@@ -2589,95 +2589,284 @@ function ReviewPage({ theme }: { theme: ResolvedTheme }) {
 }
 
 
-function AgreementPage({ theme }: { theme: ResolvedTheme }) {
-  const agreementSections = [
-    ["Project Scope", "Interior, elevation, floor plan, BOQ, BBS ya selected deliverables clearly define karo."],
-    ["Deliverables", "Renders, PDFs, drawings, estimates, review packages and export files list karo."],
-    ["Payment Milestones", "Advance, design approval, revision stage, final handover and review charges."],
-    ["Revision Policy", "Free revisions, paid revisions, timeline and approval rules define karo."],
-    ["BOQ/BBS Disclaimer", "BOQ/BBS and structural output professional review ke bina final nahi hoga."],
-    ["Client Sign-off", "Client approval, project freeze, change request and handover acknowledgement."],
-  ];
+
+type LiveAgreement = {
+  id: string;
+  projectId: string;
+  title: string;
+  scope: string | null;
+  deliverables: string | null;
+  paymentTerms: string | null;
+  revisionTerms: string | null;
+  disclaimer: string | null;
+  status: string;
+  createdAt: string;
+  updatedAt: string;
+  project?: {
+    id: string;
+    title: string;
+    projectType: string | null;
+    location: string | null;
+    plotSize: string | null;
+    facing: string | null;
+    floors: string | null;
+    budget: string | null;
+  };
+};
+
+function ClientAgreementPage({ theme }: { theme: ResolvedTheme }) {
+  const [projectsList, setProjectsList] = useState<LiveProject[]>([]);
+  const [projectId, setProjectId] = useState("");
+  const [agreements, setAgreements] = useState<LiveAgreement[]>([]);
+  const [selectedAgreement, setSelectedAgreement] = useState<LiveAgreement | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [generating, setGenerating] = useState(false);
+  const [message, setMessage] = useState("");
+
+  async function loadProjectsAndAgreements() {
+    try {
+      setLoading(true);
+      setMessage("");
+
+      const projectsResponse = await fetch("/api/projects/list", { cache: "no-store" });
+      const projectsData = await projectsResponse.json();
+
+      if (!projectsResponse.ok || !projectsData.ok) {
+        throw new Error(projectsData.error || "Failed to load projects");
+      }
+
+      const loadedProjects = projectsData.projects || [];
+      setProjectsList(loadedProjects);
+
+      const selectedProjectId = projectId || loadedProjects[0]?.id || "";
+      if (selectedProjectId && !projectId) {
+        setProjectId(selectedProjectId);
+      }
+
+      if (selectedProjectId) {
+        await loadAgreements(selectedProjectId);
+      }
+    } catch (error) {
+      console.error(error);
+      setMessage(error instanceof Error ? error.message : "Failed to load agreements");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function loadAgreements(nextProjectId: string) {
+    const response = await fetch(`/api/agreements/list?projectId=${nextProjectId}`, { cache: "no-store" });
+    const data = await response.json();
+
+    if (!response.ok || !data.ok) {
+      throw new Error(data.error || "Failed to load agreements");
+    }
+
+    const nextAgreements = data.agreements || [];
+    setAgreements(nextAgreements);
+    setSelectedAgreement(nextAgreements[0] || null);
+  }
+
+  async function handleProjectChange(nextProjectId: string) {
+    try {
+      setProjectId(nextProjectId);
+      setLoading(true);
+      setMessage("");
+      await loadAgreements(nextProjectId);
+    } catch (error) {
+      console.error(error);
+      setMessage(error instanceof Error ? error.message : "Failed to load agreements");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function handleGenerateAgreement() {
+    try {
+      setGenerating(true);
+      setMessage("");
+
+      if (!projectId) {
+        throw new Error("Project select karo. Pehle New Project section se project create karo.");
+      }
+
+      const response = await fetch("/api/agreements/generate", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ projectId }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok || !data.ok) {
+        throw new Error(data.error || "Failed to generate agreement");
+      }
+
+      await loadAgreements(projectId);
+      setSelectedAgreement(data.agreement);
+      setMessage("Client agreement generated successfully.");
+    } catch (error) {
+      console.error(error);
+      setMessage(error instanceof Error ? error.message : "Failed to generate agreement");
+    } finally {
+      setGenerating(false);
+    }
+  }
+
+  useEffect(() => {
+    loadProjectsAndAgreements();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const agreementSections = selectedAgreement
+    ? [
+        ["Scope of Work", selectedAgreement.scope],
+        ["Deliverables", selectedAgreement.deliverables],
+        ["Payment Terms", selectedAgreement.paymentTerms],
+        ["Revision Terms", selectedAgreement.revisionTerms],
+        ["Disclaimer", selectedAgreement.disclaimer],
+      ]
+    : [];
 
   return (
     <div>
-      <PageTitle
-        title="Client Agreement"
-        desc="AI-assisted agreement draft for design scope, payment terms, revisions, deliverables and client sign-off."
-        theme={theme}
-      />
+      <PageTitle title="Client Agreement" desc="Project-wise client agreement draft, scope, deliverables, payment terms and disclaimer." theme={theme} />
 
-      <div className="grid gap-5 xl:grid-cols-[0.9fr_1.1fr]">
-        <section className={cn("rounded-2xl border p-5", false ? "border-white/10 bg-white/[0.035]" : "border-[#ded5ec] bg-white light-card-shadow")}>
-          <StatusBadge status="NEW" theme={theme} />
+      <section className="rounded-2xl border border-[#ded5ec] bg-white p-5 light-card-shadow">
+        <div className="mb-5 flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
+          <div className="grid flex-1 gap-3 sm:grid-cols-[1fr_auto]">
+            <select
+              value={projectId}
+              onChange={(event) => handleProjectChange(event.target.value)}
+              className="h-12 rounded-xl border border-[#ded5ec] bg-white px-4 text-sm text-[#21133f] outline-none"
+            >
+              {!projectsList.length && <option value="">No project found</option>}
+              {projectsList.map((project) => (
+                <option key={project.id} value={project.id}>
+                  {project.title} {project.location ? `- ${project.location}` : ""}
+                </option>
+              ))}
+            </select>
 
-          <div className="mt-5 space-y-4">
-            <div>
-              <label className={cn("text-sm font-medium", false ? "text-white" : "text-[#21133f]")}>Project type</label>
-              <select className={cn("mt-2 h-12 w-full rounded-xl border px-4 text-sm outline-none", false ? "border-white/10 bg-black/20 text-white" : "border-[#ded5ec] bg-white text-[#21133f]")}>
-                <option>Residential Interior Design</option>
-                <option>Architecture + Elevation</option>
-                <option>BOQ / Contractor Estimate</option>
-                <option>Full Design + Construction Package</option>
-              </select>
-            </div>
-
-            <div>
-              <label className={cn("text-sm font-medium", false ? "text-white" : "text-[#21133f]")}>Client / project brief</label>
-              <textarea
-                className={cn("mt-2 min-h-36 w-full rounded-2xl border p-4 text-sm leading-6 outline-none", false ? "border-white/10 bg-black/20 text-white" : "border-[#ded5ec] bg-white text-[#21133f]")}
-                defaultValue="Client ko 30x40 G+1 house ke liye front elevation, interior renders, floor plan concept, BOQ draft aur client PDF chahiye. Payment milestone aur revision policy agreement me add karna hai."
-              />
-            </div>
-
-            <button className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#7c3aed] px-5 py-3 text-sm font-medium text-white">
-              Generate Agreement Draft <ScrollText className="h-4 w-4" />
-            </button>
-          </div>
-        </section>
-
-        <section className={cn("rounded-2xl border p-5", false ? "border-white/10 bg-white/[0.035]" : "border-[#ded5ec] bg-white light-card-shadow")}>
-          <div className="flex items-start justify-between gap-4">
-            <div>
-              <h3 className={cn("text-lg font-semibold", false ? "text-white" : "text-[#21133f]")}>Agreement sections</h3>
-              <p className={cn("mt-1 text-sm", false ? "text-slate-500" : "text-[#817397]")}>
-                Draft agreement me ye sections auto-generate honge.
-              </p>
-            </div>
-            <button className="rounded-xl bg-[#7c3aed] px-4 py-2.5 text-sm font-medium text-white">
-              Export PDF
+            <button
+              onClick={handleGenerateAgreement}
+              disabled={generating || !projectId}
+              className="rounded-xl bg-[#7c3aed] px-4 py-2.5 text-sm font-medium text-white disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              {generating ? "Generating..." : "Generate Agreement"}
             </button>
           </div>
 
-          <div className="mt-5 grid gap-3">
-            {agreementSections.map(([title, desc]) => (
-              <div
-                key={title}
-                className={cn("rounded-xl border p-4", false ? "border-white/10 bg-black/20" : "border-[#eee7f7] bg-[#fbf8ff]")}
-              >
-                <div className="flex items-start gap-3">
-                  <span className={cn("flex h-8 w-8 shrink-0 items-center justify-center rounded-lg", false ? "bg-[#2b1755] text-[#d8b4fe]" : "bg-[#f0dcff] text-[#6f1cc4]")}>
-                    <CheckCircle2 className="h-4 w-4" />
-                  </span>
-                  <div>
-                    <h4 className={cn("text-sm font-medium", false ? "text-white" : "text-[#21133f]")}>{title}</h4>
-                    <p className={cn("mt-1 text-sm leading-6", false ? "text-slate-400" : "text-[#817397]")}>{desc}</p>
+          <div className="rounded-xl border border-[#ded5ec] bg-[#fbf8ff] px-4 py-3 text-sm text-[#21133f]">
+            Agreements: {agreements.length}
+          </div>
+        </div>
+
+        {message && (
+          <div className={cn("mb-5 rounded-xl border p-3 text-sm", message.includes("success")
+            ? "border-[#bbf7d0] bg-[#f0fdf4] text-[#166534]"
+            : "border-[#fecaca] bg-[#fef2f2] text-[#991b1b]"
+          )}>
+            {message}
+          </div>
+        )}
+
+        {loading && (
+          <div className="rounded-xl border border-[#ded5ec] bg-[#fbf8ff] p-4 text-sm text-[#5d5077]">
+            Loading agreements...
+          </div>
+        )}
+
+        {!loading && agreements.length === 0 && (
+          <div className="rounded-xl border border-[#ded5ec] bg-[#fbf8ff] p-4 text-sm text-[#5d5077]">
+            No agreement found. Generate Agreement button click karo.
+          </div>
+        )}
+
+        {!loading && agreements.length > 0 && (
+          <div className="grid gap-5 xl:grid-cols-[0.35fr_0.65fr]">
+            <div className="space-y-3">
+              {agreements.map((agreement) => (
+                <button
+                  key={agreement.id}
+                  onClick={() => setSelectedAgreement(agreement)}
+                  className={cn(
+                    "w-full rounded-2xl border p-4 text-left transition",
+                    selectedAgreement?.id === agreement.id
+                      ? "border-[#7c3aed] bg-[#f4edff]"
+                      : "border-[#ded5ec] bg-white hover:border-[#a855f7]",
+                  )}
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <div>
+                      <h3 className="text-sm font-semibold text-[#21133f]">{agreement.title}</h3>
+                      <p className="mt-1 text-xs text-[#817397]">
+                        {new Date(agreement.createdAt).toLocaleDateString("en-IN")}
+                      </p>
+                    </div>
+                    <span className="rounded-full bg-[#fff7ed] px-2.5 py-1 text-xs text-[#f97316]">
+                      {agreement.status}
+                    </span>
                   </div>
+                </button>
+              ))}
+            </div>
+
+            {selectedAgreement && (
+              <div className="rounded-2xl border border-[#ded5ec] bg-[#fbf8ff] p-5">
+                <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                  <div>
+                    <h2 className="text-xl font-semibold text-[#140b2d]">{selectedAgreement.title}</h2>
+                    <p className="mt-1 text-sm text-[#817397]">
+                      {selectedAgreement.project?.projectType || "Project"} • {selectedAgreement.project?.location || "Location not set"}
+                    </p>
+                  </div>
+                  <StatusBadge status={selectedAgreement.status} theme={theme} />
+                </div>
+
+                {selectedAgreement.project && (
+                  <div className="mb-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                    {[
+                      ["Plot", selectedAgreement.project.plotSize || "—"],
+                      ["Facing", selectedAgreement.project.facing || "—"],
+                      ["Floors", selectedAgreement.project.floors || "—"],
+                      ["Budget", selectedAgreement.project.budget || "—"],
+                    ].map(([label, value]) => (
+                      <div key={label} className="rounded-xl bg-white p-3">
+                        <div className="text-xs text-[#817397]">{label}</div>
+                        <div className="text-sm font-medium text-[#21133f]">{value}</div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                <div className="space-y-4">
+                  {agreementSections.map(([label, value]) => (
+                    <div key={label} className="rounded-xl border border-[#eee7f7] bg-white p-4">
+                      <h3 className="mb-2 text-sm font-semibold text-[#21133f]">{label}</h3>
+                      <pre className="whitespace-pre-wrap font-sans text-sm leading-6 text-[#5d5077]">{value || "—"}</pre>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="mt-5 flex flex-wrap gap-3">
+                  <button className="rounded-xl bg-[#7c3aed] px-4 py-2.5 text-sm font-medium text-white">
+                    Copy Agreement
+                  </button>
+                  <button className="rounded-xl border border-[#ded5ec] bg-white px-4 py-2.5 text-sm font-medium text-[#6f1cc4]">
+                    Export PDF
+                  </button>
                 </div>
               </div>
-            ))}
+            )}
           </div>
-
-          <div className={cn("mt-5 rounded-xl border p-4 text-sm leading-6", false ? "border-[#facc15]/20 bg-[#3b2507]/30 text-[#fde68a]" : "border-[#fed7aa] bg-[#fff7ed] text-[#9a3412]")}>
-            AI-generated agreement draft planning ke liye hai. Final legal agreement ko lawyer/professional se review karwana recommended hai.
-          </div>
-        </section>
-      </div>
+        )}
+      </section>
     </div>
   );
 }
-
-
 
 function ApiPage({ theme }: { theme: ResolvedTheme }) {
   const apiItems = [
@@ -2774,7 +2963,7 @@ export default function SikhadengeBuildDashboard() {
     if (active === "boq") return <BoqPage theme={theme} />;
     if (active === "bbs") return <BbsPage theme={theme} />;
     if (active === "exports") return <ExportPage theme={theme} />;
-    if (active === "agreements") return <AgreementPage theme={theme} />;
+    if (active === "agreements") return <ClientAgreementPage theme={theme} />;
     if (active === "reviews") return <ReviewPage theme={theme} />;
     if (active === "api") return <ApiPage theme={theme} />;
     return <Dashboard setActive={setActive} theme={theme} />;
