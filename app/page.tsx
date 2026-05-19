@@ -3133,6 +3133,46 @@ function ApiPage({ theme }: { theme: ResolvedTheme }) {
 
 export default function SikhadengeBuildDashboard() {
 
+  // BUILDSETU_TOOL_BUTTON_ALIGN_V4
+  useEffect(() => {
+    const applyToolCardAlignment = () => {
+      const nodes = Array.from(document.querySelectorAll("button, a"));
+
+      nodes.forEach((node) => {
+        const text = (node.textContent || "").replace(/\s+/g, " ").trim();
+
+        if (!text.startsWith("Launch Tool")) return;
+
+        const actionWrap = node.parentElement;
+        if (!actionWrap) return;
+
+        actionWrap.classList.add("buildsetu-tool-card-actions-align");
+
+        const body = actionWrap.parentElement;
+        if (body) {
+          body.classList.add("buildsetu-tool-card-body-align");
+        }
+
+        const card = body?.parentElement;
+        if (card) {
+          card.classList.add("buildsetu-tool-card-align");
+        }
+      });
+    };
+
+    applyToolCardAlignment();
+
+    const observer = new MutationObserver(() => {
+      applyToolCardAlignment();
+    });
+
+    observer.observe(document.body, { childList: true, subtree: true });
+
+    return () => observer.disconnect();
+  }, []);
+
+
+
   // BUILDSETU_APP_WIDE_THEME_CLICK_V3
   useEffect(() => {
     type Mode = "light" | "dark" | "system";

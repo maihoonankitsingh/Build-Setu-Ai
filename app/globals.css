@@ -190,3 +190,116 @@ html[data-buildsetu-theme="dark"] .shadow-xl {
   box-shadow: 0 18px 50px rgba(0, 0, 0, 0.38) !important;
 }
 
+
+/* BUILDSETU_SOFT_DARK_THEME_V4 */
+html[data-buildsetu-theme="dark"] {
+  color-scheme: dark;
+  background: #171327 !important;
+}
+
+html[data-buildsetu-theme="dark"] body,
+html[data-buildsetu-theme="dark"] main {
+  background: #171327 !important;
+  color: #f8f5ff !important;
+}
+
+/* main app backgrounds softer */
+html[data-buildsetu-theme="dark"] .bg-white,
+html[data-buildsetu-theme="dark"] [class*="bg-white"],
+html[data-buildsetu-theme="dark"] [class*="bg-[#fbf8ff]"],
+html[data-buildsetu-theme="dark"] [class*="bg-[#f7f3ff]"],
+html[data-buildsetu-theme="dark"] [class*="bg-[#fcfbff]"],
+html[data-buildsetu-theme="dark"] [class*="bg-[#faf8ff]"] {
+  background-color: #211c35 !important;
+}
+
+/* top sections / subtle dark panels */
+html[data-buildsetu-theme="dark"] [class*="bg-[linear-gradient"],
+html[data-buildsetu-theme="dark"] [class*="bg-[radial-gradient"] {
+  background-image: linear-gradient(135deg, #221c38 0%, #1d1831 55%, #261f3f 100%) !important;
+}
+
+/* stronger heading text */
+html[data-buildsetu-theme="dark"] [class*="text-[#21133f]"],
+html[data-buildsetu-theme="dark"] [class*="text-[#170b2b]"],
+html[data-buildsetu-theme="dark"] [class*="text-[#291447]"],
+html[data-buildsetu-theme="dark"] [class*="text-[#201537]"],
+html[data-buildsetu-theme="dark"] [class*="text-[#1f1632]"],
+html[data-buildsetu-theme="dark"] [class*="text-[#1f1433]"],
+html[data-buildsetu-theme="dark"] [class*="text-[#1d1431]"],
+html[data-buildsetu-theme="dark"] [class*="text-[#241443]"] {
+  color: #fcfaff !important;
+}
+
+/* muted text more readable */
+html[data-buildsetu-theme="dark"] [class*="text-[#6d5b86]"],
+html[data-buildsetu-theme="dark"] [class*="text-[#817397]"],
+html[data-buildsetu-theme="dark"] [class*="text-[#766987]"],
+html[data-buildsetu-theme="dark"] [class*="text-[#786a91]"],
+html[data-buildsetu-theme="dark"] [class*="text-[#796c91]"],
+html[data-buildsetu-theme="dark"] [class*="text-[#8b7ca6]"],
+html[data-buildsetu-theme="dark"] [class*="text-[#5f5476]"],
+html[data-buildsetu-theme="dark"] [class*="text-[#635477]"] {
+  color: #cec2e7 !important;
+}
+
+/* borders softer */
+html[data-buildsetu-theme="dark"] [class*="border-[#ded0f4]"],
+html[data-buildsetu-theme="dark"] [class*="border-[#ded3ef]"],
+html[data-buildsetu-theme="dark"] [class*="border-[#e4d9f4]"],
+html[data-buildsetu-theme="dark"] [class*="border-[#e6ddf4]"],
+html[data-buildsetu-theme="dark"] [class*="border-[#e7def5]"],
+html[data-buildsetu-theme="dark"] [class*="border-[#eee7f7]"],
+html[data-buildsetu-theme="dark"] [class*="border-[#efe8fb]"],
+html[data-buildsetu-theme="dark"] [class*="border-[#f0e9fb]"] {
+  border-color: #43385f !important;
+}
+
+/* cards / inputs / selects */
+html[data-buildsetu-theme="dark"] select,
+html[data-buildsetu-theme="dark"] input,
+html[data-buildsetu-theme="dark"] textarea {
+  background: #241d3a !important;
+  color: #f8f5ff !important;
+  border-color: #4a3f68 !important;
+}
+
+/* active sidebar chip / active tabs */
+html[data-buildsetu-theme="dark"] .bg-[#ead2ff],
+html[data-buildsetu-theme="dark"] .bg-[#efe0ff],
+html[data-buildsetu-theme="dark"] .bg-purple-100 {
+  background-color: #35284f !important;
+}
+
+/* keep purple buttons beautiful */
+html[data-buildsetu-theme="dark"] [class*="from-[#5b43ea]"],
+html[data-buildsetu-theme="dark"] [class*="from-[#6246ea]"],
+html[data-buildsetu-theme="dark"] [class*="from-[#7c3aed]"],
+html[data-buildsetu-theme="dark"] [class*="bg-[#7c3aed]"],
+html[data-buildsetu-theme="dark"] [class*="bg-[#6f1cc4]"] {
+  color: #ffffff !important;
+}
+
+/* better shadow */
+html[data-buildsetu-theme="dark"] .shadow-sm,
+html[data-buildsetu-theme="dark"] .shadow-md,
+html[data-buildsetu-theme="dark"] .shadow-lg,
+html[data-buildsetu-theme="dark"] .shadow-xl {
+  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.24) !important;
+}
+
+/* tool card alignment helper */
+.buildsetu-tool-card-align {
+  display: flex !important;
+  flex-direction: column !important;
+  height: 100% !important;
+}
+.buildsetu-tool-card-body-align {
+  display: flex !important;
+  flex-direction: column !important;
+  flex: 1 1 auto !important;
+}
+.buildsetu-tool-card-actions-align {
+  margin-top: auto !important;
+}
+
