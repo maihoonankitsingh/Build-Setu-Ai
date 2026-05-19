@@ -532,3 +532,84 @@ html[data-buildsetu-theme="dark"] button:focus {
   outline: 2px solid #a78bfa !important;
   outline-offset: 2px !important;
 }
+
+/* BUILDSETU_DARK_LIGHT_SURFACE_TEXT_FIX_V7 */
+/* In dark mode, any intentionally light selected/pale surface must use dark readable text */
+html[data-buildsetu-theme="dark"] [class*="bg-[#f4ebff]"],
+html[data-buildsetu-theme="dark"] [class*="bg-[#f7efff]"],
+html[data-buildsetu-theme="dark"] [class*="bg-[#fbf8ff]"],
+html[data-buildsetu-theme="dark"] [class*="bg-[#efe8ff]"],
+html[data-buildsetu-theme="dark"] [class*="bg-[#eadcff]"],
+html[data-buildsetu-theme="dark"] [class*="bg-[#ead2ff]"],
+html[data-buildsetu-theme="dark"] [class*="bg-[#efe0ff]"],
+html[data-buildsetu-theme="dark"] [class*="bg-purple-50"],
+html[data-buildsetu-theme="dark"] [class*="bg-purple-100"] {
+  background-color: #f1e6ff !important;
+  color: #261143 !important;
+  border-color: #9b6df5 !important;
+}
+
+html[data-buildsetu-theme="dark"] [class*="bg-[#f4ebff]"] *,
+html[data-buildsetu-theme="dark"] [class*="bg-[#f7efff]"] *,
+html[data-buildsetu-theme="dark"] [class*="bg-[#fbf8ff]"] *,
+html[data-buildsetu-theme="dark"] [class*="bg-[#efe8ff]"] *,
+html[data-buildsetu-theme="dark"] [class*="bg-[#eadcff]"] *,
+html[data-buildsetu-theme="dark"] [class*="bg-[#ead2ff]"] *,
+html[data-buildsetu-theme="dark"] [class*="bg-[#efe0ff]"] *,
+html[data-buildsetu-theme="dark"] [class*="bg-purple-50"] *,
+html[data-buildsetu-theme="dark"] [class*="bg-purple-100"] * {
+  color: #261143 !important;
+}
+
+/* Icons inside light selected cards should stay purple and visible */
+html[data-buildsetu-theme="dark"] [class*="bg-[#f4ebff]"] svg,
+html[data-buildsetu-theme="dark"] [class*="bg-[#f7efff]"] svg,
+html[data-buildsetu-theme="dark"] [class*="bg-[#fbf8ff]"] svg,
+html[data-buildsetu-theme="dark"] [class*="bg-[#efe8ff]"] svg,
+html[data-buildsetu-theme="dark"] [class*="bg-[#eadcff]"] svg,
+html[data-buildsetu-theme="dark"] [class*="bg-[#ead2ff]"] svg,
+html[data-buildsetu-theme="dark"] [class*="bg-[#efe0ff]"] svg,
+html[data-buildsetu-theme="dark"] [class*="bg-purple-50"] svg,
+html[data-buildsetu-theme="dark"] [class*="bg-purple-100"] svg {
+  color: #7c3aed !important;
+}
+
+/* Selected form/control cards with light background */
+html[data-buildsetu-theme="dark"] button[class*="bg-[#f4ebff]"],
+html[data-buildsetu-theme="dark"] button[class*="bg-[#f7efff]"],
+html[data-buildsetu-theme="dark"] button[class*="bg-[#fbf8ff]"],
+html[data-buildsetu-theme="dark"] button[class*="bg-purple-50"],
+html[data-buildsetu-theme="dark"] button[class*="bg-purple-100"],
+html[data-buildsetu-theme="dark"] label[class*="bg-[#f4ebff]"],
+html[data-buildsetu-theme="dark"] label[class*="bg-[#f7efff]"],
+html[data-buildsetu-theme="dark"] label[class*="bg-[#fbf8ff]"],
+html[data-buildsetu-theme="dark"] label[class*="bg-purple-50"],
+html[data-buildsetu-theme="dark"] label[class*="bg-purple-100"] {
+  background-color: #f1e6ff !important;
+  color: #261143 !important;
+  border-color: #9b6df5 !important;
+}
+
+/* Do not let disabled selected controls become unreadable */
+html[data-buildsetu-theme="dark"] [disabled][class*="bg-[#"],
+html[data-buildsetu-theme="dark"] [aria-disabled="true"][class*="bg-[#"] {
+  opacity: 1 !important;
+}
+
+/* Dark panels must remain dark with light text */
+html[data-buildsetu-theme="dark"] [class*="bg-[#21133f]"],
+html[data-buildsetu-theme="dark"] [class*="bg-[#170b2b]"],
+html[data-buildsetu-theme="dark"] [class*="bg-[#18132a]"],
+html[data-buildsetu-theme="dark"] [class*="bg-[#211a35]"],
+html[data-buildsetu-theme="dark"] [class*="bg-[#281f40]"] {
+  background-color: #211a35 !important;
+  color: #f8f4ff !important;
+}
+
+html[data-buildsetu-theme="dark"] [class*="bg-[#21133f]"] *,
+html[data-buildsetu-theme="dark"] [class*="bg-[#170b2b]"] *,
+html[data-buildsetu-theme="dark"] [class*="bg-[#18132a]"] *,
+html[data-buildsetu-theme="dark"] [class*="bg-[#211a35]"] *,
+html[data-buildsetu-theme="dark"] [class*="bg-[#281f40]"] * {
+  color: #f8f4ff !important;
+}
