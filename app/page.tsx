@@ -730,7 +730,7 @@ function Header({
               SB
             </div>
             <div className="hidden md:block">
-              <div className={cn("text-sm font-medium", false ? "text-white" : "text-[#21133f]")}>Sikhadenge Build</div>
+              <div className={cn("text-sm font-medium", false ? "text-white" : "text-[#21133f]")}>BuildSetu AI</div>
             </div>
             <ChevronDown className={cn("h-4 w-4", false ? "text-slate-500" : "text-[#817397]")} />
           </div>
@@ -2628,8 +2628,8 @@ function ClientAgreementPage({ theme }: { theme: ResolvedTheme }) {
   const [exportingPdf, setExportingPdf] = useState(false);
   const [message, setMessage] = useState("");
 
-  const [providerName, setProviderName] = useState("Sikhadenge Design Partner");
-  const [providerCompany, setProviderCompany] = useState("Sikhadenge Build");
+  const [providerName, setProviderName] = useState("BuildSetu Design Partner");
+  const [providerCompany, setProviderCompany] = useState("BuildSetu AI");
   const [providerGst, setProviderGst] = useState("");
   const [providerAddress, setProviderAddress] = useState("Raipur, Chhattisgarh");
   const [providerEmail, setProviderEmail] = useState("support@sikhadenge.in");
@@ -3002,7 +3002,7 @@ function ApiPage({ theme }: { theme: ResolvedTheme }) {
     <div>
       <PageTitle
         title="API"
-        desc="Sikhadenge Build tools ko external website, CRM, agency workflow ya client portal se connect karne ke liye developer access."
+        desc="BuildSetu AI tools ko external website, CRM, agency workflow ya client portal se connect karne ke liye developer access."
         theme={theme}
       />
 
@@ -3015,7 +3015,7 @@ function ApiPage({ theme }: { theme: ResolvedTheme }) {
               Developer API Access
             </h3>
             <p className={cn("mt-2 text-sm leading-6", false ? "text-slate-400" : "text-[#817397]")}>
-              API se designers, architects, contractors aur agencies apni website/app se Sikhadenge Build ke AI tools use kar sakenge.
+              API se designers, architects, contractors aur agencies apni website/app se BuildSetu AI ke AI tools use kar sakenge.
               MVP me ye section documentation placeholder hai. Production me API keys, rate limits, logs aur billing add honge.
             </p>
           </div>

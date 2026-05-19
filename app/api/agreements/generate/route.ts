@@ -65,8 +65,8 @@ export async function POST(request: Request) {
 
     const structured = parseStructuredJson(project.brief?.structuredJson);
 
-    const providerName = safeString(body.providerName, "Sikhadenge Design Partner");
-    const providerCompany = safeString(body.providerCompany, "Sikhadenge Build");
+    const providerName = safeString(body.providerName, "BuildSetu Design Partner");
+    const providerCompany = safeString(body.providerCompany, "BuildSetu AI");
     const providerGst = safeString(body.providerGst, "GSTIN to be updated");
     const providerAddress = safeString(body.providerAddress, "Company address to be updated");
     const providerEmail = safeString(body.providerEmail, "support@sikhadenge.in");
