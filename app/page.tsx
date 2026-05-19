@@ -2784,7 +2784,7 @@ function ClientAgreementPage({ theme }: { theme: ResolvedTheme }) {
       }
 
       setMessage("Agreement PDF exported successfully.");
-      window.open(data.pdfUrl, "_blank", "noopener,noreferrer");
+      window.open(data.downloadUrl || data.pdfUrl, "_blank", "noopener,noreferrer");
     } catch (error) {
       console.error(error);
       setMessage(error instanceof Error ? error.message : "Failed to export PDF");
