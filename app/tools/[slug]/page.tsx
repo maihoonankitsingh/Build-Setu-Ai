@@ -343,8 +343,109 @@ export default function ToolExecutorPage() {
     }
 
     try {
+      const imageSlugs = [
+        "interior-render",
+        "exterior-elevation",
+        "render-enhancer",
+        "site-photo-redesign",
+        "remove-furniture",
+        "background-change",
+        "photo-enhancer",
+        "mood-board",
+        "false-ceiling-ai",
+        "material-palette-ai"
+      ];
+
       const designSlugs = ["floor-plan-ai", "vastu-check", "sketch-to-plan"];
       const structureSlugs = ["column-beam-plan", "bbs-generator", "working-drawings"];
+
+      if (imageSlugs.includes(slug)) {
+        if (!projectId) {
+          throw new Error("Please select a project first.");
+        }
+
+        const renderType =
+          slug === "exterior-elevation" ? "Exterior Elevation" :
+          slug === "site-photo-redesign" ? "Site Photo Redesign" :
+          slug === "render-enhancer" ? "Render Enhancer" :
+          slug === "mood-board" ? "Mood Board" :
+          slug === "false-ceiling-ai" ? "False Ceiling" :
+          slug === "material-palette-ai" ? "Material Palette" :
+          "Interior Render";
+
+        const roomType =
+          slug === "exterior-elevation" ? "Exterior" :
+          slug === "false-ceiling-ai" ? "Ceiling" :
+          slug === "material-palette-ai" ? "Material Palette" :
+          slug === "mood-board" ? "Mood Board" :
+          "Living Room";
+
+        const finalPrompt = [
+          `Create a premium realistic architecture/interior design image.`,
+          `Tool: ${config.title}.`,
+          `Render type: ${renderType}.`,
+          `Project: ${baseProject.projectName}.`,
+          `Location: ${baseProject.city}.`,
+          `Plot: ${baseProject.plotSize}.`,
+          `Floors: ${baseProject.floors}.`,
+          `User requirement: ${prompt || config.placeholder}`,
+          `Style: modern Indian premium, clean luxury, realistic materials, professional lighting, high-detail 3D render.`,
+          `Avoid text, watermark, labels, distorted geometry, extra doors, impossible stairs, unsafe structural elements.`
+        ].join("\n");
+
+        const res = await fetch("/api/ai/generate-image", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            projectId,
+            renderType,
+            roomType,
+            prompt: finalPrompt,
+          }),
+        });
+
+        const data = await res.json();
+
+        if (!res.ok || !data.ok) {
+          throw new Error(data.error || "Image generation failed");
+        }
+
+        const imageUrl = data.imageUrl || data.render?.imageUrl || "";
+        const renderId = data.render?.id || data.renderId || data.id || `image-${Date.now()}`;
+
+        setRun({
+          id: renderId,
+          createdAt: new Date().toISOString(),
+          slug,
+          title: `${config.title} Image Output`,
+          projectId,
+          prompt: finalPrompt,
+          imageUrl,
+          imageFallback: Boolean(data.fallback),
+          status: data.fallback ? "REVIEW_REQUIRED" : "COMPLETED",
+          sections: [
+            {
+              title: "Render Prompt",
+              items: [
+                finalPrompt,
+                imageUrl ? `Image URL: ${imageUrl}` : "Image URL not returned.",
+                data.fallback ? "Fallback preview used because real image generation is not available right now." : "Real/generated image preview created."
+              ],
+            },
+            {
+              title: "Review Checklist",
+              items: [
+                "Check image composition, lighting, material realism and room proportions.",
+                "Verify no unsafe structural element, impossible stair, distorted opening or wrong room placement.",
+                "Use this image as draft preview before client approval.",
+              ],
+            },
+          ],
+          nextActions: ["Open Image", "Download Image", "Add to Project PDF"],
+        });
+
+        return;
+      }
 
       if (designSlugs.includes(slug)) {
         const res = await fetch("/api/design/generate", {
@@ -637,6 +738,56 @@ export default function ToolExecutorPage() {
                     </span>
                   </div>
                 </div>
+
+                {run.imageUrl ? (
+                  <div className="overflow-hidden rounded-[2rem] border border-[#ded0f4] bg-white shadow-[0_18px_50px_rgba(47,20,90,0.10)]">
+                    <div className="border-b border-[#eee7f7] bg-[#fbf8ff] px-5 py-4">
+                      <div className="flex flex-wrap items-center justify-between gap-3">
+                        <div>
+                          <p className="text-xs font-black uppercase tracking-wider text-[#817397]">Generated Image Preview</p>
+                          <h3 className="mt-1 text-xl font-black tracking-[-0.04em] text-[#21133f]">{config.title}</h3>
+                        </div>
+                        <span className="rounded-full border border-amber-200 bg-amber-50 px-3 py-1 text-xs font-black text-amber-700">
+                          {run.imageFallback ? "Fallback Preview" : "Image Generated"}
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="p-5">
+                      <div className="overflow-hidden rounded-[1.6rem] border border-[#ded0f4] bg-[#120a20]">
+                        <img
+                          src={run.imageUrl}
+                          alt={`${config.title} generated preview`}
+                          className="h-auto w-full object-cover"
+                        />
+                      </div>
+
+                      <div className="mt-4 flex flex-wrap gap-3">
+                        <a
+                          href={run.imageUrl}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="inline-flex items-center gap-2 rounded-xl bg-[#7c3aed] px-4 py-2 text-sm font-black text-white hover:bg-[#6d28d9]"
+                        >
+                          Open Image <ExternalLink size={15} />
+                        </a>
+                        <a
+                          href={run.imageUrl}
+                          download
+                          className="inline-flex items-center gap-2 rounded-xl border border-[#ded0f4] bg-[#fbf8ff] px-4 py-2 text-sm font-black text-[#21133f] hover:bg-purple-50"
+                        >
+                          Download <Download size={15} />
+                        </a>
+                        <a
+                          href="/workspace"
+                          className="inline-flex items-center gap-2 rounded-xl border border-[#ded0f4] bg-white px-4 py-2 text-sm font-black text-[#21133f] hover:bg-purple-50"
+                        >
+                          Workspace <ArrowRight size={15} />
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                ) : null}
 
                 {run.sections.map((section: any) => (
                   <div key={section.title} className="rounded-[2rem] border border-[#ded0f4] bg-white p-5 shadow-sm">
