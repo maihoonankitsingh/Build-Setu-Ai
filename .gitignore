@@ -47,3 +47,7 @@ public/generated/renders/*
 !public/generated/renders/.gitkeep
 public/generated/agreements/*
 !public/generated/agreements/.gitkeep
+
+# Generated BuildSetu report PDFs
+public/generated/reports/*
+!public/generated/reports/.gitkeep

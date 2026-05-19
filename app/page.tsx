@@ -560,9 +560,9 @@ function Sidebar({
         </div>
         <div>
           <div className={cn("text-[21px] font-bold leading-[0.98] tracking-[-0.055em]", false ? "text-white" : "text-[#21133f]")}>
-            Sikhadenge
+            BuildSetu
           </div>
-          <div className="text-[21px] font-bold leading-[0.98] tracking-[-0.055em] text-[#c4b5fd]">Build</div>
+          <div className="text-[21px] font-bold leading-[0.98] tracking-[-0.055em] text-[#c4b5fd]">AI</div>
         </div>
       </div>
 
