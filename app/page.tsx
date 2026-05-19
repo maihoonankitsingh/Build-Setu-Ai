@@ -3132,6 +3132,174 @@ function ApiPage({ theme }: { theme: ResolvedTheme }) {
 
 
 export default function SikhadengeBuildDashboard() {
+
+  // BUILDSETU_APP_WIDE_THEME_CLICK_V3
+  useEffect(() => {
+    type Mode = "light" | "dark" | "system";
+
+    const applyMode = (mode: Mode) => {
+      if (typeof window === "undefined") return;
+
+      if (typeof (window as any).__buildsetuSetTheme === "function") {
+        (window as any).__buildsetuSetTheme(mode);
+      } else {
+        localStorage.setItem("buildsetu-theme-mode", mode);
+        const resolved =
+          mode === "system"
+            ? window.matchMedia("(prefers-color-scheme: dark)").matches
+              ? "dark"
+              : "light"
+            : mode;
+
+        document.documentElement.dataset.buildsetuThemeMode = mode;
+        document.documentElement.dataset.buildsetuTheme = resolved;
+      }
+    };
+
+    const handleClick = (event: MouseEvent) => {
+      let el = event.target as HTMLElement | null;
+
+      for (let i = 0; el && i < 8; i += 1) {
+        const text = (el.textContent || "").replace(/\s+/g, " ").trim();
+
+        if (text === "Light Mode") {
+          event.preventDefault();
+          applyMode("light");
+          return;
+        }
+
+        if (text === "Dark Mode") {
+          event.preventDefault();
+          applyMode("dark");
+          return;
+        }
+
+        if (text === "System") {
+          event.preventDefault();
+          applyMode("system");
+          return;
+        }
+
+        el = el.parentElement;
+      }
+    };
+
+    document.addEventListener("click", handleClick, true);
+
+    return () => document.removeEventListener("click", handleClick, true);
+  }, []);
+
+
+
+  // BUILDSETU_HARD_THEME_FIX_V2
+  useEffect(() => {
+    type Mode = "light" | "dark" | "system";
+
+    const isMode = (value: string | null): value is Mode => {
+      return value === "light" || value === "dark" || value === "system";
+    };
+
+    const resolveMode = (mode: Mode) => {
+      if (mode === "system") {
+        return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+      }
+
+      return mode;
+    };
+
+    const markMenu = (mode: Mode) => {
+      const activeLabel =
+        mode === "light" ? "Light Mode" : mode === "dark" ? "Dark Mode" : "System";
+
+      document.querySelectorAll("button, [role='button'], div").forEach((node) => {
+        const el = node as HTMLElement;
+        const text = (el.textContent || "").replace(/\s+/g, " ").trim();
+
+        if (text !== "Light Mode" && text !== "Dark Mode" && text !== "System") return;
+
+        el.classList.remove("bg-[#ead2ff]", "bg-[#efe0ff]", "bg-purple-100", "text-[#7c3aed]");
+        el.classList.add("text-[#4e4168]");
+
+        if (text === activeLabel) {
+          el.classList.add("bg-[#ead2ff]", "text-[#7c3aed]");
+          el.classList.remove("text-[#4e4168]");
+        }
+      });
+    };
+
+    const applyMode = (mode: Mode) => {
+      const resolved = resolveMode(mode);
+
+      document.documentElement.dataset.buildsetuThemeMode = mode;
+      document.documentElement.dataset.buildsetuTheme = resolved;
+      document.body.dataset.buildsetuTheme = resolved;
+
+      document.documentElement.classList.toggle("theme-dark", resolved === "dark");
+      document.documentElement.classList.toggle("theme-light", resolved === "light");
+      document.body.classList.toggle("theme-dark", resolved === "dark");
+      document.body.classList.toggle("theme-light", resolved === "light");
+
+      localStorage.setItem("buildsetu-theme-mode", mode);
+
+      markMenu(mode);
+    };
+
+    const saved = localStorage.getItem("buildsetu-theme-mode");
+    applyMode(isMode(saved) ? saved : "light");
+
+    const handleClick = (event: MouseEvent) => {
+      let el = event.target as HTMLElement | null;
+
+      for (let i = 0; el && i < 8; i += 1) {
+        const text = (el.textContent || "").replace(/\s+/g, " ").trim();
+
+        if (text === "Light Mode") {
+          event.preventDefault();
+          applyMode("light");
+          return;
+        }
+
+        if (text === "Dark Mode") {
+          event.preventDefault();
+          applyMode("dark");
+          return;
+        }
+
+        if (text === "System") {
+          event.preventDefault();
+          applyMode("system");
+          return;
+        }
+
+        el = el.parentElement;
+      }
+    };
+
+    const media = window.matchMedia("(prefers-color-scheme: dark)");
+
+    const handleSystemChange = () => {
+      const current = localStorage.getItem("buildsetu-theme-mode");
+      if (current === "system") applyMode("system");
+    };
+
+    document.addEventListener("click", handleClick, true);
+    media.addEventListener("change", handleSystemChange);
+
+    const observer = new MutationObserver(() => {
+      const current = localStorage.getItem("buildsetu-theme-mode");
+      markMenu(isMode(current) ? current : "light");
+    });
+
+    observer.observe(document.body, { childList: true, subtree: true });
+
+    return () => {
+      document.removeEventListener("click", handleClick, true);
+      media.removeEventListener("change", handleSystemChange);
+      observer.disconnect();
+    };
+  }, []);
+
+
   const [active, setActive] = useState<ViewKey>("dashboard");
   const [themeMode, setThemeMode] = useState<ThemeMode>("light");
   const theme = useResolvedTheme(themeMode);
