@@ -45,3 +45,5 @@ app.bak_*
 lib.bak_*
 public/generated/renders/*
 !public/generated/renders/.gitkeep
+public/generated/agreements/*
+!public/generated/agreements/.gitkeep

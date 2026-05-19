@@ -2106,6 +2106,7 @@ function BoqPage({ theme }: { theme: ResolvedTheme }) {
   const [totalAmount, setTotalAmount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [generating, setGenerating] = useState(false);
+  const [exportingPdf, setExportingPdf] = useState(false);
   const [message, setMessage] = useState("");
 
   async function loadProjectsAndBoq() {
@@ -2624,6 +2625,7 @@ function ClientAgreementPage({ theme }: { theme: ResolvedTheme }) {
   const [selectedAgreement, setSelectedAgreement] = useState<LiveAgreement | null>(null);
   const [loading, setLoading] = useState(true);
   const [generating, setGenerating] = useState(false);
+  const [exportingPdf, setExportingPdf] = useState(false);
   const [message, setMessage] = useState("");
 
   const [providerName, setProviderName] = useState("Sikhadenge Design Partner");
@@ -2752,6 +2754,42 @@ function ClientAgreementPage({ theme }: { theme: ResolvedTheme }) {
       setMessage(error instanceof Error ? error.message : "Failed to generate agreement");
     } finally {
       setGenerating(false);
+    }
+  }
+
+
+  async function handleExportAgreementPdf() {
+    try {
+      setExportingPdf(true);
+      setMessage("");
+
+      if (!selectedAgreement?.id) {
+        throw new Error("Agreement select karo ya pehle agreement generate karo.");
+      }
+
+      const response = await fetch("/api/agreements/export-pdf", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          agreementId: selectedAgreement.id,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok || !data.ok) {
+        throw new Error(data.error || "Failed to export PDF");
+      }
+
+      setMessage("Agreement PDF exported successfully.");
+      window.open(data.pdfUrl, "_blank", "noopener,noreferrer");
+    } catch (error) {
+      console.error(error);
+      setMessage(error instanceof Error ? error.message : "Failed to export PDF");
+    } finally {
+      setExportingPdf(false);
     }
   }
 
@@ -2931,8 +2969,12 @@ function ClientAgreementPage({ theme }: { theme: ResolvedTheme }) {
                   <button className="rounded-xl bg-[#7c3aed] px-4 py-2.5 text-sm font-medium text-white">
                     Copy Agreement
                   </button>
-                  <button className="rounded-xl border border-[#ded5ec] bg-white px-4 py-2.5 text-sm font-medium text-[#6f1cc4]">
-                    Export PDF
+                  <button
+                    onClick={handleExportAgreementPdf}
+                    disabled={exportingPdf || !selectedAgreement}
+                    className="rounded-xl border border-[#ded5ec] bg-white px-4 py-2.5 text-sm font-medium text-[#6f1cc4] disabled:cursor-not-allowed disabled:opacity-60"
+                  >
+                    {exportingPdf ? "Exporting..." : "Export PDF"}
                   </button>
                 </div>
               </div>
