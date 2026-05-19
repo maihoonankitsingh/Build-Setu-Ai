@@ -439,3 +439,96 @@ html[data-buildsetu-theme="dark"] .buildsetu-tool-card-actions-align button,
 html[data-buildsetu-theme="dark"] .buildsetu-tool-card-actions-align a {
   color: #ffffff !important;
 }
+
+/* BUILDSETU_DARK_FORM_CONTROLS_V6 */
+html[data-buildsetu-theme="dark"] input,
+html[data-buildsetu-theme="dark"] select,
+html[data-buildsetu-theme="dark"] textarea {
+  background-color: #211a35 !important;
+  color: #f8f4ff !important;
+  border-color: #5a4a78 !important;
+}
+
+html[data-buildsetu-theme="dark"] input::placeholder,
+html[data-buildsetu-theme="dark"] textarea::placeholder {
+  color: #b9a6d8 !important;
+}
+
+/* Fix selected white/pale pills in dark mode */
+html[data-buildsetu-theme="dark"] [class*="bg-[#f7efff]"],
+html[data-buildsetu-theme="dark"] [class*="bg-[#fbf8ff]"],
+html[data-buildsetu-theme="dark"] [class*="bg-[#f4ebff]"],
+html[data-buildsetu-theme="dark"] [class*="bg-[#efe8ff]"],
+html[data-buildsetu-theme="dark"] [class*="bg-[#eadcff]"],
+html[data-buildsetu-theme="dark"] [class*="bg-purple-50"],
+html[data-buildsetu-theme="dark"] [class*="bg-purple-100"] {
+  background-color: #33224f !important;
+  color: #f8f4ff !important;
+  border-color: #6f55a0 !important;
+}
+
+/* Any selected/active option should be readable */
+html[data-buildsetu-theme="dark"] button[class*="bg-white"],
+html[data-buildsetu-theme="dark"] div[class*="bg-white"],
+html[data-buildsetu-theme="dark"] label[class*="bg-white"] {
+  background-color: #211a35 !important;
+  color: #f8f4ff !important;
+  border-color: #5a4a78 !important;
+}
+
+/* But keep actual white text buttons strong */
+html[data-buildsetu-theme="dark"] button[class*="bg-[#7c3aed]"],
+html[data-buildsetu-theme="dark"] button[class*="bg-[#6f1cc4]"],
+html[data-buildsetu-theme="dark"] button[class*="from-[#"],
+html[data-buildsetu-theme="dark"] a[class*="bg-[#7c3aed]"],
+html[data-buildsetu-theme="dark"] a[class*="from-[#"] {
+  color: #ffffff !important;
+}
+
+/* Checked room/option labels */
+html[data-buildsetu-theme="dark"] label:has(input:checked),
+html[data-buildsetu-theme="dark"] button[aria-pressed="true"],
+html[data-buildsetu-theme="dark"] [data-state="checked"],
+html[data-buildsetu-theme="dark"] [data-selected="true"] {
+  background: linear-gradient(135deg, #6d28d9 0%, #9333ea 100%) !important;
+  color: #ffffff !important;
+  border-color: #a78bfa !important;
+}
+
+/* Ensure text inside selected controls stays readable */
+html[data-buildsetu-theme="dark"] label:has(input:checked) *,
+html[data-buildsetu-theme="dark"] button[aria-pressed="true"] *,
+html[data-buildsetu-theme="dark"] [data-state="checked"] *,
+html[data-buildsetu-theme="dark"] [data-selected="true"] * {
+  color: #ffffff !important;
+}
+
+/* Badges like AI Generated / AI Draft */
+html[data-buildsetu-theme="dark"] [class*="bg-[#f4e8ff]"],
+html[data-buildsetu-theme="dark"] [class*="bg-[#f5e8ff]"],
+html[data-buildsetu-theme="dark"] [class*="bg-[#efe0ff]"] {
+  background-color: #3b255d !important;
+  color: #f8f4ff !important;
+}
+
+/* Right-side preview text card */
+html[data-buildsetu-theme="dark"] textarea,
+html[data-buildsetu-theme="dark"] [class*="Your Design Brief"] {
+  color: #f8f4ff !important;
+}
+
+/* Keep disabled/faded elements readable enough */
+html[data-buildsetu-theme="dark"] [disabled],
+html[data-buildsetu-theme="dark"] [aria-disabled="true"] {
+  opacity: 0.72 !important;
+  color: #cdbde6 !important;
+}
+
+/* Add clear focus ring in dark mode */
+html[data-buildsetu-theme="dark"] input:focus,
+html[data-buildsetu-theme="dark"] select:focus,
+html[data-buildsetu-theme="dark"] textarea:focus,
+html[data-buildsetu-theme="dark"] button:focus {
+  outline: 2px solid #a78bfa !important;
+  outline-offset: 2px !important;
+}
