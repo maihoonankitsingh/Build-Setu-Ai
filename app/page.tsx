@@ -495,7 +495,7 @@ function ThemeDropdown({
                   selected && (theme === "dark" ? "bg-[#2c1455] text-white" : "bg-[#f0dcff] text-[#6f1cc4]"),
                 )}
               >
-                <Icon className="h-4 w-4" />
+                <Icon className="h-3.5 w-3.5 shrink-0" />
                 {item.label}
               </button>
             );
@@ -558,7 +558,7 @@ function Sidebar({
                       : "text-[#5d5077] hover:bg-[#f7f0ff] hover:text-[#6f1cc4]",
                 )}
               >
-                <Icon className="h-4 w-4" />
+                <Icon className="h-3.5 w-3.5 shrink-0" />
                 <span>{item.label}</span>
               </button>
             </div>
@@ -720,7 +720,7 @@ function CategoryTabs({
   theme: ResolvedTheme;
 }) {
   return (
-    <div className="flex gap-2 overflow-x-auto pb-1">
+    <div className="flex min-w-0 flex-1 flex-nowrap items-center gap-2 overflow-hidden pb-0">
       {categories.map((category) => {
         const Icon = category.icon;
         const selected = activeCategory === category.label;
@@ -739,7 +739,7 @@ function CategoryTabs({
                   : "border-[#ded5ec] bg-white text-[#4c4166] hover:border-[#b88bea] hover:bg-[#fbf8ff]",
             )}
           >
-            <Icon className="h-4 w-4" />
+            <Icon className="h-3.5 w-3.5 shrink-0" />
             {category.label}
           </button>
         );
@@ -767,7 +767,7 @@ function ToolCard({ tool, theme }: { tool: Tool; theme: ResolvedTheme }) {
               {tool.title}
             </h3>
             <div className="flex h-9 w-9 items-center justify-center rounded-lg border border-black/15 bg-white/85 text-[#160b25] shadow-sm">
-              <Icon className="h-4 w-4" />
+              <Icon className="h-3.5 w-3.5 shrink-0" />
             </div>
           </div>
         </div>
@@ -880,11 +880,11 @@ function Dashboard({
       <div className="mb-5 flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
         <CategoryTabs activeCategory="All Tools" setActiveCategory={() => setActive("tools")} theme={theme} />
 
-        <div className="relative w-full xl:w-[330px]">
-          <Search className={cn("absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2", theme === "dark" ? "text-slate-500" : "text-[#9b8caf]")} />
+        <div className="relative w-full shrink-0 xl:w-[260px]">
+          <Search className={cn("absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2", theme === "dark" ? "text-slate-500" : "text-[#9b8caf]")} />
           <input
             className={cn(
-              "h-12 w-full rounded-xl border pl-11 pr-4 text-sm outline-none",
+              "h-10 w-full rounded-xl border pl-10 pr-4 text-[13px] outline-none",
               theme === "dark"
                 ? "border-white/10 bg-white/[0.04] text-white placeholder:text-slate-500"
                 : "border-[#ded5ec] bg-white text-[#21133f] placeholder:text-[#9b8caf]",
@@ -916,7 +916,7 @@ function Dashboard({
                 <p className={cn("mt-2 text-3xl font-semibold", theme === "dark" ? "text-white" : "text-[#21133f]")}>{value as string}</p>
               </div>
               <div className={cn("rounded-xl p-3", theme === "dark" ? "bg-[#2b1755] text-[#d8b4fe]" : "bg-[#f0dcff] text-[#6f1cc4]")}>
-                <Icon className="h-4 w-4" />
+                <Icon className="h-3.5 w-3.5 shrink-0" />
               </div>
             </div>
           </div>
@@ -1017,11 +1017,11 @@ function AllToolsPage({ theme }: { theme: ResolvedTheme }) {
     <div>
       <div className="mb-5 flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
         <CategoryTabs activeCategory={category} setActiveCategory={setCategory} theme={theme} />
-        <div className="relative w-full xl:w-[330px]">
-          <Search className={cn("absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2", theme === "dark" ? "text-slate-500" : "text-[#9b8caf]")} />
+        <div className="relative w-full shrink-0 xl:w-[260px]">
+          <Search className={cn("absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2", theme === "dark" ? "text-slate-500" : "text-[#9b8caf]")} />
           <input
             className={cn(
-              "h-12 w-full rounded-xl border pl-11 pr-4 text-sm outline-none",
+              "h-10 w-full rounded-xl border pl-10 pr-4 text-[13px] outline-none",
               theme === "dark"
                 ? "border-white/10 bg-white/[0.04] text-white placeholder:text-slate-500"
                 : "border-[#ded5ec] bg-white text-[#21133f] placeholder:text-[#9b8caf]",
