@@ -1,0 +1,62 @@
+[
+  {
+    "id": "design_1779193843307_vdqklz",
+    "createdAt": "2026-05-19T12:30:43.307Z",
+    "projectName": "30x40 North Facing House",
+    "city": "Raipur",
+    "plotSize": "30x40 ft",
+    "facing": "North",
+    "floors": "G+1",
+    "bedrooms": "3",
+    "bathrooms": "3",
+    "parking": "Yes",
+    "vastu": "Yes",
+    "budget": "25-35 lakh",
+    "requirement": "Modern family house with parking, living room, kitchen, puja space, staircase, bedrooms and balcony.",
+    "status": "ENGINEER_REVIEW_REQUIRED",
+    "draft": {
+      "summary": "30x40 North Facing House ke liye 30x40 ft North facing plot par G+1 concept naksha draft generated. Output planning discussion ke liye hai, final construction ke liye professional review required hai.",
+      "roomSchedule": [
+        "Parking / porch near entry side with clear vehicle turning space.",
+        "Living room near main entry with visibility and natural light.",
+        "Kitchen with dining connection and service/utility possibility.",
+        "Common toilet placed away from direct living/dining visibility.",
+        "Staircase positioned to support future floor access and structural continuity.",
+        "3 bedroom requirement to be split floor-wise based on privacy and circulation.",
+        "3 bathroom requirement with plumbing shaft alignment preferred."
+      ],
+      "floorPlan": [
+        "Plot: 30x40 ft, Facing: North, City: Raipur.",
+        "Ground floor priority: parking, entry lobby, living, kitchen/dining, one toilet, staircase and one flexible room if space allows.",
+        "First floor priority: bedrooms, attached/common toilet, balcony/open sit-out and family lounge if space allows.",
+        "Keep wet areas vertically aligned where possible to reduce plumbing cost.",
+        "Keep staircase and column grid coordinated before structural design begins."
+      ],
+      "vastuNotes": [
+        "Main entry should be reviewed as per exact site facing and road position.",
+        "Kitchen placement can be explored in South-East/North-West zones where practical.",
+        "Puja/mandir can be placed in a clean and calm North-East/East zone if layout permits.",
+        "Master bedroom can be explored in South-West zone if it does not damage circulation."
+      ],
+      "structuralNotes": [
+        "This is a planning-level AI draft, not a construction drawing.",
+        "Column grid must be finalized by a structural engineer after architectural layout lock.",
+        "Beam, slab, footing and reinforcement sizes are not finalized in this draft.",
+        "Soil condition, seismic zone, load path and local code compliance must be checked before construction.",
+        "Avoid large unsupported spans unless engineer approves beam/slab system."
+      ],
+      "reviewChecklist": [
+        "Architect review: room sizes, circulation, setbacks, staircase, parking and ventilation.",
+        "Structural engineer review: column grid, beam/slab system, footing, load path and stability.",
+        "Site review: exact dimensions, road level, drainage, neighbouring structures and bylaws.",
+        "Client review: room count, privacy, budget, style and future expansion.",
+        "BOQ/BBS should be generated only after reviewed layout assumptions are locked."
+      ],
+      "clientNotes": [
+        "This draft is suitable for concept discussion and requirement alignment.",
+        "Final naksha/drawing must be prepared or approved by a qualified professional.",
+        "Any construction decision requires engineer/architect validation."
+      ]
+    }
+  }
+]
