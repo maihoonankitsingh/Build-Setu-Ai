@@ -636,7 +636,7 @@ function Sidebar({
               <div className={cn("text-xs", false ? "text-slate-500" : "text-[#817397]")}>Renews on 20 Jun 2026</div>
             </div>
           </div>
-          <button className="w-full rounded-xl bg-gradient-to-r from-[#4f46e5] to-[#b337ff] px-4 py-3 text-sm font-semibold text-white">
+          <button onClick={() => { window.location.href = "/pricing"; }} className="w-full rounded-xl bg-gradient-to-r from-[#4f46e5] to-[#b337ff] px-4 py-3 text-sm font-semibold text-white">
             Upgrade Plan
           </button>
         </div>
