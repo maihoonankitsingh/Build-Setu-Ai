@@ -54,6 +54,57 @@ import {
   LayoutGrid,
 } from "lucide-react";
 
+type BuildSetuThemeMode = "light" | "dark" | "system";
+
+function getResolvedBuildSetuTheme(mode: BuildSetuThemeMode) {
+  if (mode === "system") {
+    if (typeof window === "undefined") return "light";
+    return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+  }
+
+  return mode;
+}
+
+function applyBuildSetuTheme(mode: BuildSetuThemeMode) {
+  if (typeof document === "undefined") return;
+
+  const resolved = getResolvedBuildSetuTheme(mode);
+  const root = document.documentElement;
+
+  root.dataset.buildsetuThemeMode = mode;
+  root.dataset.buildsetuTheme = resolved;
+
+  root.classList.toggle("dark", resolved === "dark");
+
+  localStorage.setItem("buildsetu-theme-mode", mode);
+}
+
+function syncBuildSetuThemeMenu(mode: BuildSetuThemeMode) {
+  if (typeof document === "undefined") return;
+
+  const labels: Record<BuildSetuThemeMode, string> = {
+    light: "Light Mode",
+    dark: "Dark Mode",
+    system: "System",
+  };
+
+  const activeText = labels[mode];
+
+  document.querySelectorAll("button, [role='button'], div").forEach((el) => {
+    const text = (el.textContent || "").trim();
+
+    if (!["Light Mode", "Dark Mode", "System"].includes(text)) return;
+
+    el.classList.remove("bg-[#ead2ff]", "bg-purple-100", "text-[#7c3aed]");
+    el.classList.add("text-[#4e4168]");
+
+    if (text === activeText) {
+      el.classList.add("bg-[#ead2ff]", "text-[#7c3aed]");
+      el.classList.remove("text-[#4e4168]");
+    }
+  });
+}
+
 type ViewKey =
   | "dashboard"
   | "tools"
