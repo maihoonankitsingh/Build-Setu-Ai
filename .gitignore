@@ -39,3 +39,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+prisma/dev.db
+*.bak_*
+app.bak_*
+lib.bak_*
