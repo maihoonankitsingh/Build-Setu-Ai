@@ -1040,31 +1040,163 @@ function AllToolsPage({ theme }: { theme: ResolvedTheme }) {
   );
 }
 
+
+type LiveProject = {
+  id: string;
+  title: string;
+  projectType: string | null;
+  location: string | null;
+  plotSize: string | null;
+  facing: string | null;
+  floors: string | null;
+  budget: string | null;
+  status: string;
+  createdAt: string;
+  updatedAt: string;
+  brief?: {
+    rawBrief: string;
+    structuredJson: string | null;
+    questionsJson: string | null;
+  } | null;
+  _count?: {
+    renders: number;
+    boqItems: number;
+    bbsItems: number;
+    agreements: number;
+    toolRuns: number;
+  };
+};
+
 function ProjectsPage({ theme }: { theme: ResolvedTheme }) {
+  const [liveProjects, setLiveProjects] = useState<LiveProject[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  async function loadProjects() {
+    try {
+      setLoading(true);
+      setError("");
+
+      const response = await fetch("/api/projects/list", {
+        cache: "no-store",
+      });
+
+      const data = await response.json();
+
+      if (!response.ok || !data.ok) {
+        throw new Error(data.error || "Failed to load projects");
+      }
+
+      setLiveProjects(data.projects || []);
+    } catch (err) {
+      console.error(err);
+      setError(err instanceof Error ? err.message : "Failed to load projects");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    loadProjects();
+  }, []);
+
   return (
     <div>
-      <PageTitle title="Projects" desc="Client projects, draft packages, review status and exports." theme={theme} />
-      <div className="grid gap-4 lg:grid-cols-3">
-        {projects.map((project) => (
-          <div key={project.title} className={cn("rounded-2xl border p-5", theme === "dark" ? "border-white/10 bg-white/[0.035]" : "border-[#ded5ec] bg-white light-card-shadow")}>
-            <div className="flex items-start justify-between gap-3">
-              <div>
-                <h3 className={cn("font-medium", theme === "dark" ? "text-white" : "text-[#21133f]")}>{project.title}</h3>
-                <p className={cn("mt-1 text-sm", theme === "dark" ? "text-slate-500" : "text-[#817397]")}>
-                  {project.type} • {project.city}
-                </p>
-              </div>
-              <StatusBadge status={project.status} theme={theme} />
-            </div>
-            <div className={cn("mt-4 h-2 rounded-full", theme === "dark" ? "bg-white/10" : "bg-[#f0e9f8]")}>
-              <div className="h-2 rounded-full bg-[#7c3aed]" style={{ width: `${project.progress}%` }} />
-            </div>
-          </div>
-        ))}
+      <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+        <PageTitle title="Projects" desc="Database se saved client projects, brief, review status and exports." theme={theme} />
+        <button
+          onClick={loadProjects}
+          className="rounded-xl bg-[#7c3aed] px-4 py-2.5 text-sm font-medium text-white"
+        >
+          Refresh Projects
+        </button>
       </div>
+
+      {loading && (
+        <div className={cn("rounded-2xl border p-5 text-sm", theme === "dark" ? "border-white/10 bg-white/[0.035] text-slate-300" : "border-[#ded5ec] bg-white text-[#5d5077] light-card-shadow")}>
+          Loading projects...
+        </div>
+      )}
+
+      {error && (
+        <div className={cn("rounded-2xl border p-5 text-sm", theme === "dark" ? "border-[#ef4444]/30 bg-[#450a0a]/40 text-[#fecaca]" : "border-[#fecaca] bg-[#fef2f2] text-[#991b1b]")}>
+          {error}
+        </div>
+      )}
+
+      {!loading && !error && liveProjects.length === 0 && (
+        <div className={cn("rounded-2xl border p-5 text-sm", theme === "dark" ? "border-white/10 bg-white/[0.035] text-slate-300" : "border-[#ded5ec] bg-white text-[#5d5077] light-card-shadow")}>
+          No projects found. New Project section se first project create karo.
+        </div>
+      )}
+
+      {!loading && !error && liveProjects.length > 0 && (
+        <div className="grid gap-4 lg:grid-cols-3">
+          {liveProjects.map((project) => {
+            let structured: Record<string, unknown> | null = null;
+
+            try {
+              structured = project.brief?.structuredJson
+                ? JSON.parse(project.brief.structuredJson)
+                : null;
+            } catch {
+              structured = null;
+            }
+
+            return (
+              <div key={project.id} className={cn("rounded-2xl border p-5", theme === "dark" ? "border-white/10 bg-white/[0.035]" : "border-[#ded5ec] bg-white light-card-shadow")}>
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <h3 className={cn("font-medium", theme === "dark" ? "text-white" : "text-[#21133f]")}>{project.title}</h3>
+                    <p className={cn("mt-1 text-sm", theme === "dark" ? "text-slate-500" : "text-[#817397]")}>
+                      {(project.projectType || "Project")} {project.location ? `• ${project.location}` : ""}
+                    </p>
+                  </div>
+                  <StatusBadge status={project.status.replaceAll("_", " ")} theme={theme} />
+                </div>
+
+                <div className={cn("mt-4 grid grid-cols-2 gap-2 rounded-xl p-3", theme === "dark" ? "bg-black/20" : "bg-[#fbf8ff]")}>
+                  {[
+                    ["Plot", project.plotSize || String(structured?.plotSize || "—")],
+                    ["Facing", project.facing || String(structured?.facing || "—")],
+                    ["Floors", project.floors || String(structured?.floors || "—")],
+                    ["Budget", project.budget || String(structured?.budget || "—")],
+                  ].map(([label, value]) => (
+                    <div key={label}>
+                      <div className={cn("text-xs", theme === "dark" ? "text-slate-500" : "text-[#817397]")}>{label}</div>
+                      <div className={cn("text-sm font-medium", theme === "dark" ? "text-white" : "text-[#21133f]")}>{value}</div>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="mt-4 flex flex-wrap gap-2">
+                  {[
+                    ["Tool Runs", project._count?.toolRuns || 0],
+                    ["Renders", project._count?.renders || 0],
+                    ["BOQ", project._count?.boqItems || 0],
+                    ["BBS", project._count?.bbsItems || 0],
+                    ["Agreements", project._count?.agreements || 0],
+                  ].map(([label, count]) => (
+                    <span key={label} className={cn("rounded-full border px-2.5 py-1 text-xs", theme === "dark" ? "border-white/10 bg-white/[0.04] text-slate-300" : "border-[#ded5ec] bg-[#fbf8ff] text-[#5d5077]")}>
+                      {label}: {count}
+                    </span>
+                  ))}
+                </div>
+
+                {project.brief?.rawBrief && (
+                  <p className={cn("mt-4 line-clamp-3 text-sm leading-6", theme === "dark" ? "text-slate-400" : "text-[#5d5077]")}>
+                    {project.brief.rawBrief}
+                  </p>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 }
+
 
 function PageTitle({ title, desc, theme }: { title: string; desc: string; theme: ResolvedTheme }) {
   return (
