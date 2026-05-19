@@ -4,13 +4,17 @@ import { useEffect, useMemo, useState } from "react";
 import {
   AlertTriangle,
   ArrowLeft,
+  ArrowRight,
   CheckCircle2,
   Download,
   ExternalLink,
+  FileText,
   Loader2,
   Play,
   RefreshCw,
   Sparkles,
+  Wand2,
+  Zap,
 } from "lucide-react";
 import { useParams } from "next/navigation";
 
@@ -34,6 +38,7 @@ type ToolConfig = {
   description: string;
   placeholder: string;
   directLinks: Array<{ label: string; href: string }>;
+  examples: string[];
 };
 
 const configs: Record<string, ToolConfig> = {
@@ -44,14 +49,16 @@ const configs: Record<string, ToolConfig> = {
     description: "Client requirement ko structured project brief me convert kare.",
     placeholder: "Client ka raw requirement paste karo...",
     directLinks: [{ label: "New Project", href: "/" }, { label: "Workspace", href: "/workspace" }],
+    examples: ["30x40 G+1 house brief", "Interior + BOQ package", "Client proposal scope"],
   },
   "interior-render": {
     slug: "interior-render",
     title: "Interior Render",
     category: "Render",
-    description: "Room brief se premium interior render prompt and review checklist banaye.",
+    description: "Room brief se premium interior render prompt, style direction aur review checklist banaye.",
     placeholder: "Living room / bedroom / kitchen ka design brief likho...",
     directLinks: [{ label: "Workspace", href: "/workspace" }],
+    examples: ["Modern Indian living room", "Luxury bedroom with warm light", "Modular kitchen render"],
   },
   "exterior-elevation": {
     slug: "exterior-elevation",
@@ -60,6 +67,7 @@ const configs: Record<string, ToolConfig> = {
     description: "House facade/elevation ke liye design direction and render prompt banaye.",
     placeholder: "Plot size, floors, style aur facade requirement likho...",
     directLinks: [{ label: "Naksha Studio", href: "/design" }],
+    examples: ["30x40 modern elevation", "G+1 duplex facade", "Premium villa front"],
   },
   "render-enhancer": {
     slug: "render-enhancer",
@@ -68,6 +76,7 @@ const configs: Record<string, ToolConfig> = {
     description: "Existing render ko presentation-ready improve karne ke instructions banaye.",
     placeholder: "Render me kya improve karna hai? lighting, material, realism...",
     directLinks: [{ label: "Workspace", href: "/workspace" }],
+    examples: ["Improve lighting", "Make render realistic", "Fix material quality"],
   },
   "site-photo-redesign": {
     slug: "site-photo-redesign",
@@ -76,6 +85,7 @@ const configs: Record<string, ToolConfig> = {
     description: "Site/room photo redesign ke liye clear AI edit instruction banaye.",
     placeholder: "Site photo redesign requirement likho...",
     directLinks: [{ label: "Workspace", href: "/workspace" }],
+    examples: ["Empty room redesign", "Old facade makeover", "Site to premium look"],
   },
   "sketch-to-plan": {
     slug: "sketch-to-plan",
@@ -84,14 +94,16 @@ const configs: Record<string, ToolConfig> = {
     description: "Sketch ya rough idea se concept floor plan direction banaye.",
     placeholder: "Sketch me kya hai aur final plan me kya chahiye...",
     directLinks: [{ label: "Naksha Studio", href: "/design" }],
+    examples: ["Rough sketch to layout", "Room zoning plan", "30x40 plan idea"],
   },
   "floor-plan-ai": {
     slug: "floor-plan-ai",
     title: "Floor Plan AI",
     category: "Planning",
-    description: "Plot requirement se Naksha draft direction banaye.",
+    description: "Plot requirement se real Naksha draft generate kare.",
     placeholder: "30x40 North facing G+1 house, parking, living, kitchen...",
     directLinks: [{ label: "Naksha Studio", href: "/design" }],
+    examples: ["30x40 North G+1", "Vastu friendly house", "Rental floor plan"],
   },
   "architect-chat": {
     slug: "architect-chat",
@@ -100,6 +112,7 @@ const configs: Record<string, ToolConfig> = {
     description: "Design, planning, material, construction doubts ka structured answer de.",
     placeholder: "Architectural doubt ya client question likho...",
     directLinks: [{ label: "Workspace", href: "/workspace" }],
+    examples: ["Staircase kaha rakhe?", "Kitchen vastu doubt", "Budget material suggestion"],
   },
   "mood-board": {
     slug: "mood-board",
@@ -108,6 +121,7 @@ const configs: Record<string, ToolConfig> = {
     description: "Mood board, color palette, furniture and lighting direction banaye.",
     placeholder: "Style, room, color preference, budget level likho...",
     directLinks: [{ label: "Workspace", href: "/workspace" }],
+    examples: ["Warm beige mood board", "Luxury black-gold theme", "Minimal wood palette"],
   },
   "remove-furniture": {
     slug: "remove-furniture",
@@ -116,6 +130,7 @@ const configs: Record<string, ToolConfig> = {
     description: "Furniture removal/edit ke liye AI image instruction banaye.",
     placeholder: "Kya remove karna hai aur room ko kaise restore karna hai...",
     directLinks: [{ label: "Workspace", href: "/workspace" }],
+    examples: ["Remove old sofa", "Empty room cleanup", "Declutter bedroom"],
   },
   "background-change": {
     slug: "background-change",
@@ -124,6 +139,7 @@ const configs: Record<string, ToolConfig> = {
     description: "Background replacement ke liye prompt and quality checklist banaye.",
     placeholder: "Kaisa background chahiye? site, studio, garden, premium...",
     directLinks: [{ label: "Workspace", href: "/workspace" }],
+    examples: ["Premium background", "Outdoor site view", "Luxury studio setup"],
   },
   "photo-enhancer": {
     slug: "photo-enhancer",
@@ -132,14 +148,16 @@ const configs: Record<string, ToolConfig> = {
     description: "Photo upscale, lighting, sharpness and color correction plan banaye.",
     placeholder: "Photo me kya improve karna hai...",
     directLinks: [{ label: "Workspace", href: "/workspace" }],
+    examples: ["Brighten photo", "Sharpen render", "Professional correction"],
   },
   "working-drawings": {
     slug: "working-drawings",
     title: "Working Drawings",
     category: "Construction",
-    description: "Working drawing index and checklist banaye.",
+    description: "Working drawing index and structure checklist generate kare.",
     placeholder: "Project type, floors, drawing package requirement likho...",
     directLinks: [{ label: "Structure Studio", href: "/structure" }],
+    examples: ["Drawing package checklist", "Architecture + structure index", "Site drawing list"],
   },
   "boq-generator": {
     slug: "boq-generator",
@@ -148,22 +166,25 @@ const configs: Record<string, ToolConfig> = {
     description: "BOQ heads, quantity assumptions and review checklist banaye.",
     placeholder: "Project details aur BOQ scope likho...",
     directLinks: [{ label: "Workspace", href: "/workspace" }, { label: "Reports", href: "/reports" }],
+    examples: ["30x40 BOQ draft", "Finishing BOQ", "Contractor estimate"],
   },
   "bbs-generator": {
     slug: "bbs-generator",
     title: "BBS Generator",
     category: "Structural",
-    description: "BBS input checklist and handoff notes banaye.",
+    description: "Real Structure Studio se BBS handoff and structural checklist generate kare.",
     placeholder: "Footing, column, beam, slab details ya structural scope likho...",
     directLinks: [{ label: "Structure Studio", href: "/structure" }],
+    examples: ["Column beam BBS input", "Footing steel checklist", "Slab bar schedule notes"],
   },
   "column-beam-plan": {
     slug: "column-beam-plan",
     title: "Column Beam Plan",
     category: "Structural",
-    description: "Preliminary column grid and beam/slab planning notes banaye.",
+    description: "Real Structure Studio se preliminary column grid and beam/slab planning notes banaye.",
     placeholder: "Plot size, floors, parking, room spans and stair location likho...",
     directLinks: [{ label: "Structure Studio", href: "/structure" }],
+    examples: ["30x40 column grid", "G+1 beam slab notes", "Parking span caution"],
   },
   "material-palette-ai": {
     slug: "material-palette-ai",
@@ -172,6 +193,7 @@ const configs: Record<string, ToolConfig> = {
     description: "Tiles, laminate, wall color, hardware and finish palette banaye.",
     placeholder: "Room, style, color, budget and material preference likho...",
     directLinks: [{ label: "Workspace", href: "/workspace" }],
+    examples: ["Premium living palette", "Budget kitchen materials", "Warm wood palette"],
   },
   "false-ceiling-ai": {
     slug: "false-ceiling-ai",
@@ -180,22 +202,25 @@ const configs: Record<string, ToolConfig> = {
     description: "False ceiling and lighting concept banaye.",
     placeholder: "Room size, ceiling type, lighting mood and style likho...",
     directLinks: [{ label: "Workspace", href: "/workspace" }],
+    examples: ["Cove light ceiling", "Bedroom false ceiling", "Profile light layout"],
   },
   "vastu-check": {
     slug: "vastu-check",
     title: "Vastu Check",
     category: "Planning",
-    description: "Room placement, entry, kitchen, puja and bedroom vastu notes banaye.",
+    description: "Room placement, entry, kitchen, puja and bedroom vastu notes generate kare.",
     placeholder: "Facing, room placement and vastu concern likho...",
     directLinks: [{ label: "Naksha Studio", href: "/design" }],
+    examples: ["North facing vastu", "Kitchen placement check", "Puja room direction"],
   },
   "client-pdf": {
     slug: "client-pdf",
     title: "Client PDF",
     category: "Presentation",
-    description: "Client PDF scope and export readiness check kare.",
+    description: "Real Project PDF export generate kare.",
     placeholder: "Client report me kya include karna hai...",
     directLinks: [{ label: "Reports", href: "/reports" }, { label: "Workspace", href: "/workspace" }],
+    examples: ["Full client report", "Design + BOQ PDF", "Contractor package PDF"],
   },
   "client-agreement": {
     slug: "client-agreement",
@@ -204,6 +229,7 @@ const configs: Record<string, ToolConfig> = {
     description: "Client agreement scope, deliverables, payment and revision terms banaye.",
     placeholder: "Client, project, scope, payment, timeline details likho...",
     directLinks: [{ label: "Workspace", href: "/workspace" }],
+    examples: ["Design agreement", "BOQ + render scope", "Payment milestone terms"],
   },
   "contractor-package": {
     slug: "contractor-package",
@@ -212,6 +238,7 @@ const configs: Record<string, ToolConfig> = {
     description: "Contractor package, BOQ summary, work sequence and site checklist banaye.",
     placeholder: "Contractor ko kya package dena hai? scope, BOQ, drawings...",
     directLinks: [{ label: "Workspace", href: "/workspace" }, { label: "Reports", href: "/reports" }],
+    examples: ["Contractor handoff", "BOQ + site checklist", "Work sequence package"],
   },
 };
 
@@ -224,6 +251,7 @@ function fallbackConfig(slug: string): ToolConfig {
     description: "Specific BuildSetu AI tool output generate kare.",
     placeholder: "Requirement likho...",
     directLinks: [{ label: "Workspace", href: "/workspace" }],
+    examples: ["Project requirement", "Client-ready output", "Review checklist"],
   };
 }
 
@@ -268,9 +296,9 @@ export default function ToolExecutorPage() {
       projectName: projectTitle(selectedProject || ({ id: "demo", title: config.title } as Project)),
       city: String(selectedProject?.location || "Raipur"),
       plotSize: String(selectedProject?.plotSize || "30x40 ft"),
-      facing: String((selectedProject as any)?.facing || "North"),
-      floors: String((selectedProject as any)?.floors || "G+1"),
-      budget: String((selectedProject as any)?.budget || "Not specified"),
+      facing: String(selectedProject?.facing || "North"),
+      floors: String(selectedProject?.floors || "G+1"),
+      budget: String(selectedProject?.budget || "Not specified"),
     };
 
     function asToolRunFromDesign(design: any) {
@@ -450,60 +478,84 @@ export default function ToolExecutorPage() {
   }, [slug]);
 
   return (
-    <main className="min-h-screen bg-[#F7F8FB] text-slate-950">
-      <section className="mx-auto max-w-7xl px-5 py-8">
-        <div className="mb-6 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-          <div>
-            <a href="/" className="mb-4 inline-flex items-center gap-2 text-sm font-semibold text-slate-600 hover:text-blue-700">
-              <ArrowLeft size={16} />
-              Back to dashboard
-            </a>
-            <p className="text-sm font-semibold text-blue-700">BuildSetu AI Tool</p>
-            <h1 className="text-3xl font-bold tracking-tight">{config.title}</h1>
-            <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-600">{config.description}</p>
-          </div>
+    <main className="min-h-screen bg-[#f7f3ff] text-[#170b2b]">
+      <section className="mx-auto max-w-7xl px-5 py-6">
+        <div className="mb-5 overflow-hidden rounded-[2rem] border border-[#ded0f4] bg-[#170b2b] shadow-xl">
+          <div className="relative p-6 sm:p-8">
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(168,85,247,0.45),transparent_32%),radial-gradient(circle_at_85%_25%,rgba(37,99,235,0.35),transparent_30%)]" />
+            <div className="relative z-10 flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+              <div>
+                <a href="/" className="mb-5 inline-flex items-center gap-2 text-sm font-semibold text-white/75 hover:text-white">
+                  <ArrowLeft size={16} />
+                  Back to dashboard
+                </a>
 
-          <div className="flex flex-wrap gap-3">
-            {config.directLinks.map((link) => (
-              <a
-                key={link.href + link.label}
-                href={link.href}
-                className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 shadow-sm hover:bg-slate-50"
-              >
-                {link.label}
-              </a>
-            ))}
+                <div className="mb-3 flex flex-wrap items-center gap-2">
+                  <span className="rounded-full border border-white/15 bg-white/10 px-3 py-1 text-xs font-bold text-white">
+                    BuildSetu AI Tool
+                  </span>
+                  <span className="rounded-full border border-purple-300/25 bg-purple-400/15 px-3 py-1 text-xs font-bold text-purple-100">
+                    {config.category}
+                  </span>
+                  <span className="rounded-full border border-amber-300/25 bg-amber-300/15 px-3 py-1 text-xs font-bold text-amber-100">
+                    Review Required
+                  </span>
+                </div>
+
+                <h1 className="max-w-3xl text-4xl font-black tracking-[-0.05em] text-white sm:text-5xl">
+                  {config.title}
+                </h1>
+                <p className="mt-4 max-w-3xl text-sm leading-6 text-purple-100/85">
+                  {config.description}
+                </p>
+              </div>
+
+              <div className="grid min-w-[260px] gap-3">
+                {config.directLinks.map((link) => (
+                  <a
+                    key={link.href + link.label}
+                    href={link.href}
+                    className="inline-flex items-center justify-between rounded-2xl border border-white/15 bg-white/10 px-4 py-3 text-sm font-bold text-white shadow-sm backdrop-blur hover:bg-white/15"
+                  >
+                    {link.label}
+                    <ExternalLink size={16} />
+                  </a>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
 
-        <div className="mb-6 rounded-3xl border border-amber-200 bg-amber-50 p-4 text-sm leading-6 text-amber-900">
+        <div className="mb-5 rounded-3xl border border-amber-200 bg-amber-50 px-5 py-4 text-sm leading-6 text-amber-900">
           <div className="flex gap-3">
             <AlertTriangle className="mt-1 h-5 w-5 shrink-0" />
             <p>
-              Ye AI draft workflow hai. Design, structure, BOQ, BBS, legal, site execution aur safety related output qualified professional review ke baad hi final use karein.
+              AI draft workflow hai. Design, structure, BOQ, BBS, legal, site execution aur safety related output qualified professional review ke baad hi final use karein.
             </p>
           </div>
         </div>
 
-        <div className="grid gap-6 xl:grid-cols-[0.85fr_1.15fr]">
+        <div className="grid gap-6 xl:grid-cols-[0.9fr_1.1fr]">
           <section className="space-y-5">
-            <div className="rounded-[2rem] border border-slate-200 bg-white p-5 shadow-sm">
-              <div className="mb-4 flex items-center gap-3">
-                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-700 text-white">
-                  <Sparkles size={22} />
+            <div className="rounded-[2rem] border border-[#ded0f4] bg-white p-5 shadow-[0_18px_50px_rgba(47,20,90,0.10)]">
+              <div className="mb-5 flex items-start gap-4">
+                <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-[#7c3aed] to-[#2563eb] text-white shadow-lg">
+                  <Wand2 size={24} />
                 </div>
                 <div>
-                  <h2 className="text-xl font-bold">Tool Input</h2>
-                  <p className="text-sm text-slate-500">{config.category} task execute kare.</p>
+                  <h2 className="text-2xl font-black tracking-[-0.04em]">Tool Input</h2>
+                  <p className="mt-1 text-sm text-[#6d5b86]">
+                    Project select karo, prompt refine karo, phir task execute karo.
+                  </p>
                 </div>
               </div>
 
-              <label className="mb-2 block text-sm font-bold text-slate-700">Project</label>
+              <label className="mb-2 block text-sm font-bold text-[#291447]">Project</label>
               <div className="flex gap-2">
                 <select
                   value={projectId}
                   onChange={(e) => setProjectId(e.target.value)}
-                  className="min-h-12 flex-1 rounded-xl border border-slate-200 bg-white px-4 text-sm outline-none focus:border-blue-500"
+                  className="min-h-13 flex-1 rounded-2xl border border-[#ded0f4] bg-[#fbf8ff] px-4 text-sm font-semibold outline-none focus:border-[#7c3aed]"
                 >
                   {projects.map((project) => (
                     <option key={project.id} value={project.id}>
@@ -515,22 +567,34 @@ export default function ToolExecutorPage() {
                 <button
                   onClick={loadProjects}
                   disabled={projectLoading}
-                  className="flex min-h-12 w-12 items-center justify-center rounded-xl border border-slate-200 bg-slate-50 text-slate-700 hover:bg-blue-50 disabled:opacity-60"
+                  className="flex min-h-13 w-13 items-center justify-center rounded-2xl border border-[#ded0f4] bg-[#fbf8ff] text-[#6d5b86] hover:bg-purple-50 disabled:opacity-60"
                 >
                   {projectLoading ? <Loader2 className="animate-spin" size={18} /> : <RefreshCw size={18} />}
                 </button>
               </div>
 
-              <label className="mb-2 mt-5 block text-sm font-bold text-slate-700">Prompt / Requirement</label>
+              <label className="mb-2 mt-5 block text-sm font-bold text-[#291447]">Prompt / Requirement</label>
               <textarea
                 value={prompt}
                 onChange={(e) => setPrompt(e.target.value)}
-                className="min-h-[230px] w-full resize-none rounded-3xl border border-slate-200 bg-slate-50 px-5 py-4 text-[15px] leading-7 text-slate-800 outline-none focus:border-blue-500 focus:bg-white"
+                className="min-h-[245px] w-full resize-none rounded-[1.6rem] border border-[#ded0f4] bg-[#fbf8ff] px-5 py-4 text-[15px] leading-7 text-[#21133f] outline-none focus:border-[#7c3aed] focus:bg-white"
                 placeholder={config.placeholder}
               />
 
+              <div className="mt-4 flex flex-wrap gap-2">
+                {config.examples.map((item) => (
+                  <button
+                    key={item}
+                    onClick={() => setPrompt((prev) => `${prev}\n${item}`)}
+                    className="rounded-full border border-[#ded0f4] bg-[#fbf8ff] px-3 py-1.5 text-xs font-bold text-[#6d5b86] hover:border-[#a855f7] hover:bg-purple-50 hover:text-[#6f1cc4]"
+                  >
+                    + {item}
+                  </button>
+                ))}
+              </div>
+
               {error ? (
-                <div className="mt-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700">
+                <div className="mt-4 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-semibold text-red-700">
                   {error}
                 </div>
               ) : null}
@@ -538,36 +602,49 @@ export default function ToolExecutorPage() {
               <button
                 onClick={runTool}
                 disabled={loading || !prompt.trim()}
-                className="mt-5 inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-2xl bg-blue-700 px-5 text-sm font-bold text-white shadow-sm hover:bg-blue-800 disabled:cursor-not-allowed disabled:opacity-60"
+                className="mt-5 inline-flex min-h-13 w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-[#7c3aed] to-[#2563eb] px-5 text-sm font-black text-white shadow-lg shadow-purple-500/20 hover:brightness-105 disabled:cursor-not-allowed disabled:opacity-60"
               >
                 {loading ? <Loader2 className="animate-spin" size={18} /> : <Play size={18} />}
                 {loading ? "Executing..." : `Execute ${config.title}`}
               </button>
+            </div>
+
+            <div className="grid gap-3 sm:grid-cols-3">
+              {[
+                ["Mode", "AI Draft"],
+                ["Output", "Structured"],
+                ["Review", "Required"],
+              ].map(([label, value]) => (
+                <div key={label} className="rounded-3xl border border-[#ded0f4] bg-white p-4 shadow-sm">
+                  <p className="text-xs font-bold uppercase tracking-wider text-[#817397]">{label}</p>
+                  <p className="mt-1 text-lg font-black text-[#21133f]">{value}</p>
+                </div>
+              ))}
             </div>
           </section>
 
           <section className="space-y-5">
             {run ? (
               <>
-                <div className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
+                <div className="rounded-[2rem] border border-[#ded0f4] bg-white p-6 shadow-[0_18px_50px_rgba(47,20,90,0.10)]">
                   <div className="flex flex-wrap items-center justify-between gap-3">
                     <div>
-                      <p className="text-sm font-semibold text-blue-700">{run.title}</p>
-                      <h2 className="mt-1 text-2xl font-bold">Generated Output</h2>
+                      <p className="text-sm font-bold text-[#7c3aed]">{run.title}</p>
+                      <h2 className="mt-1 text-3xl font-black tracking-[-0.045em] text-[#21133f]">Generated Output</h2>
                     </div>
-                    <span className="rounded-full border border-amber-200 bg-amber-50 px-3 py-1 text-xs font-bold text-amber-700">
+                    <span className="rounded-full border border-amber-200 bg-amber-50 px-3 py-1 text-xs font-black text-amber-700">
                       Review Required
                     </span>
                   </div>
                 </div>
 
                 {run.sections.map((section: any) => (
-                  <div key={section.title} className="rounded-[2rem] border border-slate-200 bg-white p-5 shadow-sm">
-                    <h3 className="text-lg font-bold">{section.title}</h3>
+                  <div key={section.title} className="rounded-[2rem] border border-[#ded0f4] bg-white p-5 shadow-sm">
+                    <h3 className="text-xl font-black tracking-[-0.035em] text-[#21133f]">{section.title}</h3>
                     <div className="mt-4 space-y-3">
                       {section.items.map((item: string, index: number) => (
-                        <div key={index} className="flex gap-3 rounded-2xl bg-slate-50 p-3 text-sm leading-6 text-slate-700">
-                          <CheckCircle2 className="mt-1 h-4 w-4 shrink-0 text-blue-700" />
+                        <div key={index} className="flex gap-3 rounded-2xl bg-[#fbf8ff] p-3 text-sm leading-6 text-[#3f315d]">
+                          <CheckCircle2 className="mt-1 h-4 w-4 shrink-0 text-[#7c3aed]" />
                           <p>{item}</p>
                         </div>
                       ))}
@@ -575,33 +652,62 @@ export default function ToolExecutorPage() {
                   </div>
                 ))}
 
-                <div className="rounded-[2rem] border border-slate-200 bg-white p-5 shadow-sm">
-                  <h3 className="text-lg font-bold">Next Actions</h3>
+                <div className="rounded-[2rem] border border-[#ded0f4] bg-white p-5 shadow-sm">
+                  <h3 className="text-xl font-black tracking-[-0.035em] text-[#21133f]">Next Actions</h3>
                   <div className="mt-4 flex flex-wrap gap-2">
                     {run.nextActions.map((item: string) => (
-                      <span key={item} className="rounded-full border border-blue-200 bg-blue-50 px-3 py-1.5 text-xs font-bold text-blue-700">
+                      <span key={item} className="rounded-full border border-purple-200 bg-purple-50 px-3 py-1.5 text-xs font-black text-[#6f1cc4]">
                         {item}
                       </span>
                     ))}
                   </div>
 
                   <div className="mt-5 flex flex-wrap gap-3">
-                    <a href="/workspace" className="inline-flex items-center gap-2 rounded-xl bg-blue-700 px-4 py-2 text-sm font-bold text-white hover:bg-blue-800">
+                    <a href="/workspace" className="inline-flex items-center gap-2 rounded-xl bg-[#7c3aed] px-4 py-2 text-sm font-black text-white hover:bg-[#6d28d9]">
                       Workspace <ExternalLink size={15} />
                     </a>
-                    <a href="/reports" className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-4 py-2 text-sm font-bold text-slate-700 hover:bg-blue-50">
+                    <a href="/reports" className="inline-flex items-center gap-2 rounded-xl border border-[#ded0f4] bg-[#fbf8ff] px-4 py-2 text-sm font-black text-[#21133f] hover:bg-purple-50">
                       Reports <Download size={15} />
                     </a>
                   </div>
                 </div>
               </>
             ) : (
-              <div className="rounded-[2rem] border border-slate-200 bg-white p-8 text-center shadow-sm">
-                <Sparkles className="mx-auto h-10 w-10 text-blue-700" />
-                <h2 className="mt-4 text-xl font-bold">Output yahan aayega</h2>
-                <p className="mt-2 text-sm text-slate-500">
-                  Left side me prompt likho aur Execute button click karo.
-                </p>
+              <div className="overflow-hidden rounded-[2rem] border border-[#ded0f4] bg-white shadow-[0_18px_50px_rgba(47,20,90,0.10)]">
+                <div className="border-b border-[#eee7f7] bg-[#fbf8ff] px-6 py-4">
+                  <div className="flex items-center justify-between gap-3">
+                    <div>
+                      <p className="text-xs font-black uppercase tracking-wider text-[#817397]">Output Preview</p>
+                      <h2 className="mt-1 text-xl font-black tracking-[-0.04em] text-[#21133f]">Waiting for execution</h2>
+                    </div>
+                    <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-white text-[#7c3aed] shadow-sm">
+                      <Sparkles size={21} />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="p-6">
+                  <div className="rounded-[1.6rem] border border-dashed border-[#cbb7ea] bg-[#fbf8ff] p-8 text-center">
+                    <Sparkles className="mx-auto h-10 w-10 text-[#7c3aed]" />
+                    <h2 className="mt-4 text-2xl font-black tracking-[-0.045em] text-[#21133f]">Output yahan aayega</h2>
+                    <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-[#6d5b86]">
+                      Left side me prompt likho, project select karo aur Execute button click karo.
+                    </p>
+                  </div>
+
+                  <div className="mt-5 grid gap-3 sm:grid-cols-3">
+                    {[
+                      ["Step 1", "Prompt"],
+                      ["Step 2", "Execute"],
+                      ["Step 3", "Review"],
+                    ].map(([label, value]) => (
+                      <div key={label} className="rounded-2xl bg-[#fbf8ff] p-4">
+                        <p className="text-xs font-black text-[#817397]">{label}</p>
+                        <p className="mt-1 font-black text-[#21133f]">{value}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
               </div>
             )}
           </section>
