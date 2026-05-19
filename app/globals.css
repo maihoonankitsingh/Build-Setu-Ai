@@ -1,11 +1,8 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #21133f;
-  --brand: #6f1cc4;
-  --brand-soft: #f1e4ff;
-  --border: #ded5ec;
+  --background: #070611;
+  --foreground: #f8f7ff;
 }
 
 * {
@@ -19,7 +16,7 @@ html {
 body {
   margin: 0;
   min-height: 100vh;
-  background: #ffffff;
+  background: var(--background);
   color: var(--foreground);
   font-family:
     Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
@@ -33,12 +30,40 @@ select {
   font: inherit;
 }
 
-.card-shadow {
-  box-shadow: 0 10px 28px rgba(40, 18, 75, 0.07);
+::selection {
+  background: rgba(157, 78, 221, 0.35);
+  color: #ffffff;
 }
 
-.tool-visual-overlay {
-  background:
-    linear-gradient(90deg, rgba(18, 11, 34, 0.48), rgba(18, 11, 34, 0.06)),
-    radial-gradient(circle at 85% 18%, rgba(124,31,209,.25), transparent 28%);
+.sb-scroll::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.sb-scroll::-webkit-scrollbar-thumb {
+  background: rgba(139, 92, 246, 0.45);
+  border-radius: 999px;
+}
+
+.sb-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.ai-grid-bg {
+  background-image:
+    linear-gradient(rgba(168, 85, 247, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(168, 85, 247, 0.08) 1px, transparent 1px);
+  background-size: 36px 36px;
+}
+
+.ai-card-glow {
+  box-shadow:
+    0 0 0 1px rgba(168, 85, 247, 0.24),
+    0 18px 55px rgba(16, 8, 35, 0.28);
+}
+
+.light-card-shadow {
+  box-shadow:
+    0 10px 28px rgba(40, 18, 75, 0.07),
+    0 1px 0 rgba(255, 255, 255, 0.8) inset;
 }

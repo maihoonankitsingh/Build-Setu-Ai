@@ -4,7 +4,7 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "Sikhadenge Build - AI Design & Construction Workspace",
   description:
-    "Premium AI workspace for interior renders, exterior elevations, floor plan concepts, BOQ, BBS, client PDFs and contractor packages.",
+    "AI tools for interior design, exterior elevation, floor plans, BOQ, BBS, working drawings, client PDFs and contractor packages.",
 };
 
 export default function RootLayout({
