@@ -67,3 +67,11 @@ select {
     0 10px 28px rgba(40, 18, 75, 0.07),
     0 1px 0 rgba(255, 255, 255, 0.8) inset;
 }
+
+:root {
+  --font-sans: var(--font-plus-jakarta);
+}
+
+html, body {
+  font-family: var(--font-plus-jakarta), ui-sans-serif, system-ui, sans-serif;
+}

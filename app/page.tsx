@@ -821,9 +821,9 @@ function ToolCard({ tool, theme }: { tool: Tool; theme: ResolvedTheme }) {
               onClick={() => {
                 window.location.href = `/tools/${toolSlug(tool.title)}`;
               }}
-              className="inline-flex flex-1 items-center justify-center gap-2 rounded-lg bg-[#6f1cc4] px-4 py-2.5 text-sm font-medium text-white hover:bg-[#55129a]"
+              className="inline-flex flex-1 min-w-0 items-center justify-center gap-1.5 rounded-lg bg-[#6f1cc4] px-3 py-2 text-xs font-semibold leading-none text-white hover:bg-[#55129a]"
             >
-              Launch Tool <ArrowRight className="h-4 w-4" />
+              <span className="whitespace-nowrap">Launch Tool</span> <ArrowRight className="h-3.5 w-3.5 shrink-0" />
             </button>
             <button className="flex h-[42px] w-[42px] items-center justify-center rounded-lg border border-[#d8cee8] bg-[#f4f1f8] text-[#6b5a84] hover:border-[#a855f7] hover:text-[#7c1fd1]">
               <Upload className="h-4 w-4" />
