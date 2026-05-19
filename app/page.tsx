@@ -1048,31 +1048,6 @@ function AllToolsPage({ theme }: { theme: ResolvedTheme }) {
 }
 
 
-type LiveProject = {
-  id: string;
-  title: string;
-  projectType: string | null;
-  location: string | null;
-  plotSize: string | null;
-  facing: string | null;
-  floors: string | null;
-  budget: string | null;
-  status: string;
-  createdAt: string;
-  updatedAt: string;
-  brief?: {
-    rawBrief: string;
-    structuredJson: string | null;
-    questionsJson: string | null;
-  } | null;
-  _count?: {
-    renders: number;
-    boqItems: number;
-    bbsItems: number;
-    agreements: number;
-    toolRuns: number;
-  };
-};
 
 function ProjectsPage({ theme }: { theme: ResolvedTheme }) {
   const [liveProjects, setLiveProjects] = useState<LiveProject[]>([]);
@@ -1215,6 +1190,83 @@ function PageTitle({ title, desc, theme }: { title: string; desc: string; theme:
 }
 
 
+
+
+type LiveProject = {
+  id: string;
+  title: string;
+  projectType: string | null;
+  location: string | null;
+  plotSize: string | null;
+  facing: string | null;
+  floors: string | null;
+  budget: string | null;
+  status: string;
+  createdAt: string;
+  updatedAt: string;
+  brief?: {
+    rawBrief: string;
+    structuredJson: string | null;
+    questionsJson: string | null;
+  } | null;
+  _count?: {
+    renders: number;
+    boqItems: number;
+    bbsItems: number;
+    agreements: number;
+    toolRuns: number;
+  };
+};
+
+type LiveRender = {
+  id: string;
+  projectId: string;
+  renderType: string;
+  roomType: string | null;
+  prompt: string;
+  imageUrl: string | null;
+  version: number;
+  status: string;
+  createdAt: string;
+  project?: {
+    id: string;
+    title: string;
+    projectType: string | null;
+    location: string | null;
+  };
+};
+
+type LiveBoqItem = {
+  id: string;
+  projectId: string;
+  itemCode: string | null;
+  description: string;
+  unit: string | null;
+  quantity: number | null;
+  rate: number | null;
+  amount: number | null;
+  drawingRef: string | null;
+  status: string;
+  createdAt: string;
+};
+
+type LiveBbsItem = {
+  id: string;
+  projectId: string;
+  memberType: string;
+  memberId: string | null;
+  barMark: string | null;
+  diameter: number | null;
+  quantity: number | null;
+  shapeCode: string | null;
+  cuttingLength: number | null;
+  totalLength: number | null;
+  unitWeight: number | null;
+  totalWeight: number | null;
+  drawingRef: string | null;
+  status: string;
+  createdAt: string;
+};
 
 function NewProjectPage({ theme }: { theme: ResolvedTheme }) {
   const [activeTool, setActiveTool] = useState("Floor Plan");
@@ -1359,7 +1411,7 @@ function NewProjectPage({ theme }: { theme: ResolvedTheme }) {
     ["House Type", houseType, Home],
     ["Plot Size", `${plotWidth} ft x ${plotDepth} ft`, Ruler],
     ["Facing", facing, Compass],
-    ["Floors", floors, Layers],
+    ["Floors", floors, Layers3],
     ["Bedrooms", bedrooms, BedDouble],
     ["Bathrooms", bathrooms, Bath],
     ["Key Spaces", spaces.slice(0, 4).join(", "), LayoutGrid],
@@ -2050,19 +2102,6 @@ function SafetyPanel({ theme }: { theme: ResolvedTheme }) {
 }
 
 
-type LiveBoqItem = {
-  id: string;
-  projectId: string;
-  itemCode: string | null;
-  description: string;
-  unit: string | null;
-  quantity: number | null;
-  rate: number | null;
-  amount: number | null;
-  drawingRef: string | null;
-  status: string;
-  createdAt: string;
-};
 
 function BoqPage({ theme }: { theme: ResolvedTheme }) {
   const [projectsList, setProjectsList] = useState<LiveProject[]>([]);
@@ -2282,23 +2321,6 @@ function BoqPage({ theme }: { theme: ResolvedTheme }) {
 
 
 
-type LiveBbsItem = {
-  id: string;
-  projectId: string;
-  memberType: string;
-  memberId: string | null;
-  barMark: string | null;
-  diameter: number | null;
-  quantity: number | null;
-  shapeCode: string | null;
-  cuttingLength: number | null;
-  totalLength: number | null;
-  unitWeight: number | null;
-  totalWeight: number | null;
-  drawingRef: string | null;
-  status: string;
-  createdAt: string;
-};
 
 function BbsPage({ theme }: { theme: ResolvedTheme }) {
   const [projectsList, setProjectsList] = useState<LiveProject[]>([]);
