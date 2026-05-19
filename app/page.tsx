@@ -1075,32 +1075,152 @@ function PageTitle({ title, desc, theme }: { title: string; desc: string; theme:
   );
 }
 
+
 function NewProjectPage({ theme }: { theme: ResolvedTheme }) {
+  const [projectType, setProjectType] = useState("Residential House");
+  const [title, setTitle] = useState("30x40 North Facing House");
+  const [location, setLocation] = useState("Raipur");
+  const [brief, setBrief] = useState(
+    "30x40 north-facing plot hai. Ground floor me parking, living, kitchen, mandir aur 1 bedroom chahiye. First floor me 2 bedrooms aur balcony chahiye. Modern elevation chahiye. Budget 38 lakh. BOQ and client PDF bhi chahiye.",
+  );
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState("");
+  const [result, setResult] = useState<{
+    projectId?: string;
+    structuredBrief?: Record<string, unknown>;
+    questions?: string[];
+  } | null>(null);
+
+  async function handleCreateProject() {
+    try {
+      setLoading(true);
+      setMessage("");
+      setResult(null);
+
+      const createRes = await fetch("/api/projects/create", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          title,
+          projectType,
+          location,
+          rawBrief: brief,
+        }),
+      });
+
+      const createData = await createRes.json();
+
+      if (!createRes.ok || !createData.ok) {
+        throw new Error(createData.error || "Project create failed");
+      }
+
+      const projectId = createData.project.id as string;
+
+      const briefRes = await fetch("/api/ai/magic-brief", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          projectId,
+          rawBrief: brief,
+        }),
+      });
+
+      const briefData = await briefRes.json();
+
+      if (!briefRes.ok || !briefData.ok) {
+        throw new Error(briefData.error || "Magic Brief failed");
+      }
+
+      setResult({
+        projectId,
+        structuredBrief: briefData.structuredBrief,
+        questions: briefData.questions,
+      });
+
+      setMessage("Project saved and Magic Brief generated successfully.");
+    } catch (error) {
+      console.error(error);
+      setMessage(error instanceof Error ? error.message : "Something went wrong");
+    } finally {
+      setLoading(false);
+    }
+  }
+
   return (
     <div>
-      <PageTitle title="New Project" desc="Client brief se structured design brief generate karo." theme={theme} />
+      <PageTitle title="New Project" desc="Client brief se structured design brief generate karo aur project database me save karo." theme={theme} />
+
       <div className="grid gap-5 xl:grid-cols-[0.9fr_1.1fr]">
         <section className={cn("rounded-2xl border p-5", theme === "dark" ? "border-white/10 bg-white/[0.035]" : "border-[#ded5ec] bg-white light-card-shadow")}>
           <div className="mb-4 grid gap-3 sm:grid-cols-2">
-            {["Home / Residential", "Flat Interior", "Shop / Showroom", "Cafe / Restaurant", "Office", "Villa / Duplex"].map((type) => (
+            {["Residential House", "Flat Interior", "Shop / Showroom", "Cafe / Restaurant", "Office", "Villa / Duplex"].map((type) => (
               <button
                 key={type}
-                className={cn("rounded-xl border px-4 py-3 text-left text-sm font-medium", theme === "dark" ? "border-white/10 bg-white/[0.04] text-slate-200 hover:bg-white/[0.07]" : "border-[#ded5ec] bg-[#fbf8ff] text-[#21133f] hover:border-[#a855f7]")}
+                onClick={() => setProjectType(type)}
+                className={cn(
+                  "rounded-xl border px-4 py-3 text-left text-sm font-medium transition",
+                  projectType === type
+                    ? "border-[#7c3aed] bg-[#7c3aed] text-white"
+                    : theme === "dark"
+                      ? "border-white/10 bg-white/[0.04] text-slate-200 hover:bg-white/[0.07]"
+                      : "border-[#ded5ec] bg-[#fbf8ff] text-[#21133f] hover:border-[#a855f7]",
+                )}
               >
                 {type}
               </button>
             ))}
           </div>
 
-          <label className={cn("text-sm font-medium", theme === "dark" ? "text-white" : "text-[#21133f]")}>Client brief</label>
+          <div className="grid gap-3 sm:grid-cols-2">
+            <div>
+              <label className={cn("text-sm font-medium", theme === "dark" ? "text-white" : "text-[#21133f]")}>Project title</label>
+              <input
+                value={title}
+                onChange={(event) => setTitle(event.target.value)}
+                className={cn("mt-2 h-12 w-full rounded-xl border px-4 text-sm outline-none", theme === "dark" ? "border-white/10 bg-black/20 text-white" : "border-[#ded5ec] bg-white text-[#21133f]")}
+              />
+            </div>
+            <div>
+              <label className={cn("text-sm font-medium", theme === "dark" ? "text-white" : "text-[#21133f]")}>Location</label>
+              <input
+                value={location}
+                onChange={(event) => setLocation(event.target.value)}
+                className={cn("mt-2 h-12 w-full rounded-xl border px-4 text-sm outline-none", theme === "dark" ? "border-white/10 bg-black/20 text-white" : "border-[#ded5ec] bg-white text-[#21133f]")}
+              />
+            </div>
+          </div>
+
+          <label className={cn("mt-4 block text-sm font-medium", theme === "dark" ? "text-white" : "text-[#21133f]")}>Client brief</label>
           <textarea
+            value={brief}
+            onChange={(event) => setBrief(event.target.value)}
             className={cn("mt-3 min-h-44 w-full rounded-2xl border p-4 text-sm leading-6 outline-none", theme === "dark" ? "border-white/10 bg-black/20 text-white" : "border-[#ded5ec] bg-white text-[#21133f]")}
-            defaultValue="30x40 north-facing plot hai. Ground floor me parking, living, kitchen, mandir aur 1 bedroom chahiye. First floor me 2 bedroom aur balcony chahiye. Modern elevation chahiye. Budget 38 lakh."
           />
 
+          {message && (
+            <div className={cn("mt-4 rounded-xl border p-3 text-sm", message.includes("success")
+              ? theme === "dark"
+                ? "border-[#22c55e]/30 bg-[#052e16]/40 text-[#bbf7d0]"
+                : "border-[#bbf7d0] bg-[#f0fdf4] text-[#166534]"
+              : theme === "dark"
+                ? "border-[#ef4444]/30 bg-[#450a0a]/40 text-[#fecaca]"
+                : "border-[#fecaca] bg-[#fef2f2] text-[#991b1b]"
+            )}>
+              {message}
+            </div>
+          )}
+
           <div className="mt-4 flex flex-wrap gap-3">
-            <button className="inline-flex items-center gap-2 rounded-xl bg-[#7c3aed] px-5 py-3 text-sm font-medium text-white">
-              Generate Smart Questions <Sparkles className="h-4 w-4" />
+            <button
+              onClick={handleCreateProject}
+              disabled={loading}
+              className="inline-flex items-center gap-2 rounded-xl bg-[#7c3aed] px-5 py-3 text-sm font-medium text-white disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              {loading ? "Generating..." : "Save Project + Generate Magic Brief"} <Sparkles className="h-4 w-4" />
             </button>
             <button className={cn("inline-flex items-center gap-2 rounded-xl border px-5 py-3 text-sm font-medium", theme === "dark" ? "border-white/10 bg-white/[0.04] text-white" : "border-[#ded5ec] bg-[#fbf8ff] text-[#6f1cc4]")}>
               Upload Plan / Photo <Upload className="h-4 w-4" />
@@ -1110,49 +1230,89 @@ function NewProjectPage({ theme }: { theme: ResolvedTheme }) {
 
         <section className={cn("rounded-2xl border", theme === "dark" ? "border-white/10 bg-white/[0.035]" : "border-[#ded5ec] bg-white light-card-shadow")}>
           <div className={cn("border-b p-5", theme === "dark" ? "border-white/10" : "border-[#eee7f7]")}>
-            <h2 className={cn("font-medium", theme === "dark" ? "text-white" : "text-[#21133f]")}>AI Briefing Chat</h2>
-            <p className={cn("mt-1 text-sm", theme === "dark" ? "text-slate-500" : "text-[#817397]")}>Smart questions + structured project brief.</p>
+            <h2 className={cn("font-medium", theme === "dark" ? "text-white" : "text-[#21133f]")}>AI Briefing Output</h2>
+            <p className={cn("mt-1 text-sm", theme === "dark" ? "text-slate-500" : "text-[#817397]")}>Saved project + structured brief + smart questions.</p>
           </div>
+
           <div className="space-y-4 p-5">
-            <div className="ml-auto max-w-[85%] rounded-2xl bg-[#7c3aed] px-4 py-3 text-sm leading-6 text-white">
-              30x40 north-facing plot hai. Ground floor me parking, living, kitchen, mandir aur 1 bedroom chahiye.
-            </div>
-            <div className={cn("max-w-[85%] rounded-2xl px-4 py-3 text-sm leading-6", theme === "dark" ? "bg-white/[0.06] text-slate-200" : "bg-[#f7f0ff] text-[#3f315d]")}>
-              Samjha. Ye G+1 residential project hai. Mujhe 5 details chahiye: city, staircase type, vastu preference, parking type, aur pehle output me floor plan ya elevation chahiye?
-            </div>
-            <div className={cn("rounded-2xl border p-4", theme === "dark" ? "border-white/10 bg-black/20" : "border-[#ded5ec] bg-[#fbf8ff]")}>
-              <div className={cn("mb-3 flex items-center gap-2 text-sm font-medium", theme === "dark" ? "text-white" : "text-[#21133f]")}>
-                <CheckCircle2 className="h-4 w-4 text-[#12b76a]" />
-                Structured Brief Preview
-              </div>
-              <div className="grid gap-2 sm:grid-cols-2">
-                {[
-                  ["Project", "Residential House"],
-                  ["Plot", "30x40 ft"],
-                  ["Facing", "North"],
-                  ["Location", "Raipur"],
-                  ["Floors", "G+1"],
-                  ["Priority", "Elevation + Interior"],
-                ].map(([key, value]) => (
-                  <div key={key} className={cn("rounded-xl px-3 py-2", theme === "dark" ? "bg-white/[0.04]" : "bg-white")}>
-                    <div className={cn("text-xs", theme === "dark" ? "text-slate-500" : "text-[#817397]")}>{key}</div>
-                    <div className={cn("text-sm font-medium", theme === "dark" ? "text-white" : "text-[#21133f]")}>{value}</div>
+            {!result && (
+              <>
+                <div className="ml-auto max-w-[85%] rounded-2xl bg-[#7c3aed] px-4 py-3 text-sm leading-6 text-white">
+                  {brief}
+                </div>
+                <div className={cn("max-w-[85%] rounded-2xl px-4 py-3 text-sm leading-6", theme === "dark" ? "bg-white/[0.06] text-slate-200" : "bg-[#f7f0ff] text-[#3f315d]")}>
+                  Brief submit karne ke baad yahan AI structured project brief aur smart questions dikhenge.
+                </div>
+              </>
+            )}
+
+            {result?.structuredBrief && (
+              <div className={cn("rounded-2xl border p-4", theme === "dark" ? "border-white/10 bg-black/20" : "border-[#ded5ec] bg-[#fbf8ff]")}>
+                <div className={cn("mb-3 flex items-center gap-2 text-sm font-medium", theme === "dark" ? "text-white" : "text-[#21133f]")}>
+                  <CheckCircle2 className="h-4 w-4 text-[#12b76a]" />
+                  Structured Brief Saved
+                </div>
+
+                <div className="grid gap-2 sm:grid-cols-2">
+                  {Object.entries(result.structuredBrief)
+                    .filter(([key]) => !["safetyNotes", "detectedRooms", "priorityOutputs"].includes(key))
+                    .map(([key, value]) => (
+                      <div key={key} className={cn("rounded-xl px-3 py-2", theme === "dark" ? "bg-white/[0.04]" : "bg-white")}>
+                        <div className={cn("text-xs capitalize", theme === "dark" ? "text-slate-500" : "text-[#817397]")}>{key}</div>
+                        <div className={cn("text-sm font-medium", theme === "dark" ? "text-white" : "text-[#21133f]")}>
+                          {String(value || "Not detected")}
+                        </div>
+                      </div>
+                    ))}
+                </div>
+
+                <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                  <div className={cn("rounded-xl p-3", theme === "dark" ? "bg-white/[0.04]" : "bg-white")}>
+                    <div className={cn("text-xs", theme === "dark" ? "text-slate-500" : "text-[#817397]")}>Detected Rooms</div>
+                    <div className={cn("mt-2 flex flex-wrap gap-2 text-xs", theme === "dark" ? "text-slate-200" : "text-[#3f315d]")}>
+                      {Array.isArray(result.structuredBrief.detectedRooms)
+                        ? result.structuredBrief.detectedRooms.map((item) => <span key={String(item)} className="rounded-full bg-[#7c3aed] px-2.5 py-1 text-white">{String(item)}</span>)
+                        : "Not detected"}
+                    </div>
                   </div>
-                ))}
+
+                  <div className={cn("rounded-xl p-3", theme === "dark" ? "bg-white/[0.04]" : "bg-white")}>
+                    <div className={cn("text-xs", theme === "dark" ? "text-slate-500" : "text-[#817397]")}>Priority Outputs</div>
+                    <div className={cn("mt-2 flex flex-wrap gap-2 text-xs", theme === "dark" ? "text-slate-200" : "text-[#3f315d]")}>
+                      {Array.isArray(result.structuredBrief.priorityOutputs)
+                        ? result.structuredBrief.priorityOutputs.map((item) => <span key={String(item)} className="rounded-full bg-[#2b1755] px-2.5 py-1 text-[#e9d5ff]">{String(item)}</span>)
+                        : "Not detected"}
+                    </div>
+                  </div>
+                </div>
               </div>
-            </div>
-            <div className={cn("flex items-center gap-2 rounded-2xl border p-2", theme === "dark" ? "border-white/10 bg-black/20" : "border-[#ded5ec] bg-white")}>
-              <input className={cn("h-10 flex-1 bg-transparent px-3 text-sm outline-none", theme === "dark" ? "text-white placeholder:text-slate-600" : "text-[#21133f]")} placeholder="Ask AI to revise project brief..." />
-              <button className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#7c3aed] text-white">
-                <Send className="h-4 w-4" />
-              </button>
-            </div>
+            )}
+
+            {result?.questions && (
+              <div className={cn("rounded-2xl border p-4", theme === "dark" ? "border-white/10 bg-black/20" : "border-[#ded5ec] bg-[#fbf8ff]")}>
+                <h3 className={cn("text-sm font-medium", theme === "dark" ? "text-white" : "text-[#21133f]")}>Smart Questions</h3>
+                <div className="mt-3 space-y-2">
+                  {result.questions.map((question, index) => (
+                    <div key={question} className={cn("rounded-xl px-3 py-2 text-sm", theme === "dark" ? "bg-white/[0.04] text-slate-300" : "bg-white text-[#3f315d]")}>
+                      {index + 1}. {question}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {result?.projectId && (
+              <div className={cn("rounded-xl border p-3 text-xs", theme === "dark" ? "border-white/10 bg-white/[0.04] text-slate-500" : "border-[#eee7f7] bg-white text-[#817397]")}>
+                Project ID: {result.projectId}
+              </div>
+            )}
           </div>
         </section>
       </div>
     </div>
   );
 }
+
 
 function RenderStudio({ theme }: { theme: ResolvedTheme }) {
   return (
