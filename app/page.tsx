@@ -2072,28 +2072,250 @@ function BoqPage({ theme }: { theme: ResolvedTheme }) {
 }
 
 
+
+type LiveBbsItem = {
+  id: string;
+  projectId: string;
+  memberType: string;
+  memberId: string | null;
+  barMark: string | null;
+  diameter: number | null;
+  quantity: number | null;
+  shapeCode: string | null;
+  cuttingLength: number | null;
+  totalLength: number | null;
+  unitWeight: number | null;
+  totalWeight: number | null;
+  drawingRef: string | null;
+  status: string;
+  createdAt: string;
+};
+
 function BbsPage({ theme }: { theme: ResolvedTheme }) {
+  const [projectsList, setProjectsList] = useState<LiveProject[]>([]);
+  const [projectId, setProjectId] = useState("");
+  const [items, setItems] = useState<LiveBbsItem[]>([]);
+  const [totalWeight, setTotalWeight] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [generating, setGenerating] = useState(false);
+  const [message, setMessage] = useState("");
+
+  async function loadProjectsAndBbs() {
+    try {
+      setLoading(true);
+      setMessage("");
+
+      const projectsResponse = await fetch("/api/projects/list", { cache: "no-store" });
+      const projectsData = await projectsResponse.json();
+
+      if (!projectsResponse.ok || !projectsData.ok) {
+        throw new Error(projectsData.error || "Failed to load projects");
+      }
+
+      const loadedProjects = projectsData.projects || [];
+      setProjectsList(loadedProjects);
+
+      const selectedProjectId = projectId || loadedProjects[0]?.id || "";
+      if (selectedProjectId && !projectId) {
+        setProjectId(selectedProjectId);
+      }
+
+      if (selectedProjectId) {
+        await loadBbs(selectedProjectId);
+      }
+    } catch (error) {
+      console.error(error);
+      setMessage(error instanceof Error ? error.message : "Failed to load BBS data");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function loadBbs(nextProjectId: string) {
+    const response = await fetch(`/api/bbs/list?projectId=${nextProjectId}`, { cache: "no-store" });
+    const data = await response.json();
+
+    if (!response.ok || !data.ok) {
+      throw new Error(data.error || "Failed to load BBS");
+    }
+
+    setItems(data.items || []);
+    setTotalWeight(Number(data.totalWeight || 0));
+  }
+
+  async function handleProjectChange(nextProjectId: string) {
+    try {
+      setProjectId(nextProjectId);
+      setLoading(true);
+      setMessage("");
+      await loadBbs(nextProjectId);
+    } catch (error) {
+      console.error(error);
+      setMessage(error instanceof Error ? error.message : "Failed to load BBS");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function handleGenerateBbs() {
+    try {
+      setGenerating(true);
+      setMessage("");
+
+      if (!projectId) {
+        throw new Error("Project select karo. Pehle New Project section se project create karo.");
+      }
+
+      const response = await fetch("/api/bbs/generate", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ projectId }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok || !data.ok) {
+        throw new Error(data.error || "Failed to generate BBS");
+      }
+
+      setItems(data.items || []);
+      setTotalWeight(Number(data.totalWeight || 0));
+      setMessage(`BBS draft generated successfully. ${data.count} items created.`);
+    } catch (error) {
+      console.error(error);
+      setMessage(error instanceof Error ? error.message : "Failed to generate BBS");
+    } finally {
+      setGenerating(false);
+    }
+  }
+
+  useEffect(() => {
+    loadProjectsAndBbs();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <div>
-      <PageTitle title="BBS" desc="Engineer input ke basis par BBS table, steel summary and cutting list." theme={theme} />
+      <PageTitle title="BBS" desc="Project-wise draft Bar Bending Schedule, steel summary and engineer review status." theme={theme} />
+
       <section className={cn("rounded-2xl border p-5", theme === "dark" ? "border-white/10 bg-white/[0.035]" : "border-[#ded5ec] bg-white light-card-shadow")}>
-        <StatusBadge status="PHASE 4" theme={theme} />
-        <div className="mt-5 grid gap-4 md:grid-cols-3">
-          {[
-            ["Engineer Input", "Column, beam, slab, footing reinforcement data."],
-            ["Rule Calculation", "Cutting length, total length, unit weight, total steel."],
-            ["Export", "Member-wise BBS, dia-wise steel summary, PDF/Excel."],
-          ].map(([title, desc]) => (
-            <div key={title} className={cn("rounded-2xl border p-5", theme === "dark" ? "border-white/10 bg-black/20" : "border-[#eee7f7] bg-[#fbf8ff]")}>
-              <h3 className={cn("font-medium", theme === "dark" ? "text-white" : "text-[#21133f]")}>{title}</h3>
-              <p className={cn("mt-2 text-sm leading-6", theme === "dark" ? "text-slate-400" : "text-[#817397]")}>{desc}</p>
+        <div className="mb-5 flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
+          <div className="grid flex-1 gap-3 sm:grid-cols-[1fr_auto]">
+            <select
+              value={projectId}
+              onChange={(event) => handleProjectChange(event.target.value)}
+              className={cn("h-12 rounded-xl border px-4 text-sm outline-none", theme === "dark" ? "border-white/10 bg-black/20 text-white" : "border-[#ded5ec] bg-white text-[#21133f]")}
+            >
+              {!projectsList.length && <option value="">No project found</option>}
+              {projectsList.map((project) => (
+                <option key={project.id} value={project.id}>
+                  {project.title} {project.location ? `- ${project.location}` : ""}
+                </option>
+              ))}
+            </select>
+
+            <button
+              onClick={handleGenerateBbs}
+              disabled={generating || !projectId}
+              className="rounded-xl bg-[#7c3aed] px-4 py-2.5 text-sm font-medium text-white disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              {generating ? "Generating..." : "Generate BBS Draft"}
+            </button>
+          </div>
+
+          <div className={cn("rounded-xl border px-4 py-3 text-sm", theme === "dark" ? "border-white/10 bg-black/20 text-slate-200" : "border-[#ded5ec] bg-[#fbf8ff] text-[#21133f]")}>
+            Steel: {totalWeight.toLocaleString("en-IN", { maximumFractionDigits: 2 })} kg
+          </div>
+        </div>
+
+        <div className="mb-5 flex flex-wrap items-center gap-3">
+          <StatusBadge status="PHASE 4" theme={theme} />
+          <StatusBadge status="REVIEW" theme={theme} />
+          <span className={cn("text-sm", theme === "dark" ? "text-slate-400" : "text-[#817397]")}>
+            {items.length} BBS items
+          </span>
+        </div>
+
+        {message && (
+          <div className={cn("mb-5 rounded-xl border p-3 text-sm", message.includes("success")
+            ? theme === "dark"
+              ? "border-[#22c55e]/30 bg-[#052e16]/40 text-[#bbf7d0]"
+              : "border-[#bbf7d0] bg-[#f0fdf4] text-[#166534]"
+            : theme === "dark"
+              ? "border-[#ef4444]/30 bg-[#450a0a]/40 text-[#fecaca]"
+              : "border-[#fecaca] bg-[#fef2f2] text-[#991b1b]"
+          )}>
+            {message}
+          </div>
+        )}
+
+        {loading && (
+          <div className={cn("rounded-xl border p-4 text-sm", theme === "dark" ? "border-white/10 bg-black/20 text-slate-300" : "border-[#ded5ec] bg-[#fbf8ff] text-[#5d5077]")}>
+            Loading BBS...
+          </div>
+        )}
+
+        {!loading && items.length === 0 && (
+          <div className={cn("rounded-xl border p-4 text-sm", theme === "dark" ? "border-white/10 bg-black/20 text-slate-300" : "border-[#ded5ec] bg-[#fbf8ff] text-[#5d5077]")}>
+            No BBS items found. Generate BBS Draft button click karo.
+          </div>
+        )}
+
+        {!loading && items.length > 0 && (
+          <div className={cn("overflow-hidden rounded-2xl border", theme === "dark" ? "border-white/10" : "border-[#ded5ec]")}>
+            <div className="overflow-x-auto">
+              <table className="w-full min-w-[980px] text-left text-sm">
+                <thead className={cn("text-xs uppercase tracking-wide", theme === "dark" ? "bg-white/[0.04] text-slate-400" : "bg-[#fbf8ff] text-[#817397]")}>
+                  <tr>
+                    <th className="p-4">Member</th>
+                    <th>Bar Mark</th>
+                    <th>Dia</th>
+                    <th>Qty</th>
+                    <th>Shape</th>
+                    <th>Cut Len</th>
+                    <th>Total Len</th>
+                    <th>Total Wt</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody className={cn("divide-y", theme === "dark" ? "divide-white/10" : "divide-[#eee7f7]")}>
+                  {items.map((item) => (
+                    <tr key={item.id}>
+                      <td className={cn("p-4 font-medium", theme === "dark" ? "text-white" : "text-[#21133f]")}>
+                        {item.memberType} {item.memberId ? `- ${item.memberId}` : ""}
+                      </td>
+                      <td className={theme === "dark" ? "text-slate-300" : "text-[#3f315d]"}>{item.barMark || "—"}</td>
+                      <td className={theme === "dark" ? "text-slate-400" : "text-[#5d5077]"}>{item.diameter ? `${item.diameter}mm` : "—"}</td>
+                      <td className={theme === "dark" ? "text-slate-400" : "text-[#5d5077]"}>{item.quantity ?? "—"}</td>
+                      <td className={theme === "dark" ? "text-slate-400" : "text-[#5d5077]"}>{item.shapeCode || "—"}</td>
+                      <td className={theme === "dark" ? "text-slate-400" : "text-[#5d5077]"}>{item.cuttingLength ?? "—"} m</td>
+                      <td className={theme === "dark" ? "text-slate-400" : "text-[#5d5077]"}>{item.totalLength ?? "—"} m</td>
+                      <td className={cn("font-medium", theme === "dark" ? "text-white" : "text-[#21133f]")}>
+                        {Number(item.totalWeight || 0).toLocaleString("en-IN", { maximumFractionDigits: 2 })} kg
+                      </td>
+                      <td>
+                        <span className={cn("rounded-full px-2.5 py-1 text-xs", theme === "dark" ? "bg-[#3b2507] text-[#fde68a]" : "bg-[#fff7ed] text-[#f97316]")}>
+                          {item.status}
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
-          ))}
+          </div>
+        )}
+
+        <div className={cn("mt-5 rounded-xl border p-4 text-sm leading-6", theme === "dark" ? "border-[#facc15]/20 bg-[#3b2507]/30 text-[#fde68a]" : "border-[#fed7aa] bg-[#fff7ed] text-[#9a3412]")}>
+          BBS draft planning ke liye hai. Final reinforcement details structural engineer ke approved drawings ke according verify karein.
         </div>
       </section>
     </div>
   );
 }
+
 
 function ExportPage({ theme }: { theme: ResolvedTheme }) {
   return (
