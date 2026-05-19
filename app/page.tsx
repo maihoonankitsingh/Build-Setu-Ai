@@ -690,13 +690,19 @@ function Header({
         </div>
 
         <div className="flex flex-wrap items-center justify-end gap-3">
-          <button type="button" onClick={() => { window.location.href = "/credits"; }} className="cursor-pointer  hover:bg-purple-50">
-            <Sparkles className="h-4 w-4 text-[#a855f7]" />
-            120 Credits
-            <button className="ml-2 rounded-full bg-[#2b1755] p-1 text-white">
-              <Plus className="h-3 w-3" />
-            </button>
-          </button>
+          <a
+  href="/credits"
+  className="group inline-flex h-12 items-center gap-3 rounded-full border border-[#e7ddf5] bg-white px-4 pr-3 text-[#241443] shadow-sm transition hover:-translate-y-0.5 hover:border-[#cfb6ff] hover:shadow-[0_10px_24px_rgba(124,58,237,0.14)]"
+>
+  <span className="relative flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-[#f6edff] via-[#ead8ff] to-[#d8b4fe] shadow-inner ring-1 ring-white/80">
+    <span className="absolute -right-0.5 -top-0.5 h-2.5 w-2.5 rounded-full bg-[#a855f7] shadow-[0_0_10px_rgba(168,85,247,0.65)]" />
+    <Sparkles className="h-4 w-4 text-[#7c3aed]" />
+  </span>
+  <span className="text-[15px] font-bold tracking-[-0.02em] text-[#3b2468]">120 Credits</span>
+  <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#2d1455] text-[20px] font-semibold leading-none text-white shadow-sm transition group-hover:bg-[#4b1f8b]">
+    +
+  </span>
+</a>
 
           <ThemeDropdown themeMode={themeMode} setThemeMode={setThemeMode} theme={theme} />
 
