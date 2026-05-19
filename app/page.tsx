@@ -1512,7 +1512,7 @@ function NewProjectPage({ theme }: { theme: ResolvedTheme }) {
             </div>
           </div>
 
-          <div className="mt-5 grid gap-4 lg:grid-cols-[1fr_1fr_1.1fr]">
+          <div className="mt-5 grid gap-4">
             <div>
               <label className={cn("text-sm font-medium", theme === "dark" ? "text-white" : "text-[#21133f]")}>Plot Size (ft)</label>
               <div className="mt-2 grid grid-cols-[1fr_auto_1fr] items-center gap-2">
@@ -1530,7 +1530,7 @@ function NewProjectPage({ theme }: { theme: ResolvedTheme }) {
               <label className={cn("text-sm font-medium", theme === "dark" ? "text-white" : "text-[#21133f]")}>Floors</label>
               <div className="mt-2 grid grid-cols-4 gap-2">
                 {["G", "G+1", "G+2", "G+3"].map((item) => (
-                  <button key={item} onClick={() => setFloors(item)} className={cn("h-12 rounded-xl border text-sm font-medium", floors === item ? "border-[#7c3aed] bg-[#7c3aed] text-white" : theme === "dark" ? "border-white/10 bg-black/20 text-slate-300" : "border-[#ded5ec] bg-white text-[#3f315d]")}>{item}</button>
+                  <button key={item} onClick={() => setFloors(item)} className={cn("h-11 rounded-xl border px-2 text-xs font-medium sm:text-sm", floors === item ? "border-[#7c3aed] bg-[#7c3aed] text-white" : theme === "dark" ? "border-white/10 bg-black/20 text-slate-300" : "border-[#ded5ec] bg-white text-[#3f315d]")}>{item}</button>
                 ))}
               </div>
             </div>
@@ -1539,7 +1539,7 @@ function NewProjectPage({ theme }: { theme: ResolvedTheme }) {
               <label className={cn("text-sm font-medium", theme === "dark" ? "text-white" : "text-[#21133f]")}>Facing</label>
               <div className="mt-2 grid grid-cols-4 gap-2">
                 {["North", "South", "East", "West"].map((item) => (
-                  <button key={item} onClick={() => setFacing(item)} className={cn("flex h-12 items-center justify-center gap-1 rounded-xl border text-sm font-medium", facing === item ? "border-[#7c3aed] bg-[#f4edff] text-[#6f1cc4]" : theme === "dark" ? "border-white/10 bg-black/20 text-slate-300" : "border-[#ded5ec] bg-white text-[#3f315d]")}>
+                  <button key={item} onClick={() => setFacing(item)} className={cn("flex h-11 min-w-0 items-center justify-center gap-1 rounded-xl border px-2 text-xs font-medium sm:text-sm", facing === item ? "border-[#7c3aed] bg-[#f4edff] text-[#6f1cc4]" : theme === "dark" ? "border-white/10 bg-black/20 text-slate-300" : "border-[#ded5ec] bg-white text-[#3f315d]")}>
                     <Compass className="h-4 w-4" /> {item}
                   </button>
                 ))}
@@ -1591,7 +1591,7 @@ function NewProjectPage({ theme }: { theme: ResolvedTheme }) {
             <label className={cn("text-sm font-medium", theme === "dark" ? "text-white" : "text-[#21133f]")}>Style / Look</label>
             <div className="mt-2 grid gap-3 sm:grid-cols-3 xl:grid-cols-6">
               {styleOptions.map((item) => (
-                <button key={item} onClick={() => setStyle(item)} className={cn("overflow-hidden rounded-xl border p-2 text-sm font-medium", style === item ? "border-[#7c3aed] bg-[#f4edff] text-[#6f1cc4]" : theme === "dark" ? "border-white/10 bg-black/20 text-slate-300" : "border-[#ded5ec] bg-white text-[#3f315d]")}>
+                <button key={item} onClick={() => setStyle(item)} className={cn("overflow-hidden rounded-xl border p-2 text-xs font-medium sm:text-sm", style === item ? "border-[#7c3aed] bg-[#f4edff] text-[#6f1cc4]" : theme === "dark" ? "border-white/10 bg-black/20 text-slate-300" : "border-[#ded5ec] bg-white text-[#3f315d]")}>
                   <div className="mb-2 h-16 rounded-lg bg-cover bg-center" style={{ backgroundImage: `url(/tool-images/exterior-elevation.png)` }} />
                   {item}
                 </button>
