@@ -810,6 +810,10 @@ function ToolCard({ tool, theme }: { tool: Tool; theme: ResolvedTheme }) {
           <div className="mt-4 flex items-center gap-2">
             <button
               onClick={() => {
+                if (tool.category === "Structural" || tool.title === "BBS Generator") {
+                  window.location.href = "/structure";
+                  return;
+                }
                 if (tool.title === "Floor Plan AI") {
                   window.location.href = "/design";
                   return;
