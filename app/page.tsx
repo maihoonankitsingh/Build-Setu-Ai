@@ -84,6 +84,7 @@ type Tool = {
   icon: React.ElementType;
   visual: string;
   visualLabel: string;
+  imageUrl: string;
   featured?: boolean;
 };
 
@@ -127,6 +128,7 @@ const tools: Tool[] = [
     icon: Sparkles,
     visualLabel: "AI Brief",
     visual: "from-[#16103b] via-[#4b168f] to-[#12091f]",
+    imageUrl: "/tool-images/magic-brief.png",
     featured: true,
   },
   {
@@ -138,6 +140,7 @@ const tools: Tool[] = [
     icon: ImageIcon,
     visualLabel: "Interior",
     visual: "from-[#2b1634] via-[#7c2d92] to-[#15101c]",
+    imageUrl: "/tool-images/interior-render.png",
     featured: true,
   },
   {
@@ -149,6 +152,7 @@ const tools: Tool[] = [
     icon: Building2,
     visualLabel: "Exterior",
     visual: "from-[#112d3d] via-[#28378f] to-[#110b22]",
+    imageUrl: "/tool-images/exterior-elevation.png",
     featured: true,
   },
   {
@@ -160,6 +164,7 @@ const tools: Tool[] = [
     icon: Wand2,
     visualLabel: "Enhance",
     visual: "from-[#0f172a] via-[#384063] to-[#0b0715]",
+    imageUrl: "/tool-images/render-enhancer.png",
     featured: true,
   },
   {
@@ -171,6 +176,7 @@ const tools: Tool[] = [
     icon: ImageIcon,
     visualLabel: "Redesign",
     visual: "from-[#30231f] via-[#685449] to-[#111827]",
+    imageUrl: "/tool-images/site-photo-redesign.png",
     featured: true,
   },
   {
@@ -182,6 +188,7 @@ const tools: Tool[] = [
     icon: Ruler,
     visualLabel: "Sketch",
     visual: "from-[#1d1d24] via-[#6b7280] to-[#09090b]",
+    imageUrl: "/tool-images/sketch-to-plan.png",
   },
   {
     title: "Floor Plan AI",
@@ -192,6 +199,7 @@ const tools: Tool[] = [
     icon: Home,
     visualLabel: "Plan",
     visual: "from-[#111827] via-[#344d77] to-[#1c1230]",
+    imageUrl: "/tool-images/floor-plan-ai.png",
   },
   {
     title: "Architect Chat",
@@ -202,6 +210,7 @@ const tools: Tool[] = [
     icon: Sparkles,
     visualLabel: "Chat",
     visual: "from-[#12091f] via-[#391176] to-[#080712]",
+    imageUrl: "/tool-images/architect-chat.png",
   },
   {
     title: "Mood Board",
@@ -212,6 +221,7 @@ const tools: Tool[] = [
     icon: Palette,
     visualLabel: "Mood",
     visual: "from-[#31243d] via-[#74505c] to-[#0f1020]",
+    imageUrl: "/tool-images/mood-board.png",
   },
   {
     title: "Remove Furniture",
@@ -222,6 +232,7 @@ const tools: Tool[] = [
     icon: Sofa,
     visualLabel: "Empty",
     visual: "from-[#1f2937] via-[#4b5563] to-[#111827]",
+    imageUrl: "/tool-images/remove-furniture.png",
   },
   {
     title: "Background Change",
@@ -232,6 +243,7 @@ const tools: Tool[] = [
     icon: Wand2,
     visualLabel: "BG",
     visual: "from-[#1f2937] via-[#44337a] to-[#0b1020]",
+    imageUrl: "/tool-images/background-change.png",
   },
   {
     title: "Photo Enhancer",
@@ -242,6 +254,7 @@ const tools: Tool[] = [
     icon: ImageIcon,
     visualLabel: "Photo",
     visual: "from-[#2a1c2c] via-[#334155] to-[#0b0715]",
+    imageUrl: "/tool-images/photo-enhancer.png",
   },
   {
     title: "Working Drawings",
@@ -252,6 +265,7 @@ const tools: Tool[] = [
     icon: Layers3,
     visualLabel: "Docs",
     visual: "from-[#07111f] via-[#172554] to-[#0b0715]",
+    imageUrl: "/tool-images/working-drawings.png",
   },
   {
     title: "BOQ Generator",
@@ -262,6 +276,7 @@ const tools: Tool[] = [
     icon: Calculator,
     visualLabel: "BOQ",
     visual: "from-[#15221b] via-[#5b3c96] to-[#0b0715]",
+    imageUrl: "/tool-images/boq-generator.png",
   },
   {
     title: "BBS Generator",
@@ -272,6 +287,7 @@ const tools: Tool[] = [
     icon: ClipboardList,
     visualLabel: "BBS",
     visual: "from-[#221216] via-[#3f285f] to-[#0b0715]",
+    imageUrl: "/tool-images/bbs-generator.png",
   },
   {
     title: "Column Beam Plan",
@@ -282,6 +298,7 @@ const tools: Tool[] = [
     icon: Layers3,
     visualLabel: "Grid",
     visual: "from-[#07111f] via-[#2a286e] to-[#0b0715]",
+    imageUrl: "/tool-images/column-beam-plan.png",
   },
   {
     title: "Material Palette AI",
@@ -292,6 +309,7 @@ const tools: Tool[] = [
     icon: Palette,
     visualLabel: "Palette",
     visual: "from-[#2e1f2f] via-[#77594e] to-[#100b16]",
+    imageUrl: "/tool-images/material-palette-ai.png",
   },
   {
     title: "False Ceiling AI",
@@ -302,6 +320,7 @@ const tools: Tool[] = [
     icon: Lightbulb,
     visualLabel: "Ceiling",
     visual: "from-[#2a1c3b] via-[#625069] to-[#111827]",
+    imageUrl: "/tool-images/false-ceiling-ai.png",
   },
   {
     title: "Vastu Check",
@@ -312,6 +331,7 @@ const tools: Tool[] = [
     icon: Compass,
     visualLabel: "Vastu",
     visual: "from-[#152b35] via-[#3f2d7a] to-[#0b0715]",
+    imageUrl: "/tool-images/vastu-check.png",
   },
   {
     title: "Client PDF",
@@ -322,6 +342,7 @@ const tools: Tool[] = [
     icon: FileText,
     visualLabel: "PDF",
     visual: "from-[#27133e] via-[#6b21a8] to-[#13091f]",
+    imageUrl: "/tool-images/client-pdf.png",
   },
   {
     title: "Client Agreement",
@@ -332,6 +353,7 @@ const tools: Tool[] = [
     icon: ScrollText,
     visualLabel: "Legal",
     visual: "from-[#1a1230] via-[#6d28d9] to-[#0b0715]",
+    imageUrl: "/tool-images/client-agreement.png",
   },
   {
     title: "Contractor Package",
@@ -342,6 +364,7 @@ const tools: Tool[] = [
     icon: BoxesIcon,
     visualLabel: "Pack",
     visual: "from-[#2a1b12] via-[#774c2f] to-[#0b0715]",
+    imageUrl: "/tool-images/contractor-package.png",
   },
 ];
 
@@ -754,8 +777,9 @@ function ToolCard({ tool, theme }: { tool: Tool; theme: ResolvedTheme }) {
   if (theme === "light") {
     return (
       <article className="light-card-shadow overflow-hidden rounded-2xl border border-[#ded5ec] bg-white transition hover:-translate-y-1 hover:border-[#a855f7]">
-        <div className={cn("relative h-[128px] bg-gradient-to-br", tool.visual)}>
-          <div className="absolute inset-0 bg-gradient-to-r from-black/55 via-black/15 to-transparent" />
+        <div className="relative h-[128px] overflow-hidden bg-[#0d0a17]">
+          <img src={tool.imageUrl} alt="" className="absolute inset-0 h-full w-full object-cover" />
+          <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/20 to-transparent" />
           <div className="absolute left-3 top-3 rounded-md border border-black/20 bg-white/85 px-2 py-1 text-xs font-semibold text-[#160b25]">
             AI
           </div>
@@ -795,9 +819,10 @@ function ToolCard({ tool, theme }: { tool: Tool; theme: ResolvedTheme }) {
 
   return (
     <article className="ai-card-glow group overflow-hidden rounded-2xl border border-[#6d28d9]/45 bg-[#0d0a17] transition hover:-translate-y-1 hover:border-[#a855f7]">
-      <div className={cn("relative h-[132px] bg-gradient-to-br", tool.visual)}>
-        <div className="ai-grid-bg absolute inset-0 opacity-40" />
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/15 to-[#080611]" />
+      <div className="relative h-[132px] overflow-hidden bg-[#0d0a17]">
+        <img src={tool.imageUrl} alt="" className="absolute inset-0 h-full w-full object-cover transition duration-500 group-hover:scale-105" />
+        <div className="ai-grid-bg absolute inset-0 opacity-25" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/5 via-black/20 to-[#080611]" />
         <div className="absolute left-3 top-3 rounded-md bg-[#5b21b6] px-2 py-1 text-xs font-semibold text-white shadow-lg shadow-purple-900/25">
           AI
         </div>
