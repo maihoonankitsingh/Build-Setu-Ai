@@ -28,6 +28,7 @@ import {
   Plus,
   Ruler,
   Search,
+  ScrollText,
   Send,
   Settings,
   ShieldCheck,
@@ -54,6 +55,7 @@ type ViewKey =
   | "boq"
   | "bbs"
   | "exports"
+  | "agreements"
   | "reviews";
 
 type ThemeMode = "light" | "dark" | "system";
@@ -93,6 +95,7 @@ const navItems: Array<{ id: ViewKey; label: string; icon: React.ElementType }> =
   { id: "bbs", label: "BBS", icon: ClipboardList },
   { id: "reviews", label: "Reviews", icon: ShieldCheck },
   { id: "exports", label: "Exports", icon: FileText },
+  { id: "agreements", label: "Client Agreement", icon: ScrollText },
 ];
 
 const bottomNav = [
@@ -316,6 +319,16 @@ const tools: Tool[] = [
     icon: FileText,
     visualLabel: "PDF",
     visual: "from-[#27133e] via-[#6b21a8] to-[#13091f]",
+  },
+  {
+    title: "Client Agreement",
+    category: "Presentation",
+    desc: "Scope, deliverables, payment milestones, revision policy aur sign-off clauses ka agreement draft banaye.",
+    cost: "2 Credits / Agreement",
+    status: "NEW",
+    icon: ScrollText,
+    visualLabel: "Legal",
+    visual: "from-[#1a1230] via-[#6d28d9] to-[#0b0715]",
   },
   {
     title: "Contractor Package",
@@ -1380,6 +1393,96 @@ function ReviewPage({ theme }: { theme: ResolvedTheme }) {
   );
 }
 
+
+function AgreementPage({ theme }: { theme: ResolvedTheme }) {
+  const agreementSections = [
+    ["Project Scope", "Interior, elevation, floor plan, BOQ, BBS ya selected deliverables clearly define karo."],
+    ["Deliverables", "Renders, PDFs, drawings, estimates, review packages and export files list karo."],
+    ["Payment Milestones", "Advance, design approval, revision stage, final handover and review charges."],
+    ["Revision Policy", "Free revisions, paid revisions, timeline and approval rules define karo."],
+    ["BOQ/BBS Disclaimer", "BOQ/BBS and structural output professional review ke bina final nahi hoga."],
+    ["Client Sign-off", "Client approval, project freeze, change request and handover acknowledgement."],
+  ];
+
+  return (
+    <div>
+      <PageTitle
+        title="Client Agreement"
+        desc="AI-assisted agreement draft for design scope, payment terms, revisions, deliverables and client sign-off."
+        theme={theme}
+      />
+
+      <div className="grid gap-5 xl:grid-cols-[0.9fr_1.1fr]">
+        <section className={cn("rounded-2xl border p-5", theme === "dark" ? "border-white/10 bg-white/[0.035]" : "border-[#ded5ec] bg-white light-card-shadow")}>
+          <StatusBadge status="NEW" theme={theme} />
+
+          <div className="mt-5 space-y-4">
+            <div>
+              <label className={cn("text-sm font-medium", theme === "dark" ? "text-white" : "text-[#21133f]")}>Project type</label>
+              <select className={cn("mt-2 h-12 w-full rounded-xl border px-4 text-sm outline-none", theme === "dark" ? "border-white/10 bg-black/20 text-white" : "border-[#ded5ec] bg-white text-[#21133f]")}>
+                <option>Residential Interior Design</option>
+                <option>Architecture + Elevation</option>
+                <option>BOQ / Contractor Estimate</option>
+                <option>Full Design + Construction Package</option>
+              </select>
+            </div>
+
+            <div>
+              <label className={cn("text-sm font-medium", theme === "dark" ? "text-white" : "text-[#21133f]")}>Client / project brief</label>
+              <textarea
+                className={cn("mt-2 min-h-36 w-full rounded-2xl border p-4 text-sm leading-6 outline-none", theme === "dark" ? "border-white/10 bg-black/20 text-white" : "border-[#ded5ec] bg-white text-[#21133f]")}
+                defaultValue="Client ko 30x40 G+1 house ke liye front elevation, interior renders, floor plan concept, BOQ draft aur client PDF chahiye. Payment milestone aur revision policy agreement me add karna hai."
+              />
+            </div>
+
+            <button className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#7c3aed] px-5 py-3 text-sm font-medium text-white">
+              Generate Agreement Draft <ScrollText className="h-4 w-4" />
+            </button>
+          </div>
+        </section>
+
+        <section className={cn("rounded-2xl border p-5", theme === "dark" ? "border-white/10 bg-white/[0.035]" : "border-[#ded5ec] bg-white light-card-shadow")}>
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <h3 className={cn("text-lg font-semibold", theme === "dark" ? "text-white" : "text-[#21133f]")}>Agreement sections</h3>
+              <p className={cn("mt-1 text-sm", theme === "dark" ? "text-slate-500" : "text-[#817397]")}>
+                Draft agreement me ye sections auto-generate honge.
+              </p>
+            </div>
+            <button className="rounded-xl bg-[#7c3aed] px-4 py-2.5 text-sm font-medium text-white">
+              Export PDF
+            </button>
+          </div>
+
+          <div className="mt-5 grid gap-3">
+            {agreementSections.map(([title, desc]) => (
+              <div
+                key={title}
+                className={cn("rounded-xl border p-4", theme === "dark" ? "border-white/10 bg-black/20" : "border-[#eee7f7] bg-[#fbf8ff]")}
+              >
+                <div className="flex items-start gap-3">
+                  <span className={cn("flex h-8 w-8 shrink-0 items-center justify-center rounded-lg", theme === "dark" ? "bg-[#2b1755] text-[#d8b4fe]" : "bg-[#f0dcff] text-[#6f1cc4]")}>
+                    <CheckCircle2 className="h-4 w-4" />
+                  </span>
+                  <div>
+                    <h4 className={cn("text-sm font-medium", theme === "dark" ? "text-white" : "text-[#21133f]")}>{title}</h4>
+                    <p className={cn("mt-1 text-sm leading-6", theme === "dark" ? "text-slate-400" : "text-[#817397]")}>{desc}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className={cn("mt-5 rounded-xl border p-4 text-sm leading-6", theme === "dark" ? "border-[#facc15]/20 bg-[#3b2507]/30 text-[#fde68a]" : "border-[#fed7aa] bg-[#fff7ed] text-[#9a3412]")}>
+            AI-generated agreement draft planning ke liye hai. Final legal agreement ko lawyer/professional se review karwana recommended hai.
+          </div>
+        </section>
+      </div>
+    </div>
+  );
+}
+
+
 export default function SikhadengeBuildDashboard() {
   const [active, setActive] = useState<ViewKey>("dashboard");
   const [themeMode, setThemeMode] = useState<ThemeMode>("dark");
@@ -1394,6 +1497,7 @@ export default function SikhadengeBuildDashboard() {
     if (active === "boq") return <BoqPage theme={theme} />;
     if (active === "bbs") return <BbsPage theme={theme} />;
     if (active === "exports") return <ExportPage theme={theme} />;
+    if (active === "agreements") return <AgreementPage theme={theme} />;
     if (active === "reviews") return <ReviewPage theme={theme} />;
     return <Dashboard setActive={setActive} theme={theme} />;
   };
