@@ -77,41 +77,91 @@ html, body {
 }
 
 
-/* BUILDSETU_SAFE_APP_THEME_V3 */
+/* BUILDSETU_STABLE_THEME_V8
+   Safe theme strategy:
+   - Light mode = original UI.
+   - Dark mode = soft dark shell + readable original cards.
+   - No global Tailwind bg/text force overrides.
+   - Prevents light-card + light-text conflict.
+*/
+
 html[data-buildsetu-theme="light"] {
   color-scheme: light;
 }
 
+html[data-buildsetu-theme="light"] body,
+html[data-buildsetu-theme="light"] main {
+  background: #ffffff;
+  color: #21133f;
+}
+
 html[data-buildsetu-theme="dark"] {
   color-scheme: dark;
-  background: #0b0614 !important;
+  background: #f7f2ff;
 }
 
 html[data-buildsetu-theme="dark"] body,
 html[data-buildsetu-theme="dark"] main {
-  background: #0b0614 !important;
+  background: #f7f2ff !important;
+  color: #21133f !important;
+}
+
+/* Dark mode shell: sidebar/header accents, but cards keep their own readable colors */
+html[data-buildsetu-theme="dark"] aside {
+  background: #211a35 !important;
   color: #f8f4ff !important;
+  border-color: #4d3c70 !important;
 }
 
-/* Dark surfaces */
-html[data-buildsetu-theme="dark"] .bg-white,
-html[data-buildsetu-theme="dark"] [class*="bg-white"],
-html[data-buildsetu-theme="dark"] [class*="bg-[#fbf8ff]"],
-html[data-buildsetu-theme="dark"] [class*="bg-[#f7f3ff]"],
-html[data-buildsetu-theme="dark"] [class*="bg-[#fcfbff]"],
-html[data-buildsetu-theme="dark"] [class*="bg-[#f8f7fb]"],
-html[data-buildsetu-theme="dark"] [class*="bg-[#faf8ff]"],
-html[data-buildsetu-theme="dark"] [class*="bg-[#f8fcff]"] {
-  background-color: #171024 !important;
+html[data-buildsetu-theme="dark"] aside * {
+  color: #eadfff !important;
 }
 
-/* Light arbitrary gradients used on pricing/credits pages */
-html[data-buildsetu-theme="dark"] [class*="bg-[linear-gradient"],
-html[data-buildsetu-theme="dark"] [class*="bg-[radial-gradient"] {
-  background-image: linear-gradient(135deg, #171024 0%, #10091d 55%, #1a1030 100%) !important;
+html[data-buildsetu-theme="dark"] aside a,
+html[data-buildsetu-theme="dark"] aside button {
+  color: #eadfff !important;
 }
 
-/* Keep primary purple buttons readable */
+html[data-buildsetu-theme="dark"] aside [class*="bg-[#ead2ff]"],
+html[data-buildsetu-theme="dark"] aside [class*="bg-[#efe0ff]"],
+html[data-buildsetu-theme="dark"] aside [class*="bg-purple-100"] {
+  background: #f1e6ff !important;
+  color: #3b1668 !important;
+}
+
+html[data-buildsetu-theme="dark"] aside [class*="bg-[#ead2ff]"] *,
+html[data-buildsetu-theme="dark"] aside [class*="bg-[#efe0ff]"] *,
+html[data-buildsetu-theme="dark"] aside [class*="bg-purple-100"] * {
+  color: #3b1668 !important;
+}
+
+/* Theme dropdown selected items: light surface must use dark text */
+html[data-buildsetu-theme="dark"] [class*="bg-[#ead2ff]"],
+html[data-buildsetu-theme="dark"] [class*="bg-[#efe0ff]"] {
+  background: #f1e6ff !important;
+  color: #261143 !important;
+}
+
+html[data-buildsetu-theme="dark"] [class*="bg-[#ead2ff]"] *,
+html[data-buildsetu-theme="dark"] [class*="bg-[#efe0ff]"] * {
+  color: #261143 !important;
+}
+
+/* Inputs remain readable in all modes */
+html[data-buildsetu-theme="dark"] input,
+html[data-buildsetu-theme="dark"] select,
+html[data-buildsetu-theme="dark"] textarea {
+  background: #ffffff !important;
+  color: #21133f !important;
+  border-color: #d8c8f0 !important;
+}
+
+html[data-buildsetu-theme="dark"] input::placeholder,
+html[data-buildsetu-theme="dark"] textarea::placeholder {
+  color: #7b6b95 !important;
+}
+
+/* Purple CTAs must always stay readable */
 html[data-buildsetu-theme="dark"] [class*="bg-[#6f1cc4]"],
 html[data-buildsetu-theme="dark"] [class*="bg-[#7c3aed]"],
 html[data-buildsetu-theme="dark"] [class*="from-[#5b43ea]"],
@@ -120,496 +170,20 @@ html[data-buildsetu-theme="dark"] [class*="from-[#7c3aed]"] {
   color: #ffffff !important;
 }
 
-/* Strong text */
-html[data-buildsetu-theme="dark"] [class*="text-[#21133f]"],
-html[data-buildsetu-theme="dark"] [class*="text-[#170b2b]"],
-html[data-buildsetu-theme="dark"] [class*="text-[#291447]"],
-html[data-buildsetu-theme="dark"] [class*="text-[#201537]"],
-html[data-buildsetu-theme="dark"] [class*="text-[#1f1632]"],
-html[data-buildsetu-theme="dark"] [class*="text-[#1d1431]"],
-html[data-buildsetu-theme="dark"] [class*="text-[#1f1433]"],
-html[data-buildsetu-theme="dark"] [class*="text-[#241443]"],
-html[data-buildsetu-theme="dark"] [class*="text-[#2c2830]"],
-html[data-buildsetu-theme="dark"] [class*="text-[#29242f]"],
-html[data-buildsetu-theme="dark"] [class*="text-[#181321]"],
-html[data-buildsetu-theme="dark"] [class*="text-[#1b1624]"] {
-  color: #f8f4ff !important;
-}
-
-/* Muted text */
-html[data-buildsetu-theme="dark"] [class*="text-[#6d5b86]"],
-html[data-buildsetu-theme="dark"] [class*="text-[#817397]"],
-html[data-buildsetu-theme="dark"] [class*="text-[#6b607a]"],
-html[data-buildsetu-theme="dark"] [class*="text-[#6f6578]"],
-html[data-buildsetu-theme="dark"] [class*="text-[#7c718d]"],
-html[data-buildsetu-theme="dark"] [class*="text-[#786a91]"],
-html[data-buildsetu-theme="dark"] [class*="text-[#796c91]"],
-html[data-buildsetu-theme="dark"] [class*="text-[#766987]"],
-html[data-buildsetu-theme="dark"] [class*="text-[#8c839c]"],
-html[data-buildsetu-theme="dark"] [class*="text-[#8b7ca6]"],
-html[data-buildsetu-theme="dark"] [class*="text-[#5f5476]"],
-html[data-buildsetu-theme="dark"] [class*="text-[#635477]"] {
-  color: #cab8e4 !important;
-}
-
-/* Borders */
-html[data-buildsetu-theme="dark"] [class*="border-[#ded0f4]"],
-html[data-buildsetu-theme="dark"] [class*="border-[#ded3ef]"],
-html[data-buildsetu-theme="dark"] [class*="border-[#e4d9f4]"],
-html[data-buildsetu-theme="dark"] [class*="border-[#e6ddf4]"],
-html[data-buildsetu-theme="dark"] [class*="border-[#e7def5]"],
-html[data-buildsetu-theme="dark"] [class*="border-[#eee7f7]"],
-html[data-buildsetu-theme="dark"] [class*="border-[#efe8fb]"],
-html[data-buildsetu-theme="dark"] [class*="border-[#f0e9fb]"],
-html[data-buildsetu-theme="dark"] [class*="border-[#e1d9ec]"],
-html[data-buildsetu-theme="dark"] [class*="border-[#ddd7e8]"] {
-  border-color: #3a2854 !important;
-}
-
-/* Inputs */
-html[data-buildsetu-theme="dark"] select,
-html[data-buildsetu-theme="dark"] input,
-html[data-buildsetu-theme="dark"] textarea {
-  background: #120b20 !important;
-  color: #f8f4ff !important;
-  border-color: #3a2854 !important;
-}
-
-/* Menu active state readable */
-html[data-buildsetu-theme="dark"] .bg-[#ead2ff],
-html[data-buildsetu-theme="dark"] .bg-[#efe0ff],
-html[data-buildsetu-theme="dark"] .bg-purple-100 {
-  background-color: #2a1742 !important;
-}
-
-/* Shadows */
-html[data-buildsetu-theme="dark"] .shadow-sm,
-html[data-buildsetu-theme="dark"] .shadow-md,
-html[data-buildsetu-theme="dark"] .shadow-lg,
-html[data-buildsetu-theme="dark"] .shadow-xl {
-  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.38) !important;
-}
-
-
-/* BUILDSETU_SOFT_DARK_THEME_V4 */
-html[data-buildsetu-theme="dark"] {
-  color-scheme: dark;
-  background: #171327 !important;
-}
-
-html[data-buildsetu-theme="dark"] body,
-html[data-buildsetu-theme="dark"] main {
-  background: #171327 !important;
-  color: #f8f5ff !important;
-}
-
-/* main app backgrounds softer */
-html[data-buildsetu-theme="dark"] .bg-white,
-html[data-buildsetu-theme="dark"] [class*="bg-white"],
-html[data-buildsetu-theme="dark"] [class*="bg-[#fbf8ff]"],
-html[data-buildsetu-theme="dark"] [class*="bg-[#f7f3ff]"],
-html[data-buildsetu-theme="dark"] [class*="bg-[#fcfbff]"],
-html[data-buildsetu-theme="dark"] [class*="bg-[#faf8ff]"] {
-  background-color: #211c35 !important;
-}
-
-/* top sections / subtle dark panels */
-html[data-buildsetu-theme="dark"] [class*="bg-[linear-gradient"],
-html[data-buildsetu-theme="dark"] [class*="bg-[radial-gradient"] {
-  background-image: linear-gradient(135deg, #221c38 0%, #1d1831 55%, #261f3f 100%) !important;
-}
-
-/* stronger heading text */
-html[data-buildsetu-theme="dark"] [class*="text-[#21133f]"],
-html[data-buildsetu-theme="dark"] [class*="text-[#170b2b]"],
-html[data-buildsetu-theme="dark"] [class*="text-[#291447]"],
-html[data-buildsetu-theme="dark"] [class*="text-[#201537]"],
-html[data-buildsetu-theme="dark"] [class*="text-[#1f1632]"],
-html[data-buildsetu-theme="dark"] [class*="text-[#1f1433]"],
-html[data-buildsetu-theme="dark"] [class*="text-[#1d1431]"],
-html[data-buildsetu-theme="dark"] [class*="text-[#241443]"] {
-  color: #fcfaff !important;
-}
-
-/* muted text more readable */
-html[data-buildsetu-theme="dark"] [class*="text-[#6d5b86]"],
-html[data-buildsetu-theme="dark"] [class*="text-[#817397]"],
-html[data-buildsetu-theme="dark"] [class*="text-[#766987]"],
-html[data-buildsetu-theme="dark"] [class*="text-[#786a91]"],
-html[data-buildsetu-theme="dark"] [class*="text-[#796c91]"],
-html[data-buildsetu-theme="dark"] [class*="text-[#8b7ca6]"],
-html[data-buildsetu-theme="dark"] [class*="text-[#5f5476]"],
-html[data-buildsetu-theme="dark"] [class*="text-[#635477]"] {
-  color: #cec2e7 !important;
-}
-
-/* borders softer */
-html[data-buildsetu-theme="dark"] [class*="border-[#ded0f4]"],
-html[data-buildsetu-theme="dark"] [class*="border-[#ded3ef]"],
-html[data-buildsetu-theme="dark"] [class*="border-[#e4d9f4]"],
-html[data-buildsetu-theme="dark"] [class*="border-[#e6ddf4]"],
-html[data-buildsetu-theme="dark"] [class*="border-[#e7def5]"],
-html[data-buildsetu-theme="dark"] [class*="border-[#eee7f7]"],
-html[data-buildsetu-theme="dark"] [class*="border-[#efe8fb]"],
-html[data-buildsetu-theme="dark"] [class*="border-[#f0e9fb]"] {
-  border-color: #43385f !important;
-}
-
-/* cards / inputs / selects */
-html[data-buildsetu-theme="dark"] select,
-html[data-buildsetu-theme="dark"] input,
-html[data-buildsetu-theme="dark"] textarea {
-  background: #241d3a !important;
-  color: #f8f5ff !important;
-  border-color: #4a3f68 !important;
-}
-
-/* active sidebar chip / active tabs */
-html[data-buildsetu-theme="dark"] .bg-[#ead2ff],
-html[data-buildsetu-theme="dark"] .bg-[#efe0ff],
-html[data-buildsetu-theme="dark"] .bg-purple-100 {
-  background-color: #35284f !important;
-}
-
-/* keep purple buttons beautiful */
-html[data-buildsetu-theme="dark"] [class*="from-[#5b43ea]"],
-html[data-buildsetu-theme="dark"] [class*="from-[#6246ea]"],
-html[data-buildsetu-theme="dark"] [class*="from-[#7c3aed]"],
-html[data-buildsetu-theme="dark"] [class*="bg-[#7c3aed]"],
-html[data-buildsetu-theme="dark"] [class*="bg-[#6f1cc4]"] {
-  color: #ffffff !important;
-}
-
-/* better shadow */
-html[data-buildsetu-theme="dark"] .shadow-sm,
-html[data-buildsetu-theme="dark"] .shadow-md,
-html[data-buildsetu-theme="dark"] .shadow-lg,
-html[data-buildsetu-theme="dark"] .shadow-xl {
-  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.24) !important;
-}
-
-/* tool card alignment helper */
+/* Dashboard tool-card button alignment */
 .buildsetu-tool-card-align {
   display: flex !important;
   flex-direction: column !important;
   height: 100% !important;
 }
+
 .buildsetu-tool-card-body-align {
   display: flex !important;
   flex-direction: column !important;
   flex: 1 1 auto !important;
 }
+
 .buildsetu-tool-card-actions-align {
   margin-top: auto !important;
 }
 
-
-/* BUILDSETU_DARK_READABILITY_V5 */
-html[data-buildsetu-theme="dark"] {
-  --bs-dark-bg: #18132a;
-  --bs-dark-panel: #211a35;
-  --bs-dark-panel-2: #281f40;
-  --bs-dark-border: #5a4a78;
-  --bs-dark-text: #fffaff;
-  --bs-dark-muted: #e0d3f5;
-  --bs-dark-soft: #cbb9e8;
-}
-
-/* Keep dashboard readable, not faded */
-html[data-buildsetu-theme="dark"] body,
-html[data-buildsetu-theme="dark"] main {
-  background: var(--bs-dark-bg) !important;
-  color: var(--bs-dark-text) !important;
-}
-
-/* Panels/cards */
-html[data-buildsetu-theme="dark"] article,
-html[data-buildsetu-theme="dark"] section,
-html[data-buildsetu-theme="dark"] aside,
-html[data-buildsetu-theme="dark"] [class*="rounded-2xl"],
-html[data-buildsetu-theme="dark"] [class*="rounded-[2rem]"],
-html[data-buildsetu-theme="dark"] [class*="rounded-[24px]"],
-html[data-buildsetu-theme="dark"] [class*="rounded-[26px]"],
-html[data-buildsetu-theme="dark"] [class*="rounded-[28px]"] {
-  border-color: var(--bs-dark-border) !important;
-}
-
-/* Main card backgrounds */
-html[data-buildsetu-theme="dark"] .buildsetu-tool-card-align,
-html[data-buildsetu-theme="dark"] [class*="bg-white"],
-html[data-buildsetu-theme="dark"] [class*="bg-[#fbf8ff]"],
-html[data-buildsetu-theme="dark"] [class*="bg-[#f7f3ff]"] {
-  background-color: var(--bs-dark-panel) !important;
-}
-
-/* Text: make all dashboard text readable */
-html[data-buildsetu-theme="dark"] p,
-html[data-buildsetu-theme="dark"] span,
-html[data-buildsetu-theme="dark"] div,
-html[data-buildsetu-theme="dark"] label,
-html[data-buildsetu-theme="dark"] h1,
-html[data-buildsetu-theme="dark"] h2,
-html[data-buildsetu-theme="dark"] h3,
-html[data-buildsetu-theme="dark"] h4 {
-  color: inherit;
-}
-
-html[data-buildsetu-theme="dark"] h1,
-html[data-buildsetu-theme="dark"] h2,
-html[data-buildsetu-theme="dark"] h3,
-html[data-buildsetu-theme="dark"] [class*="font-black"],
-html[data-buildsetu-theme="dark"] [class*="font-bold"] {
-  color: var(--bs-dark-text) !important;
-}
-
-html[data-buildsetu-theme="dark"] p,
-html[data-buildsetu-theme="dark"] [class*="text-sm"],
-html[data-buildsetu-theme="dark"] [class*="text-xs"],
-html[data-buildsetu-theme="dark"] [class*="text-[13px]"],
-html[data-buildsetu-theme="dark"] [class*="text-[14px]"],
-html[data-buildsetu-theme="dark"] [class*="text-[15px]"] {
-  color: var(--bs-dark-muted) !important;
-}
-
-/* Sidebar inactive items readable */
-html[data-buildsetu-theme="dark"] aside a,
-html[data-buildsetu-theme="dark"] aside button,
-html[data-buildsetu-theme="dark"] aside div {
-  color: var(--bs-dark-muted) !important;
-}
-
-html[data-buildsetu-theme="dark"] aside .bg-[#ead2ff],
-html[data-buildsetu-theme="dark"] aside .bg-[#efe0ff],
-html[data-buildsetu-theme="dark"] aside .bg-purple-100,
-html[data-buildsetu-theme="dark"] aside [class*="bg-purple-100"] {
-  background-color: #ead7ff !important;
-  color: #4b168f !important;
-}
-
-/* Top credits pill text */
-html[data-buildsetu-theme="dark"] a[href="/credits"] {
-  background: #211a35 !important;
-  border-color: #7c68a3 !important;
-}
-
-html[data-buildsetu-theme="dark"] a[href="/credits"] span {
-  color: #f8f4ff !important;
-}
-
-/* Tabs */
-html[data-buildsetu-theme="dark"] button,
-html[data-buildsetu-theme="dark"] a {
-  border-color: #5a4a78;
-}
-
-html[data-buildsetu-theme="dark"] button:not([class*="bg-[#6f1cc4]"]):not([class*="bg-[#7c3aed]"]):not([class*="from-[#"]) {
-  color: var(--bs-dark-muted) !important;
-}
-
-/* Preserve purple CTA buttons */
-html[data-buildsetu-theme="dark"] [class*="bg-[#6f1cc4]"],
-html[data-buildsetu-theme="dark"] [class*="bg-[#7c3aed]"],
-html[data-buildsetu-theme="dark"] [class*="from-[#5b43ea]"],
-html[data-buildsetu-theme="dark"] [class*="from-[#6246ea]"],
-html[data-buildsetu-theme="dark"] [class*="from-[#7c3aed]"] {
-  color: #ffffff !important;
-}
-
-/* Tool card image/title area should stay vivid */
-html[data-buildsetu-theme="dark"] .buildsetu-tool-card-align img,
-html[data-buildsetu-theme="dark"] .buildsetu-tool-card-align [style*="background-image"] {
-  opacity: 1 !important;
-  filter: none !important;
-}
-
-/* Fix pale/white gradient cards in dark mode */
-html[data-buildsetu-theme="dark"] [class*="bg-[linear-gradient"] {
-  background-image: linear-gradient(135deg, #211a35 0%, #261e3f 55%, #30234f 100%) !important;
-}
-
-/* Green credit dot and status tags should remain colored */
-html[data-buildsetu-theme="dark"] .bg-green-500,
-html[data-buildsetu-theme="dark"] [class*="bg-emerald"],
-html[data-buildsetu-theme="dark"] [class*="bg-green"] {
-  color: #ffffff !important;
-}
-
-/* Small upload icon button readable */
-html[data-buildsetu-theme="dark"] .buildsetu-tool-card-actions-align button,
-html[data-buildsetu-theme="dark"] .buildsetu-tool-card-actions-align a {
-  color: #ffffff !important;
-}
-
-/* BUILDSETU_DARK_FORM_CONTROLS_V6 */
-html[data-buildsetu-theme="dark"] input,
-html[data-buildsetu-theme="dark"] select,
-html[data-buildsetu-theme="dark"] textarea {
-  background-color: #211a35 !important;
-  color: #f8f4ff !important;
-  border-color: #5a4a78 !important;
-}
-
-html[data-buildsetu-theme="dark"] input::placeholder,
-html[data-buildsetu-theme="dark"] textarea::placeholder {
-  color: #b9a6d8 !important;
-}
-
-/* Fix selected white/pale pills in dark mode */
-html[data-buildsetu-theme="dark"] [class*="bg-[#f7efff]"],
-html[data-buildsetu-theme="dark"] [class*="bg-[#fbf8ff]"],
-html[data-buildsetu-theme="dark"] [class*="bg-[#f4ebff]"],
-html[data-buildsetu-theme="dark"] [class*="bg-[#efe8ff]"],
-html[data-buildsetu-theme="dark"] [class*="bg-[#eadcff]"],
-html[data-buildsetu-theme="dark"] [class*="bg-purple-50"],
-html[data-buildsetu-theme="dark"] [class*="bg-purple-100"] {
-  background-color: #33224f !important;
-  color: #f8f4ff !important;
-  border-color: #6f55a0 !important;
-}
-
-/* Any selected/active option should be readable */
-html[data-buildsetu-theme="dark"] button[class*="bg-white"],
-html[data-buildsetu-theme="dark"] div[class*="bg-white"],
-html[data-buildsetu-theme="dark"] label[class*="bg-white"] {
-  background-color: #211a35 !important;
-  color: #f8f4ff !important;
-  border-color: #5a4a78 !important;
-}
-
-/* But keep actual white text buttons strong */
-html[data-buildsetu-theme="dark"] button[class*="bg-[#7c3aed]"],
-html[data-buildsetu-theme="dark"] button[class*="bg-[#6f1cc4]"],
-html[data-buildsetu-theme="dark"] button[class*="from-[#"],
-html[data-buildsetu-theme="dark"] a[class*="bg-[#7c3aed]"],
-html[data-buildsetu-theme="dark"] a[class*="from-[#"] {
-  color: #ffffff !important;
-}
-
-/* Checked room/option labels */
-html[data-buildsetu-theme="dark"] label:has(input:checked),
-html[data-buildsetu-theme="dark"] button[aria-pressed="true"],
-html[data-buildsetu-theme="dark"] [data-state="checked"],
-html[data-buildsetu-theme="dark"] [data-selected="true"] {
-  background: linear-gradient(135deg, #6d28d9 0%, #9333ea 100%) !important;
-  color: #ffffff !important;
-  border-color: #a78bfa !important;
-}
-
-/* Ensure text inside selected controls stays readable */
-html[data-buildsetu-theme="dark"] label:has(input:checked) *,
-html[data-buildsetu-theme="dark"] button[aria-pressed="true"] *,
-html[data-buildsetu-theme="dark"] [data-state="checked"] *,
-html[data-buildsetu-theme="dark"] [data-selected="true"] * {
-  color: #ffffff !important;
-}
-
-/* Badges like AI Generated / AI Draft */
-html[data-buildsetu-theme="dark"] [class*="bg-[#f4e8ff]"],
-html[data-buildsetu-theme="dark"] [class*="bg-[#f5e8ff]"],
-html[data-buildsetu-theme="dark"] [class*="bg-[#efe0ff]"] {
-  background-color: #3b255d !important;
-  color: #f8f4ff !important;
-}
-
-/* Right-side preview text card */
-html[data-buildsetu-theme="dark"] textarea,
-html[data-buildsetu-theme="dark"] [class*="Your Design Brief"] {
-  color: #f8f4ff !important;
-}
-
-/* Keep disabled/faded elements readable enough */
-html[data-buildsetu-theme="dark"] [disabled],
-html[data-buildsetu-theme="dark"] [aria-disabled="true"] {
-  opacity: 0.72 !important;
-  color: #cdbde6 !important;
-}
-
-/* Add clear focus ring in dark mode */
-html[data-buildsetu-theme="dark"] input:focus,
-html[data-buildsetu-theme="dark"] select:focus,
-html[data-buildsetu-theme="dark"] textarea:focus,
-html[data-buildsetu-theme="dark"] button:focus {
-  outline: 2px solid #a78bfa !important;
-  outline-offset: 2px !important;
-}
-
-/* BUILDSETU_DARK_LIGHT_SURFACE_TEXT_FIX_V7 */
-/* In dark mode, any intentionally light selected/pale surface must use dark readable text */
-html[data-buildsetu-theme="dark"] [class*="bg-[#f4ebff]"],
-html[data-buildsetu-theme="dark"] [class*="bg-[#f7efff]"],
-html[data-buildsetu-theme="dark"] [class*="bg-[#fbf8ff]"],
-html[data-buildsetu-theme="dark"] [class*="bg-[#efe8ff]"],
-html[data-buildsetu-theme="dark"] [class*="bg-[#eadcff]"],
-html[data-buildsetu-theme="dark"] [class*="bg-[#ead2ff]"],
-html[data-buildsetu-theme="dark"] [class*="bg-[#efe0ff]"],
-html[data-buildsetu-theme="dark"] [class*="bg-purple-50"],
-html[data-buildsetu-theme="dark"] [class*="bg-purple-100"] {
-  background-color: #f1e6ff !important;
-  color: #261143 !important;
-  border-color: #9b6df5 !important;
-}
-
-html[data-buildsetu-theme="dark"] [class*="bg-[#f4ebff]"] *,
-html[data-buildsetu-theme="dark"] [class*="bg-[#f7efff]"] *,
-html[data-buildsetu-theme="dark"] [class*="bg-[#fbf8ff]"] *,
-html[data-buildsetu-theme="dark"] [class*="bg-[#efe8ff]"] *,
-html[data-buildsetu-theme="dark"] [class*="bg-[#eadcff]"] *,
-html[data-buildsetu-theme="dark"] [class*="bg-[#ead2ff]"] *,
-html[data-buildsetu-theme="dark"] [class*="bg-[#efe0ff]"] *,
-html[data-buildsetu-theme="dark"] [class*="bg-purple-50"] *,
-html[data-buildsetu-theme="dark"] [class*="bg-purple-100"] * {
-  color: #261143 !important;
-}
-
-/* Icons inside light selected cards should stay purple and visible */
-html[data-buildsetu-theme="dark"] [class*="bg-[#f4ebff]"] svg,
-html[data-buildsetu-theme="dark"] [class*="bg-[#f7efff]"] svg,
-html[data-buildsetu-theme="dark"] [class*="bg-[#fbf8ff]"] svg,
-html[data-buildsetu-theme="dark"] [class*="bg-[#efe8ff]"] svg,
-html[data-buildsetu-theme="dark"] [class*="bg-[#eadcff]"] svg,
-html[data-buildsetu-theme="dark"] [class*="bg-[#ead2ff]"] svg,
-html[data-buildsetu-theme="dark"] [class*="bg-[#efe0ff]"] svg,
-html[data-buildsetu-theme="dark"] [class*="bg-purple-50"] svg,
-html[data-buildsetu-theme="dark"] [class*="bg-purple-100"] svg {
-  color: #7c3aed !important;
-}
-
-/* Selected form/control cards with light background */
-html[data-buildsetu-theme="dark"] button[class*="bg-[#f4ebff]"],
-html[data-buildsetu-theme="dark"] button[class*="bg-[#f7efff]"],
-html[data-buildsetu-theme="dark"] button[class*="bg-[#fbf8ff]"],
-html[data-buildsetu-theme="dark"] button[class*="bg-purple-50"],
-html[data-buildsetu-theme="dark"] button[class*="bg-purple-100"],
-html[data-buildsetu-theme="dark"] label[class*="bg-[#f4ebff]"],
-html[data-buildsetu-theme="dark"] label[class*="bg-[#f7efff]"],
-html[data-buildsetu-theme="dark"] label[class*="bg-[#fbf8ff]"],
-html[data-buildsetu-theme="dark"] label[class*="bg-purple-50"],
-html[data-buildsetu-theme="dark"] label[class*="bg-purple-100"] {
-  background-color: #f1e6ff !important;
-  color: #261143 !important;
-  border-color: #9b6df5 !important;
-}
-
-/* Do not let disabled selected controls become unreadable */
-html[data-buildsetu-theme="dark"] [disabled][class*="bg-[#"],
-html[data-buildsetu-theme="dark"] [aria-disabled="true"][class*="bg-[#"] {
-  opacity: 1 !important;
-}
-
-/* Dark panels must remain dark with light text */
-html[data-buildsetu-theme="dark"] [class*="bg-[#21133f]"],
-html[data-buildsetu-theme="dark"] [class*="bg-[#170b2b]"],
-html[data-buildsetu-theme="dark"] [class*="bg-[#18132a]"],
-html[data-buildsetu-theme="dark"] [class*="bg-[#211a35]"],
-html[data-buildsetu-theme="dark"] [class*="bg-[#281f40]"] {
-  background-color: #211a35 !important;
-  color: #f8f4ff !important;
-}
-
-html[data-buildsetu-theme="dark"] [class*="bg-[#21133f]"] *,
-html[data-buildsetu-theme="dark"] [class*="bg-[#170b2b]"] *,
-html[data-buildsetu-theme="dark"] [class*="bg-[#18132a]"] *,
-html[data-buildsetu-theme="dark"] [class*="bg-[#211a35]"] *,
-html[data-buildsetu-theme="dark"] [class*="bg-[#281f40]"] * {
-  color: #f8f4ff !important;
-}
