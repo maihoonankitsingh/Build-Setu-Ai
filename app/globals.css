@@ -303,3 +303,139 @@ html[data-buildsetu-theme="dark"] .shadow-xl {
   margin-top: auto !important;
 }
 
+
+/* BUILDSETU_DARK_READABILITY_V5 */
+html[data-buildsetu-theme="dark"] {
+  --bs-dark-bg: #18132a;
+  --bs-dark-panel: #211a35;
+  --bs-dark-panel-2: #281f40;
+  --bs-dark-border: #5a4a78;
+  --bs-dark-text: #fffaff;
+  --bs-dark-muted: #e0d3f5;
+  --bs-dark-soft: #cbb9e8;
+}
+
+/* Keep dashboard readable, not faded */
+html[data-buildsetu-theme="dark"] body,
+html[data-buildsetu-theme="dark"] main {
+  background: var(--bs-dark-bg) !important;
+  color: var(--bs-dark-text) !important;
+}
+
+/* Panels/cards */
+html[data-buildsetu-theme="dark"] article,
+html[data-buildsetu-theme="dark"] section,
+html[data-buildsetu-theme="dark"] aside,
+html[data-buildsetu-theme="dark"] [class*="rounded-2xl"],
+html[data-buildsetu-theme="dark"] [class*="rounded-[2rem]"],
+html[data-buildsetu-theme="dark"] [class*="rounded-[24px]"],
+html[data-buildsetu-theme="dark"] [class*="rounded-[26px]"],
+html[data-buildsetu-theme="dark"] [class*="rounded-[28px]"] {
+  border-color: var(--bs-dark-border) !important;
+}
+
+/* Main card backgrounds */
+html[data-buildsetu-theme="dark"] .buildsetu-tool-card-align,
+html[data-buildsetu-theme="dark"] [class*="bg-white"],
+html[data-buildsetu-theme="dark"] [class*="bg-[#fbf8ff]"],
+html[data-buildsetu-theme="dark"] [class*="bg-[#f7f3ff]"] {
+  background-color: var(--bs-dark-panel) !important;
+}
+
+/* Text: make all dashboard text readable */
+html[data-buildsetu-theme="dark"] p,
+html[data-buildsetu-theme="dark"] span,
+html[data-buildsetu-theme="dark"] div,
+html[data-buildsetu-theme="dark"] label,
+html[data-buildsetu-theme="dark"] h1,
+html[data-buildsetu-theme="dark"] h2,
+html[data-buildsetu-theme="dark"] h3,
+html[data-buildsetu-theme="dark"] h4 {
+  color: inherit;
+}
+
+html[data-buildsetu-theme="dark"] h1,
+html[data-buildsetu-theme="dark"] h2,
+html[data-buildsetu-theme="dark"] h3,
+html[data-buildsetu-theme="dark"] [class*="font-black"],
+html[data-buildsetu-theme="dark"] [class*="font-bold"] {
+  color: var(--bs-dark-text) !important;
+}
+
+html[data-buildsetu-theme="dark"] p,
+html[data-buildsetu-theme="dark"] [class*="text-sm"],
+html[data-buildsetu-theme="dark"] [class*="text-xs"],
+html[data-buildsetu-theme="dark"] [class*="text-[13px]"],
+html[data-buildsetu-theme="dark"] [class*="text-[14px]"],
+html[data-buildsetu-theme="dark"] [class*="text-[15px]"] {
+  color: var(--bs-dark-muted) !important;
+}
+
+/* Sidebar inactive items readable */
+html[data-buildsetu-theme="dark"] aside a,
+html[data-buildsetu-theme="dark"] aside button,
+html[data-buildsetu-theme="dark"] aside div {
+  color: var(--bs-dark-muted) !important;
+}
+
+html[data-buildsetu-theme="dark"] aside .bg-[#ead2ff],
+html[data-buildsetu-theme="dark"] aside .bg-[#efe0ff],
+html[data-buildsetu-theme="dark"] aside .bg-purple-100,
+html[data-buildsetu-theme="dark"] aside [class*="bg-purple-100"] {
+  background-color: #ead7ff !important;
+  color: #4b168f !important;
+}
+
+/* Top credits pill text */
+html[data-buildsetu-theme="dark"] a[href="/credits"] {
+  background: #211a35 !important;
+  border-color: #7c68a3 !important;
+}
+
+html[data-buildsetu-theme="dark"] a[href="/credits"] span {
+  color: #f8f4ff !important;
+}
+
+/* Tabs */
+html[data-buildsetu-theme="dark"] button,
+html[data-buildsetu-theme="dark"] a {
+  border-color: #5a4a78;
+}
+
+html[data-buildsetu-theme="dark"] button:not([class*="bg-[#6f1cc4]"]):not([class*="bg-[#7c3aed]"]):not([class*="from-[#"]) {
+  color: var(--bs-dark-muted) !important;
+}
+
+/* Preserve purple CTA buttons */
+html[data-buildsetu-theme="dark"] [class*="bg-[#6f1cc4]"],
+html[data-buildsetu-theme="dark"] [class*="bg-[#7c3aed]"],
+html[data-buildsetu-theme="dark"] [class*="from-[#5b43ea]"],
+html[data-buildsetu-theme="dark"] [class*="from-[#6246ea]"],
+html[data-buildsetu-theme="dark"] [class*="from-[#7c3aed]"] {
+  color: #ffffff !important;
+}
+
+/* Tool card image/title area should stay vivid */
+html[data-buildsetu-theme="dark"] .buildsetu-tool-card-align img,
+html[data-buildsetu-theme="dark"] .buildsetu-tool-card-align [style*="background-image"] {
+  opacity: 1 !important;
+  filter: none !important;
+}
+
+/* Fix pale/white gradient cards in dark mode */
+html[data-buildsetu-theme="dark"] [class*="bg-[linear-gradient"] {
+  background-image: linear-gradient(135deg, #211a35 0%, #261e3f 55%, #30234f 100%) !important;
+}
+
+/* Green credit dot and status tags should remain colored */
+html[data-buildsetu-theme="dark"] .bg-green-500,
+html[data-buildsetu-theme="dark"] [class*="bg-emerald"],
+html[data-buildsetu-theme="dark"] [class*="bg-green"] {
+  color: #ffffff !important;
+}
+
+/* Small upload icon button readable */
+html[data-buildsetu-theme="dark"] .buildsetu-tool-card-actions-align button,
+html[data-buildsetu-theme="dark"] .buildsetu-tool-card-actions-align a {
+  color: #ffffff !important;
+}
