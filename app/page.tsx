@@ -1446,59 +1446,327 @@ function NewProjectPage({ theme }: { theme: ResolvedTheme }) {
 }
 
 
+
+type LiveRender = {
+  id: string;
+  projectId: string;
+  renderType: string;
+  roomType: string | null;
+  prompt: string;
+  imageUrl: string | null;
+  version: number;
+  status: string;
+  createdAt: string;
+  project?: {
+    id: string;
+    title: string;
+    projectType: string | null;
+    location: string | null;
+  };
+};
+
 function RenderStudio({ theme }: { theme: ResolvedTheme }) {
+  const [projectsList, setProjectsList] = useState<LiveProject[]>([]);
+  const [projectId, setProjectId] = useState("");
+  const [renderType, setRenderType] = useState("Interior Render");
+  const [roomType, setRoomType] = useState("Living Room");
+  const [style, setStyle] = useState("Modern Indian Premium");
+  const [prompt, setPrompt] = useState(
+    "Premium modern Indian living room with walnut wood, beige walls, warm cove lighting, family friendly storage and luxury clean layout.",
+  );
+  const [renders, setRenders] = useState<LiveRender[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [historyLoading, setHistoryLoading] = useState(true);
+  const [message, setMessage] = useState("");
+
+  async function loadProjectsAndRenders() {
+    try {
+      setHistoryLoading(true);
+      setMessage("");
+
+      const projectsResponse = await fetch("/api/projects/list", {
+        cache: "no-store",
+      });
+      const projectsData = await projectsResponse.json();
+
+      if (!projectsResponse.ok || !projectsData.ok) {
+        throw new Error(projectsData.error || "Failed to load projects");
+      }
+
+      const loadedProjects = projectsData.projects || [];
+      setProjectsList(loadedProjects);
+
+      const selectedProjectId = projectId || loadedProjects[0]?.id || "";
+      if (selectedProjectId && !projectId) {
+        setProjectId(selectedProjectId);
+      }
+
+      const rendersUrl = selectedProjectId
+        ? `/api/renders/list?projectId=${selectedProjectId}`
+        : "/api/renders/list";
+
+      const rendersResponse = await fetch(rendersUrl, {
+        cache: "no-store",
+      });
+      const rendersData = await rendersResponse.json();
+
+      if (!rendersResponse.ok || !rendersData.ok) {
+        throw new Error(rendersData.error || "Failed to load renders");
+      }
+
+      setRenders(rendersData.renders || []);
+    } catch (error) {
+      console.error(error);
+      setMessage(error instanceof Error ? error.message : "Failed to load render studio data");
+    } finally {
+      setHistoryLoading(false);
+    }
+  }
+
+  async function loadRendersForProject(nextProjectId: string) {
+    try {
+      setHistoryLoading(true);
+      setMessage("");
+
+      const response = await fetch(`/api/renders/list?projectId=${nextProjectId}`, {
+        cache: "no-store",
+      });
+      const data = await response.json();
+
+      if (!response.ok || !data.ok) {
+        throw new Error(data.error || "Failed to load renders");
+      }
+
+      setRenders(data.renders || []);
+    } catch (error) {
+      console.error(error);
+      setMessage(error instanceof Error ? error.message : "Failed to load renders");
+    } finally {
+      setHistoryLoading(false);
+    }
+  }
+
+  async function handleCreateRender() {
+    try {
+      setLoading(true);
+      setMessage("");
+
+      if (!projectId) {
+        throw new Error("Project select karo. Pehle New Project section se project create karo.");
+      }
+
+      const finalPrompt = `${prompt}\n\nStyle: ${style}`;
+
+      const response = await fetch("/api/renders/create", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          projectId,
+          renderType,
+          roomType,
+          prompt: finalPrompt,
+          imageUrl:
+            renderType === "Exterior Elevation"
+              ? "/tool-images/exterior-elevation.png"
+              : "/tool-images/interior-render.png",
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok || !data.ok) {
+        throw new Error(data.error || "Failed to save render");
+      }
+
+      setMessage("Render prompt saved successfully.");
+      await loadRendersForProject(projectId);
+    } catch (error) {
+      console.error(error);
+      setMessage(error instanceof Error ? error.message : "Something went wrong");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    loadProjectsAndRenders();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <div>
-      <PageTitle title="Render Studio" desc="Interior and elevation image generation with revision by chat." theme={theme} />
+      <PageTitle title="Render Studio" desc="Interior and elevation render prompts save karo aur project-wise render history dekho." theme={theme} />
+
       <div className="grid gap-5 xl:grid-cols-[0.85fr_1.15fr]">
         <section className={cn("rounded-2xl border p-5", theme === "dark" ? "border-white/10 bg-white/[0.035]" : "border-[#ded5ec] bg-white light-card-shadow")}>
           <StatusBadge status="LIVE" theme={theme} />
+
           <div className="mt-4 space-y-3">
-            <select className={cn("h-12 w-full rounded-xl border px-4 text-sm outline-none", theme === "dark" ? "border-white/10 bg-black/20 text-white" : "border-[#ded5ec] bg-white text-[#21133f]")}>
-              <option>Living Room Interior</option>
-              <option>Front Elevation</option>
-              <option>Bedroom Interior</option>
-              <option>Kitchen Interior</option>
-            </select>
-            <select className={cn("h-12 w-full rounded-xl border px-4 text-sm outline-none", theme === "dark" ? "border-white/10 bg-black/20 text-white" : "border-[#ded5ec] bg-white text-[#21133f]")}>
-              <option>Modern Indian Premium</option>
-              <option>Budget Modern</option>
-              <option>Luxury White + Wood</option>
-              <option>Minimal Warm</option>
-            </select>
-            <textarea
-              className={cn("min-h-28 w-full rounded-2xl border p-4 text-sm leading-6 outline-none", theme === "dark" ? "border-white/10 bg-black/20 text-white" : "border-[#ded5ec] bg-white text-[#21133f]")}
-              defaultValue="Use walnut wood, beige walls, warm cove lighting, Indian family-friendly storage, clean premium look."
-            />
-            <button className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#7c3aed] px-5 py-3 text-sm font-medium text-white">
-              Generate Image <Sparkles className="h-4 w-4" />
+            <div>
+              <label className={cn("text-sm font-medium", theme === "dark" ? "text-white" : "text-[#21133f]")}>Project</label>
+              <select
+                value={projectId}
+                onChange={(event) => {
+                  setProjectId(event.target.value);
+                  loadRendersForProject(event.target.value);
+                }}
+                className={cn("mt-2 h-12 w-full rounded-xl border px-4 text-sm outline-none", theme === "dark" ? "border-white/10 bg-black/20 text-white" : "border-[#ded5ec] bg-white text-[#21133f]")}
+              >
+                {!projectsList.length && <option value="">No project found</option>}
+                {projectsList.map((project) => (
+                  <option key={project.id} value={project.id}>
+                    {project.title} {project.location ? `- ${project.location}` : ""}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="grid gap-3 sm:grid-cols-2">
+              <div>
+                <label className={cn("text-sm font-medium", theme === "dark" ? "text-white" : "text-[#21133f]")}>Render type</label>
+                <select
+                  value={renderType}
+                  onChange={(event) => setRenderType(event.target.value)}
+                  className={cn("mt-2 h-12 w-full rounded-xl border px-4 text-sm outline-none", theme === "dark" ? "border-white/10 bg-black/20 text-white" : "border-[#ded5ec] bg-white text-[#21133f]")}
+                >
+                  <option>Interior Render</option>
+                  <option>Exterior Elevation</option>
+                  <option>Site Photo Redesign</option>
+                  <option>Render Enhancer</option>
+                </select>
+              </div>
+
+              <div>
+                <label className={cn("text-sm font-medium", theme === "dark" ? "text-white" : "text-[#21133f]")}>Room / area</label>
+                <select
+                  value={roomType}
+                  onChange={(event) => setRoomType(event.target.value)}
+                  className={cn("mt-2 h-12 w-full rounded-xl border px-4 text-sm outline-none", theme === "dark" ? "border-white/10 bg-black/20 text-white" : "border-[#ded5ec] bg-white text-[#21133f]")}
+                >
+                  <option>Living Room</option>
+                  <option>Bedroom</option>
+                  <option>Kitchen</option>
+                  <option>Front Elevation</option>
+                  <option>Bathroom</option>
+                  <option>Office</option>
+                </select>
+              </div>
+            </div>
+
+            <div>
+              <label className={cn("text-sm font-medium", theme === "dark" ? "text-white" : "text-[#21133f]")}>Style</label>
+              <select
+                value={style}
+                onChange={(event) => setStyle(event.target.value)}
+                className={cn("mt-2 h-12 w-full rounded-xl border px-4 text-sm outline-none", theme === "dark" ? "border-white/10 bg-black/20 text-white" : "border-[#ded5ec] bg-white text-[#21133f]")}
+              >
+                <option>Modern Indian Premium</option>
+                <option>Budget Modern</option>
+                <option>Luxury White + Wood</option>
+                <option>Minimal Warm</option>
+                <option>Neo Classical</option>
+                <option>Contemporary Glass Facade</option>
+              </select>
+            </div>
+
+            <div>
+              <label className={cn("text-sm font-medium", theme === "dark" ? "text-white" : "text-[#21133f]")}>Prompt</label>
+              <textarea
+                value={prompt}
+                onChange={(event) => setPrompt(event.target.value)}
+                className={cn("mt-2 min-h-32 w-full rounded-2xl border p-4 text-sm leading-6 outline-none", theme === "dark" ? "border-white/10 bg-black/20 text-white" : "border-[#ded5ec] bg-white text-[#21133f]")}
+              />
+            </div>
+
+            {message && (
+              <div className={cn("rounded-xl border p-3 text-sm", message.includes("success")
+                ? theme === "dark"
+                  ? "border-[#22c55e]/30 bg-[#052e16]/40 text-[#bbf7d0]"
+                  : "border-[#bbf7d0] bg-[#f0fdf4] text-[#166534]"
+                : theme === "dark"
+                  ? "border-[#ef4444]/30 bg-[#450a0a]/40 text-[#fecaca]"
+                  : "border-[#fecaca] bg-[#fef2f2] text-[#991b1b]"
+              )}>
+                {message}
+              </div>
+            )}
+
+            <button
+              onClick={handleCreateRender}
+              disabled={loading}
+              className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#7c3aed] px-5 py-3 text-sm font-medium text-white disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              {loading ? "Saving Render..." : "Save Render Prompt"} <Sparkles className="h-4 w-4" />
             </button>
           </div>
         </section>
 
         <section className={cn("rounded-2xl border p-5", theme === "dark" ? "border-white/10 bg-white/[0.035]" : "border-[#ded5ec] bg-white light-card-shadow")}>
-          <h2 className={cn("font-medium", theme === "dark" ? "text-white" : "text-[#21133f]")}>Generated versions</h2>
-          <div className="mt-5 grid gap-4 md:grid-cols-3">
-            {["Modern Warm", "Premium Wood", "Budget Clean"].map((title, index) => (
-              <div key={title} className={cn("overflow-hidden rounded-2xl border", theme === "dark" ? "border-white/10 bg-black/20" : "border-[#ded5ec] bg-white")}>
-                <div className={cn("flex aspect-[4/3] items-center justify-center", index === 0 ? "bg-[#7c3aed]/20" : index === 1 ? "bg-[#4f46e5]/20" : "bg-[#16a34a]/20")}>
-                  <Home className={cn("h-12 w-12", theme === "dark" ? "text-white/70" : "text-[#6b5a84]")} />
-                </div>
-                <div className="p-4">
-                  <h3 className={cn("font-medium", theme === "dark" ? "text-white" : "text-[#21133f]")}>{title}</h3>
-                  <p className={cn("mt-1 text-xs leading-5", theme === "dark" ? "text-slate-500" : "text-[#817397]")}>AI draft for client discussion.</p>
-                  <button className="mt-4 w-full rounded-xl bg-[#7c3aed] px-3 py-2 text-xs font-medium text-white">
-                    Edit with Chat
-                  </button>
-                </div>
-              </div>
-            ))}
+          <div className="mb-5 flex items-center justify-between">
+            <div>
+              <h2 className={cn("font-medium", theme === "dark" ? "text-white" : "text-[#21133f]")}>Render history</h2>
+              <p className={cn("mt-1 text-sm", theme === "dark" ? "text-slate-500" : "text-[#817397]")}>
+                Saved render prompts and preview images.
+              </p>
+            </div>
+            <button
+              onClick={() => projectId ? loadRendersForProject(projectId) : loadProjectsAndRenders()}
+              className={cn("rounded-xl border px-3 py-2 text-sm font-medium", theme === "dark" ? "border-white/10 bg-white/[0.04] text-white" : "border-[#ded5ec] bg-[#fbf8ff] text-[#6f1cc4]")}
+            >
+              Refresh
+            </button>
           </div>
+
+          {historyLoading && (
+            <div className={cn("rounded-xl border p-4 text-sm", theme === "dark" ? "border-white/10 bg-black/20 text-slate-300" : "border-[#ded5ec] bg-[#fbf8ff] text-[#5d5077]")}>
+              Loading render history...
+            </div>
+          )}
+
+          {!historyLoading && renders.length === 0 && (
+            <div className={cn("rounded-xl border p-4 text-sm", theme === "dark" ? "border-white/10 bg-black/20 text-slate-300" : "border-[#ded5ec] bg-[#fbf8ff] text-[#5d5077]")}>
+              No renders saved yet. Left form se first render prompt save karo.
+            </div>
+          )}
+
+          {!historyLoading && renders.length > 0 && (
+            <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+              {renders.map((render) => (
+                <div key={render.id} className={cn("overflow-hidden rounded-2xl border", theme === "dark" ? "border-white/10 bg-black/20" : "border-[#ded5ec] bg-white")}>
+                  <div className="relative aspect-[4/3] overflow-hidden bg-[#0d0a17]">
+                    {render.imageUrl ? (
+                      <img src={render.imageUrl} alt="" className="h-full w-full object-cover" />
+                    ) : (
+                      <div className="flex h-full items-center justify-center">
+                        <ImageIcon className={cn("h-12 w-12", theme === "dark" ? "text-white/40" : "text-[#6b5a84]")} />
+                      </div>
+                    )}
+                    <div className="absolute left-3 top-3">
+                      <StatusBadge status={render.status} theme={theme} />
+                    </div>
+                  </div>
+
+                  <div className="p-4">
+                    <h3 className={cn("font-medium", theme === "dark" ? "text-white" : "text-[#21133f]")}>{render.renderType}</h3>
+                    <p className={cn("mt-1 text-xs", theme === "dark" ? "text-slate-500" : "text-[#817397]")}>
+                      {render.roomType || "General"} • Version {render.version}
+                    </p>
+                    <p className={cn("mt-3 line-clamp-4 text-xs leading-5", theme === "dark" ? "text-slate-400" : "text-[#5d5077]")}>
+                      {render.prompt}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </section>
       </div>
     </div>
   );
 }
+
 
 function ProjectWorkspace({ theme }: { theme: ResolvedTheme }) {
   return (
