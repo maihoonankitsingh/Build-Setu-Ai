@@ -85,13 +85,35 @@ async function collectData(projectId: string) {
   const bbsData = await apiJson("/api/bbs/list");
   const agreementData = await apiJson("/api/agreements/list");
 
+  const designData =
+    (await readJsonIfExists(path.join(process.cwd(), "data", "generated", "designs.json"))) || [];
+  const structureData =
+    (await readJsonIfExists(path.join(process.cwd(), "data", "generated", "structures.json"))) || [];
+
   const projects = arr(projectsData, ["projects", "data", "items", "rows"]);
   const renders = arr(rendersData, ["renders", "data", "items", "rows"]);
   const boqs = arr(boqData, ["boqs", "boq", "items", "data", "rows"]);
   const bbs = arr(bbsData, ["bbs", "items", "data", "rows"]);
   const agreements = arr(agreementData, ["agreements", "data", "items", "rows"]);
+  const designs = arr(designData, ["designs", "data", "items", "rows"]);
+  const structures = arr(structureData, ["structures", "data", "items", "rows"]);
 
   const project = projects.find((x: any) => String(x.id || x.projectId || x.project_id) === projectId) || null;
+
+  function latestRelevant(items: any[]) {
+    const projectName = String(project?.name || project?.projectName || project?.title || "").toLowerCase();
+
+    const matched = items.filter((x: any) => {
+      if (String(x?.projectId || x?.project_id || "") === projectId) return true;
+      if (projectName && String(x?.projectName || x?.name || x?.title || "").toLowerCase() === projectName) return true;
+      return false;
+    });
+
+    const pool = matched.length ? matched : items;
+    return [...pool].sort((a: any, b: any) => {
+      return new Date(b?.createdAt || 0).getTime() - new Date(a?.createdAt || 0).getTime();
+    })[0] || null;
+  }
 
   return {
     project,
@@ -99,6 +121,8 @@ async function collectData(projectId: string) {
     boqs: boqs.filter(matchProjectId),
     bbs: bbs.filter(matchProjectId),
     agreements: agreements.filter(matchProjectId).slice(0, 3),
+    design: latestRelevant(designs),
+    structure: latestRelevant(structures),
   };
 }
 
@@ -217,6 +241,25 @@ export async function POST(req: NextRequest) {
       y -= 8;
     }
 
+    function listBlock(items: unknown, limit = 8) {
+      const arr = Array.isArray(items) ? items : [];
+      if (!arr.length) {
+        paragraph("No records found.");
+        return;
+      }
+
+      for (const item of arr.slice(0, limit)) {
+        ensure(62);
+        for (const l of wrapText("- " + safeText(item), 86)) {
+          ensure(58);
+          page.drawText(l, { x: 52, y, size: 8.7, font, color: dark });
+          y -= 12;
+        }
+        y -= 2;
+      }
+      y -= 6;
+    }
+
     header();
 
     const p: any = data.project;
@@ -266,6 +309,48 @@ export async function POST(req: NextRequest) {
       }
     }
 
+    title("Naksha / Design Draft");
+    if (!data.design) {
+      paragraph("No Naksha Studio draft found for this report.");
+    } else {
+      const d: any = data.design;
+      row("Project", d.projectName || d.name || d.title);
+      row("Plot / Facing", `${safeText(d.plotSize)} / ${safeText(d.facing)}`);
+      row("Floors", d.floors);
+      row("Status", d.status || "ENGINEER_REVIEW_REQUIRED");
+      paragraph(d?.draft?.summary || d.requirement || "Naksha draft summary not available.");
+
+      title("Naksha Room Schedule");
+      listBlock(d?.draft?.roomSchedule, 10);
+
+      title("Floor Plan Logic");
+      listBlock(d?.draft?.floorPlan, 10);
+
+      title("Vastu / Planning Notes");
+      listBlock(d?.draft?.vastuNotes || d?.draft?.clientNotes, 8);
+    }
+
+    title("Structure Draft");
+    if (!data.structure) {
+      paragraph("No Structure Studio draft found for this report.");
+    } else {
+      const st: any = data.structure;
+      row("Project", st.projectName || st.name || st.title);
+      row("Type / Floors", `${safeText(st.buildingType)} / ${safeText(st.floors)}`);
+      row("Soil Input", st.soilType);
+      row("Status", st.status || "ENGINEER_REVIEW_REQUIRED");
+      paragraph(st?.draft?.summary || st.requirement || "Structure draft summary not available.");
+
+      title("Preliminary Column Grid");
+      listBlock(st?.draft?.columnGrid, 8);
+
+      title("Beam / Slab Notes");
+      listBlock(st?.draft?.beamSlabNotes, 8);
+
+      title("Engineer Review Checklist");
+      listBlock(st?.draft?.engineerChecklist, 10);
+    }
+
     title("BOQ / Estimate Summary");
     if (!data.boqs.length) {
       paragraph("No BOQ records found for this project.");
@@ -312,7 +397,7 @@ export async function POST(req: NextRequest) {
     }
 
     title("Professional Note");
-    paragraph("This report is generated as a project documentation draft. BOQ, BBS, design scope, commercial terms and agreement content should be reviewed by the responsible architect, engineer, contractor, accountant or legal professional before use.");
+    paragraph("This report is generated as a project documentation draft. Naksha, structure, BOQ, BBS, design scope, commercial terms and agreement content should be reviewed by the responsible architect, structural engineer, contractor, accountant or legal professional before use. Structural output is preliminary and not for construction without engineer approval.");
 
     footer();
 
