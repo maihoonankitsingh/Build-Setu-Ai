@@ -40,8 +40,8 @@ const plans: Plan[] = [
     id: "starter",
     label: "PRO",
     name: "Starter",
-    monthlyPrice: 2499,
-    yearlyPrice: 24990,
+    monthlyPrice: 4999,
+    yearlyPrice: 49990,
     monthlyCredits: 200,
     yearlyCredits: 3000,
     accent: "orange",
@@ -60,8 +60,8 @@ const plans: Plan[] = [
     id: "pro",
     label: "MAX",
     name: "Pro",
-    monthlyPrice: 4999,
-    yearlyPrice: 49990,
+    monthlyPrice: 9999,
+    yearlyPrice: 99990,
     monthlyCredits: 500,
     yearlyCredits: 7500,
     accent: "green",
@@ -83,8 +83,8 @@ const plans: Plan[] = [
     id: "agency",
     label: "ULTRA",
     name: "Agency",
-    monthlyPrice: 12999,
-    yearlyPrice: 129990,
+    monthlyPrice: 24999,
+    yearlyPrice: 249990,
     monthlyCredits: 1500,
     yearlyCredits: 24000,
     accent: "purple",
@@ -356,7 +356,7 @@ export default function PricingPage() {
 
             <div className="flex items-end gap-1">
               <span className="text-[28px] font-black tracking-[-0.05em] text-[#181321]">
-                ₹999
+                ₹2,499
               </span>
               <span className="pb-2 text-xs font-semibold text-[#8c839c]">/30 tokens</span>
             </div>
