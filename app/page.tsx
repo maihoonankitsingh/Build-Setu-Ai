@@ -407,7 +407,7 @@ function cn(...items: Array<string | false | null | undefined>) {
 }
 
 function statusClass(status: string, theme: ResolvedTheme) {
-  if (theme === "light") {
+  if (true) {
     const light: Record<string, string> = {
       NEW: "bg-[#2563eb] text-white",
       LIVE: "bg-[#16a34a] text-white",
@@ -477,7 +477,7 @@ function ThemeDropdown({
   const [open, setOpen] = useState(false);
 
   const itemClass =
-    theme === "dark"
+    false
       ? "text-slate-200 hover:bg-white/[0.07]"
       : "text-[#4c4166] hover:bg-[#f7f0ff]";
 
@@ -487,7 +487,7 @@ function ThemeDropdown({
         onClick={() => setOpen((value) => !value)}
         className={cn(
           "flex h-11 w-11 items-center justify-center rounded-xl border transition",
-          theme === "dark"
+          false
             ? "border-white/10 bg-white/[0.04] text-slate-300 hover:bg-white/[0.08]"
             : "border-[#ded5ec] bg-white text-[#5d5077] hover:bg-[#fbf8ff]",
         )}
@@ -500,7 +500,7 @@ function ThemeDropdown({
         <div
           className={cn(
             "absolute right-0 top-13 z-50 w-48 rounded-xl border p-2 shadow-xl",
-            theme === "dark"
+            false
               ? "border-white/10 bg-[#100b1e] shadow-black/30"
               : "border-[#ded5ec] bg-white shadow-purple-100",
           )}
@@ -522,7 +522,7 @@ function ThemeDropdown({
                 className={cn(
                   "flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm",
                   itemClass,
-                  selected && (theme === "dark" ? "bg-[#2c1455] text-white" : "bg-[#f0dcff] text-[#6f1cc4]"),
+                  selected && (false ? "bg-[#2c1455] text-white" : "bg-[#f0dcff] text-[#6f1cc4]"),
                 )}
               >
                 <Icon className="h-3.5 w-3.5 shrink-0" />
@@ -549,7 +549,7 @@ function Sidebar({
     <aside
       className={cn(
         "fixed left-0 top-0 z-30 hidden h-screen w-[270px] overflow-y-auto border-r px-5 py-4 lg:flex lg:flex-col sb-scroll",
-        theme === "dark"
+        false
           ? "border-white/10 bg-[#090713]/96 text-white"
           : "border-[#eee7f7] bg-white text-[#21133f]",
       )}
@@ -559,7 +559,7 @@ function Sidebar({
           <Hammer className="h-5 w-5" />
         </div>
         <div>
-          <div className={cn("text-[21px] font-bold leading-[0.98] tracking-[-0.055em]", theme === "dark" ? "text-white" : "text-[#21133f]")}>
+          <div className={cn("text-[21px] font-bold leading-[0.98] tracking-[-0.055em]", false ? "text-white" : "text-[#21133f]")}>
             Sikhadenge
           </div>
           <div className="text-[21px] font-bold leading-[0.98] tracking-[-0.055em] text-[#c4b5fd]">Build</div>
@@ -574,16 +574,16 @@ function Sidebar({
 
           return (
             <div key={item.id}>
-              {withDivider && <div className={cn("my-2 h-px", theme === "dark" ? "bg-white/10" : "bg-[#eee7f7]")} />}
+              {withDivider && <div className={cn("my-2 h-px", false ? "bg-white/10" : "bg-[#eee7f7]")} />}
               <button
                 onClick={() => setActive(item.id)}
                 className={cn(
                   "flex w-full items-center gap-3 rounded-xl px-3 py-2 text-left text-[14px] font-medium transition",
                   selected
-                    ? theme === "dark"
+                    ? false
                       ? "bg-[#2b1755] text-white shadow-lg shadow-purple-950/20"
                       : "bg-[#f0dcff] text-[#6f1cc4]"
-                    : theme === "dark"
+                    : false
                       ? "text-slate-400 hover:bg-white/[0.06] hover:text-white"
                       : "text-[#5d5077] hover:bg-[#f7f0ff] hover:text-[#6f1cc4]",
                 )}
@@ -596,7 +596,7 @@ function Sidebar({
         })}
       </nav>
 
-      <div className={cn("my-3 h-px", theme === "dark" ? "bg-white/10" : "bg-[#eee7f7]")} />
+      <div className={cn("my-3 h-px", false ? "bg-white/10" : "bg-[#eee7f7]")} />
 
       <div className="space-y-2">
         {bottomNav.map((item) => {
@@ -606,7 +606,7 @@ function Sidebar({
               key={item.label}
               className={cn(
                 "flex w-full items-center gap-3 rounded-xl px-3 py-2 text-left text-[14px] font-medium transition",
-                theme === "dark"
+                false
                   ? "text-slate-400 hover:bg-white/[0.06] hover:text-white"
                   : "text-[#5d5077] hover:bg-[#f7f0ff] hover:text-[#6f1cc4]",
               )}
@@ -622,7 +622,7 @@ function Sidebar({
         <div
           className={cn(
             "rounded-2xl border p-3",
-            theme === "dark"
+            false
               ? "border-white/10 bg-[#070611]"
               : "border-[#ded5ec] bg-[#fbf8ff]",
           )}
@@ -632,8 +632,8 @@ function Sidebar({
               <CreditCard className="h-5 w-5" />
             </div>
             <div>
-              <div className={cn("text-sm font-semibold", theme === "dark" ? "text-white" : "text-[#21133f]")}>Pro Plan</div>
-              <div className={cn("text-xs", theme === "dark" ? "text-slate-500" : "text-[#817397]")}>Renews on 20 Jun 2026</div>
+              <div className={cn("text-sm font-semibold", false ? "text-white" : "text-[#21133f]")}>Pro Plan</div>
+              <div className={cn("text-xs", false ? "text-slate-500" : "text-[#817397]")}>Renews on 20 Jun 2026</div>
             </div>
           </div>
           <button className="w-full rounded-xl bg-gradient-to-r from-[#4f46e5] to-[#b337ff] px-4 py-3 text-sm font-semibold text-white">
@@ -645,7 +645,7 @@ function Sidebar({
           <button
             className={cn(
               "rounded-full p-3",
-              theme === "dark" ? "bg-[#1a102d] text-[#c4b5fd]" : "bg-[#f0dcff] text-[#6f1cc4]",
+              false ? "bg-[#1a102d] text-[#c4b5fd]" : "bg-[#f0dcff] text-[#6f1cc4]",
             )}
           >
             ‹‹
@@ -671,20 +671,20 @@ function Header({
     <header
       className={cn(
         "sticky top-0 z-20 border-b px-4 py-5 backdrop-blur-xl lg:ml-[270px] lg:px-8",
-        theme === "dark"
+        false
           ? "border-white/10 bg-[#070611]/92"
           : "border-[#eee7f7] bg-white/92",
       )}
     >
       <div className="flex items-start justify-between gap-5">
         <div>
-          <button className={cn("mb-4 rounded-xl border p-2 lg:hidden", theme === "dark" ? "border-white/10 text-white" : "border-[#ded5ec] text-[#5d5077]")}>
+          <button className={cn("mb-4 rounded-xl border p-2 lg:hidden", false ? "border-white/10 text-white" : "border-[#ded5ec] text-[#5d5077]")}>
             <Menu className="h-5 w-5" />
           </button>
-          <h1 className={cn("text-[30px] font-bold tracking-[-0.045em]", theme === "dark" ? "text-white" : "text-[#21133f]")}>
+          <h1 className={cn("text-[30px] font-bold tracking-[-0.045em]", false ? "text-white" : "text-[#21133f]")}>
             Welcome back, Builder! 👋
           </h1>
-          <p className={cn("mt-1 text-sm", theme === "dark" ? "text-slate-400" : "text-[#6b5a84]")}>
+          <p className={cn("mt-1 text-sm", false ? "text-slate-400" : "text-[#6b5a84]")}>
             AI-Powered Design & Construction Workspace
           </p>
         </div>
@@ -693,7 +693,7 @@ function Header({
           <div
             className={cn(
               "hidden items-center gap-2 rounded-full border px-4 py-2 text-sm font-medium sm:flex",
-              theme === "dark"
+              false
                 ? "border-white/10 bg-white/[0.04] text-white"
                 : "border-[#ded5ec] bg-[#fbf8ff] text-[#6f1cc4]",
             )}
@@ -710,7 +710,7 @@ function Header({
           <button
             className={cn(
               "flex h-11 w-11 items-center justify-center rounded-xl border transition",
-              theme === "dark"
+              false
                 ? "border-white/10 bg-white/[0.04] text-slate-300 hover:bg-white/[0.08]"
                 : "border-[#ded5ec] bg-white text-[#5d5077] hover:bg-[#fbf8ff]",
             )}
@@ -721,7 +721,7 @@ function Header({
           <div
             className={cn(
               "flex items-center gap-3 rounded-full border px-3 py-2",
-              theme === "dark"
+              false
                 ? "border-white/10 bg-white/[0.04]"
                 : "border-[#ded5ec] bg-white",
             )}
@@ -730,9 +730,9 @@ function Header({
               SB
             </div>
             <div className="hidden md:block">
-              <div className={cn("text-sm font-medium", theme === "dark" ? "text-white" : "text-[#21133f]")}>Sikhadenge Build</div>
+              <div className={cn("text-sm font-medium", false ? "text-white" : "text-[#21133f]")}>Sikhadenge Build</div>
             </div>
-            <ChevronDown className={cn("h-4 w-4", theme === "dark" ? "text-slate-500" : "text-[#817397]")} />
+            <ChevronDown className={cn("h-4 w-4", false ? "text-slate-500" : "text-[#817397]")} />
           </div>
         </div>
       </div>
@@ -761,10 +761,10 @@ function CategoryTabs({
             className={cn(
               "flex min-w-fit items-center gap-2 rounded-xl border px-4 py-3 text-sm font-medium transition",
               selected
-                ? theme === "dark"
+                ? false
                   ? "border-[#8b5cf6] bg-[#2b1755] text-white shadow-lg shadow-purple-950/20"
                   : "border-[#160b25] bg-[#160b25] text-white"
-                : theme === "dark"
+                : false
                   ? "border-white/10 bg-white/[0.03] text-slate-300 hover:bg-white/[0.07] hover:text-white"
                   : "border-[#ded5ec] bg-white text-[#4c4166] hover:border-[#b88bea] hover:bg-[#fbf8ff]",
             )}
@@ -781,7 +781,7 @@ function CategoryTabs({
 function ToolCard({ tool, theme }: { tool: Tool; theme: ResolvedTheme }) {
   const Icon = tool.icon;
 
-  if (theme === "light") {
+  if (true) {
     return (
       <article className="light-card-shadow overflow-hidden rounded-2xl border border-[#ded5ec] bg-white transition hover:-translate-y-1 hover:border-[#a855f7]">
         <div className="relative h-[128px] overflow-hidden bg-[#0d0a17]">
@@ -886,7 +886,7 @@ function PageShell({
     <div
       className={cn(
         "min-h-screen transition-colors",
-        theme === "dark" ? "bg-[#070611] text-white" : "bg-white text-[#21133f]",
+        false ? "bg-[#070611] text-white" : "bg-white text-[#21133f]",
       )}
     >
       <Sidebar active={active} setActive={setActive} theme={theme} />
@@ -924,17 +924,17 @@ function Dashboard({
             key={label as string}
             className={cn(
               "rounded-2xl border p-3",
-              theme === "dark"
+              false
                 ? "border-white/10 bg-white/[0.035]"
                 : "border-[#ded5ec] bg-white light-card-shadow",
             )}
           >
             <div className="flex items-start justify-between">
               <div>
-                <p className={cn("text-sm", theme === "dark" ? "text-slate-400" : "text-[#817397]")}>{label as string}</p>
-                <p className={cn("mt-2 text-3xl font-semibold", theme === "dark" ? "text-white" : "text-[#21133f]")}>{value as string}</p>
+                <p className={cn("text-sm", false ? "text-slate-400" : "text-[#817397]")}>{label as string}</p>
+                <p className={cn("mt-2 text-3xl font-semibold", false ? "text-white" : "text-[#21133f]")}>{value as string}</p>
               </div>
-              <div className={cn("rounded-xl p-3", theme === "dark" ? "bg-[#2b1755] text-[#d8b4fe]" : "bg-[#f0dcff] text-[#6f1cc4]")}>
+              <div className={cn("rounded-xl p-3", false ? "bg-[#2b1755] text-[#d8b4fe]" : "bg-[#f0dcff] text-[#6f1cc4]")}>
                 <Icon className="h-3.5 w-3.5 shrink-0" />
               </div>
             </div>
@@ -961,24 +961,24 @@ function AiHumanExpertise({ theme }: { theme: ResolvedTheme }) {
     <section
       className={cn(
         "relative overflow-hidden rounded-2xl border p-6",
-        theme === "dark"
+        false
           ? "border-[#7c3aed]/45 bg-[#0d0a17] ai-card-glow"
           : "border-[#ded5ec] bg-gradient-to-br from-[#fbf8ff] to-white light-card-shadow",
       )}
     >
       <div className="absolute right-0 top-0 h-full w-1/2 bg-gradient-to-l from-[#7c3aed]/25 to-transparent" />
       <div className="relative">
-        <h2 className={cn("text-2xl font-semibold tracking-[-0.04em]", theme === "dark" ? "text-white" : "text-[#21133f]")}>
+        <h2 className={cn("text-2xl font-semibold tracking-[-0.04em]", false ? "text-white" : "text-[#21133f]")}>
           AI + Human Expertise
         </h2>
-        <p className={cn("mt-1 text-sm", theme === "dark" ? "text-[#c4b5fd]" : "text-[#6f1cc4]")}>
+        <p className={cn("mt-1 text-sm", false ? "text-[#c4b5fd]" : "text-[#6f1cc4]")}>
           Perfect Design. Safe Construction.
         </p>
 
         <div className="mt-6 space-y-3">
           {["AI for Speed & Ideas", "Experts for Safety & Accuracy", "Review gate for BOQ, BBS and drawings"].map((item) => (
-            <div key={item} className={cn("flex items-center gap-3 text-sm", theme === "dark" ? "text-slate-300" : "text-[#5d5077]")}>
-              <span className={cn("flex h-7 w-7 items-center justify-center rounded-lg", theme === "dark" ? "bg-[#2b1755] text-[#d8b4fe]" : "bg-[#f0dcff] text-[#6f1cc4]")}>
+            <div key={item} className={cn("flex items-center gap-3 text-sm", false ? "text-slate-300" : "text-[#5d5077]")}>
+              <span className={cn("flex h-7 w-7 items-center justify-center rounded-lg", false ? "bg-[#2b1755] text-[#d8b4fe]" : "bg-[#f0dcff] text-[#6f1cc4]")}>
                 <CheckCircle2 className="h-4 w-4" />
               </span>
               {item}
@@ -992,13 +992,13 @@ function AiHumanExpertise({ theme }: { theme: ResolvedTheme }) {
 
 function ProjectsPreview({ setActive, theme }: { setActive: (id: ViewKey) => void; theme: ResolvedTheme }) {
   return (
-    <section className={cn("rounded-2xl border p-5", theme === "dark" ? "border-white/10 bg-white/[0.035]" : "border-[#ded5ec] bg-white light-card-shadow")}>
+    <section className={cn("rounded-2xl border p-5", false ? "border-white/10 bg-white/[0.035]" : "border-[#ded5ec] bg-white light-card-shadow")}>
       <div className="mb-4 flex items-center justify-between">
         <div>
-          <h2 className={cn("text-lg font-semibold", theme === "dark" ? "text-white" : "text-[#21133f]")}>Recent Projects</h2>
-          <p className={cn("text-sm", theme === "dark" ? "text-slate-500" : "text-[#817397]")}>Saved client workspaces</p>
+          <h2 className={cn("text-lg font-semibold", false ? "text-white" : "text-[#21133f]")}>Recent Projects</h2>
+          <p className={cn("text-sm", false ? "text-slate-500" : "text-[#817397]")}>Saved client workspaces</p>
         </div>
-        <button onClick={() => setActive("projects")} className={cn("rounded-xl px-3 py-2 text-sm font-medium", theme === "dark" ? "bg-[#2b1755] text-white" : "bg-[#f0dcff] text-[#6f1cc4]")}>
+        <button onClick={() => setActive("projects")} className={cn("rounded-xl px-3 py-2 text-sm font-medium", false ? "bg-[#2b1755] text-white" : "bg-[#f0dcff] text-[#6f1cc4]")}>
           View all
         </button>
       </div>
@@ -1007,12 +1007,12 @@ function ProjectsPreview({ setActive, theme }: { setActive: (id: ViewKey) => voi
         {projects.map((project) => (
           <div
             key={project.title}
-            className={cn("rounded-xl border p-3", theme === "dark" ? "border-white/10 bg-black/15" : "border-[#eee7f7] bg-[#fbf8ff]")}
+            className={cn("rounded-xl border p-3", false ? "border-white/10 bg-black/15" : "border-[#eee7f7] bg-[#fbf8ff]")}
           >
             <div className="flex items-start justify-between gap-3">
               <div>
-                <h3 className={cn("text-sm font-medium", theme === "dark" ? "text-white" : "text-[#21133f]")}>{project.title}</h3>
-                <p className={cn("mt-1 text-xs", theme === "dark" ? "text-slate-500" : "text-[#817397]")}>
+                <h3 className={cn("text-sm font-medium", false ? "text-white" : "text-[#21133f]")}>{project.title}</h3>
+                <p className={cn("mt-1 text-xs", false ? "text-slate-500" : "text-[#817397]")}>
                   {project.type} • {project.city}
                 </p>
               </div>
@@ -1095,19 +1095,19 @@ function ProjectsPage({ theme }: { theme: ResolvedTheme }) {
       </div>
 
       {loading && (
-        <div className={cn("rounded-2xl border p-5 text-sm", theme === "dark" ? "border-white/10 bg-white/[0.035] text-slate-300" : "border-[#ded5ec] bg-white text-[#5d5077] light-card-shadow")}>
+        <div className={cn("rounded-2xl border p-5 text-sm", false ? "border-white/10 bg-white/[0.035] text-slate-300" : "border-[#ded5ec] bg-white text-[#5d5077] light-card-shadow")}>
           Loading projects...
         </div>
       )}
 
       {error && (
-        <div className={cn("rounded-2xl border p-5 text-sm", theme === "dark" ? "border-[#ef4444]/30 bg-[#450a0a]/40 text-[#fecaca]" : "border-[#fecaca] bg-[#fef2f2] text-[#991b1b]")}>
+        <div className={cn("rounded-2xl border p-5 text-sm", false ? "border-[#ef4444]/30 bg-[#450a0a]/40 text-[#fecaca]" : "border-[#fecaca] bg-[#fef2f2] text-[#991b1b]")}>
           {error}
         </div>
       )}
 
       {!loading && !error && liveProjects.length === 0 && (
-        <div className={cn("rounded-2xl border p-5 text-sm", theme === "dark" ? "border-white/10 bg-white/[0.035] text-slate-300" : "border-[#ded5ec] bg-white text-[#5d5077] light-card-shadow")}>
+        <div className={cn("rounded-2xl border p-5 text-sm", false ? "border-white/10 bg-white/[0.035] text-slate-300" : "border-[#ded5ec] bg-white text-[#5d5077] light-card-shadow")}>
           No projects found. New Project section se first project create karo.
         </div>
       )}
@@ -1126,18 +1126,18 @@ function ProjectsPage({ theme }: { theme: ResolvedTheme }) {
             }
 
             return (
-              <div key={project.id} className={cn("rounded-2xl border p-5", theme === "dark" ? "border-white/10 bg-white/[0.035]" : "border-[#ded5ec] bg-white light-card-shadow")}>
+              <div key={project.id} className={cn("rounded-2xl border p-5", false ? "border-white/10 bg-white/[0.035]" : "border-[#ded5ec] bg-white light-card-shadow")}>
                 <div className="flex items-start justify-between gap-3">
                   <div>
-                    <h3 className={cn("font-medium", theme === "dark" ? "text-white" : "text-[#21133f]")}>{project.title}</h3>
-                    <p className={cn("mt-1 text-sm", theme === "dark" ? "text-slate-500" : "text-[#817397]")}>
+                    <h3 className={cn("font-medium", false ? "text-white" : "text-[#21133f]")}>{project.title}</h3>
+                    <p className={cn("mt-1 text-sm", false ? "text-slate-500" : "text-[#817397]")}>
                       {(project.projectType || "Project")} {project.location ? `• ${project.location}` : ""}
                     </p>
                   </div>
                   <StatusBadge status={project.status.replaceAll("_", " ")} theme={theme} />
                 </div>
 
-                <div className={cn("mt-4 grid grid-cols-2 gap-2 rounded-xl p-3", theme === "dark" ? "bg-black/20" : "bg-[#fbf8ff]")}>
+                <div className={cn("mt-4 grid grid-cols-2 gap-2 rounded-xl p-3", false ? "bg-black/20" : "bg-[#fbf8ff]")}>
                   {[
                     ["Plot", project.plotSize || String(structured?.plotSize || "—")],
                     ["Facing", project.facing || String(structured?.facing || "—")],
@@ -1145,8 +1145,8 @@ function ProjectsPage({ theme }: { theme: ResolvedTheme }) {
                     ["Budget", project.budget || String(structured?.budget || "—")],
                   ].map(([label, value]) => (
                     <div key={label}>
-                      <div className={cn("text-xs", theme === "dark" ? "text-slate-500" : "text-[#817397]")}>{label}</div>
-                      <div className={cn("text-sm font-medium", theme === "dark" ? "text-white" : "text-[#21133f]")}>{value}</div>
+                      <div className={cn("text-xs", false ? "text-slate-500" : "text-[#817397]")}>{label}</div>
+                      <div className={cn("text-sm font-medium", false ? "text-white" : "text-[#21133f]")}>{value}</div>
                     </div>
                   ))}
                 </div>
@@ -1159,14 +1159,14 @@ function ProjectsPage({ theme }: { theme: ResolvedTheme }) {
                     ["BBS", project._count?.bbsItems || 0],
                     ["Agreements", project._count?.agreements || 0],
                   ].map(([label, count]) => (
-                    <span key={label} className={cn("rounded-full border px-2.5 py-1 text-xs", theme === "dark" ? "border-white/10 bg-white/[0.04] text-slate-300" : "border-[#ded5ec] bg-[#fbf8ff] text-[#5d5077]")}>
+                    <span key={label} className={cn("rounded-full border px-2.5 py-1 text-xs", false ? "border-white/10 bg-white/[0.04] text-slate-300" : "border-[#ded5ec] bg-[#fbf8ff] text-[#5d5077]")}>
                       {label}: {count}
                     </span>
                   ))}
                 </div>
 
                 {project.brief?.rawBrief && (
-                  <p className={cn("mt-4 line-clamp-3 text-sm leading-6", theme === "dark" ? "text-slate-400" : "text-[#5d5077]")}>
+                  <p className={cn("mt-4 line-clamp-3 text-sm leading-6", false ? "text-slate-400" : "text-[#5d5077]")}>
                     {project.brief.rawBrief}
                   </p>
                 )}
@@ -1183,8 +1183,8 @@ function ProjectsPage({ theme }: { theme: ResolvedTheme }) {
 function PageTitle({ title, desc, theme }: { title: string; desc: string; theme: ResolvedTheme }) {
   return (
     <div className="mb-5">
-      <h2 className={cn("text-[28px] font-semibold tracking-[-0.04em]", theme === "dark" ? "text-white" : "text-[#21133f]")}>{title}</h2>
-      <p className={cn("mt-1 text-sm", theme === "dark" ? "text-slate-400" : "text-[#6b5a84]")}>{desc}</p>
+      <h2 className={cn("text-[28px] font-semibold tracking-[-0.04em]", false ? "text-white" : "text-[#21133f]")}>{title}</h2>
+      <p className={cn("mt-1 text-sm", false ? "text-slate-400" : "text-[#6b5a84]")}>{desc}</p>
     </div>
   );
 }
@@ -1425,20 +1425,20 @@ function NewProjectPage({ theme }: { theme: ResolvedTheme }) {
         <div>
           <div className="flex items-center gap-3">
             <Sparkles className="h-8 w-8 text-[#7c3aed]" />
-            <h1 className={cn("text-3xl font-semibold tracking-tight", theme === "dark" ? "text-white" : "text-[#140b2d]")}>
+            <h1 className={cn("text-3xl font-semibold tracking-tight", false ? "text-white" : "text-[#140b2d]")}>
               Create Architecture Designs with AI
             </h1>
           </div>
-          <p className={cn("mt-3 max-w-3xl text-sm leading-6", theme === "dark" ? "text-slate-400" : "text-[#6f6187]")}>
+          <p className={cn("mt-3 max-w-3xl text-sm leading-6", false ? "text-slate-400" : "text-[#6f6187]")}>
             Select details or write a prompt — generate floor plan ideas, interior concepts, exterior elevation and client-ready design briefs.
           </p>
         </div>
 
         <div className="flex items-center gap-3">
-          <div className={cn("rounded-xl border px-4 py-2 text-sm font-medium", theme === "dark" ? "border-white/10 bg-white/[0.04] text-white" : "border-[#ded5ec] bg-white text-[#21133f] light-card-shadow")}>
+          <div className={cn("rounded-xl border px-4 py-2 text-sm font-medium", false ? "border-white/10 bg-white/[0.04] text-white" : "border-[#ded5ec] bg-white text-[#21133f] light-card-shadow")}>
             ✦ 120 AI Credits
           </div>
-          <button className={cn("rounded-xl border p-2.5", theme === "dark" ? "border-white/10 bg-white/[0.04] text-slate-300" : "border-[#ded5ec] bg-white text-[#6f1cc4]")}>
+          <button className={cn("rounded-xl border p-2.5", false ? "border-white/10 bg-white/[0.04] text-slate-300" : "border-[#ded5ec] bg-white text-[#6f1cc4]")}>
             <HelpCircle className="h-4 w-4" />
           </button>
         </div>
@@ -1452,33 +1452,33 @@ function NewProjectPage({ theme }: { theme: ResolvedTheme }) {
             className={cn(
               "rounded-2xl border p-5 text-center transition",
               activeTool === name
-                ? theme === "dark"
+                ? false
                   ? "border-[#8b5cf6] bg-[#2b1755] text-white"
                   : "border-[#8b5cf6] bg-[#f4edff] text-[#21133f] shadow-[0_18px_50px_rgba(124,58,237,0.12)]"
-                : theme === "dark"
+                : false
                   ? "border-white/10 bg-white/[0.035] text-slate-300 hover:border-[#7c3aed]"
                   : "border-[#ded5ec] bg-white text-[#3f315d] hover:border-[#a855f7]",
             )}
           >
-            <Icon className={cn("mx-auto h-9 w-9", activeTool === name ? "text-[#7c3aed]" : theme === "dark" ? "text-slate-400" : "text-[#7c3aed]")} />
+            <Icon className={cn("mx-auto h-9 w-9", activeTool === name ? "text-[#7c3aed]" : false ? "text-slate-400" : "text-[#7c3aed]")} />
             <div className="mt-4 text-sm font-semibold">{name}</div>
-            <div className={cn("mt-2 text-xs leading-5", theme === "dark" ? "text-slate-500" : "text-[#817397]")}>{desc}</div>
+            <div className={cn("mt-2 text-xs leading-5", false ? "text-slate-500" : "text-[#817397]")}>{desc}</div>
           </button>
         ))}
       </div>
 
       <div className="grid gap-5 xl:grid-cols-[1.05fr_0.95fr]">
-        <section className={cn("rounded-2xl border p-5", theme === "dark" ? "border-white/10 bg-white/[0.035]" : "border-[#ded5ec] bg-white light-card-shadow")}>
+        <section className={cn("rounded-2xl border p-5", false ? "border-white/10 bg-white/[0.035]" : "border-[#ded5ec] bg-white light-card-shadow")}>
           <div className="mb-5 flex items-start justify-between gap-4">
             <div>
-              <h2 className={cn("text-xl font-semibold", theme === "dark" ? "text-white" : "text-[#140b2d]")}>Tell us what you want to create</h2>
-              <p className={cn("mt-2 text-sm", theme === "dark" ? "text-slate-400" : "text-[#6f6187]")}>
+              <h2 className={cn("text-xl font-semibold", false ? "text-white" : "text-[#140b2d]")}>Tell us what you want to create</h2>
+              <p className={cn("mt-2 text-sm", false ? "text-slate-400" : "text-[#6f6187]")}>
                 Write your requirement in your own words or use the quick selectors below.
               </p>
             </div>
             <button
               onClick={buildPromptFromSelectors}
-              className={cn("rounded-xl border px-3 py-2 text-sm font-medium", theme === "dark" ? "border-white/10 bg-white/[0.04] text-slate-200" : "border-[#ded5ec] bg-white text-[#6f1cc4]")}
+              className={cn("rounded-xl border px-3 py-2 text-sm font-medium", false ? "border-white/10 bg-white/[0.04] text-slate-200" : "border-[#ded5ec] bg-white text-[#6f1cc4]")}
             >
               Examples
             </button>
@@ -1486,8 +1486,8 @@ function NewProjectPage({ theme }: { theme: ResolvedTheme }) {
 
           <div className="grid gap-4 lg:grid-cols-3">
             <div>
-              <label className={cn("text-sm font-medium", theme === "dark" ? "text-white" : "text-[#21133f]")}>Project Type</label>
-              <select value={projectType} onChange={(e) => setProjectType(e.target.value)} className={cn("mt-2 h-12 w-full rounded-xl border px-4 text-sm outline-none", theme === "dark" ? "border-white/10 bg-black/20 text-white" : "border-[#ded5ec] bg-white text-[#21133f]")}>
+              <label className={cn("text-sm font-medium", false ? "text-white" : "text-[#21133f]")}>Project Type</label>
+              <select value={projectType} onChange={(e) => setProjectType(e.target.value)} className={cn("mt-2 h-12 w-full rounded-xl border px-4 text-sm outline-none", false ? "border-white/10 bg-black/20 text-white" : "border-[#ded5ec] bg-white text-[#21133f]")}>
                 <option>Residential House</option>
                 <option>Flat Interior</option>
                 <option>Shop / Showroom</option>
@@ -1497,8 +1497,8 @@ function NewProjectPage({ theme }: { theme: ResolvedTheme }) {
             </div>
 
             <div>
-              <label className={cn("text-sm font-medium", theme === "dark" ? "text-white" : "text-[#21133f]")}>House Type</label>
-              <select value={houseType} onChange={(e) => setHouseType(e.target.value)} className={cn("mt-2 h-12 w-full rounded-xl border px-4 text-sm outline-none", theme === "dark" ? "border-white/10 bg-black/20 text-white" : "border-[#ded5ec] bg-white text-[#21133f]")}>
+              <label className={cn("text-sm font-medium", false ? "text-white" : "text-[#21133f]")}>House Type</label>
+              <select value={houseType} onChange={(e) => setHouseType(e.target.value)} className={cn("mt-2 h-12 w-full rounded-xl border px-4 text-sm outline-none", false ? "border-white/10 bg-black/20 text-white" : "border-[#ded5ec] bg-white text-[#21133f]")}>
                 <option>Independent House</option>
                 <option>Duplex</option>
                 <option>Villa</option>
@@ -1507,39 +1507,39 @@ function NewProjectPage({ theme }: { theme: ResolvedTheme }) {
             </div>
 
             <div>
-              <label className={cn("text-sm font-medium", theme === "dark" ? "text-white" : "text-[#21133f]")}>Location</label>
-              <input value={location} onChange={(e) => setLocation(e.target.value)} className={cn("mt-2 h-12 w-full rounded-xl border px-4 text-sm outline-none", theme === "dark" ? "border-white/10 bg-black/20 text-white" : "border-[#ded5ec] bg-white text-[#21133f]")} />
+              <label className={cn("text-sm font-medium", false ? "text-white" : "text-[#21133f]")}>Location</label>
+              <input value={location} onChange={(e) => setLocation(e.target.value)} className={cn("mt-2 h-12 w-full rounded-xl border px-4 text-sm outline-none", false ? "border-white/10 bg-black/20 text-white" : "border-[#ded5ec] bg-white text-[#21133f]")} />
             </div>
           </div>
 
           <div className="mt-5 grid gap-4">
             <div>
-              <label className={cn("text-sm font-medium", theme === "dark" ? "text-white" : "text-[#21133f]")}>Plot Size (ft)</label>
+              <label className={cn("text-sm font-medium", false ? "text-white" : "text-[#21133f]")}>Plot Size (ft)</label>
               <div className="mt-2 grid grid-cols-[1fr_auto_1fr] items-center gap-2">
-                <input value={plotWidth} onChange={(e) => setPlotWidth(e.target.value)} className={cn("h-12 rounded-xl border px-4 text-sm outline-none", theme === "dark" ? "border-white/10 bg-black/20 text-white" : "border-[#ded5ec] bg-white text-[#21133f]")} />
-                <span className={theme === "dark" ? "text-slate-500" : "text-[#817397]"}>×</span>
-                <input value={plotDepth} onChange={(e) => setPlotDepth(e.target.value)} className={cn("h-12 rounded-xl border px-4 text-sm outline-none", theme === "dark" ? "border-white/10 bg-black/20 text-white" : "border-[#ded5ec] bg-white text-[#21133f]")} />
+                <input value={plotWidth} onChange={(e) => setPlotWidth(e.target.value)} className={cn("h-12 rounded-xl border px-4 text-sm outline-none", false ? "border-white/10 bg-black/20 text-white" : "border-[#ded5ec] bg-white text-[#21133f]")} />
+                <span className={false ? "text-slate-500" : "text-[#817397]"}>×</span>
+                <input value={plotDepth} onChange={(e) => setPlotDepth(e.target.value)} className={cn("h-12 rounded-xl border px-4 text-sm outline-none", false ? "border-white/10 bg-black/20 text-white" : "border-[#ded5ec] bg-white text-[#21133f]")} />
               </div>
-              <div className={cn("mt-1 grid grid-cols-2 text-center text-xs", theme === "dark" ? "text-slate-500" : "text-[#817397]")}>
+              <div className={cn("mt-1 grid grid-cols-2 text-center text-xs", false ? "text-slate-500" : "text-[#817397]")}>
                 <span>Width</span>
                 <span>Depth</span>
               </div>
             </div>
 
             <div>
-              <label className={cn("text-sm font-medium", theme === "dark" ? "text-white" : "text-[#21133f]")}>Floors</label>
+              <label className={cn("text-sm font-medium", false ? "text-white" : "text-[#21133f]")}>Floors</label>
               <div className="mt-2 grid grid-cols-4 gap-2">
                 {["G", "G+1", "G+2", "G+3"].map((item) => (
-                  <button key={item} onClick={() => setFloors(item)} className={cn("h-11 rounded-xl border px-2 text-xs font-medium sm:text-sm", floors === item ? "border-[#7c3aed] bg-[#7c3aed] text-white" : theme === "dark" ? "border-white/10 bg-black/20 text-slate-300" : "border-[#ded5ec] bg-white text-[#3f315d]")}>{item}</button>
+                  <button key={item} onClick={() => setFloors(item)} className={cn("h-11 rounded-xl border px-2 text-xs font-medium sm:text-sm", floors === item ? "border-[#7c3aed] bg-[#7c3aed] text-white" : false ? "border-white/10 bg-black/20 text-slate-300" : "border-[#ded5ec] bg-white text-[#3f315d]")}>{item}</button>
                 ))}
               </div>
             </div>
 
             <div>
-              <label className={cn("text-sm font-medium", theme === "dark" ? "text-white" : "text-[#21133f]")}>Facing</label>
+              <label className={cn("text-sm font-medium", false ? "text-white" : "text-[#21133f]")}>Facing</label>
               <div className="mt-2 grid grid-cols-4 gap-2">
                 {["North", "South", "East", "West"].map((item) => (
-                  <button key={item} onClick={() => setFacing(item)} className={cn("flex h-11 min-w-0 items-center justify-center gap-1 rounded-xl border px-2 text-xs font-medium sm:text-sm", facing === item ? "border-[#7c3aed] bg-[#f4edff] text-[#6f1cc4]" : theme === "dark" ? "border-white/10 bg-black/20 text-slate-300" : "border-[#ded5ec] bg-white text-[#3f315d]")}>
+                  <button key={item} onClick={() => setFacing(item)} className={cn("flex h-11 min-w-0 items-center justify-center gap-1 rounded-xl border px-2 text-xs font-medium sm:text-sm", facing === item ? "border-[#7c3aed] bg-[#f4edff] text-[#6f1cc4]" : false ? "border-white/10 bg-black/20 text-slate-300" : "border-[#ded5ec] bg-white text-[#3f315d]")}>
                     <Compass className="h-4 w-4" /> {item}
                   </button>
                 ))}
@@ -1549,20 +1549,20 @@ function NewProjectPage({ theme }: { theme: ResolvedTheme }) {
 
           <div className="mt-5 grid gap-4 lg:grid-cols-3">
             <div>
-              <label className={cn("text-sm font-medium", theme === "dark" ? "text-white" : "text-[#21133f]")}>Bedrooms</label>
-              <select value={bedrooms} onChange={(e) => setBedrooms(e.target.value)} className={cn("mt-2 h-12 w-full rounded-xl border px-4 text-sm outline-none", theme === "dark" ? "border-white/10 bg-black/20 text-white" : "border-[#ded5ec] bg-white text-[#21133f]")}>
+              <label className={cn("text-sm font-medium", false ? "text-white" : "text-[#21133f]")}>Bedrooms</label>
+              <select value={bedrooms} onChange={(e) => setBedrooms(e.target.value)} className={cn("mt-2 h-12 w-full rounded-xl border px-4 text-sm outline-none", false ? "border-white/10 bg-black/20 text-white" : "border-[#ded5ec] bg-white text-[#21133f]")}>
                 <option>1</option><option>2</option><option>3</option><option>4</option><option>5</option>
               </select>
             </div>
             <div>
-              <label className={cn("text-sm font-medium", theme === "dark" ? "text-white" : "text-[#21133f]")}>Bathrooms / Toilets</label>
-              <select value={bathrooms} onChange={(e) => setBathrooms(e.target.value)} className={cn("mt-2 h-12 w-full rounded-xl border px-4 text-sm outline-none", theme === "dark" ? "border-white/10 bg-black/20 text-white" : "border-[#ded5ec] bg-white text-[#21133f]")}>
+              <label className={cn("text-sm font-medium", false ? "text-white" : "text-[#21133f]")}>Bathrooms / Toilets</label>
+              <select value={bathrooms} onChange={(e) => setBathrooms(e.target.value)} className={cn("mt-2 h-12 w-full rounded-xl border px-4 text-sm outline-none", false ? "border-white/10 bg-black/20 text-white" : "border-[#ded5ec] bg-white text-[#21133f]")}>
                 <option>1</option><option>2</option><option>3</option><option>4</option>
               </select>
             </div>
             <div>
-              <label className={cn("text-sm font-medium", theme === "dark" ? "text-white" : "text-[#21133f]")}>Budget Approx.</label>
-              <select value={budget} onChange={(e) => setBudget(e.target.value)} className={cn("mt-2 h-12 w-full rounded-xl border px-4 text-sm outline-none", theme === "dark" ? "border-white/10 bg-black/20 text-white" : "border-[#ded5ec] bg-white text-[#21133f]")}>
+              <label className={cn("text-sm font-medium", false ? "text-white" : "text-[#21133f]")}>Budget Approx.</label>
+              <select value={budget} onChange={(e) => setBudget(e.target.value)} className={cn("mt-2 h-12 w-full rounded-xl border px-4 text-sm outline-none", false ? "border-white/10 bg-black/20 text-white" : "border-[#ded5ec] bg-white text-[#21133f]")}>
                 <option>15 - 25 Lakh</option>
                 <option>30 - 40 Lakh</option>
                 <option>40 - 60 Lakh</option>
@@ -1573,13 +1573,13 @@ function NewProjectPage({ theme }: { theme: ResolvedTheme }) {
           </div>
 
           <div className="mt-5">
-            <label className={cn("text-sm font-medium", theme === "dark" ? "text-white" : "text-[#21133f]")}>Rooms & Spaces</label>
+            <label className={cn("text-sm font-medium", false ? "text-white" : "text-[#21133f]")}>Rooms & Spaces</label>
             <div className="mt-2 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
               {spaceOptions.map((space) => {
                 const selected = spaces.includes(space);
                 return (
-                  <button key={space} onClick={() => toggleSpace(space)} className={cn("flex items-center gap-2 rounded-xl border px-3 py-2.5 text-left text-sm", selected ? "border-[#7c3aed] bg-[#f4edff] text-[#6f1cc4]" : theme === "dark" ? "border-white/10 bg-black/20 text-slate-300" : "border-[#ded5ec] bg-white text-[#3f315d]")}>
-                    <span className={cn("flex h-4 w-4 items-center justify-center rounded border text-[10px]", selected ? "border-[#7c3aed] bg-[#7c3aed] text-white" : theme === "dark" ? "border-white/20" : "border-[#c7bad8]")}>{selected ? "✓" : ""}</span>
+                  <button key={space} onClick={() => toggleSpace(space)} className={cn("flex items-center gap-2 rounded-xl border px-3 py-2.5 text-left text-sm", selected ? "border-[#7c3aed] bg-[#f4edff] text-[#6f1cc4]" : false ? "border-white/10 bg-black/20 text-slate-300" : "border-[#ded5ec] bg-white text-[#3f315d]")}>
+                    <span className={cn("flex h-4 w-4 items-center justify-center rounded border text-[10px]", selected ? "border-[#7c3aed] bg-[#7c3aed] text-white" : false ? "border-white/20" : "border-[#c7bad8]")}>{selected ? "✓" : ""}</span>
                     {space}
                   </button>
                 );
@@ -1588,10 +1588,10 @@ function NewProjectPage({ theme }: { theme: ResolvedTheme }) {
           </div>
 
           <div className="mt-5">
-            <label className={cn("text-sm font-medium", theme === "dark" ? "text-white" : "text-[#21133f]")}>Style / Look</label>
+            <label className={cn("text-sm font-medium", false ? "text-white" : "text-[#21133f]")}>Style / Look</label>
             <div className="mt-2 grid gap-3 sm:grid-cols-3 xl:grid-cols-6">
               {styleOptions.map((item) => (
-                <button key={item} onClick={() => setStyle(item)} className={cn("overflow-hidden rounded-xl border p-2 text-xs font-medium sm:text-sm", style === item ? "border-[#7c3aed] bg-[#f4edff] text-[#6f1cc4]" : theme === "dark" ? "border-white/10 bg-black/20 text-slate-300" : "border-[#ded5ec] bg-white text-[#3f315d]")}>
+                <button key={item} onClick={() => setStyle(item)} className={cn("overflow-hidden rounded-xl border p-2 text-xs font-medium sm:text-sm", style === item ? "border-[#7c3aed] bg-[#f4edff] text-[#6f1cc4]" : false ? "border-white/10 bg-black/20 text-slate-300" : "border-[#ded5ec] bg-white text-[#3f315d]")}>
                   <div className="mb-2 h-16 rounded-lg bg-cover bg-center" style={{ backgroundImage: `url(/tool-images/exterior-elevation.png)` }} />
                   {item}
                 </button>
@@ -1600,20 +1600,20 @@ function NewProjectPage({ theme }: { theme: ResolvedTheme }) {
           </div>
 
           <div className="mt-5">
-            <label className={cn("text-sm font-medium", theme === "dark" ? "text-white" : "text-[#21133f]")}>Prompt</label>
+            <label className={cn("text-sm font-medium", false ? "text-white" : "text-[#21133f]")}>Prompt</label>
             <textarea
               value={brief}
               onChange={(event) => setBrief(event.target.value)}
-              className={cn("mt-2 min-h-28 w-full rounded-2xl border p-4 text-sm leading-6 outline-none", theme === "dark" ? "border-white/10 bg-black/20 text-white" : "border-[#ded5ec] bg-white text-[#21133f]")}
+              className={cn("mt-2 min-h-28 w-full rounded-2xl border p-4 text-sm leading-6 outline-none", false ? "border-white/10 bg-black/20 text-white" : "border-[#ded5ec] bg-white text-[#21133f]")}
             />
           </div>
 
           {message && (
             <div className={cn("mt-4 rounded-xl border p-3 text-sm", message.includes("success")
-              ? theme === "dark"
+              ? false
                 ? "border-[#22c55e]/30 bg-[#052e16]/40 text-[#bbf7d0]"
                 : "border-[#bbf7d0] bg-[#f0fdf4] text-[#166534]"
-              : theme === "dark"
+              : false
                 ? "border-[#ef4444]/30 bg-[#450a0a]/40 text-[#fecaca]"
                 : "border-[#fecaca] bg-[#fef2f2] text-[#991b1b]"
             )}>
@@ -1629,47 +1629,47 @@ function NewProjectPage({ theme }: { theme: ResolvedTheme }) {
             >
               {loading ? "Creating..." : "Create Design Brief"} <Sparkles className="h-4 w-4" />
             </button>
-            <button onClick={clearAll} className={cn("inline-flex items-center justify-center gap-2 rounded-xl border px-5 py-3 text-sm font-medium", theme === "dark" ? "border-white/10 bg-white/[0.04] text-white" : "border-[#ded5ec] bg-white text-[#3f315d]")}>
+            <button onClick={clearAll} className={cn("inline-flex items-center justify-center gap-2 rounded-xl border px-5 py-3 text-sm font-medium", false ? "border-white/10 bg-white/[0.04] text-white" : "border-[#ded5ec] bg-white text-[#3f315d]")}>
               <RefreshCcw className="h-4 w-4" /> Clear All
             </button>
           </div>
         </section>
 
-        <section className={cn("rounded-2xl border p-5", theme === "dark" ? "border-white/10 bg-white/[0.035]" : "border-[#ded5ec] bg-white light-card-shadow")}>
+        <section className={cn("rounded-2xl border p-5", false ? "border-white/10 bg-white/[0.035]" : "border-[#ded5ec] bg-white light-card-shadow")}>
           <div className="mb-4 flex items-start justify-between gap-3">
             <div>
               <div className="flex items-center gap-2">
                 <Sparkles className="h-5 w-5 text-[#7c3aed]" />
-                <h2 className={cn("text-xl font-semibold", theme === "dark" ? "text-white" : "text-[#140b2d]")}>Your Design Brief</h2>
+                <h2 className={cn("text-xl font-semibold", false ? "text-white" : "text-[#140b2d]")}>Your Design Brief</h2>
               </div>
-              <p className={cn("mt-2 text-sm", theme === "dark" ? "text-slate-400" : "text-[#6f6187]")}>
+              <p className={cn("mt-2 text-sm", false ? "text-slate-400" : "text-[#6f6187]")}>
                 Review the AI generated brief. You can edit or add more details.
               </p>
             </div>
-            <span className={cn("rounded-full px-3 py-1 text-xs font-medium", theme === "dark" ? "bg-[#2b1755] text-[#e9d5ff]" : "bg-[#f4edff] text-[#7c3aed]")}>AI Generated</span>
+            <span className={cn("rounded-full px-3 py-1 text-xs font-medium", false ? "bg-[#2b1755] text-[#e9d5ff]" : "bg-[#f4edff] text-[#7c3aed]")}>AI Generated</span>
           </div>
 
-          <div className={cn("rounded-2xl p-5 font-mono text-sm leading-7", theme === "dark" ? "bg-black/25 text-slate-200" : "bg-[#f4edff] text-[#21133f]")}>
+          <div className={cn("rounded-2xl p-5 font-mono text-sm leading-7", false ? "bg-black/25 text-slate-200" : "bg-[#f4edff] text-[#21133f]")}>
             {brief}
           </div>
 
-          <h3 className={cn("mt-5 text-sm font-semibold", theme === "dark" ? "text-white" : "text-[#21133f]")}>Brief Summary</h3>
+          <h3 className={cn("mt-5 text-sm font-semibold", false ? "text-white" : "text-[#21133f]")}>Brief Summary</h3>
 
           <div className="mt-3 grid gap-3 sm:grid-cols-2">
             {summaryRows.map(([label, value, Icon]) => (
-              <div key={String(label)} className={cn("flex items-center gap-3 rounded-xl border p-3", theme === "dark" ? "border-white/10 bg-black/20" : "border-[#eee7f7] bg-white")}>
+              <div key={String(label)} className={cn("flex items-center gap-3 rounded-xl border p-3", false ? "border-white/10 bg-black/20" : "border-[#eee7f7] bg-white")}>
                 {typeof Icon !== "string" && <Icon className="h-5 w-5 text-[#7c3aed]" />}
                 <div>
-                  <div className={cn("text-xs", theme === "dark" ? "text-slate-500" : "text-[#817397]")}>{String(label)}</div>
-                  <div className={cn("text-sm font-medium", theme === "dark" ? "text-white" : "text-[#21133f]")}>{String(value || "—")}</div>
+                  <div className={cn("text-xs", false ? "text-slate-500" : "text-[#817397]")}>{String(label)}</div>
+                  <div className={cn("text-sm font-medium", false ? "text-white" : "text-[#21133f]")}>{String(value || "—")}</div>
                 </div>
               </div>
             ))}
           </div>
 
           {result?.structuredBrief && (
-            <div className={cn("mt-5 rounded-2xl border p-4", theme === "dark" ? "border-white/10 bg-black/20" : "border-[#ded5ec] bg-[#fbf8ff]")}>
-              <div className={cn("mb-3 flex items-center gap-2 text-sm font-medium", theme === "dark" ? "text-white" : "text-[#21133f]")}>
+            <div className={cn("mt-5 rounded-2xl border p-4", false ? "border-white/10 bg-black/20" : "border-[#ded5ec] bg-[#fbf8ff]")}>
+              <div className={cn("mb-3 flex items-center gap-2 text-sm font-medium", false ? "text-white" : "text-[#21133f]")}>
                 <CheckCircle2 className="h-4 w-4 text-[#12b76a]" />
                 Structured Brief Saved
               </div>
@@ -1678,9 +1678,9 @@ function NewProjectPage({ theme }: { theme: ResolvedTheme }) {
                 {Object.entries(result.structuredBrief)
                   .filter(([key]) => !["safetyNotes", "detectedRooms", "priorityOutputs"].includes(key))
                   .map(([key, value]) => (
-                    <div key={key} className={cn("rounded-xl px-3 py-2", theme === "dark" ? "bg-white/[0.04]" : "bg-white")}>
-                      <div className={cn("text-xs capitalize", theme === "dark" ? "text-slate-500" : "text-[#817397]")}>{key}</div>
-                      <div className={cn("text-sm font-medium", theme === "dark" ? "text-white" : "text-[#21133f]")}>
+                    <div key={key} className={cn("rounded-xl px-3 py-2", false ? "bg-white/[0.04]" : "bg-white")}>
+                      <div className={cn("text-xs capitalize", false ? "text-slate-500" : "text-[#817397]")}>{key}</div>
+                      <div className={cn("text-sm font-medium", false ? "text-white" : "text-[#21133f]")}>
                         {String(value || "Not detected")}
                       </div>
                     </div>
@@ -1689,10 +1689,10 @@ function NewProjectPage({ theme }: { theme: ResolvedTheme }) {
 
               {result.questions && (
                 <div className="mt-4">
-                  <h4 className={cn("text-sm font-medium", theme === "dark" ? "text-white" : "text-[#21133f]")}>Smart Questions</h4>
+                  <h4 className={cn("text-sm font-medium", false ? "text-white" : "text-[#21133f]")}>Smart Questions</h4>
                   <div className="mt-2 space-y-2">
                     {result.questions.map((question, index) => (
-                      <div key={question} className={cn("rounded-xl px-3 py-2 text-sm", theme === "dark" ? "bg-white/[0.04] text-slate-300" : "bg-white text-[#3f315d]")}>
+                      <div key={question} className={cn("rounded-xl px-3 py-2 text-sm", false ? "bg-white/[0.04] text-slate-300" : "bg-white text-[#3f315d]")}>
                         {index + 1}. {question}
                       </div>
                     ))}
@@ -1710,12 +1710,12 @@ function NewProjectPage({ theme }: { theme: ResolvedTheme }) {
             {loading ? "Generating..." : "Generate Design Preview"} <ArrowRight className="h-4 w-4" />
           </button>
 
-          <p className={cn("mt-3 text-center text-xs", theme === "dark" ? "text-slate-500" : "text-[#817397]")}>
+          <p className={cn("mt-3 text-center text-xs", false ? "text-slate-500" : "text-[#817397]")}>
             You can review and refine the results later.
           </p>
 
           {result?.projectId && (
-            <div className={cn("mt-4 rounded-xl border p-3 text-xs", theme === "dark" ? "border-white/10 bg-white/[0.04] text-slate-500" : "border-[#eee7f7] bg-white text-[#817397]")}>
+            <div className={cn("mt-4 rounded-xl border p-3 text-xs", false ? "border-white/10 bg-white/[0.04] text-slate-500" : "border-[#eee7f7] bg-white text-[#817397]")}>
               Project ID: {result.projectId}
             </div>
           )}
@@ -1857,19 +1857,19 @@ function RenderStudio({ theme }: { theme: ResolvedTheme }) {
       <PageTitle title="Render Studio" desc="Interior and elevation render prompts save karo aur project-wise render history dekho." theme={theme} />
 
       <div className="grid gap-5 xl:grid-cols-[0.85fr_1.15fr]">
-        <section className={cn("rounded-2xl border p-5", theme === "dark" ? "border-white/10 bg-white/[0.035]" : "border-[#ded5ec] bg-white light-card-shadow")}>
+        <section className={cn("rounded-2xl border p-5", false ? "border-white/10 bg-white/[0.035]" : "border-[#ded5ec] bg-white light-card-shadow")}>
           <StatusBadge status="LIVE" theme={theme} />
 
           <div className="mt-4 space-y-3">
             <div>
-              <label className={cn("text-sm font-medium", theme === "dark" ? "text-white" : "text-[#21133f]")}>Project</label>
+              <label className={cn("text-sm font-medium", false ? "text-white" : "text-[#21133f]")}>Project</label>
               <select
                 value={projectId}
                 onChange={(event) => {
                   setProjectId(event.target.value);
                   loadRendersForProject(event.target.value);
                 }}
-                className={cn("mt-2 h-12 w-full rounded-xl border px-4 text-sm outline-none", theme === "dark" ? "border-white/10 bg-black/20 text-white" : "border-[#ded5ec] bg-white text-[#21133f]")}
+                className={cn("mt-2 h-12 w-full rounded-xl border px-4 text-sm outline-none", false ? "border-white/10 bg-black/20 text-white" : "border-[#ded5ec] bg-white text-[#21133f]")}
               >
                 {!projectsList.length && <option value="">No project found</option>}
                 {projectsList.map((project) => (
@@ -1882,11 +1882,11 @@ function RenderStudio({ theme }: { theme: ResolvedTheme }) {
 
             <div className="grid gap-3 sm:grid-cols-2">
               <div>
-                <label className={cn("text-sm font-medium", theme === "dark" ? "text-white" : "text-[#21133f]")}>Render type</label>
+                <label className={cn("text-sm font-medium", false ? "text-white" : "text-[#21133f]")}>Render type</label>
                 <select
                   value={renderType}
                   onChange={(event) => setRenderType(event.target.value)}
-                  className={cn("mt-2 h-12 w-full rounded-xl border px-4 text-sm outline-none", theme === "dark" ? "border-white/10 bg-black/20 text-white" : "border-[#ded5ec] bg-white text-[#21133f]")}
+                  className={cn("mt-2 h-12 w-full rounded-xl border px-4 text-sm outline-none", false ? "border-white/10 bg-black/20 text-white" : "border-[#ded5ec] bg-white text-[#21133f]")}
                 >
                   <option>Interior Render</option>
                   <option>Exterior Elevation</option>
@@ -1896,11 +1896,11 @@ function RenderStudio({ theme }: { theme: ResolvedTheme }) {
               </div>
 
               <div>
-                <label className={cn("text-sm font-medium", theme === "dark" ? "text-white" : "text-[#21133f]")}>Room / area</label>
+                <label className={cn("text-sm font-medium", false ? "text-white" : "text-[#21133f]")}>Room / area</label>
                 <select
                   value={roomType}
                   onChange={(event) => setRoomType(event.target.value)}
-                  className={cn("mt-2 h-12 w-full rounded-xl border px-4 text-sm outline-none", theme === "dark" ? "border-white/10 bg-black/20 text-white" : "border-[#ded5ec] bg-white text-[#21133f]")}
+                  className={cn("mt-2 h-12 w-full rounded-xl border px-4 text-sm outline-none", false ? "border-white/10 bg-black/20 text-white" : "border-[#ded5ec] bg-white text-[#21133f]")}
                 >
                   <option>Living Room</option>
                   <option>Bedroom</option>
@@ -1913,11 +1913,11 @@ function RenderStudio({ theme }: { theme: ResolvedTheme }) {
             </div>
 
             <div>
-              <label className={cn("text-sm font-medium", theme === "dark" ? "text-white" : "text-[#21133f]")}>Style</label>
+              <label className={cn("text-sm font-medium", false ? "text-white" : "text-[#21133f]")}>Style</label>
               <select
                 value={style}
                 onChange={(event) => setStyle(event.target.value)}
-                className={cn("mt-2 h-12 w-full rounded-xl border px-4 text-sm outline-none", theme === "dark" ? "border-white/10 bg-black/20 text-white" : "border-[#ded5ec] bg-white text-[#21133f]")}
+                className={cn("mt-2 h-12 w-full rounded-xl border px-4 text-sm outline-none", false ? "border-white/10 bg-black/20 text-white" : "border-[#ded5ec] bg-white text-[#21133f]")}
               >
                 <option>Modern Indian Premium</option>
                 <option>Budget Modern</option>
@@ -1929,20 +1929,20 @@ function RenderStudio({ theme }: { theme: ResolvedTheme }) {
             </div>
 
             <div>
-              <label className={cn("text-sm font-medium", theme === "dark" ? "text-white" : "text-[#21133f]")}>Prompt</label>
+              <label className={cn("text-sm font-medium", false ? "text-white" : "text-[#21133f]")}>Prompt</label>
               <textarea
                 value={prompt}
                 onChange={(event) => setPrompt(event.target.value)}
-                className={cn("mt-2 min-h-32 w-full rounded-2xl border p-4 text-sm leading-6 outline-none", theme === "dark" ? "border-white/10 bg-black/20 text-white" : "border-[#ded5ec] bg-white text-[#21133f]")}
+                className={cn("mt-2 min-h-32 w-full rounded-2xl border p-4 text-sm leading-6 outline-none", false ? "border-white/10 bg-black/20 text-white" : "border-[#ded5ec] bg-white text-[#21133f]")}
               />
             </div>
 
             {message && (
               <div className={cn("rounded-xl border p-3 text-sm", message.includes("success")
-                ? theme === "dark"
+                ? false
                   ? "border-[#22c55e]/30 bg-[#052e16]/40 text-[#bbf7d0]"
                   : "border-[#bbf7d0] bg-[#f0fdf4] text-[#166534]"
-                : theme === "dark"
+                : false
                   ? "border-[#ef4444]/30 bg-[#450a0a]/40 text-[#fecaca]"
                   : "border-[#fecaca] bg-[#fef2f2] text-[#991b1b]"
               )}>
@@ -1960,30 +1960,30 @@ function RenderStudio({ theme }: { theme: ResolvedTheme }) {
           </div>
         </section>
 
-        <section className={cn("rounded-2xl border p-5", theme === "dark" ? "border-white/10 bg-white/[0.035]" : "border-[#ded5ec] bg-white light-card-shadow")}>
+        <section className={cn("rounded-2xl border p-5", false ? "border-white/10 bg-white/[0.035]" : "border-[#ded5ec] bg-white light-card-shadow")}>
           <div className="mb-5 flex items-center justify-between">
             <div>
-              <h2 className={cn("font-medium", theme === "dark" ? "text-white" : "text-[#21133f]")}>Render history</h2>
-              <p className={cn("mt-1 text-sm", theme === "dark" ? "text-slate-500" : "text-[#817397]")}>
+              <h2 className={cn("font-medium", false ? "text-white" : "text-[#21133f]")}>Render history</h2>
+              <p className={cn("mt-1 text-sm", false ? "text-slate-500" : "text-[#817397]")}>
                 Saved render prompts and preview images.
               </p>
             </div>
             <button
               onClick={() => projectId ? loadRendersForProject(projectId) : loadProjectsAndRenders()}
-              className={cn("rounded-xl border px-3 py-2 text-sm font-medium", theme === "dark" ? "border-white/10 bg-white/[0.04] text-white" : "border-[#ded5ec] bg-[#fbf8ff] text-[#6f1cc4]")}
+              className={cn("rounded-xl border px-3 py-2 text-sm font-medium", false ? "border-white/10 bg-white/[0.04] text-white" : "border-[#ded5ec] bg-[#fbf8ff] text-[#6f1cc4]")}
             >
               Refresh
             </button>
           </div>
 
           {historyLoading && (
-            <div className={cn("rounded-xl border p-4 text-sm", theme === "dark" ? "border-white/10 bg-black/20 text-slate-300" : "border-[#ded5ec] bg-[#fbf8ff] text-[#5d5077]")}>
+            <div className={cn("rounded-xl border p-4 text-sm", false ? "border-white/10 bg-black/20 text-slate-300" : "border-[#ded5ec] bg-[#fbf8ff] text-[#5d5077]")}>
               Loading render history...
             </div>
           )}
 
           {!historyLoading && renders.length === 0 && (
-            <div className={cn("rounded-xl border p-4 text-sm", theme === "dark" ? "border-white/10 bg-black/20 text-slate-300" : "border-[#ded5ec] bg-[#fbf8ff] text-[#5d5077]")}>
+            <div className={cn("rounded-xl border p-4 text-sm", false ? "border-white/10 bg-black/20 text-slate-300" : "border-[#ded5ec] bg-[#fbf8ff] text-[#5d5077]")}>
               No renders saved yet. Left form se first render prompt save karo.
             </div>
           )}
@@ -1991,13 +1991,13 @@ function RenderStudio({ theme }: { theme: ResolvedTheme }) {
           {!historyLoading && renders.length > 0 && (
             <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
               {renders.map((render) => (
-                <div key={render.id} className={cn("overflow-hidden rounded-2xl border", theme === "dark" ? "border-white/10 bg-black/20" : "border-[#ded5ec] bg-white")}>
+                <div key={render.id} className={cn("overflow-hidden rounded-2xl border", false ? "border-white/10 bg-black/20" : "border-[#ded5ec] bg-white")}>
                   <div className="relative aspect-[4/3] overflow-hidden bg-[#0d0a17]">
                     {render.imageUrl ? (
                       <img src={render.imageUrl} alt="" className="h-full w-full object-cover" />
                     ) : (
                       <div className="flex h-full items-center justify-center">
-                        <ImageIcon className={cn("h-12 w-12", theme === "dark" ? "text-white/40" : "text-[#6b5a84]")} />
+                        <ImageIcon className={cn("h-12 w-12", false ? "text-white/40" : "text-[#6b5a84]")} />
                       </div>
                     )}
                     <div className="absolute left-3 top-3">
@@ -2006,11 +2006,11 @@ function RenderStudio({ theme }: { theme: ResolvedTheme }) {
                   </div>
 
                   <div className="p-4">
-                    <h3 className={cn("font-medium", theme === "dark" ? "text-white" : "text-[#21133f]")}>{render.renderType}</h3>
-                    <p className={cn("mt-1 text-xs", theme === "dark" ? "text-slate-500" : "text-[#817397]")}>
+                    <h3 className={cn("font-medium", false ? "text-white" : "text-[#21133f]")}>{render.renderType}</h3>
+                    <p className={cn("mt-1 text-xs", false ? "text-slate-500" : "text-[#817397]")}>
                       {render.roomType || "General"} • Version {render.version}
                     </p>
-                    <p className={cn("mt-3 line-clamp-4 text-xs leading-5", theme === "dark" ? "text-slate-400" : "text-[#5d5077]")}>
+                    <p className={cn("mt-3 line-clamp-4 text-xs leading-5", false ? "text-slate-400" : "text-[#5d5077]")}>
                       {render.prompt}
                     </p>
                   </div>
@@ -2029,17 +2029,17 @@ function ProjectWorkspace({ theme }: { theme: ResolvedTheme }) {
   return (
     <div>
       <PageTitle title="Project Workspace" desc="BOQ, BBS, renders, exports and review status ek jagah." theme={theme} />
-      <div className={cn("mb-5 rounded-2xl border p-5", theme === "dark" ? "border-white/10 bg-white/[0.035]" : "border-[#ded5ec] bg-white light-card-shadow")}>
+      <div className={cn("mb-5 rounded-2xl border p-5", false ? "border-white/10 bg-white/[0.035]" : "border-[#ded5ec] bg-white light-card-shadow")}>
         <div className="flex flex-col justify-between gap-4 lg:flex-row lg:items-start">
           <div>
             <div className="mb-3 flex flex-wrap gap-2">
               <StatusBadge status="AI Draft" theme={theme} />
               <StatusBadge status="Review Required" theme={theme} />
             </div>
-            <h2 className={cn("text-[26px] font-semibold tracking-[-0.04em]", theme === "dark" ? "text-white" : "text-[#21133f]")}>
+            <h2 className={cn("text-[26px] font-semibold tracking-[-0.04em]", false ? "text-white" : "text-[#21133f]")}>
               30x40 North Facing House — Raipur
             </h2>
-            <p className={cn("mt-2 text-sm", theme === "dark" ? "text-slate-500" : "text-[#817397]")}>
+            <p className={cn("mt-2 text-sm", false ? "text-slate-500" : "text-[#817397]")}>
               Residential G+1 • Interior + Elevation MVP • BOQ/BBS staged for later phases
             </p>
           </div>
@@ -2050,8 +2050,8 @@ function ProjectWorkspace({ theme }: { theme: ResolvedTheme }) {
       </div>
 
       <div className="grid gap-5 xl:grid-cols-[1fr_0.85fr]">
-        <div className={cn("rounded-2xl border p-5", theme === "dark" ? "border-white/10 bg-white/[0.035]" : "border-[#ded5ec] bg-white light-card-shadow")}>
-          <h2 className={cn("font-medium", theme === "dark" ? "text-white" : "text-[#21133f]")}>Project outputs</h2>
+        <div className={cn("rounded-2xl border p-5", false ? "border-white/10 bg-white/[0.035]" : "border-[#ded5ec] bg-white light-card-shadow")}>
+          <h2 className={cn("font-medium", false ? "text-white" : "text-[#21133f]")}>Project outputs</h2>
           <div className="mt-5 grid gap-4 md:grid-cols-2">
             {[
               ["Interior Render", "3 versions generated", "LIVE"],
@@ -2059,9 +2059,9 @@ function ProjectWorkspace({ theme }: { theme: ResolvedTheme }) {
               ["Floor Plan", "Concept queued", "PHASE 2"],
               ["Client PDF", "Ready to export", "LIVE"],
             ].map(([title, desc, status]) => (
-              <div key={title} className={cn("rounded-2xl border p-4", theme === "dark" ? "border-white/10 bg-black/20" : "border-[#eee7f7] bg-[#fbf8ff]")}>
-                <h3 className={cn("font-medium", theme === "dark" ? "text-white" : "text-[#21133f]")}>{title}</h3>
-                <p className={cn("mt-1 text-sm", theme === "dark" ? "text-slate-500" : "text-[#817397]")}>{desc}</p>
+              <div key={title} className={cn("rounded-2xl border p-4", false ? "border-white/10 bg-black/20" : "border-[#eee7f7] bg-[#fbf8ff]")}>
+                <h3 className={cn("font-medium", false ? "text-white" : "text-[#21133f]")}>{title}</h3>
+                <p className={cn("mt-1 text-sm", false ? "text-slate-500" : "text-[#817397]")}>{desc}</p>
                 <div className="mt-4">
                   <StatusBadge status={status} theme={theme} />
                 </div>
@@ -2078,8 +2078,8 @@ function ProjectWorkspace({ theme }: { theme: ResolvedTheme }) {
 
 function SafetyPanel({ theme }: { theme: ResolvedTheme }) {
   return (
-    <div className={cn("rounded-2xl border p-5", theme === "dark" ? "border-[#facc15]/20 bg-[#3b2507]/30" : "border-[#fed7aa] bg-[#fff7ed] light-card-shadow")}>
-      <h2 className={cn("font-medium", theme === "dark" ? "text-white" : "text-[#21133f]")}>Safety and review layer</h2>
+    <div className={cn("rounded-2xl border p-5", false ? "border-[#facc15]/20 bg-[#3b2507]/30" : "border-[#fed7aa] bg-[#fff7ed] light-card-shadow")}>
+      <h2 className={cn("font-medium", false ? "text-white" : "text-[#21133f]")}>Safety and review layer</h2>
       <div className="mt-4 space-y-3">
         {[
           "Final construction documents require professional review.",
@@ -2087,7 +2087,7 @@ function SafetyPanel({ theme }: { theme: ResolvedTheme }) {
           "BOQ quantities are draft until drawings/site are verified.",
           "BBS requires engineer-entered reinforcement data.",
         ].map((item) => (
-          <div key={item} className={cn("flex gap-3 rounded-xl border p-3 text-sm leading-6", theme === "dark" ? "border-[#facc15]/20 bg-black/20 text-[#fde68a]" : "border-[#fed7aa] bg-white text-[#9a3412]")}>
+          <div key={item} className={cn("flex gap-3 rounded-xl border p-3 text-sm leading-6", false ? "border-[#facc15]/20 bg-black/20 text-[#fde68a]" : "border-[#fed7aa] bg-white text-[#9a3412]")}>
             <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0" />
             {item}
           </div>
@@ -2208,13 +2208,13 @@ function BoqPage({ theme }: { theme: ResolvedTheme }) {
     <div>
       <PageTitle title="BOQ / Estimate" desc="Project-wise draft BOQ, material quantity, amount summary and review status." theme={theme} />
 
-      <section className={cn("rounded-2xl border p-5", theme === "dark" ? "border-white/10 bg-white/[0.035]" : "border-[#ded5ec] bg-white light-card-shadow")}>
+      <section className={cn("rounded-2xl border p-5", false ? "border-white/10 bg-white/[0.035]" : "border-[#ded5ec] bg-white light-card-shadow")}>
         <div className="mb-5 flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
           <div className="grid flex-1 gap-3 sm:grid-cols-[1fr_auto]">
             <select
               value={projectId}
               onChange={(event) => handleProjectChange(event.target.value)}
-              className={cn("h-12 rounded-xl border px-4 text-sm outline-none", theme === "dark" ? "border-white/10 bg-black/20 text-white" : "border-[#ded5ec] bg-white text-[#21133f]")}
+              className={cn("h-12 rounded-xl border px-4 text-sm outline-none", false ? "border-white/10 bg-black/20 text-white" : "border-[#ded5ec] bg-white text-[#21133f]")}
             >
               {!projectsList.length && <option value="">No project found</option>}
               {projectsList.map((project) => (
@@ -2233,24 +2233,24 @@ function BoqPage({ theme }: { theme: ResolvedTheme }) {
             </button>
           </div>
 
-          <div className={cn("rounded-xl border px-4 py-3 text-sm", theme === "dark" ? "border-white/10 bg-black/20 text-slate-200" : "border-[#ded5ec] bg-[#fbf8ff] text-[#21133f]")}>
+          <div className={cn("rounded-xl border px-4 py-3 text-sm", false ? "border-white/10 bg-black/20 text-slate-200" : "border-[#ded5ec] bg-[#fbf8ff] text-[#21133f]")}>
             Total: ₹{totalAmount.toLocaleString("en-IN")}
           </div>
         </div>
 
         <div className="mb-5 flex flex-wrap items-center gap-3">
           <StatusBadge status="PHASE 3" theme={theme} />
-          <span className={cn("text-sm", theme === "dark" ? "text-slate-400" : "text-[#817397]")}>
+          <span className={cn("text-sm", false ? "text-slate-400" : "text-[#817397]")}>
             {items.length} BOQ items
           </span>
         </div>
 
         {message && (
           <div className={cn("mb-5 rounded-xl border p-3 text-sm", message.includes("success")
-            ? theme === "dark"
+            ? false
               ? "border-[#22c55e]/30 bg-[#052e16]/40 text-[#bbf7d0]"
               : "border-[#bbf7d0] bg-[#f0fdf4] text-[#166534]"
-            : theme === "dark"
+            : false
               ? "border-[#ef4444]/30 bg-[#450a0a]/40 text-[#fecaca]"
               : "border-[#fecaca] bg-[#fef2f2] text-[#991b1b]"
           )}>
@@ -2259,22 +2259,22 @@ function BoqPage({ theme }: { theme: ResolvedTheme }) {
         )}
 
         {loading && (
-          <div className={cn("rounded-xl border p-4 text-sm", theme === "dark" ? "border-white/10 bg-black/20 text-slate-300" : "border-[#ded5ec] bg-[#fbf8ff] text-[#5d5077]")}>
+          <div className={cn("rounded-xl border p-4 text-sm", false ? "border-white/10 bg-black/20 text-slate-300" : "border-[#ded5ec] bg-[#fbf8ff] text-[#5d5077]")}>
             Loading BOQ...
           </div>
         )}
 
         {!loading && items.length === 0 && (
-          <div className={cn("rounded-xl border p-4 text-sm", theme === "dark" ? "border-white/10 bg-black/20 text-slate-300" : "border-[#ded5ec] bg-[#fbf8ff] text-[#5d5077]")}>
+          <div className={cn("rounded-xl border p-4 text-sm", false ? "border-white/10 bg-black/20 text-slate-300" : "border-[#ded5ec] bg-[#fbf8ff] text-[#5d5077]")}>
             No BOQ items found. Generate BOQ Draft button click karo.
           </div>
         )}
 
         {!loading && items.length > 0 && (
-          <div className={cn("overflow-hidden rounded-2xl border", theme === "dark" ? "border-white/10" : "border-[#ded5ec]")}>
+          <div className={cn("overflow-hidden rounded-2xl border", false ? "border-white/10" : "border-[#ded5ec]")}>
             <div className="overflow-x-auto">
               <table className="w-full min-w-[900px] text-left text-sm">
-                <thead className={cn("text-xs uppercase tracking-wide", theme === "dark" ? "bg-white/[0.04] text-slate-400" : "bg-[#fbf8ff] text-[#817397]")}>
+                <thead className={cn("text-xs uppercase tracking-wide", false ? "bg-white/[0.04] text-slate-400" : "bg-[#fbf8ff] text-[#817397]")}>
                   <tr>
                     <th className="p-4">Code</th>
                     <th>Description</th>
@@ -2285,17 +2285,17 @@ function BoqPage({ theme }: { theme: ResolvedTheme }) {
                     <th>Status</th>
                   </tr>
                 </thead>
-                <tbody className={cn("divide-y", theme === "dark" ? "divide-white/10" : "divide-[#eee7f7]")}>
+                <tbody className={cn("divide-y", false ? "divide-white/10" : "divide-[#eee7f7]")}>
                   {items.map((item) => (
                     <tr key={item.id}>
-                      <td className={cn("p-4 font-medium", theme === "dark" ? "text-white" : "text-[#21133f]")}>{item.itemCode || "—"}</td>
-                      <td className={theme === "dark" ? "text-slate-300" : "text-[#3f315d]"}>{item.description}</td>
-                      <td className={theme === "dark" ? "text-slate-400" : "text-[#5d5077]"}>{item.unit || "—"}</td>
-                      <td className={theme === "dark" ? "text-slate-400" : "text-[#5d5077]"}>{item.quantity ?? "—"}</td>
-                      <td className={theme === "dark" ? "text-slate-400" : "text-[#5d5077]"}>₹{Number(item.rate || 0).toLocaleString("en-IN")}</td>
-                      <td className={cn("font-medium", theme === "dark" ? "text-white" : "text-[#21133f]")}>₹{Number(item.amount || 0).toLocaleString("en-IN")}</td>
+                      <td className={cn("p-4 font-medium", false ? "text-white" : "text-[#21133f]")}>{item.itemCode || "—"}</td>
+                      <td className={false ? "text-slate-300" : "text-[#3f315d]"}>{item.description}</td>
+                      <td className={false ? "text-slate-400" : "text-[#5d5077]"}>{item.unit || "—"}</td>
+                      <td className={false ? "text-slate-400" : "text-[#5d5077]"}>{item.quantity ?? "—"}</td>
+                      <td className={false ? "text-slate-400" : "text-[#5d5077]"}>₹{Number(item.rate || 0).toLocaleString("en-IN")}</td>
+                      <td className={cn("font-medium", false ? "text-white" : "text-[#21133f]")}>₹{Number(item.amount || 0).toLocaleString("en-IN")}</td>
                       <td>
-                        <span className={cn("rounded-full px-2.5 py-1 text-xs", theme === "dark" ? "bg-[#3b2507] text-[#fde68a]" : "bg-[#fff7ed] text-[#f97316]")}>
+                        <span className={cn("rounded-full px-2.5 py-1 text-xs", false ? "bg-[#3b2507] text-[#fde68a]" : "bg-[#fff7ed] text-[#f97316]")}>
                           {item.status}
                         </span>
                       </td>
@@ -2307,7 +2307,7 @@ function BoqPage({ theme }: { theme: ResolvedTheme }) {
           </div>
         )}
 
-        <div className={cn("mt-5 rounded-xl border p-4 text-sm leading-6", theme === "dark" ? "border-[#facc15]/20 bg-[#3b2507]/30 text-[#fde68a]" : "border-[#fed7aa] bg-[#fff7ed] text-[#9a3412]")}>
+        <div className={cn("mt-5 rounded-xl border p-4 text-sm leading-6", false ? "border-[#facc15]/20 bg-[#3b2507]/30 text-[#fde68a]" : "border-[#fed7aa] bg-[#fff7ed] text-[#9a3412]")}>
           BOQ draft planning ke liye hai. Final quantity, rates and scope drawings/site verification ke baad lock karein.
         </div>
       </section>
@@ -2427,13 +2427,13 @@ function BbsPage({ theme }: { theme: ResolvedTheme }) {
     <div>
       <PageTitle title="BBS" desc="Project-wise draft Bar Bending Schedule, steel summary and engineer review status." theme={theme} />
 
-      <section className={cn("rounded-2xl border p-5", theme === "dark" ? "border-white/10 bg-white/[0.035]" : "border-[#ded5ec] bg-white light-card-shadow")}>
+      <section className={cn("rounded-2xl border p-5", false ? "border-white/10 bg-white/[0.035]" : "border-[#ded5ec] bg-white light-card-shadow")}>
         <div className="mb-5 flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
           <div className="grid flex-1 gap-3 sm:grid-cols-[1fr_auto]">
             <select
               value={projectId}
               onChange={(event) => handleProjectChange(event.target.value)}
-              className={cn("h-12 rounded-xl border px-4 text-sm outline-none", theme === "dark" ? "border-white/10 bg-black/20 text-white" : "border-[#ded5ec] bg-white text-[#21133f]")}
+              className={cn("h-12 rounded-xl border px-4 text-sm outline-none", false ? "border-white/10 bg-black/20 text-white" : "border-[#ded5ec] bg-white text-[#21133f]")}
             >
               {!projectsList.length && <option value="">No project found</option>}
               {projectsList.map((project) => (
@@ -2452,7 +2452,7 @@ function BbsPage({ theme }: { theme: ResolvedTheme }) {
             </button>
           </div>
 
-          <div className={cn("rounded-xl border px-4 py-3 text-sm", theme === "dark" ? "border-white/10 bg-black/20 text-slate-200" : "border-[#ded5ec] bg-[#fbf8ff] text-[#21133f]")}>
+          <div className={cn("rounded-xl border px-4 py-3 text-sm", false ? "border-white/10 bg-black/20 text-slate-200" : "border-[#ded5ec] bg-[#fbf8ff] text-[#21133f]")}>
             Steel: {totalWeight.toLocaleString("en-IN", { maximumFractionDigits: 2 })} kg
           </div>
         </div>
@@ -2460,17 +2460,17 @@ function BbsPage({ theme }: { theme: ResolvedTheme }) {
         <div className="mb-5 flex flex-wrap items-center gap-3">
           <StatusBadge status="PHASE 4" theme={theme} />
           <StatusBadge status="REVIEW" theme={theme} />
-          <span className={cn("text-sm", theme === "dark" ? "text-slate-400" : "text-[#817397]")}>
+          <span className={cn("text-sm", false ? "text-slate-400" : "text-[#817397]")}>
             {items.length} BBS items
           </span>
         </div>
 
         {message && (
           <div className={cn("mb-5 rounded-xl border p-3 text-sm", message.includes("success")
-            ? theme === "dark"
+            ? false
               ? "border-[#22c55e]/30 bg-[#052e16]/40 text-[#bbf7d0]"
               : "border-[#bbf7d0] bg-[#f0fdf4] text-[#166534]"
-            : theme === "dark"
+            : false
               ? "border-[#ef4444]/30 bg-[#450a0a]/40 text-[#fecaca]"
               : "border-[#fecaca] bg-[#fef2f2] text-[#991b1b]"
           )}>
@@ -2479,22 +2479,22 @@ function BbsPage({ theme }: { theme: ResolvedTheme }) {
         )}
 
         {loading && (
-          <div className={cn("rounded-xl border p-4 text-sm", theme === "dark" ? "border-white/10 bg-black/20 text-slate-300" : "border-[#ded5ec] bg-[#fbf8ff] text-[#5d5077]")}>
+          <div className={cn("rounded-xl border p-4 text-sm", false ? "border-white/10 bg-black/20 text-slate-300" : "border-[#ded5ec] bg-[#fbf8ff] text-[#5d5077]")}>
             Loading BBS...
           </div>
         )}
 
         {!loading && items.length === 0 && (
-          <div className={cn("rounded-xl border p-4 text-sm", theme === "dark" ? "border-white/10 bg-black/20 text-slate-300" : "border-[#ded5ec] bg-[#fbf8ff] text-[#5d5077]")}>
+          <div className={cn("rounded-xl border p-4 text-sm", false ? "border-white/10 bg-black/20 text-slate-300" : "border-[#ded5ec] bg-[#fbf8ff] text-[#5d5077]")}>
             No BBS items found. Generate BBS Draft button click karo.
           </div>
         )}
 
         {!loading && items.length > 0 && (
-          <div className={cn("overflow-hidden rounded-2xl border", theme === "dark" ? "border-white/10" : "border-[#ded5ec]")}>
+          <div className={cn("overflow-hidden rounded-2xl border", false ? "border-white/10" : "border-[#ded5ec]")}>
             <div className="overflow-x-auto">
               <table className="w-full min-w-[980px] text-left text-sm">
-                <thead className={cn("text-xs uppercase tracking-wide", theme === "dark" ? "bg-white/[0.04] text-slate-400" : "bg-[#fbf8ff] text-[#817397]")}>
+                <thead className={cn("text-xs uppercase tracking-wide", false ? "bg-white/[0.04] text-slate-400" : "bg-[#fbf8ff] text-[#817397]")}>
                   <tr>
                     <th className="p-4">Member</th>
                     <th>Bar Mark</th>
@@ -2507,23 +2507,23 @@ function BbsPage({ theme }: { theme: ResolvedTheme }) {
                     <th>Status</th>
                   </tr>
                 </thead>
-                <tbody className={cn("divide-y", theme === "dark" ? "divide-white/10" : "divide-[#eee7f7]")}>
+                <tbody className={cn("divide-y", false ? "divide-white/10" : "divide-[#eee7f7]")}>
                   {items.map((item) => (
                     <tr key={item.id}>
-                      <td className={cn("p-4 font-medium", theme === "dark" ? "text-white" : "text-[#21133f]")}>
+                      <td className={cn("p-4 font-medium", false ? "text-white" : "text-[#21133f]")}>
                         {item.memberType} {item.memberId ? `- ${item.memberId}` : ""}
                       </td>
-                      <td className={theme === "dark" ? "text-slate-300" : "text-[#3f315d]"}>{item.barMark || "—"}</td>
-                      <td className={theme === "dark" ? "text-slate-400" : "text-[#5d5077]"}>{item.diameter ? `${item.diameter}mm` : "—"}</td>
-                      <td className={theme === "dark" ? "text-slate-400" : "text-[#5d5077]"}>{item.quantity ?? "—"}</td>
-                      <td className={theme === "dark" ? "text-slate-400" : "text-[#5d5077]"}>{item.shapeCode || "—"}</td>
-                      <td className={theme === "dark" ? "text-slate-400" : "text-[#5d5077]"}>{item.cuttingLength ?? "—"} m</td>
-                      <td className={theme === "dark" ? "text-slate-400" : "text-[#5d5077]"}>{item.totalLength ?? "—"} m</td>
-                      <td className={cn("font-medium", theme === "dark" ? "text-white" : "text-[#21133f]")}>
+                      <td className={false ? "text-slate-300" : "text-[#3f315d]"}>{item.barMark || "—"}</td>
+                      <td className={false ? "text-slate-400" : "text-[#5d5077]"}>{item.diameter ? `${item.diameter}mm` : "—"}</td>
+                      <td className={false ? "text-slate-400" : "text-[#5d5077]"}>{item.quantity ?? "—"}</td>
+                      <td className={false ? "text-slate-400" : "text-[#5d5077]"}>{item.shapeCode || "—"}</td>
+                      <td className={false ? "text-slate-400" : "text-[#5d5077]"}>{item.cuttingLength ?? "—"} m</td>
+                      <td className={false ? "text-slate-400" : "text-[#5d5077]"}>{item.totalLength ?? "—"} m</td>
+                      <td className={cn("font-medium", false ? "text-white" : "text-[#21133f]")}>
                         {Number(item.totalWeight || 0).toLocaleString("en-IN", { maximumFractionDigits: 2 })} kg
                       </td>
                       <td>
-                        <span className={cn("rounded-full px-2.5 py-1 text-xs", theme === "dark" ? "bg-[#3b2507] text-[#fde68a]" : "bg-[#fff7ed] text-[#f97316]")}>
+                        <span className={cn("rounded-full px-2.5 py-1 text-xs", false ? "bg-[#3b2507] text-[#fde68a]" : "bg-[#fff7ed] text-[#f97316]")}>
                           {item.status}
                         </span>
                       </td>
@@ -2535,7 +2535,7 @@ function BbsPage({ theme }: { theme: ResolvedTheme }) {
           </div>
         )}
 
-        <div className={cn("mt-5 rounded-xl border p-4 text-sm leading-6", theme === "dark" ? "border-[#facc15]/20 bg-[#3b2507]/30 text-[#fde68a]" : "border-[#fed7aa] bg-[#fff7ed] text-[#9a3412]")}>
+        <div className={cn("mt-5 rounded-xl border p-4 text-sm leading-6", false ? "border-[#facc15]/20 bg-[#3b2507]/30 text-[#fde68a]" : "border-[#fed7aa] bg-[#fff7ed] text-[#9a3412]")}>
           BBS draft planning ke liye hai. Final reinforcement details structural engineer ke approved drawings ke according verify karein.
         </div>
       </section>
@@ -2554,10 +2554,10 @@ function ExportPage({ theme }: { theme: ResolvedTheme }) {
           ["Contractor Package", "Drawing index, BOQ, material summary, work sequence.", Wrench],
           ["Structural Review Package", "Plan, grid, column/beam/slab draft, checklist.", ShieldCheck],
         ].map(([title, desc, Icon]) => (
-          <div key={title as string} className={cn("rounded-2xl border p-5", theme === "dark" ? "border-white/10 bg-white/[0.035]" : "border-[#ded5ec] bg-white light-card-shadow")}>
+          <div key={title as string} className={cn("rounded-2xl border p-5", false ? "border-white/10 bg-white/[0.035]" : "border-[#ded5ec] bg-white light-card-shadow")}>
             <Icon className="h-7 w-7 text-[#8b5cf6]" />
-            <h3 className={cn("mt-4 font-medium", theme === "dark" ? "text-white" : "text-[#21133f]")}>{title as string}</h3>
-            <p className={cn("mt-2 text-sm leading-6", theme === "dark" ? "text-slate-400" : "text-[#817397]")}>{desc as string}</p>
+            <h3 className={cn("mt-4 font-medium", false ? "text-white" : "text-[#21133f]")}>{title as string}</h3>
+            <p className={cn("mt-2 text-sm leading-6", false ? "text-slate-400" : "text-[#817397]")}>{desc as string}</p>
             <button className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#7c3aed] px-4 py-3 text-sm font-medium text-white">
               Generate PDF <Download className="h-4 w-4" />
             </button>
@@ -2572,14 +2572,14 @@ function ReviewPage({ theme }: { theme: ResolvedTheme }) {
   return (
     <div>
       <PageTitle title="Reviews" desc="Professional review workflow for BOQ, BBS, drawings and structural drafts." theme={theme} />
-      <section className={cn("rounded-2xl border p-5", theme === "dark" ? "border-white/10 bg-white/[0.035]" : "border-[#ded5ec] bg-white light-card-shadow")}>
+      <section className={cn("rounded-2xl border p-5", false ? "border-white/10 bg-white/[0.035]" : "border-[#ded5ec] bg-white light-card-shadow")}>
         <div className="grid gap-4 md:grid-cols-4">
           {["AI Draft", "Under Review", "Changes Required", "Approved"].map((step, index) => (
-            <div key={step} className={cn("rounded-2xl border p-5 text-center", theme === "dark" ? "border-white/10 bg-black/20" : "border-[#eee7f7] bg-[#fbf8ff]")}>
-              <div className={cn("mx-auto mb-3 flex h-10 w-10 items-center justify-center rounded-xl text-sm font-medium", theme === "dark" ? "bg-[#2b1755] text-[#d8b4fe]" : "bg-[#f0dcff] text-[#6f1cc4]")}>
+            <div key={step} className={cn("rounded-2xl border p-5 text-center", false ? "border-white/10 bg-black/20" : "border-[#eee7f7] bg-[#fbf8ff]")}>
+              <div className={cn("mx-auto mb-3 flex h-10 w-10 items-center justify-center rounded-xl text-sm font-medium", false ? "bg-[#2b1755] text-[#d8b4fe]" : "bg-[#f0dcff] text-[#6f1cc4]")}>
                 {index + 1}
               </div>
-              <div className={cn("text-sm font-medium", theme === "dark" ? "text-white" : "text-[#21133f]")}>{step}</div>
+              <div className={cn("text-sm font-medium", false ? "text-white" : "text-[#21133f]")}>{step}</div>
             </div>
           ))}
         </div>
@@ -2608,13 +2608,13 @@ function AgreementPage({ theme }: { theme: ResolvedTheme }) {
       />
 
       <div className="grid gap-5 xl:grid-cols-[0.9fr_1.1fr]">
-        <section className={cn("rounded-2xl border p-5", theme === "dark" ? "border-white/10 bg-white/[0.035]" : "border-[#ded5ec] bg-white light-card-shadow")}>
+        <section className={cn("rounded-2xl border p-5", false ? "border-white/10 bg-white/[0.035]" : "border-[#ded5ec] bg-white light-card-shadow")}>
           <StatusBadge status="NEW" theme={theme} />
 
           <div className="mt-5 space-y-4">
             <div>
-              <label className={cn("text-sm font-medium", theme === "dark" ? "text-white" : "text-[#21133f]")}>Project type</label>
-              <select className={cn("mt-2 h-12 w-full rounded-xl border px-4 text-sm outline-none", theme === "dark" ? "border-white/10 bg-black/20 text-white" : "border-[#ded5ec] bg-white text-[#21133f]")}>
+              <label className={cn("text-sm font-medium", false ? "text-white" : "text-[#21133f]")}>Project type</label>
+              <select className={cn("mt-2 h-12 w-full rounded-xl border px-4 text-sm outline-none", false ? "border-white/10 bg-black/20 text-white" : "border-[#ded5ec] bg-white text-[#21133f]")}>
                 <option>Residential Interior Design</option>
                 <option>Architecture + Elevation</option>
                 <option>BOQ / Contractor Estimate</option>
@@ -2623,9 +2623,9 @@ function AgreementPage({ theme }: { theme: ResolvedTheme }) {
             </div>
 
             <div>
-              <label className={cn("text-sm font-medium", theme === "dark" ? "text-white" : "text-[#21133f]")}>Client / project brief</label>
+              <label className={cn("text-sm font-medium", false ? "text-white" : "text-[#21133f]")}>Client / project brief</label>
               <textarea
-                className={cn("mt-2 min-h-36 w-full rounded-2xl border p-4 text-sm leading-6 outline-none", theme === "dark" ? "border-white/10 bg-black/20 text-white" : "border-[#ded5ec] bg-white text-[#21133f]")}
+                className={cn("mt-2 min-h-36 w-full rounded-2xl border p-4 text-sm leading-6 outline-none", false ? "border-white/10 bg-black/20 text-white" : "border-[#ded5ec] bg-white text-[#21133f]")}
                 defaultValue="Client ko 30x40 G+1 house ke liye front elevation, interior renders, floor plan concept, BOQ draft aur client PDF chahiye. Payment milestone aur revision policy agreement me add karna hai."
               />
             </div>
@@ -2636,11 +2636,11 @@ function AgreementPage({ theme }: { theme: ResolvedTheme }) {
           </div>
         </section>
 
-        <section className={cn("rounded-2xl border p-5", theme === "dark" ? "border-white/10 bg-white/[0.035]" : "border-[#ded5ec] bg-white light-card-shadow")}>
+        <section className={cn("rounded-2xl border p-5", false ? "border-white/10 bg-white/[0.035]" : "border-[#ded5ec] bg-white light-card-shadow")}>
           <div className="flex items-start justify-between gap-4">
             <div>
-              <h3 className={cn("text-lg font-semibold", theme === "dark" ? "text-white" : "text-[#21133f]")}>Agreement sections</h3>
-              <p className={cn("mt-1 text-sm", theme === "dark" ? "text-slate-500" : "text-[#817397]")}>
+              <h3 className={cn("text-lg font-semibold", false ? "text-white" : "text-[#21133f]")}>Agreement sections</h3>
+              <p className={cn("mt-1 text-sm", false ? "text-slate-500" : "text-[#817397]")}>
                 Draft agreement me ye sections auto-generate honge.
               </p>
             </div>
@@ -2653,22 +2653,22 @@ function AgreementPage({ theme }: { theme: ResolvedTheme }) {
             {agreementSections.map(([title, desc]) => (
               <div
                 key={title}
-                className={cn("rounded-xl border p-4", theme === "dark" ? "border-white/10 bg-black/20" : "border-[#eee7f7] bg-[#fbf8ff]")}
+                className={cn("rounded-xl border p-4", false ? "border-white/10 bg-black/20" : "border-[#eee7f7] bg-[#fbf8ff]")}
               >
                 <div className="flex items-start gap-3">
-                  <span className={cn("flex h-8 w-8 shrink-0 items-center justify-center rounded-lg", theme === "dark" ? "bg-[#2b1755] text-[#d8b4fe]" : "bg-[#f0dcff] text-[#6f1cc4]")}>
+                  <span className={cn("flex h-8 w-8 shrink-0 items-center justify-center rounded-lg", false ? "bg-[#2b1755] text-[#d8b4fe]" : "bg-[#f0dcff] text-[#6f1cc4]")}>
                     <CheckCircle2 className="h-4 w-4" />
                   </span>
                   <div>
-                    <h4 className={cn("text-sm font-medium", theme === "dark" ? "text-white" : "text-[#21133f]")}>{title}</h4>
-                    <p className={cn("mt-1 text-sm leading-6", theme === "dark" ? "text-slate-400" : "text-[#817397]")}>{desc}</p>
+                    <h4 className={cn("text-sm font-medium", false ? "text-white" : "text-[#21133f]")}>{title}</h4>
+                    <p className={cn("mt-1 text-sm leading-6", false ? "text-slate-400" : "text-[#817397]")}>{desc}</p>
                   </div>
                 </div>
               </div>
             ))}
           </div>
 
-          <div className={cn("mt-5 rounded-xl border p-4 text-sm leading-6", theme === "dark" ? "border-[#facc15]/20 bg-[#3b2507]/30 text-[#fde68a]" : "border-[#fed7aa] bg-[#fff7ed] text-[#9a3412]")}>
+          <div className={cn("mt-5 rounded-xl border p-4 text-sm leading-6", false ? "border-[#facc15]/20 bg-[#3b2507]/30 text-[#fde68a]" : "border-[#fed7aa] bg-[#fff7ed] text-[#9a3412]")}>
             AI-generated agreement draft planning ke liye hai. Final legal agreement ko lawyer/professional se review karwana recommended hai.
           </div>
         </section>
@@ -2700,14 +2700,14 @@ function ApiPage({ theme }: { theme: ResolvedTheme }) {
       />
 
       <div className="grid gap-5 xl:grid-cols-[0.9fr_1.1fr]">
-        <section className={cn("rounded-2xl border p-5", theme === "dark" ? "border-white/10 bg-white/[0.035]" : "border-[#ded5ec] bg-white light-card-shadow")}>
+        <section className={cn("rounded-2xl border p-5", false ? "border-white/10 bg-white/[0.035]" : "border-[#ded5ec] bg-white light-card-shadow")}>
           <StatusBadge status="NEW" theme={theme} />
 
           <div className="mt-5">
-            <h3 className={cn("text-lg font-semibold", theme === "dark" ? "text-white" : "text-[#21133f]")}>
+            <h3 className={cn("text-lg font-semibold", false ? "text-white" : "text-[#21133f]")}>
               Developer API Access
             </h3>
-            <p className={cn("mt-2 text-sm leading-6", theme === "dark" ? "text-slate-400" : "text-[#817397]")}>
+            <p className={cn("mt-2 text-sm leading-6", false ? "text-slate-400" : "text-[#817397]")}>
               API se designers, architects, contractors aur agencies apni website/app se Sikhadenge Build ke AI tools use kar sakenge.
               MVP me ye section documentation placeholder hai. Production me API keys, rate limits, logs aur billing add honge.
             </p>
@@ -2717,21 +2717,21 @@ function ApiPage({ theme }: { theme: ResolvedTheme }) {
             <button className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#7c3aed] px-5 py-3 text-sm font-medium text-white">
               Generate API Key <Code2 className="h-4 w-4" />
             </button>
-            <button className={cn("inline-flex w-full items-center justify-center gap-2 rounded-xl border px-5 py-3 text-sm font-medium", theme === "dark" ? "border-white/10 bg-white/[0.04] text-white" : "border-[#ded5ec] bg-[#fbf8ff] text-[#6f1cc4]")}>
+            <button className={cn("inline-flex w-full items-center justify-center gap-2 rounded-xl border px-5 py-3 text-sm font-medium", false ? "border-white/10 bg-white/[0.04] text-white" : "border-[#ded5ec] bg-[#fbf8ff] text-[#6f1cc4]")}>
               View Documentation
             </button>
           </div>
 
-          <div className={cn("mt-5 rounded-xl border p-4 text-sm leading-6", theme === "dark" ? "border-[#facc15]/20 bg-[#3b2507]/30 text-[#fde68a]" : "border-[#fed7aa] bg-[#fff7ed] text-[#9a3412]")}>
+          <div className={cn("mt-5 rounded-xl border p-4 text-sm leading-6", false ? "border-[#facc15]/20 bg-[#3b2507]/30 text-[#fde68a]" : "border-[#fed7aa] bg-[#fff7ed] text-[#9a3412]")}>
             API access abhi controlled/coming-soon rahega. Public API launch se pehle authentication, rate limit, credit deduction aur abuse protection required hai.
           </div>
         </section>
 
-        <section className={cn("rounded-2xl border p-5", theme === "dark" ? "border-white/10 bg-white/[0.035]" : "border-[#ded5ec] bg-white light-card-shadow")}>
-          <h3 className={cn("text-lg font-semibold", theme === "dark" ? "text-white" : "text-[#21133f]")}>
+        <section className={cn("rounded-2xl border p-5", false ? "border-white/10 bg-white/[0.035]" : "border-[#ded5ec] bg-white light-card-shadow")}>
+          <h3 className={cn("text-lg font-semibold", false ? "text-white" : "text-[#21133f]")}>
             Planned API modules
           </h3>
-          <p className={cn("mt-1 text-sm", theme === "dark" ? "text-slate-500" : "text-[#817397]")}>
+          <p className={cn("mt-1 text-sm", false ? "text-slate-500" : "text-[#817397]")}>
             Ye endpoints future partner/agency integrations ke liye planned hain.
           </p>
 
@@ -2739,15 +2739,15 @@ function ApiPage({ theme }: { theme: ResolvedTheme }) {
             {apiItems.map(([title, desc]) => (
               <div
                 key={title}
-                className={cn("rounded-xl border p-4", theme === "dark" ? "border-white/10 bg-black/20" : "border-[#eee7f7] bg-[#fbf8ff]")}
+                className={cn("rounded-xl border p-4", false ? "border-white/10 bg-black/20" : "border-[#eee7f7] bg-[#fbf8ff]")}
               >
                 <div className="flex items-start gap-3">
-                  <span className={cn("flex h-8 w-8 shrink-0 items-center justify-center rounded-lg", theme === "dark" ? "bg-[#2b1755] text-[#d8b4fe]" : "bg-[#f0dcff] text-[#6f1cc4]")}>
+                  <span className={cn("flex h-8 w-8 shrink-0 items-center justify-center rounded-lg", false ? "bg-[#2b1755] text-[#d8b4fe]" : "bg-[#f0dcff] text-[#6f1cc4]")}>
                     <Code2 className="h-4 w-4" />
                   </span>
                   <div>
-                    <h4 className={cn("text-sm font-medium", theme === "dark" ? "text-white" : "text-[#21133f]")}>{title}</h4>
-                    <p className={cn("mt-1 text-sm leading-6", theme === "dark" ? "text-slate-400" : "text-[#817397]")}>{desc}</p>
+                    <h4 className={cn("text-sm font-medium", false ? "text-white" : "text-[#21133f]")}>{title}</h4>
+                    <p className={cn("mt-1 text-sm leading-6", false ? "text-slate-400" : "text-[#817397]")}>{desc}</p>
                   </div>
                 </div>
               </div>
@@ -2762,7 +2762,7 @@ function ApiPage({ theme }: { theme: ResolvedTheme }) {
 
 export default function SikhadengeBuildDashboard() {
   const [active, setActive] = useState<ViewKey>("dashboard");
-  const [themeMode, setThemeMode] = useState<ThemeMode>("dark");
+  const [themeMode, setThemeMode] = useState<ThemeMode>("light");
   const theme = useResolvedTheme(themeMode);
 
   const content = () => {
