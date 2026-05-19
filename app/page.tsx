@@ -10,6 +10,7 @@ import {
   CheckCircle2,
   ChevronDown,
   ClipboardList,
+  Code2,
   CreditCard,
   Download,
   FileText,
@@ -56,7 +57,8 @@ type ViewKey =
   | "bbs"
   | "exports"
   | "agreements"
-  | "reviews";
+  | "reviews"
+  | "api";
 
 type ThemeMode = "light" | "dark" | "system";
 type ResolvedTheme = "light" | "dark";
@@ -96,6 +98,7 @@ const navItems: Array<{ id: ViewKey; label: string; icon: React.ElementType }> =
   { id: "reviews", label: "Reviews", icon: ShieldCheck },
   { id: "exports", label: "Exports", icon: FileText },
   { id: "agreements", label: "Client Agreement", icon: ScrollText },
+  { id: "api", label: "API", icon: Code2 },
 ];
 
 const bottomNav = [
@@ -1483,6 +1486,88 @@ function AgreementPage({ theme }: { theme: ResolvedTheme }) {
 }
 
 
+
+function ApiPage({ theme }: { theme: ResolvedTheme }) {
+  const apiItems = [
+    ["Project Create API", "External website, CRM ya agency form se project create karne ke liye."],
+    ["Brief Generator API", "Client requirement ko structured project brief aur smart questions me convert kare."],
+    ["Render API", "Interior render, exterior elevation, site photo redesign aur render enhancer ke liye."],
+    ["BOQ API", "Project data se BOQ draft, material quantity aur estimate summary generate kare."],
+    ["BBS API", "Engineer-entered reinforcement data se BBS table aur steel summary banaye."],
+    ["PDF Export API", "Client proposal, contractor package aur review package PDF export kare."],
+    ["Webhook Events", "Project created, render completed, PDF ready, review requested jaise events bheje."],
+    ["API Keys", "Agency/partner integration ke liye secure API key management."]
+  ];
+
+  return (
+    <div>
+      <PageTitle
+        title="API"
+        desc="Sikhadenge Build tools ko external website, CRM, agency workflow ya client portal se connect karne ke liye developer access."
+        theme={theme}
+      />
+
+      <div className="grid gap-5 xl:grid-cols-[0.9fr_1.1fr]">
+        <section className={cn("rounded-2xl border p-5", theme === "dark" ? "border-white/10 bg-white/[0.035]" : "border-[#ded5ec] bg-white light-card-shadow")}>
+          <StatusBadge status="NEW" theme={theme} />
+
+          <div className="mt-5">
+            <h3 className={cn("text-lg font-semibold", theme === "dark" ? "text-white" : "text-[#21133f]")}>
+              Developer API Access
+            </h3>
+            <p className={cn("mt-2 text-sm leading-6", theme === "dark" ? "text-slate-400" : "text-[#817397]")}>
+              API se designers, architects, contractors aur agencies apni website/app se Sikhadenge Build ke AI tools use kar sakenge.
+              MVP me ye section documentation placeholder hai. Production me API keys, rate limits, logs aur billing add honge.
+            </p>
+          </div>
+
+          <div className="mt-5 space-y-3">
+            <button className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#7c3aed] px-5 py-3 text-sm font-medium text-white">
+              Generate API Key <Code2 className="h-4 w-4" />
+            </button>
+            <button className={cn("inline-flex w-full items-center justify-center gap-2 rounded-xl border px-5 py-3 text-sm font-medium", theme === "dark" ? "border-white/10 bg-white/[0.04] text-white" : "border-[#ded5ec] bg-[#fbf8ff] text-[#6f1cc4]")}>
+              View Documentation
+            </button>
+          </div>
+
+          <div className={cn("mt-5 rounded-xl border p-4 text-sm leading-6", theme === "dark" ? "border-[#facc15]/20 bg-[#3b2507]/30 text-[#fde68a]" : "border-[#fed7aa] bg-[#fff7ed] text-[#9a3412]")}>
+            API access abhi controlled/coming-soon rahega. Public API launch se pehle authentication, rate limit, credit deduction aur abuse protection required hai.
+          </div>
+        </section>
+
+        <section className={cn("rounded-2xl border p-5", theme === "dark" ? "border-white/10 bg-white/[0.035]" : "border-[#ded5ec] bg-white light-card-shadow")}>
+          <h3 className={cn("text-lg font-semibold", theme === "dark" ? "text-white" : "text-[#21133f]")}>
+            Planned API modules
+          </h3>
+          <p className={cn("mt-1 text-sm", theme === "dark" ? "text-slate-500" : "text-[#817397]")}>
+            Ye endpoints future partner/agency integrations ke liye planned hain.
+          </p>
+
+          <div className="mt-5 grid gap-3">
+            {apiItems.map(([title, desc]) => (
+              <div
+                key={title}
+                className={cn("rounded-xl border p-4", theme === "dark" ? "border-white/10 bg-black/20" : "border-[#eee7f7] bg-[#fbf8ff]")}
+              >
+                <div className="flex items-start gap-3">
+                  <span className={cn("flex h-8 w-8 shrink-0 items-center justify-center rounded-lg", theme === "dark" ? "bg-[#2b1755] text-[#d8b4fe]" : "bg-[#f0dcff] text-[#6f1cc4]")}>
+                    <Code2 className="h-4 w-4" />
+                  </span>
+                  <div>
+                    <h4 className={cn("text-sm font-medium", theme === "dark" ? "text-white" : "text-[#21133f]")}>{title}</h4>
+                    <p className={cn("mt-1 text-sm leading-6", theme === "dark" ? "text-slate-400" : "text-[#817397]")}>{desc}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      </div>
+    </div>
+  );
+}
+
+
 export default function SikhadengeBuildDashboard() {
   const [active, setActive] = useState<ViewKey>("dashboard");
   const [themeMode, setThemeMode] = useState<ThemeMode>("dark");
@@ -1499,6 +1584,7 @@ export default function SikhadengeBuildDashboard() {
     if (active === "exports") return <ExportPage theme={theme} />;
     if (active === "agreements") return <AgreementPage theme={theme} />;
     if (active === "reviews") return <ReviewPage theme={theme} />;
+    if (active === "api") return <ApiPage theme={theme} />;
     return <Dashboard setActive={setActive} theme={theme} />;
   };
 
