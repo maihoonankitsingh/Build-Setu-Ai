@@ -19,8 +19,12 @@ type Project = {
   title?: string;
   projectName?: string;
   name?: string;
+  projectType?: string;
   location?: string;
   plotSize?: string;
+  facing?: string;
+  floors?: string;
+  budget?: string;
 };
 
 type ToolConfig = {
