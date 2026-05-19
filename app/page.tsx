@@ -808,7 +808,19 @@ function ToolCard({ tool, theme }: { tool: Tool; theme: ResolvedTheme }) {
             {tool.desc}
           </p>
           <div className="mt-4 flex items-center gap-2">
-            <button className="inline-flex flex-1 items-center justify-center gap-2 rounded-lg bg-[#6f1cc4] px-4 py-2.5 text-sm font-medium text-white hover:bg-[#55129a]">
+            <button
+              onClick={() => {
+                if (tool.title === "Client PDF") {
+                  window.location.href = "/reports";
+                  return;
+                }
+                if (tool.title === "Client Agreement") {
+                  window.location.href = "/#agreements";
+                  return;
+                }
+              }}
+              className="inline-flex flex-1 items-center justify-center gap-2 rounded-lg bg-[#6f1cc4] px-4 py-2.5 text-sm font-medium text-white hover:bg-[#55129a]"
+            >
               Launch Tool <ArrowRight className="h-4 w-4" />
             </button>
             <button className="flex h-[42px] w-[42px] items-center justify-center rounded-lg border border-[#d8cee8] bg-[#f4f1f8] text-[#6b5a84] hover:border-[#a855f7] hover:text-[#7c1fd1]">
