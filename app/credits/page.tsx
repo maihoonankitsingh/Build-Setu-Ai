@@ -117,12 +117,12 @@ function PackCard({ pack }: { pack: Pack }) {
       ) : null}
 
       <div className="flex h-full flex-col p-5 pt-6">
-        <div className="mt-4 flex items-start justify-between gap-4">
+        <div className="mt-4 grid min-h-[104px] grid-cols-[1fr_auto] items-start gap-4">
           <div>
             <h2 className="text-[18px] font-black tracking-[-0.04em] text-[#201537]">
               {pack.name}
             </h2>
-            <p className="mt-2 text-[13px] leading-6 text-[#786a91]">
+            <p className="mt-2 line-clamp-2 text-[13px] leading-6 text-[#786a91]">
               {pack.desc}
             </p>
           </div>
@@ -132,7 +132,7 @@ function PackCard({ pack }: { pack: Pack }) {
           </div>
         </div>
 
-        <div className="mt-5 rounded-[20px] border border-[#f0e9fb] bg-[#fcfbff] p-4">
+        <div className="mt-0 rounded-[20px] border border-[#f0e9fb] bg-[#fcfbff] p-4">
           <div className="grid grid-cols-2 gap-4">
             <div>
               <p className="text-[11px] font-black uppercase tracking-wider text-[#8b7ca6]">
@@ -158,7 +158,7 @@ function PackCard({ pack }: { pack: Pack }) {
           onClick={() => {
             alert(`${pack.name} selected. Next step: payment gateway integration.`);
           }}
-          className="mt-5 flex h-12 w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-[#5b43ea] via-[#7c3aed] to-[#d946ef] text-sm font-black text-white shadow-[0_12px_28px_rgba(124,58,237,0.24)] transition hover:brightness-105"
+          className="mt-5 flex h-12 w-full shrink-0 items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-[#5b43ea] via-[#7c3aed] to-[#d946ef] text-sm font-black text-white shadow-[0_12px_28px_rgba(124,58,237,0.24)] transition hover:brightness-105"
         >
           <Plus size={18} />
           Buy Credits
@@ -202,49 +202,76 @@ export default function CreditsPage() {
           </a>
         </div>
 
-        {/* TOP SECTION - COMPACT */}
-        <section className="rounded-[28px] border border-[#e7def5] bg-white p-5 shadow-[0_18px_50px_rgba(65,29,120,0.05)]">
-          <div className="grid gap-5 lg:grid-cols-[1.6fr_320px]">
-            <div className="flex min-h-[220px] flex-col rounded-[24px] border border-[#ece4f8] bg-[linear-gradient(135deg,#ffffff_0%,#fcfaff_48%,#f3e8ff_100%)] p-5">
-              <div className="mb-3 inline-flex w-fit items-center gap-2 rounded-full border border-[#eadcff] bg-[#f7efff] px-3 py-1 text-[11px] font-black uppercase tracking-wide text-[#7c3aed]">
-                <Sparkles size={13} />
-                BuildSetu Credits
-              </div>
+        {/* TOP SECTION - REFINED */}
+        <section className="rounded-[26px] border border-[#e7def5] bg-white p-4 shadow-[0_16px_45px_rgba(65,29,120,0.05)]">
+          <div className="grid gap-4 lg:grid-cols-[1.65fr_0.85fr]">
+            <div className="relative overflow-hidden rounded-[22px] border border-[#ece4f8] bg-[linear-gradient(135deg,#ffffff_0%,#fbf8ff_56%,#f2e7ff_100%)] p-5">
+              <div className="absolute -right-16 -top-16 h-44 w-44 rounded-full bg-[#e9d5ff] opacity-45 blur-3xl" />
+              <div className="absolute left-0 top-0 h-1 w-full bg-gradient-to-r from-[#5b43ea] via-[#8b31d9] to-[#d946ef]" />
 
-              <h1 className="text-[30px] font-black leading-none tracking-[-0.06em] text-[#21133f] md:text-[42px]">
-                Buy more credits
-              </h1>
+              <div className="relative grid gap-5 xl:grid-cols-[1fr_280px] xl:items-center">
+                <div>
+                  <div className="mb-3 inline-flex w-fit items-center gap-2 rounded-full border border-[#eadcff] bg-white/85 px-3 py-1 text-[11px] font-black uppercase tracking-wide text-[#7c3aed] shadow-sm">
+                    <Sparkles size={13} />
+                    BuildSetu Credits
+                  </div>
 
-              <p className="mt-3 max-w-3xl text-[14px] leading-7 text-[#6c5f84]">
-                Credits khatam hone par yahin se extra credits purchase kar sakte ho.
-                Credits render, AI tools, reports, BOQ/BBS, agreements aur PDF exports me use honge.
-              </p>
+                  <h1 className="text-[30px] font-black leading-none tracking-[-0.06em] text-[#21133f] md:text-[40px]">
+                    Buy more credits
+                  </h1>
 
-              <div className="mt-auto pt-5">
-                <div className="flex flex-wrap gap-3">
-                  <span className="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-xs font-black text-[#5f5476] shadow-sm ring-1 ring-[#eee6f8]">
-                    <BadgeCheck size={14} className="text-emerald-500" />
-                    Instant top-up ready
-                  </span>
-                  <span className="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-xs font-black text-[#5f5476] shadow-sm ring-1 ring-[#eee6f8]">
-                    <Shield size={14} className="text-[#7c3aed]" />
-                    Usage-based deduction
-                  </span>
-                  <span className="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-xs font-black text-[#5f5476] shadow-sm ring-1 ring-[#eee6f8]">
-                    <Lock size={14} className="text-amber-500" />
-                    Secure checkout ready
-                  </span>
+                  <p className="mt-3 max-w-2xl text-[14px] leading-6 text-[#6c5f84]">
+                    Credits khatam hone par extra credits purchase karo. Ye credits renders,
+                    AI tools, BOQ/BBS, agreements aur PDF exports me use honge.
+                  </p>
+
+                  <div className="mt-4 flex flex-wrap gap-2.5">
+                    <span className="inline-flex items-center gap-2 rounded-full bg-white px-3.5 py-2 text-[12px] font-black text-[#5f5476] shadow-sm ring-1 ring-[#eee6f8]">
+                      <BadgeCheck size={14} className="text-emerald-500" />
+                      Instant top-up
+                    </span>
+                    <span className="inline-flex items-center gap-2 rounded-full bg-white px-3.5 py-2 text-[12px] font-black text-[#5f5476] shadow-sm ring-1 ring-[#eee6f8]">
+                      <Shield size={14} className="text-[#7c3aed]" />
+                      Usage-based
+                    </span>
+                    <span className="inline-flex items-center gap-2 rounded-full bg-white px-3.5 py-2 text-[12px] font-black text-[#5f5476] shadow-sm ring-1 ring-[#eee6f8]">
+                      <Lock size={14} className="text-amber-500" />
+                      Secure checkout
+                    </span>
+                  </div>
+                </div>
+
+                <div className="grid gap-3">
+                  <div className="rounded-2xl border border-[#efe6fb] bg-white/80 p-4 shadow-sm">
+                    <p className="text-[11px] font-black uppercase tracking-wider text-[#8b7ca6]">
+                      Minimum Pack
+                    </p>
+                    <p className="mt-1 text-[22px] font-black tracking-[-0.04em] text-[#21133f]">
+                      ₹2,499
+                    </p>
+                    <p className="mt-1 text-xs text-[#786a91]">120 credits se start</p>
+                  </div>
+
+                  <div className="rounded-2xl border border-[#efe6fb] bg-white/80 p-4 shadow-sm">
+                    <p className="text-[11px] font-black uppercase tracking-wider text-[#8b7ca6]">
+                      Best For
+                    </p>
+                    <p className="mt-1 text-[18px] font-black tracking-[-0.03em] text-[#21133f]">
+                      Designers + Contractors
+                    </p>
+                    <p className="mt-1 text-xs text-[#786a91]">Project-wise AI usage</p>
+                  </div>
                 </div>
               </div>
             </div>
 
-            <div className="flex min-h-[220px] flex-col rounded-[24px] border border-[#eadfff] bg-[linear-gradient(180deg,#fbf7ff_0%,#efe5ff_100%)] p-5 shadow-inner">
+            <div className="rounded-[22px] border border-[#eadfff] bg-[linear-gradient(180deg,#fbf7ff_0%,#efe5ff_100%)] p-5 shadow-inner">
               <div className="flex items-start justify-between gap-4">
                 <div>
                   <p className="text-[11px] font-black uppercase tracking-[0.18em] text-[#8f7fa7]">
                     Available Credits
                   </p>
-                  <p className="mt-2 text-[54px] font-black leading-none tracking-[-0.08em] text-[#1f1433]">
+                  <p className="mt-2 text-[48px] font-black leading-none tracking-[-0.08em] text-[#1f1433]">
                     {availableCredits}
                   </p>
                 </div>
@@ -254,22 +281,32 @@ export default function CreditsPage() {
                 </div>
               </div>
 
-              <div className="mt-4 rounded-[20px] border border-white/70 bg-white/75 p-4">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm font-semibold text-[#756888]">Recommended Pack</span>
+              <div className="mt-4 rounded-[18px] border border-white/70 bg-white/75 p-4">
+                <div className="flex items-center justify-between gap-3">
+                  <span className="text-xs font-black uppercase tracking-wide text-[#8b7ca6]">
+                    Recommended
+                  </span>
                   <span className="rounded-full bg-[#efe8ff] px-3 py-1 text-[10px] font-black text-[#7c3aed]">
                     PRO
                   </span>
                 </div>
-                <p className="mt-2 text-[22px] font-black tracking-[-0.05em] text-[#21133f]">
-                  400 Credits
-                </p>
-                <p className="mt-1 text-sm text-[#786a91]">Best for active workflows</p>
+
+                <div className="mt-3 flex items-end justify-between gap-3">
+                  <div>
+                    <p className="text-[24px] font-black tracking-[-0.05em] text-[#21133f]">
+                      400 Credits
+                    </p>
+                    <p className="mt-1 text-xs text-[#786a91]">Best for active workflows</p>
+                  </div>
+                  <p className="text-[22px] font-black tracking-[-0.04em] text-[#21133f]">
+                    ₹4,999
+                  </p>
+                </div>
               </div>
 
               <a
                 href="#credit-packs"
-                className="mt-auto flex h-11 items-center justify-center gap-2 rounded-2xl bg-[#21133f] text-sm font-black text-white shadow-[0_12px_26px_rgba(33,19,63,0.18)]"
+                className="mt-4 flex h-11 items-center justify-center gap-2 rounded-2xl bg-[#21133f] text-sm font-black text-white shadow-[0_12px_26px_rgba(33,19,63,0.18)]"
               >
                 <Plus size={18} />
                 Buy More Credits
