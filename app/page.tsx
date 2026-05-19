@@ -778,6 +778,15 @@ function CategoryTabs({
   );
 }
 
+
+function toolSlug(title: string) {
+  return title
+    .toLowerCase()
+    .replace(/&/g, "and")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
 function ToolCard({ tool, theme }: { tool: Tool; theme: ResolvedTheme }) {
   const Icon = tool.icon;
 
@@ -810,26 +819,7 @@ function ToolCard({ tool, theme }: { tool: Tool; theme: ResolvedTheme }) {
           <div className="mt-4 flex items-center gap-2">
             <button
               onClick={() => {
-                if (tool.category === "Structural" || tool.title === "BBS Generator") {
-                  window.location.href = "/structure";
-                  return;
-                }
-                if (tool.title === "Floor Plan AI") {
-                  window.location.href = "/design";
-                  return;
-                }
-                if (tool.title === "Vastu Check") {
-                  window.location.href = "/design";
-                  return;
-                }
-                if (tool.title === "Client PDF") {
-                  window.location.href = "/reports";
-                  return;
-                }
-                if (tool.title === "Client Agreement") {
-                  window.location.href = "/#agreements";
-                  return;
-                }
+                window.location.href = `/tools/${toolSlug(tool.title)}`;
               }}
               className="inline-flex flex-1 items-center justify-center gap-2 rounded-lg bg-[#6f1cc4] px-4 py-2.5 text-sm font-medium text-white hover:bg-[#55129a]"
             >

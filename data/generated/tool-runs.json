@@ -1,0 +1,59 @@
+[
+  {
+    "id": "toolrun_1779197895912_drjlha",
+    "createdAt": "2026-05-19T13:38:15.912Z",
+    "slug": "floor-plan-ai",
+    "title": "Floor Plan AI",
+    "projectId": "demo",
+    "prompt": "30x40 North facing G+1 house ke liye floor plan output banao",
+    "status": "REVIEW_REQUIRED",
+    "sections": [
+      {
+        "title": "Room Schedule",
+        "items": [
+          "Room Schedule for Floor Plan AI: 30x40 North facing G+1 house ke liye floor plan output banao",
+          "Output ko client discussion, planning and internal workflow ke draft ke roop me use karein.",
+          "Final version professional review ke baad lock karein."
+        ]
+      },
+      {
+        "title": "Floor Plan Logic",
+        "items": [
+          "Floor Plan Logic for Floor Plan AI: 30x40 North facing G+1 house ke liye floor plan output banao",
+          "Output ko client discussion, planning and internal workflow ke draft ke roop me use karein.",
+          "Final version professional review ke baad lock karein."
+        ]
+      },
+      {
+        "title": "Vastu Notes",
+        "items": [
+          "Vastu Notes for Floor Plan AI: 30x40 North facing G+1 house ke liye floor plan output banao",
+          "Output ko client discussion, planning and internal workflow ke draft ke roop me use karein.",
+          "Final version professional review ke baad lock karein."
+        ]
+      },
+      {
+        "title": "Circulation Notes",
+        "items": [
+          "Circulation Notes for Floor Plan AI: 30x40 North facing G+1 house ke liye floor plan output banao",
+          "Output ko client discussion, planning and internal workflow ke draft ke roop me use karein.",
+          "Final version professional review ke baad lock karein."
+        ]
+      },
+      {
+        "title": "Review Checklist",
+        "items": [
+          "Client requirement and site dimensions verify karein.",
+          "Architect/engineer review status mark karein.",
+          "Final execution se pehle dimensions, byelaws, structure and budget validate karein.",
+          "Floor Plan AI output AI draft hai. Final use se pehle professional review required hai."
+        ]
+      }
+    ],
+    "nextActions": [
+      "Open Naksha Studio",
+      "Generate Structure",
+      "Export PDF"
+    ]
+  }
+]
