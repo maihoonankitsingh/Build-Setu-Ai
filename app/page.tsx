@@ -1840,54 +1840,237 @@ function SafetyPanel({ theme }: { theme: ResolvedTheme }) {
   );
 }
 
+
+type LiveBoqItem = {
+  id: string;
+  projectId: string;
+  itemCode: string | null;
+  description: string;
+  unit: string | null;
+  quantity: number | null;
+  rate: number | null;
+  amount: number | null;
+  drawingRef: string | null;
+  status: string;
+  createdAt: string;
+};
+
 function BoqPage({ theme }: { theme: ResolvedTheme }) {
-  const rows = [
-    ["1.01", "Excavation for foundation", "Cum", "TBD", "Site verify"],
-    ["2.01", "PCC below footing", "Cum", "TBD", "Engineer verify"],
-    ["3.01", "RCC in footing", "Cum", "TBD", "Engineer verify"],
-    ["4.01", "Reinforcement steel", "Kg", "From BBS", "Review required"],
-    ["5.01", "Brick/block masonry", "Sqm/Cum", "Auto", "Draft"],
-  ];
+  const [projectsList, setProjectsList] = useState<LiveProject[]>([]);
+  const [projectId, setProjectId] = useState("");
+  const [items, setItems] = useState<LiveBoqItem[]>([]);
+  const [totalAmount, setTotalAmount] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [generating, setGenerating] = useState(false);
+  const [message, setMessage] = useState("");
+
+  async function loadProjectsAndBoq() {
+    try {
+      setLoading(true);
+      setMessage("");
+
+      const projectsResponse = await fetch("/api/projects/list", { cache: "no-store" });
+      const projectsData = await projectsResponse.json();
+
+      if (!projectsResponse.ok || !projectsData.ok) {
+        throw new Error(projectsData.error || "Failed to load projects");
+      }
+
+      const loadedProjects = projectsData.projects || [];
+      setProjectsList(loadedProjects);
+
+      const selectedProjectId = projectId || loadedProjects[0]?.id || "";
+      if (selectedProjectId && !projectId) {
+        setProjectId(selectedProjectId);
+      }
+
+      if (selectedProjectId) {
+        await loadBoq(selectedProjectId);
+      }
+    } catch (error) {
+      console.error(error);
+      setMessage(error instanceof Error ? error.message : "Failed to load BOQ data");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function loadBoq(nextProjectId: string) {
+    const response = await fetch(`/api/boq/list?projectId=${nextProjectId}`, { cache: "no-store" });
+    const data = await response.json();
+
+    if (!response.ok || !data.ok) {
+      throw new Error(data.error || "Failed to load BOQ");
+    }
+
+    setItems(data.items || []);
+    setTotalAmount(Number(data.totalAmount || 0));
+  }
+
+  async function handleProjectChange(nextProjectId: string) {
+    try {
+      setProjectId(nextProjectId);
+      setLoading(true);
+      setMessage("");
+      await loadBoq(nextProjectId);
+    } catch (error) {
+      console.error(error);
+      setMessage(error instanceof Error ? error.message : "Failed to load BOQ");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function handleGenerateBoq() {
+    try {
+      setGenerating(true);
+      setMessage("");
+
+      if (!projectId) {
+        throw new Error("Project select karo. Pehle New Project section se project create karo.");
+      }
+
+      const response = await fetch("/api/boq/generate", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ projectId }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok || !data.ok) {
+        throw new Error(data.error || "Failed to generate BOQ");
+      }
+
+      setItems(data.items || []);
+      setTotalAmount(Number(data.totalAmount || 0));
+      setMessage(`BOQ generated successfully. ${data.count} items created.`);
+    } catch (error) {
+      console.error(error);
+      setMessage(error instanceof Error ? error.message : "Failed to generate BOQ");
+    } finally {
+      setGenerating(false);
+    }
+  }
+
+  useEffect(() => {
+    loadProjectsAndBoq();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <div>
-      <PageTitle title="BOQ / Estimate" desc="Rough estimate, BOQ draft, material summary and contractor package." theme={theme} />
+      <PageTitle title="BOQ / Estimate" desc="Project-wise draft BOQ, material quantity, amount summary and review status." theme={theme} />
+
       <section className={cn("rounded-2xl border p-5", theme === "dark" ? "border-white/10 bg-white/[0.035]" : "border-[#ded5ec] bg-white light-card-shadow")}>
-        <div className="mb-5 flex items-center justify-between">
-          <StatusBadge status="PHASE 3" theme={theme} />
-          <button className="rounded-xl bg-[#7c3aed] px-4 py-2.5 text-sm font-medium text-white">
-            Generate BOQ Draft
-          </button>
+        <div className="mb-5 flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
+          <div className="grid flex-1 gap-3 sm:grid-cols-[1fr_auto]">
+            <select
+              value={projectId}
+              onChange={(event) => handleProjectChange(event.target.value)}
+              className={cn("h-12 rounded-xl border px-4 text-sm outline-none", theme === "dark" ? "border-white/10 bg-black/20 text-white" : "border-[#ded5ec] bg-white text-[#21133f]")}
+            >
+              {!projectsList.length && <option value="">No project found</option>}
+              {projectsList.map((project) => (
+                <option key={project.id} value={project.id}>
+                  {project.title} {project.location ? `- ${project.location}` : ""}
+                </option>
+              ))}
+            </select>
+
+            <button
+              onClick={handleGenerateBoq}
+              disabled={generating || !projectId}
+              className="rounded-xl bg-[#7c3aed] px-4 py-2.5 text-sm font-medium text-white disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              {generating ? "Generating..." : "Generate BOQ Draft"}
+            </button>
+          </div>
+
+          <div className={cn("rounded-xl border px-4 py-3 text-sm", theme === "dark" ? "border-white/10 bg-black/20 text-slate-200" : "border-[#ded5ec] bg-[#fbf8ff] text-[#21133f]")}>
+            Total: ₹{totalAmount.toLocaleString("en-IN")}
+          </div>
         </div>
 
-        <div className={cn("overflow-hidden rounded-2xl border", theme === "dark" ? "border-white/10" : "border-[#ded5ec]")}>
-          <table className="w-full min-w-[720px] text-left text-sm">
-            <thead className={cn("text-xs uppercase tracking-wide", theme === "dark" ? "bg-white/[0.04] text-slate-400" : "bg-[#fbf8ff] text-[#817397]")}>
-              <tr>
-                <th className="p-4">Code</th>
-                <th>Description</th>
-                <th>Unit</th>
-                <th>Qty</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody className={cn("divide-y", theme === "dark" ? "divide-white/10" : "divide-[#eee7f7]")}>
-              {rows.map((row) => (
-                <tr key={row[0]}>
-                  <td className={cn("p-4 font-medium", theme === "dark" ? "text-white" : "text-[#21133f]")}>{row[0]}</td>
-                  <td className={theme === "dark" ? "text-slate-300" : ""}>{row[1]}</td>
-                  <td className={theme === "dark" ? "text-slate-400" : ""}>{row[2]}</td>
-                  <td className={theme === "dark" ? "text-slate-400" : ""}>{row[3]}</td>
-                  <td className={theme === "dark" ? "text-slate-400" : "text-[#817397]"}>{row[4]}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        <div className="mb-5 flex flex-wrap items-center gap-3">
+          <StatusBadge status="PHASE 3" theme={theme} />
+          <span className={cn("text-sm", theme === "dark" ? "text-slate-400" : "text-[#817397]")}>
+            {items.length} BOQ items
+          </span>
+        </div>
+
+        {message && (
+          <div className={cn("mb-5 rounded-xl border p-3 text-sm", message.includes("success")
+            ? theme === "dark"
+              ? "border-[#22c55e]/30 bg-[#052e16]/40 text-[#bbf7d0]"
+              : "border-[#bbf7d0] bg-[#f0fdf4] text-[#166534]"
+            : theme === "dark"
+              ? "border-[#ef4444]/30 bg-[#450a0a]/40 text-[#fecaca]"
+              : "border-[#fecaca] bg-[#fef2f2] text-[#991b1b]"
+          )}>
+            {message}
+          </div>
+        )}
+
+        {loading && (
+          <div className={cn("rounded-xl border p-4 text-sm", theme === "dark" ? "border-white/10 bg-black/20 text-slate-300" : "border-[#ded5ec] bg-[#fbf8ff] text-[#5d5077]")}>
+            Loading BOQ...
+          </div>
+        )}
+
+        {!loading && items.length === 0 && (
+          <div className={cn("rounded-xl border p-4 text-sm", theme === "dark" ? "border-white/10 bg-black/20 text-slate-300" : "border-[#ded5ec] bg-[#fbf8ff] text-[#5d5077]")}>
+            No BOQ items found. Generate BOQ Draft button click karo.
+          </div>
+        )}
+
+        {!loading && items.length > 0 && (
+          <div className={cn("overflow-hidden rounded-2xl border", theme === "dark" ? "border-white/10" : "border-[#ded5ec]")}>
+            <div className="overflow-x-auto">
+              <table className="w-full min-w-[900px] text-left text-sm">
+                <thead className={cn("text-xs uppercase tracking-wide", theme === "dark" ? "bg-white/[0.04] text-slate-400" : "bg-[#fbf8ff] text-[#817397]")}>
+                  <tr>
+                    <th className="p-4">Code</th>
+                    <th>Description</th>
+                    <th>Unit</th>
+                    <th>Qty</th>
+                    <th>Rate</th>
+                    <th>Amount</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody className={cn("divide-y", theme === "dark" ? "divide-white/10" : "divide-[#eee7f7]")}>
+                  {items.map((item) => (
+                    <tr key={item.id}>
+                      <td className={cn("p-4 font-medium", theme === "dark" ? "text-white" : "text-[#21133f]")}>{item.itemCode || "—"}</td>
+                      <td className={theme === "dark" ? "text-slate-300" : "text-[#3f315d]"}>{item.description}</td>
+                      <td className={theme === "dark" ? "text-slate-400" : "text-[#5d5077]"}>{item.unit || "—"}</td>
+                      <td className={theme === "dark" ? "text-slate-400" : "text-[#5d5077]"}>{item.quantity ?? "—"}</td>
+                      <td className={theme === "dark" ? "text-slate-400" : "text-[#5d5077]"}>₹{Number(item.rate || 0).toLocaleString("en-IN")}</td>
+                      <td className={cn("font-medium", theme === "dark" ? "text-white" : "text-[#21133f]")}>₹{Number(item.amount || 0).toLocaleString("en-IN")}</td>
+                      <td>
+                        <span className={cn("rounded-full px-2.5 py-1 text-xs", theme === "dark" ? "bg-[#3b2507] text-[#fde68a]" : "bg-[#fff7ed] text-[#f97316]")}>
+                          {item.status}
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+
+        <div className={cn("mt-5 rounded-xl border p-4 text-sm leading-6", theme === "dark" ? "border-[#facc15]/20 bg-[#3b2507]/30 text-[#fde68a]" : "border-[#fed7aa] bg-[#fff7ed] text-[#9a3412]")}>
+          BOQ draft planning ke liye hai. Final quantity, rates and scope drawings/site verification ke baad lock karein.
         </div>
       </section>
     </div>
   );
 }
+
 
 function BbsPage({ theme }: { theme: ResolvedTheme }) {
   return (
