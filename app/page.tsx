@@ -51,6 +51,7 @@ import {
   BedDouble,
   HelpCircle,
   RefreshCcw,
+  LayoutGrid,
 } from "lucide-react";
 
 type ViewKey =
