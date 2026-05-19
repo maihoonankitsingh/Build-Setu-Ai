@@ -682,10 +682,10 @@ function Header({
             <Menu className="h-5 w-5" />
           </button>
           <h1 className={cn("text-[30px] font-bold tracking-[-0.045em]", false ? "text-white" : "text-[#21133f]")}>
-            Welcome back, Builder! 👋
+            Welcome to BuildSetu AI 👋
           </h1>
           <p className={cn("mt-1 text-sm", false ? "text-slate-400" : "text-[#6b5a84]")}>
-            AI-Powered Design & Construction Workspace
+            AI workspace for plans, interiors, BOQ, BBS and client documents
           </p>
         </div>
 
