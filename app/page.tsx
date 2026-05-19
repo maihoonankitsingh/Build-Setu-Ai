@@ -2590,6 +2590,9 @@ function ReviewPage({ theme }: { theme: ResolvedTheme }) {
 
 
 
+
+
+
 type LiveAgreement = {
   id: string;
   projectId: string;
@@ -2622,6 +2625,25 @@ function ClientAgreementPage({ theme }: { theme: ResolvedTheme }) {
   const [loading, setLoading] = useState(true);
   const [generating, setGenerating] = useState(false);
   const [message, setMessage] = useState("");
+
+  const [providerName, setProviderName] = useState("Sikhadenge Design Partner");
+  const [providerCompany, setProviderCompany] = useState("Sikhadenge Build");
+  const [providerGst, setProviderGst] = useState("");
+  const [providerAddress, setProviderAddress] = useState("Raipur, Chhattisgarh");
+  const [providerEmail, setProviderEmail] = useState("support@sikhadenge.in");
+  const [providerPhone, setProviderPhone] = useState("");
+
+  const [clientName, setClientName] = useState("");
+  const [clientCompany, setClientCompany] = useState("");
+  const [clientGst, setClientGst] = useState("");
+  const [clientAddress, setClientAddress] = useState("");
+  const [clientEmail, setClientEmail] = useState("");
+  const [clientPhone, setClientPhone] = useState("");
+
+  const [projectValue, setProjectValue] = useState("");
+  const [startDate, setStartDate] = useState("");
+  const [completionDate, setCompletionDate] = useState("");
+  const [jurisdiction, setJurisdiction] = useState("Raipur, Chhattisgarh");
 
   async function loadProjectsAndAgreements() {
     try {
@@ -2695,7 +2717,25 @@ function ClientAgreementPage({ theme }: { theme: ResolvedTheme }) {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ projectId }),
+        body: JSON.stringify({
+          projectId,
+          providerName,
+          providerCompany,
+          providerGst,
+          providerAddress,
+          providerEmail,
+          providerPhone,
+          clientName,
+          clientCompany,
+          clientGst,
+          clientAddress,
+          clientEmail,
+          clientPhone,
+          projectValue,
+          startDate,
+          completionDate,
+          jurisdiction,
+        }),
       });
 
       const data = await response.json();
@@ -2706,7 +2746,7 @@ function ClientAgreementPage({ theme }: { theme: ResolvedTheme }) {
 
       await loadAgreements(projectId);
       setSelectedAgreement(data.agreement);
-      setMessage("Client agreement generated successfully.");
+      setMessage("Advanced client agreement generated successfully.");
     } catch (error) {
       console.error(error);
       setMessage(error instanceof Error ? error.message : "Failed to generate agreement");
@@ -2722,17 +2762,17 @@ function ClientAgreementPage({ theme }: { theme: ResolvedTheme }) {
 
   const agreementSections = selectedAgreement
     ? [
-        ["Scope of Work", selectedAgreement.scope],
+        ["Scope + Party Details", selectedAgreement.scope],
         ["Deliverables", selectedAgreement.deliverables],
         ["Payment Terms", selectedAgreement.paymentTerms],
-        ["Revision Terms", selectedAgreement.revisionTerms],
-        ["Disclaimer", selectedAgreement.disclaimer],
+        ["Revision / Client Responsibility", selectedAgreement.revisionTerms],
+        ["Terms, Conditions + Disclaimer", selectedAgreement.disclaimer],
       ]
     : [];
 
   return (
     <div>
-      <PageTitle title="Client Agreement" desc="Project-wise client agreement draft, scope, deliverables, payment terms and disclaimer." theme={theme} />
+      <PageTitle title="Client Agreement" desc="Advanced client agreement with both party details, GST, scope, payment terms and legal conditions." theme={theme} />
 
       <section className="rounded-2xl border border-[#ded5ec] bg-white p-5 light-card-shadow">
         <div className="mb-5 flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
@@ -2755,12 +2795,48 @@ function ClientAgreementPage({ theme }: { theme: ResolvedTheme }) {
               disabled={generating || !projectId}
               className="rounded-xl bg-[#7c3aed] px-4 py-2.5 text-sm font-medium text-white disabled:cursor-not-allowed disabled:opacity-60"
             >
-              {generating ? "Generating..." : "Generate Agreement"}
+              {generating ? "Generating..." : "Generate Advanced Agreement"}
             </button>
           </div>
 
           <div className="rounded-xl border border-[#ded5ec] bg-[#fbf8ff] px-4 py-3 text-sm text-[#21133f]">
             Agreements: {agreements.length}
+          </div>
+        </div>
+
+        <div className="mb-5 grid gap-5 xl:grid-cols-2">
+          <div className="rounded-2xl border border-[#ded5ec] bg-[#fbf8ff] p-4">
+            <h3 className="mb-3 text-sm font-semibold text-[#21133f]">Service Provider / Designer Details</h3>
+            <div className="grid gap-3 sm:grid-cols-2">
+              <input value={providerName} onChange={(e) => setProviderName(e.target.value)} placeholder="Designer / contact person" className="h-11 rounded-xl border border-[#ded5ec] bg-white px-3 text-sm text-[#21133f] outline-none" />
+              <input value={providerCompany} onChange={(e) => setProviderCompany(e.target.value)} placeholder="Company / firm name" className="h-11 rounded-xl border border-[#ded5ec] bg-white px-3 text-sm text-[#21133f] outline-none" />
+              <input value={providerGst} onChange={(e) => setProviderGst(e.target.value)} placeholder="GSTIN" className="h-11 rounded-xl border border-[#ded5ec] bg-white px-3 text-sm text-[#21133f] outline-none" />
+              <input value={providerPhone} onChange={(e) => setProviderPhone(e.target.value)} placeholder="Phone" className="h-11 rounded-xl border border-[#ded5ec] bg-white px-3 text-sm text-[#21133f] outline-none" />
+              <input value={providerEmail} onChange={(e) => setProviderEmail(e.target.value)} placeholder="Email" className="h-11 rounded-xl border border-[#ded5ec] bg-white px-3 text-sm text-[#21133f] outline-none sm:col-span-2" />
+              <textarea value={providerAddress} onChange={(e) => setProviderAddress(e.target.value)} placeholder="Company address" className="min-h-20 rounded-xl border border-[#ded5ec] bg-white p-3 text-sm text-[#21133f] outline-none sm:col-span-2" />
+            </div>
+          </div>
+
+          <div className="rounded-2xl border border-[#ded5ec] bg-[#fbf8ff] p-4">
+            <h3 className="mb-3 text-sm font-semibold text-[#21133f]">Client / Owner Details</h3>
+            <div className="grid gap-3 sm:grid-cols-2">
+              <input value={clientName} onChange={(e) => setClientName(e.target.value)} placeholder="Client name" className="h-11 rounded-xl border border-[#ded5ec] bg-white px-3 text-sm text-[#21133f] outline-none" />
+              <input value={clientCompany} onChange={(e) => setClientCompany(e.target.value)} placeholder="Client company / owner name" className="h-11 rounded-xl border border-[#ded5ec] bg-white px-3 text-sm text-[#21133f] outline-none" />
+              <input value={clientGst} onChange={(e) => setClientGst(e.target.value)} placeholder="Client GSTIN / optional" className="h-11 rounded-xl border border-[#ded5ec] bg-white px-3 text-sm text-[#21133f] outline-none" />
+              <input value={clientPhone} onChange={(e) => setClientPhone(e.target.value)} placeholder="Client phone" className="h-11 rounded-xl border border-[#ded5ec] bg-white px-3 text-sm text-[#21133f] outline-none" />
+              <input value={clientEmail} onChange={(e) => setClientEmail(e.target.value)} placeholder="Client email" className="h-11 rounded-xl border border-[#ded5ec] bg-white px-3 text-sm text-[#21133f] outline-none sm:col-span-2" />
+              <textarea value={clientAddress} onChange={(e) => setClientAddress(e.target.value)} placeholder="Client address" className="min-h-20 rounded-xl border border-[#ded5ec] bg-white p-3 text-sm text-[#21133f] outline-none sm:col-span-2" />
+            </div>
+          </div>
+
+          <div className="rounded-2xl border border-[#ded5ec] bg-white p-4 xl:col-span-2">
+            <h3 className="mb-3 text-sm font-semibold text-[#21133f]">Commercial / Timeline Details</h3>
+            <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+              <input value={projectValue} onChange={(e) => setProjectValue(e.target.value)} placeholder="Project / design value" className="h-11 rounded-xl border border-[#ded5ec] bg-white px-3 text-sm text-[#21133f] outline-none" />
+              <input value={startDate} onChange={(e) => setStartDate(e.target.value)} placeholder="Start date" className="h-11 rounded-xl border border-[#ded5ec] bg-white px-3 text-sm text-[#21133f] outline-none" />
+              <input value={completionDate} onChange={(e) => setCompletionDate(e.target.value)} placeholder="Completion / handover date" className="h-11 rounded-xl border border-[#ded5ec] bg-white px-3 text-sm text-[#21133f] outline-none" />
+              <input value={jurisdiction} onChange={(e) => setJurisdiction(e.target.value)} placeholder="Jurisdiction city/state" className="h-11 rounded-xl border border-[#ded5ec] bg-white px-3 text-sm text-[#21133f] outline-none" />
+            </div>
           </div>
         </div>
 
@@ -2781,7 +2857,7 @@ function ClientAgreementPage({ theme }: { theme: ResolvedTheme }) {
 
         {!loading && agreements.length === 0 && (
           <div className="rounded-xl border border-[#ded5ec] bg-[#fbf8ff] p-4 text-sm text-[#5d5077]">
-            No agreement found. Generate Agreement button click karo.
+            No agreement found. Generate Advanced Agreement button click karo.
           </div>
         )}
 
