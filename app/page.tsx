@@ -45,6 +45,12 @@ import {
   Lightbulb,
   Compass,
   Boxes as BoxesIcon,
+  Armchair,
+  BadgeIndianRupee,
+  Bath,
+  BedDouble,
+  HelpCircle,
+  RefreshCcw,
 } from "lucide-react";
 
 type ViewKey =
@@ -1208,12 +1214,24 @@ function PageTitle({ title, desc, theme }: { title: string; desc: string; theme:
 }
 
 
+
 function NewProjectPage({ theme }: { theme: ResolvedTheme }) {
+  const [activeTool, setActiveTool] = useState("Floor Plan");
   const [projectType, setProjectType] = useState("Residential House");
+  const [houseType, setHouseType] = useState("Independent House");
   const [title, setTitle] = useState("30x40 North Facing House");
   const [location, setLocation] = useState("Raipur");
+  const [plotWidth, setPlotWidth] = useState("30");
+  const [plotDepth, setPlotDepth] = useState("40");
+  const [facing, setFacing] = useState("North");
+  const [floors, setFloors] = useState("G+1");
+  const [bedrooms, setBedrooms] = useState("2");
+  const [bathrooms, setBathrooms] = useState("1");
+  const [budget, setBudget] = useState("30 - 40 Lakh");
+  const [style, setStyle] = useState("Modern");
+  const [spaces, setSpaces] = useState(["Living Room", "Kitchen", "Parking", "Puja Room", "Staircase", "Wash Area"]);
   const [brief, setBrief] = useState(
-    "30x40 north-facing plot hai. Ground floor me parking, living, kitchen, mandir aur 1 bedroom chahiye. First floor me 2 bedrooms aur balcony chahiye. Modern elevation chahiye. Budget 38 lakh. BOQ and client PDF bhi chahiye.",
+    "Create a modern residential house design for a 30x40 ft north facing plot. Ground floor plan with parking, living room, kitchen, puja room, staircase, 1 bathroom and good natural light. First floor with bedrooms and balcony. Modern elevation style with BOQ and client PDF.",
   );
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
@@ -1223,11 +1241,40 @@ function NewProjectPage({ theme }: { theme: ResolvedTheme }) {
     questions?: string[];
   } | null>(null);
 
+  const toolOptions = [
+    { name: "Floor Plan", icon: LayoutGrid, desc: "Create smart floor plan ideas" },
+    { name: "Interior Design", icon: Sofa, desc: "Design beautiful interior concepts" },
+    { name: "Exterior Elevation", icon: Building2, desc: "Generate modern elevations" },
+    { name: "Estimate / BOQ", icon: Calculator, desc: "Material takeoff & cost estimate" },
+    { name: "Client Proposal", icon: FileText, desc: "Professional proposal documents" },
+    { name: "Furniture Layout", icon: Armchair, desc: "Plan furniture and space" },
+  ];
+
+  const styleOptions = ["Modern", "Minimal", "Contemporary", "Traditional", "Luxury", "More Styles"];
+  const spaceOptions = ["Living Room", "Kitchen", "Dining Room", "Parking", "Puja Room", "Staircase", "Store Room", "Wash Area", "Balcony"];
+
+  function toggleSpace(space: string) {
+    setSpaces((current) =>
+      current.includes(space)
+        ? current.filter((item) => item !== space)
+        : [...current, space],
+    );
+  }
+
+  function buildPromptFromSelectors() {
+    const plotSize = `${plotWidth}x${plotDepth} ft`;
+    const prompt = `Create a ${style.toLowerCase()} ${projectType.toLowerCase()} design for a ${plotSize} ${facing.toLowerCase()} facing plot in ${location}. House type: ${houseType}. Floors: ${floors}. Bedrooms: ${bedrooms}. Bathrooms: ${bathrooms}. Key spaces: ${spaces.join(", ")}. Budget approx ₹${budget}. Required output: ${activeTool}, BOQ and client-ready design brief.`;
+    setBrief(prompt);
+    return prompt;
+  }
+
   async function handleCreateProject() {
     try {
       setLoading(true);
       setMessage("");
       setResult(null);
+
+      const finalBrief = buildPromptFromSelectors();
 
       const createRes = await fetch("/api/projects/create", {
         method: "POST",
@@ -1238,7 +1285,11 @@ function NewProjectPage({ theme }: { theme: ResolvedTheme }) {
           title,
           projectType,
           location,
-          rawBrief: brief,
+          plotSize: `${plotWidth}x${plotDepth} ft`,
+          facing,
+          floors,
+          budget,
+          rawBrief: finalBrief,
         }),
       });
 
@@ -1257,7 +1308,7 @@ function NewProjectPage({ theme }: { theme: ResolvedTheme }) {
         },
         body: JSON.stringify({
           projectId,
-          rawBrief: brief,
+          rawBrief: finalBrief,
         }),
       });
 
@@ -1282,56 +1333,227 @@ function NewProjectPage({ theme }: { theme: ResolvedTheme }) {
     }
   }
 
+  function clearAll() {
+    setActiveTool("Floor Plan");
+    setProjectType("Residential House");
+    setHouseType("Independent House");
+    setTitle("30x40 North Facing House");
+    setLocation("Raipur");
+    setPlotWidth("30");
+    setPlotDepth("40");
+    setFacing("North");
+    setFloors("G+1");
+    setBedrooms("2");
+    setBathrooms("1");
+    setBudget("30 - 40 Lakh");
+    setStyle("Modern");
+    setSpaces(["Living Room", "Kitchen", "Parking", "Puja Room", "Staircase", "Wash Area"]);
+    setResult(null);
+    setMessage("");
+    setBrief("Create a modern residential house design for a 30x40 ft north facing plot. Ground floor plan with parking, living room, kitchen, puja room, staircase, 1 bathroom and good natural light. First floor with bedrooms and balcony. Modern elevation style with BOQ and client PDF.");
+  }
+
+  const summaryRows = [
+    ["Project Type", projectType, Home],
+    ["House Type", houseType, Home],
+    ["Plot Size", `${plotWidth} ft x ${plotDepth} ft`, Ruler],
+    ["Facing", facing, Compass],
+    ["Floors", floors, Layers],
+    ["Bedrooms", bedrooms, BedDouble],
+    ["Bathrooms", bathrooms, Bath],
+    ["Key Spaces", spaces.slice(0, 4).join(", "), LayoutGrid],
+    ["Style", style, Sparkles],
+    ["Budget Approx.", `₹ ${budget}`, BadgeIndianRupee],
+  ];
+
   return (
     <div>
-      <PageTitle title="New Project" desc="Client brief se structured design brief generate karo aur project database me save karo." theme={theme} />
+      <div className="mb-6 flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
+        <div>
+          <div className="flex items-center gap-3">
+            <Sparkles className="h-8 w-8 text-[#7c3aed]" />
+            <h1 className={cn("text-3xl font-semibold tracking-tight", theme === "dark" ? "text-white" : "text-[#140b2d]")}>
+              Create Architecture Designs with AI
+            </h1>
+          </div>
+          <p className={cn("mt-3 max-w-3xl text-sm leading-6", theme === "dark" ? "text-slate-400" : "text-[#6f6187]")}>
+            Select details or write a prompt — generate floor plan ideas, interior concepts, exterior elevation and client-ready design briefs.
+          </p>
+        </div>
 
-      <div className="grid gap-5 xl:grid-cols-[0.9fr_1.1fr]">
+        <div className="flex items-center gap-3">
+          <div className={cn("rounded-xl border px-4 py-2 text-sm font-medium", theme === "dark" ? "border-white/10 bg-white/[0.04] text-white" : "border-[#ded5ec] bg-white text-[#21133f] light-card-shadow")}>
+            ✦ 120 AI Credits
+          </div>
+          <button className={cn("rounded-xl border p-2.5", theme === "dark" ? "border-white/10 bg-white/[0.04] text-slate-300" : "border-[#ded5ec] bg-white text-[#6f1cc4]")}>
+            <HelpCircle className="h-4 w-4" />
+          </button>
+        </div>
+      </div>
+
+      <div className="mb-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-6">
+        {toolOptions.map(({ name, icon: Icon, desc }) => (
+          <button
+            key={name}
+            onClick={() => setActiveTool(name)}
+            className={cn(
+              "rounded-2xl border p-5 text-center transition",
+              activeTool === name
+                ? theme === "dark"
+                  ? "border-[#8b5cf6] bg-[#2b1755] text-white"
+                  : "border-[#8b5cf6] bg-[#f4edff] text-[#21133f] shadow-[0_18px_50px_rgba(124,58,237,0.12)]"
+                : theme === "dark"
+                  ? "border-white/10 bg-white/[0.035] text-slate-300 hover:border-[#7c3aed]"
+                  : "border-[#ded5ec] bg-white text-[#3f315d] hover:border-[#a855f7]",
+            )}
+          >
+            <Icon className={cn("mx-auto h-9 w-9", activeTool === name ? "text-[#7c3aed]" : theme === "dark" ? "text-slate-400" : "text-[#7c3aed]")} />
+            <div className="mt-4 text-sm font-semibold">{name}</div>
+            <div className={cn("mt-2 text-xs leading-5", theme === "dark" ? "text-slate-500" : "text-[#817397]")}>{desc}</div>
+          </button>
+        ))}
+      </div>
+
+      <div className="grid gap-5 xl:grid-cols-[1.05fr_0.95fr]">
         <section className={cn("rounded-2xl border p-5", theme === "dark" ? "border-white/10 bg-white/[0.035]" : "border-[#ded5ec] bg-white light-card-shadow")}>
-          <div className="mb-4 grid gap-3 sm:grid-cols-2">
-            {["Residential House", "Flat Interior", "Shop / Showroom", "Cafe / Restaurant", "Office", "Villa / Duplex"].map((type) => (
-              <button
-                key={type}
-                onClick={() => setProjectType(type)}
-                className={cn(
-                  "rounded-xl border px-4 py-3 text-left text-sm font-medium transition",
-                  projectType === type
-                    ? "border-[#7c3aed] bg-[#7c3aed] text-white"
-                    : theme === "dark"
-                      ? "border-white/10 bg-white/[0.04] text-slate-200 hover:bg-white/[0.07]"
-                      : "border-[#ded5ec] bg-[#fbf8ff] text-[#21133f] hover:border-[#a855f7]",
-                )}
-              >
-                {type}
-              </button>
-            ))}
+          <div className="mb-5 flex items-start justify-between gap-4">
+            <div>
+              <h2 className={cn("text-xl font-semibold", theme === "dark" ? "text-white" : "text-[#140b2d]")}>Tell us what you want to create</h2>
+              <p className={cn("mt-2 text-sm", theme === "dark" ? "text-slate-400" : "text-[#6f6187]")}>
+                Write your requirement in your own words or use the quick selectors below.
+              </p>
+            </div>
+            <button
+              onClick={buildPromptFromSelectors}
+              className={cn("rounded-xl border px-3 py-2 text-sm font-medium", theme === "dark" ? "border-white/10 bg-white/[0.04] text-slate-200" : "border-[#ded5ec] bg-white text-[#6f1cc4]")}
+            >
+              Examples
+            </button>
           </div>
 
-          <div className="grid gap-3 sm:grid-cols-2">
+          <div className="grid gap-4 lg:grid-cols-3">
             <div>
-              <label className={cn("text-sm font-medium", theme === "dark" ? "text-white" : "text-[#21133f]")}>Project title</label>
-              <input
-                value={title}
-                onChange={(event) => setTitle(event.target.value)}
-                className={cn("mt-2 h-12 w-full rounded-xl border px-4 text-sm outline-none", theme === "dark" ? "border-white/10 bg-black/20 text-white" : "border-[#ded5ec] bg-white text-[#21133f]")}
-              />
+              <label className={cn("text-sm font-medium", theme === "dark" ? "text-white" : "text-[#21133f]")}>Project Type</label>
+              <select value={projectType} onChange={(e) => setProjectType(e.target.value)} className={cn("mt-2 h-12 w-full rounded-xl border px-4 text-sm outline-none", theme === "dark" ? "border-white/10 bg-black/20 text-white" : "border-[#ded5ec] bg-white text-[#21133f]")}>
+                <option>Residential House</option>
+                <option>Flat Interior</option>
+                <option>Shop / Showroom</option>
+                <option>Office</option>
+                <option>Villa / Duplex</option>
+              </select>
             </div>
+
+            <div>
+              <label className={cn("text-sm font-medium", theme === "dark" ? "text-white" : "text-[#21133f]")}>House Type</label>
+              <select value={houseType} onChange={(e) => setHouseType(e.target.value)} className={cn("mt-2 h-12 w-full rounded-xl border px-4 text-sm outline-none", theme === "dark" ? "border-white/10 bg-black/20 text-white" : "border-[#ded5ec] bg-white text-[#21133f]")}>
+                <option>Independent House</option>
+                <option>Duplex</option>
+                <option>Villa</option>
+                <option>Apartment</option>
+              </select>
+            </div>
+
             <div>
               <label className={cn("text-sm font-medium", theme === "dark" ? "text-white" : "text-[#21133f]")}>Location</label>
-              <input
-                value={location}
-                onChange={(event) => setLocation(event.target.value)}
-                className={cn("mt-2 h-12 w-full rounded-xl border px-4 text-sm outline-none", theme === "dark" ? "border-white/10 bg-black/20 text-white" : "border-[#ded5ec] bg-white text-[#21133f]")}
-              />
+              <input value={location} onChange={(e) => setLocation(e.target.value)} className={cn("mt-2 h-12 w-full rounded-xl border px-4 text-sm outline-none", theme === "dark" ? "border-white/10 bg-black/20 text-white" : "border-[#ded5ec] bg-white text-[#21133f]")} />
             </div>
           </div>
 
-          <label className={cn("mt-4 block text-sm font-medium", theme === "dark" ? "text-white" : "text-[#21133f]")}>Client brief</label>
-          <textarea
-            value={brief}
-            onChange={(event) => setBrief(event.target.value)}
-            className={cn("mt-3 min-h-44 w-full rounded-2xl border p-4 text-sm leading-6 outline-none", theme === "dark" ? "border-white/10 bg-black/20 text-white" : "border-[#ded5ec] bg-white text-[#21133f]")}
-          />
+          <div className="mt-5 grid gap-4 lg:grid-cols-[1fr_1fr_1.1fr]">
+            <div>
+              <label className={cn("text-sm font-medium", theme === "dark" ? "text-white" : "text-[#21133f]")}>Plot Size (ft)</label>
+              <div className="mt-2 grid grid-cols-[1fr_auto_1fr] items-center gap-2">
+                <input value={plotWidth} onChange={(e) => setPlotWidth(e.target.value)} className={cn("h-12 rounded-xl border px-4 text-sm outline-none", theme === "dark" ? "border-white/10 bg-black/20 text-white" : "border-[#ded5ec] bg-white text-[#21133f]")} />
+                <span className={theme === "dark" ? "text-slate-500" : "text-[#817397]"}>×</span>
+                <input value={plotDepth} onChange={(e) => setPlotDepth(e.target.value)} className={cn("h-12 rounded-xl border px-4 text-sm outline-none", theme === "dark" ? "border-white/10 bg-black/20 text-white" : "border-[#ded5ec] bg-white text-[#21133f]")} />
+              </div>
+              <div className={cn("mt-1 grid grid-cols-2 text-center text-xs", theme === "dark" ? "text-slate-500" : "text-[#817397]")}>
+                <span>Width</span>
+                <span>Depth</span>
+              </div>
+            </div>
+
+            <div>
+              <label className={cn("text-sm font-medium", theme === "dark" ? "text-white" : "text-[#21133f]")}>Floors</label>
+              <div className="mt-2 grid grid-cols-4 gap-2">
+                {["G", "G+1", "G+2", "G+3"].map((item) => (
+                  <button key={item} onClick={() => setFloors(item)} className={cn("h-12 rounded-xl border text-sm font-medium", floors === item ? "border-[#7c3aed] bg-[#7c3aed] text-white" : theme === "dark" ? "border-white/10 bg-black/20 text-slate-300" : "border-[#ded5ec] bg-white text-[#3f315d]")}>{item}</button>
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <label className={cn("text-sm font-medium", theme === "dark" ? "text-white" : "text-[#21133f]")}>Facing</label>
+              <div className="mt-2 grid grid-cols-4 gap-2">
+                {["North", "South", "East", "West"].map((item) => (
+                  <button key={item} onClick={() => setFacing(item)} className={cn("flex h-12 items-center justify-center gap-1 rounded-xl border text-sm font-medium", facing === item ? "border-[#7c3aed] bg-[#f4edff] text-[#6f1cc4]" : theme === "dark" ? "border-white/10 bg-black/20 text-slate-300" : "border-[#ded5ec] bg-white text-[#3f315d]")}>
+                    <Compass className="h-4 w-4" /> {item}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-5 grid gap-4 lg:grid-cols-3">
+            <div>
+              <label className={cn("text-sm font-medium", theme === "dark" ? "text-white" : "text-[#21133f]")}>Bedrooms</label>
+              <select value={bedrooms} onChange={(e) => setBedrooms(e.target.value)} className={cn("mt-2 h-12 w-full rounded-xl border px-4 text-sm outline-none", theme === "dark" ? "border-white/10 bg-black/20 text-white" : "border-[#ded5ec] bg-white text-[#21133f]")}>
+                <option>1</option><option>2</option><option>3</option><option>4</option><option>5</option>
+              </select>
+            </div>
+            <div>
+              <label className={cn("text-sm font-medium", theme === "dark" ? "text-white" : "text-[#21133f]")}>Bathrooms / Toilets</label>
+              <select value={bathrooms} onChange={(e) => setBathrooms(e.target.value)} className={cn("mt-2 h-12 w-full rounded-xl border px-4 text-sm outline-none", theme === "dark" ? "border-white/10 bg-black/20 text-white" : "border-[#ded5ec] bg-white text-[#21133f]")}>
+                <option>1</option><option>2</option><option>3</option><option>4</option>
+              </select>
+            </div>
+            <div>
+              <label className={cn("text-sm font-medium", theme === "dark" ? "text-white" : "text-[#21133f]")}>Budget Approx.</label>
+              <select value={budget} onChange={(e) => setBudget(e.target.value)} className={cn("mt-2 h-12 w-full rounded-xl border px-4 text-sm outline-none", theme === "dark" ? "border-white/10 bg-black/20 text-white" : "border-[#ded5ec] bg-white text-[#21133f]")}>
+                <option>15 - 25 Lakh</option>
+                <option>30 - 40 Lakh</option>
+                <option>40 - 60 Lakh</option>
+                <option>60 Lakh - 1 Cr</option>
+                <option>1 Cr+</option>
+              </select>
+            </div>
+          </div>
+
+          <div className="mt-5">
+            <label className={cn("text-sm font-medium", theme === "dark" ? "text-white" : "text-[#21133f]")}>Rooms & Spaces</label>
+            <div className="mt-2 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+              {spaceOptions.map((space) => {
+                const selected = spaces.includes(space);
+                return (
+                  <button key={space} onClick={() => toggleSpace(space)} className={cn("flex items-center gap-2 rounded-xl border px-3 py-2.5 text-left text-sm", selected ? "border-[#7c3aed] bg-[#f4edff] text-[#6f1cc4]" : theme === "dark" ? "border-white/10 bg-black/20 text-slate-300" : "border-[#ded5ec] bg-white text-[#3f315d]")}>
+                    <span className={cn("flex h-4 w-4 items-center justify-center rounded border text-[10px]", selected ? "border-[#7c3aed] bg-[#7c3aed] text-white" : theme === "dark" ? "border-white/20" : "border-[#c7bad8]")}>{selected ? "✓" : ""}</span>
+                    {space}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          <div className="mt-5">
+            <label className={cn("text-sm font-medium", theme === "dark" ? "text-white" : "text-[#21133f]")}>Style / Look</label>
+            <div className="mt-2 grid gap-3 sm:grid-cols-3 xl:grid-cols-6">
+              {styleOptions.map((item) => (
+                <button key={item} onClick={() => setStyle(item)} className={cn("overflow-hidden rounded-xl border p-2 text-sm font-medium", style === item ? "border-[#7c3aed] bg-[#f4edff] text-[#6f1cc4]" : theme === "dark" ? "border-white/10 bg-black/20 text-slate-300" : "border-[#ded5ec] bg-white text-[#3f315d]")}>
+                  <div className="mb-2 h-16 rounded-lg bg-cover bg-center" style={{ backgroundImage: `url(/tool-images/exterior-elevation.png)` }} />
+                  {item}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="mt-5">
+            <label className={cn("text-sm font-medium", theme === "dark" ? "text-white" : "text-[#21133f]")}>Prompt</label>
+            <textarea
+              value={brief}
+              onChange={(event) => setBrief(event.target.value)}
+              className={cn("mt-2 min-h-28 w-full rounded-2xl border p-4 text-sm leading-6 outline-none", theme === "dark" ? "border-white/10 bg-black/20 text-white" : "border-[#ded5ec] bg-white text-[#21133f]")}
+            />
+          </div>
 
           {message && (
             <div className={cn("mt-4 rounded-xl border p-3 text-sm", message.includes("success")
@@ -1346,124 +1568,110 @@ function NewProjectPage({ theme }: { theme: ResolvedTheme }) {
             </div>
           )}
 
-          <div className="mt-4 flex flex-wrap gap-3">
+          <div className="mt-5 grid gap-3 sm:grid-cols-[1fr_auto]">
             <button
               onClick={handleCreateProject}
               disabled={loading}
-              className="inline-flex items-center gap-2 rounded-xl bg-[#7c3aed] px-5 py-3 text-sm font-medium text-white disabled:cursor-not-allowed disabled:opacity-60"
+              className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#6d28d9] px-5 py-3 text-sm font-medium text-white shadow-[0_16px_40px_rgba(109,40,217,0.25)] disabled:cursor-not-allowed disabled:opacity-60"
             >
-              {loading ? "Generating..." : "Save Project + Generate Magic Brief"} <Sparkles className="h-4 w-4" />
+              {loading ? "Creating..." : "Create Design Brief"} <Sparkles className="h-4 w-4" />
             </button>
-            <button className={cn("inline-flex items-center gap-2 rounded-xl border px-5 py-3 text-sm font-medium", theme === "dark" ? "border-white/10 bg-white/[0.04] text-white" : "border-[#ded5ec] bg-[#fbf8ff] text-[#6f1cc4]")}>
-              Upload Plan / Photo <Upload className="h-4 w-4" />
+            <button onClick={clearAll} className={cn("inline-flex items-center justify-center gap-2 rounded-xl border px-5 py-3 text-sm font-medium", theme === "dark" ? "border-white/10 bg-white/[0.04] text-white" : "border-[#ded5ec] bg-white text-[#3f315d]")}>
+              <RefreshCcw className="h-4 w-4" /> Clear All
             </button>
           </div>
         </section>
 
-        <section className={cn("rounded-2xl border", theme === "dark" ? "border-white/10 bg-white/[0.035]" : "border-[#ded5ec] bg-white light-card-shadow")}>
-          <div className={cn("border-b p-5", theme === "dark" ? "border-white/10" : "border-[#eee7f7]")}>
-            <h2 className={cn("font-medium", theme === "dark" ? "text-white" : "text-[#21133f]")}>AI Briefing Output</h2>
-            <p className={cn("mt-1 text-sm", theme === "dark" ? "text-slate-500" : "text-[#817397]")}>Saved project + structured brief + smart questions.</p>
+        <section className={cn("rounded-2xl border p-5", theme === "dark" ? "border-white/10 bg-white/[0.035]" : "border-[#ded5ec] bg-white light-card-shadow")}>
+          <div className="mb-4 flex items-start justify-between gap-3">
+            <div>
+              <div className="flex items-center gap-2">
+                <Sparkles className="h-5 w-5 text-[#7c3aed]" />
+                <h2 className={cn("text-xl font-semibold", theme === "dark" ? "text-white" : "text-[#140b2d]")}>Your Design Brief</h2>
+              </div>
+              <p className={cn("mt-2 text-sm", theme === "dark" ? "text-slate-400" : "text-[#6f6187]")}>
+                Review the AI generated brief. You can edit or add more details.
+              </p>
+            </div>
+            <span className={cn("rounded-full px-3 py-1 text-xs font-medium", theme === "dark" ? "bg-[#2b1755] text-[#e9d5ff]" : "bg-[#f4edff] text-[#7c3aed]")}>AI Generated</span>
           </div>
 
-          <div className="space-y-4 p-5">
-            {!result && (
-              <>
-                <div className="ml-auto max-w-[85%] rounded-2xl bg-[#7c3aed] px-4 py-3 text-sm leading-6 text-white">
-                  {brief}
-                </div>
-                <div className={cn("max-w-[85%] rounded-2xl px-4 py-3 text-sm leading-6", theme === "dark" ? "bg-white/[0.06] text-slate-200" : "bg-[#f7f0ff] text-[#3f315d]")}>
-                  Brief submit karne ke baad yahan AI structured project brief aur smart questions dikhenge.
-                </div>
-              </>
-            )}
+          <div className={cn("rounded-2xl p-5 font-mono text-sm leading-7", theme === "dark" ? "bg-black/25 text-slate-200" : "bg-[#f4edff] text-[#21133f]")}>
+            {brief}
+          </div>
 
-            {result?.structuredBrief && (
-              <div className={cn("rounded-2xl border p-4", theme === "dark" ? "border-white/10 bg-black/20" : "border-[#ded5ec] bg-[#fbf8ff]")}>
-                <div className={cn("mb-3 flex items-center gap-2 text-sm font-medium", theme === "dark" ? "text-white" : "text-[#21133f]")}>
-                  <CheckCircle2 className="h-4 w-4 text-[#12b76a]" />
-                  Structured Brief Saved
-                </div>
+          <h3 className={cn("mt-5 text-sm font-semibold", theme === "dark" ? "text-white" : "text-[#21133f]")}>Brief Summary</h3>
 
-                <div className="grid gap-2 sm:grid-cols-2">
-                  {Object.entries(result.structuredBrief)
-                    .filter(([key]) => !["safetyNotes", "detectedRooms", "priorityOutputs"].includes(key))
-                    .map(([key, value]) => (
-                      <div key={key} className={cn("rounded-xl px-3 py-2", theme === "dark" ? "bg-white/[0.04]" : "bg-white")}>
-                        <div className={cn("text-xs capitalize", theme === "dark" ? "text-slate-500" : "text-[#817397]")}>{key}</div>
-                        <div className={cn("text-sm font-medium", theme === "dark" ? "text-white" : "text-[#21133f]")}>
-                          {String(value || "Not detected")}
-                        </div>
-                      </div>
-                    ))}
-                </div>
-
-                <div className="mt-4 grid gap-3 sm:grid-cols-2">
-                  <div className={cn("rounded-xl p-3", theme === "dark" ? "bg-white/[0.04]" : "bg-white")}>
-                    <div className={cn("text-xs", theme === "dark" ? "text-slate-500" : "text-[#817397]")}>Detected Rooms</div>
-                    <div className={cn("mt-2 flex flex-wrap gap-2 text-xs", theme === "dark" ? "text-slate-200" : "text-[#3f315d]")}>
-                      {Array.isArray(result.structuredBrief.detectedRooms)
-                        ? result.structuredBrief.detectedRooms.map((item) => <span key={String(item)} className="rounded-full bg-[#7c3aed] px-2.5 py-1 text-white">{String(item)}</span>)
-                        : "Not detected"}
-                    </div>
-                  </div>
-
-                  <div className={cn("rounded-xl p-3", theme === "dark" ? "bg-white/[0.04]" : "bg-white")}>
-                    <div className={cn("text-xs", theme === "dark" ? "text-slate-500" : "text-[#817397]")}>Priority Outputs</div>
-                    <div className={cn("mt-2 flex flex-wrap gap-2 text-xs", theme === "dark" ? "text-slate-200" : "text-[#3f315d]")}>
-                      {Array.isArray(result.structuredBrief.priorityOutputs)
-                        ? result.structuredBrief.priorityOutputs.map((item) => <span key={String(item)} className="rounded-full bg-[#2b1755] px-2.5 py-1 text-[#e9d5ff]">{String(item)}</span>)
-                        : "Not detected"}
-                    </div>
-                  </div>
+          <div className="mt-3 grid gap-3 sm:grid-cols-2">
+            {summaryRows.map(([label, value, Icon]) => (
+              <div key={String(label)} className={cn("flex items-center gap-3 rounded-xl border p-3", theme === "dark" ? "border-white/10 bg-black/20" : "border-[#eee7f7] bg-white")}>
+                {typeof Icon !== "string" && <Icon className="h-5 w-5 text-[#7c3aed]" />}
+                <div>
+                  <div className={cn("text-xs", theme === "dark" ? "text-slate-500" : "text-[#817397]")}>{String(label)}</div>
+                  <div className={cn("text-sm font-medium", theme === "dark" ? "text-white" : "text-[#21133f]")}>{String(value || "—")}</div>
                 </div>
               </div>
-            )}
+            ))}
+          </div>
 
-            {result?.questions && (
-              <div className={cn("rounded-2xl border p-4", theme === "dark" ? "border-white/10 bg-black/20" : "border-[#ded5ec] bg-[#fbf8ff]")}>
-                <h3 className={cn("text-sm font-medium", theme === "dark" ? "text-white" : "text-[#21133f]")}>Smart Questions</h3>
-                <div className="mt-3 space-y-2">
-                  {result.questions.map((question, index) => (
-                    <div key={question} className={cn("rounded-xl px-3 py-2 text-sm", theme === "dark" ? "bg-white/[0.04] text-slate-300" : "bg-white text-[#3f315d]")}>
-                      {index + 1}. {question}
+          {result?.structuredBrief && (
+            <div className={cn("mt-5 rounded-2xl border p-4", theme === "dark" ? "border-white/10 bg-black/20" : "border-[#ded5ec] bg-[#fbf8ff]")}>
+              <div className={cn("mb-3 flex items-center gap-2 text-sm font-medium", theme === "dark" ? "text-white" : "text-[#21133f]")}>
+                <CheckCircle2 className="h-4 w-4 text-[#12b76a]" />
+                Structured Brief Saved
+              </div>
+
+              <div className="grid gap-2 sm:grid-cols-2">
+                {Object.entries(result.structuredBrief)
+                  .filter(([key]) => !["safetyNotes", "detectedRooms", "priorityOutputs"].includes(key))
+                  .map(([key, value]) => (
+                    <div key={key} className={cn("rounded-xl px-3 py-2", theme === "dark" ? "bg-white/[0.04]" : "bg-white")}>
+                      <div className={cn("text-xs capitalize", theme === "dark" ? "text-slate-500" : "text-[#817397]")}>{key}</div>
+                      <div className={cn("text-sm font-medium", theme === "dark" ? "text-white" : "text-[#21133f]")}>
+                        {String(value || "Not detected")}
+                      </div>
                     </div>
                   ))}
-                </div>
               </div>
-            )}
 
-            {result?.projectId && (
-              <div className={cn("rounded-xl border p-3 text-xs", theme === "dark" ? "border-white/10 bg-white/[0.04] text-slate-500" : "border-[#eee7f7] bg-white text-[#817397]")}>
-                Project ID: {result.projectId}
-              </div>
-            )}
-          </div>
+              {result.questions && (
+                <div className="mt-4">
+                  <h4 className={cn("text-sm font-medium", theme === "dark" ? "text-white" : "text-[#21133f]")}>Smart Questions</h4>
+                  <div className="mt-2 space-y-2">
+                    {result.questions.map((question, index) => (
+                      <div key={question} className={cn("rounded-xl px-3 py-2 text-sm", theme === "dark" ? "bg-white/[0.04] text-slate-300" : "bg-white text-[#3f315d]")}>
+                        {index + 1}. {question}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
+          <button
+            onClick={handleCreateProject}
+            disabled={loading}
+            className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#6d28d9] px-5 py-3 text-sm font-medium text-white shadow-[0_16px_40px_rgba(109,40,217,0.25)] disabled:cursor-not-allowed disabled:opacity-60"
+          >
+            {loading ? "Generating..." : "Generate Design Preview"} <ArrowRight className="h-4 w-4" />
+          </button>
+
+          <p className={cn("mt-3 text-center text-xs", theme === "dark" ? "text-slate-500" : "text-[#817397]")}>
+            You can review and refine the results later.
+          </p>
+
+          {result?.projectId && (
+            <div className={cn("mt-4 rounded-xl border p-3 text-xs", theme === "dark" ? "border-white/10 bg-white/[0.04] text-slate-500" : "border-[#eee7f7] bg-white text-[#817397]")}>
+              Project ID: {result.projectId}
+            </div>
+          )}
         </section>
       </div>
     </div>
   );
 }
 
-
-
-type LiveRender = {
-  id: string;
-  projectId: string;
-  renderType: string;
-  roomType: string | null;
-  prompt: string;
-  imageUrl: string | null;
-  version: number;
-  status: string;
-  createdAt: string;
-  project?: {
-    id: string;
-    title: string;
-    projectType: string | null;
-    location: string | null;
-  };
-};
 
 function RenderStudio({ theme }: { theme: ResolvedTheme }) {
   const [projectsList, setProjectsList] = useState<LiveProject[]>([]);
