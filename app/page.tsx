@@ -576,7 +576,7 @@ function Sidebar({
             <div key={item.id}>
               {withDivider && <div className={cn("my-2 h-px", false ? "bg-white/10" : "bg-[#eee7f7]")} />}
               <button
-                onClick={() => setActive(item.id)}
+                onClick={() => item.id === "exports" ? (window.location.href = "/reports") : setActive(item.id)}
                 className={cn(
                   "flex w-full items-center gap-3 rounded-xl px-3 py-2 text-left text-[14px] font-medium transition",
                   selected
