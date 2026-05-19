@@ -258,7 +258,162 @@ export default function ToolExecutorPage() {
     setError("");
     setRun(null);
 
+    const selectedProject = projects.find((project) => project.id === projectId);
+
+    const baseProject = {
+      projectName: projectTitle(selectedProject || ({ id: "demo", title: config.title } as Project)),
+      city: String(selectedProject?.location || "Raipur"),
+      plotSize: String(selectedProject?.plotSize || "30x40 ft"),
+      facing: String((selectedProject as any)?.facing || "North"),
+      floors: String((selectedProject as any)?.floors || "G+1"),
+      budget: String((selectedProject as any)?.budget || "Not specified"),
+    };
+
+    function asToolRunFromDesign(design: any) {
+      return {
+        id: design.id,
+        createdAt: design.createdAt,
+        slug,
+        title: `${config.title} Output`,
+        projectId,
+        prompt,
+        status: design.status || "ENGINEER_REVIEW_REQUIRED",
+        sections: [
+          { title: "Summary", items: [design?.draft?.summary || design.requirement || "Design draft generated."] },
+          { title: "Room Schedule", items: design?.draft?.roomSchedule || [] },
+          { title: "Floor Plan Logic", items: design?.draft?.floorPlan || [] },
+          { title: "Vastu Notes", items: design?.draft?.vastuNotes || [] },
+          { title: "Review Checklist", items: design?.draft?.reviewChecklist || [] },
+        ],
+        nextActions: ["Open Naksha Studio", "Generate Structure", "Export Full PDF"],
+      };
+    }
+
+    function asToolRunFromStructure(structure: any) {
+      return {
+        id: structure.id,
+        createdAt: structure.createdAt,
+        slug,
+        title: `${config.title} Output`,
+        projectId,
+        prompt,
+        status: structure.status || "ENGINEER_REVIEW_REQUIRED",
+        sections: [
+          { title: "Summary", items: [structure?.draft?.summary || structure.requirement || "Structure draft generated."] },
+          { title: "Preliminary Column Grid", items: structure?.draft?.columnGrid || [] },
+          { title: "Beam / Slab Notes", items: structure?.draft?.beamSlabNotes || [] },
+          { title: "Foundation Notes", items: structure?.draft?.foundationNotes || [] },
+          { title: "Engineer Review Checklist", items: structure?.draft?.engineerChecklist || [] },
+          { title: "BBS Handoff Notes", items: structure?.draft?.bbsHandoffNotes || [] },
+        ],
+        nextActions: ["Open Structure Studio", "Generate BBS", "Export Full PDF"],
+      };
+    }
+
     try {
+      const designSlugs = ["floor-plan-ai", "vastu-check", "sketch-to-plan"];
+      const structureSlugs = ["column-beam-plan", "bbs-generator", "working-drawings"];
+
+      if (designSlugs.includes(slug)) {
+        const res = await fetch("/api/design/generate", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            ...baseProject,
+            bedrooms: "3",
+            bathrooms: "3",
+            parking: "Yes",
+            vastu: slug === "vastu-check" ? "Yes" : "Flexible",
+            requirement: prompt || config.placeholder,
+          }),
+        });
+
+        const data = await res.json();
+
+        if (!res.ok || !data.ok) {
+          throw new Error(data.error || "Naksha generation failed");
+        }
+
+        setRun(asToolRunFromDesign(data.design));
+        return;
+      }
+
+      if (structureSlugs.includes(slug)) {
+        const res = await fetch("/api/structure/generate", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            projectName: baseProject.projectName,
+            city: baseProject.city,
+            plotSize: baseProject.plotSize,
+            floors: baseProject.floors,
+            buildingType: String(selectedProject?.projectType || "Residential"),
+            soilType: "Unknown / to be tested",
+            span: "10-12 ft typical room span",
+            requirement: prompt || config.placeholder,
+          }),
+        });
+
+        const data = await res.json();
+
+        if (!res.ok || !data.ok) {
+          throw new Error(data.error || "Structure generation failed");
+        }
+
+        setRun(asToolRunFromStructure(data.structure));
+        return;
+      }
+
+      if (slug === "client-pdf") {
+        if (!projectId) {
+          throw new Error("Please select a project first.");
+        }
+
+        const res = await fetch("/api/reports/project-pdf", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ projectId }),
+        });
+
+        const data = await res.json();
+
+        if (!res.ok || !data.ok) {
+          throw new Error(data.error || "PDF export failed");
+        }
+
+        setRun({
+          id: data.fileName,
+          createdAt: new Date().toISOString(),
+          slug,
+          title: "Client PDF Generated",
+          projectId,
+          prompt,
+          status: "REVIEW_REQUIRED",
+          sections: [
+            {
+              title: "PDF Export",
+              items: [
+                `File generated: ${data.fileName}`,
+                `Download URL: ${data.downloadUrl}`,
+                "Full Project PDF includes project summary, Naksha, Structure, BOQ, BBS and agreement summary where available.",
+              ],
+            },
+            {
+              title: "Review Checklist",
+              items: [
+                "Open PDF and verify client/project details.",
+                "Check Naksha and Structure warnings before client sharing.",
+                "BOQ/BBS/Agreement sections should be reviewed by responsible professionals.",
+              ],
+            },
+          ],
+          nextActions: ["Download PDF", "Open Reports", "Share with client after review"],
+        });
+
+        window.location.href = data.downloadUrl;
+        return;
+      }
+
       const res = await fetch("/api/tools/run", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
