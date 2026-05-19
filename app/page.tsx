@@ -690,20 +690,13 @@ function Header({
         </div>
 
         <div className="flex flex-wrap items-center justify-end gap-3">
-          <div
-            className={cn(
-              "hidden items-center gap-2 rounded-full border px-4 py-2 text-sm font-medium sm:flex",
-              false
-                ? "border-white/10 bg-white/[0.04] text-white"
-                : "border-[#ded5ec] bg-[#fbf8ff] text-[#6f1cc4]",
-            )}
-          >
+          <button type="button" onClick={() => { window.location.href = "/credits"; }} className="cursor-pointer  hover:bg-purple-50">
             <Sparkles className="h-4 w-4 text-[#a855f7]" />
             120 Credits
             <button className="ml-2 rounded-full bg-[#2b1755] p-1 text-white">
               <Plus className="h-3 w-3" />
             </button>
-          </div>
+          </button>
 
           <ThemeDropdown themeMode={themeMode} setThemeMode={setThemeMode} theme={theme} />
 
