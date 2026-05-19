@@ -1837,7 +1837,7 @@ function RenderStudio({ theme }: { theme: ResolvedTheme }) {
         throw new Error(data.error || "Failed to save render");
       }
 
-      setMessage("AI image generated and saved successfully.");
+      setMessage(data.fallback ? "Demo preview saved. Real AI generation will work after billing is active." : "AI image generated and saved successfully.");
       await loadRendersForProject(projectId);
     } catch (error) {
       console.error(error);
@@ -1955,7 +1955,7 @@ function RenderStudio({ theme }: { theme: ResolvedTheme }) {
               disabled={loading}
               className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#7c3aed] px-5 py-3 text-sm font-medium text-white disabled:cursor-not-allowed disabled:opacity-60"
             >
-              {loading ? "Generating Image..." : "Generate AI Image"} <Sparkles className="h-4 w-4" />
+              {loading ? "Generating Preview..." : "Generate Preview Image"} <Sparkles className="h-4 w-4" />
             </button>
           </div>
         </section>

@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import OpenAI from "openai";
-import { writeFile, mkdir } from "fs/promises";
+import { copyFile, mkdir } from "fs/promises";
 import path from "path";
 import { prisma } from "@/lib/db";
 
@@ -28,15 +28,134 @@ function enhanceArchitecturePrompt(prompt: string, renderType: string, roomType?
     .join("\n");
 }
 
-export async function POST(request: Request) {
-  try {
-    if (!process.env.OPENAI_API_KEY) {
-      return NextResponse.json(
-        { ok: false, error: "OPENAI_API_KEY is missing" },
-        { status: 500 },
-      );
-    }
+function getFallbackSource(renderType: string) {
+  const lower = renderType.toLowerCase();
 
+  if (lower.includes("exterior") || lower.includes("elevation")) {
+    return "exterior-elevation.png";
+  }
+
+  if (lower.includes("site")) {
+    return "site-photo-redesign.png";
+  }
+
+  if (lower.includes("enhancer")) {
+    return "render-enhancer.png";
+  }
+
+  return "interior-render.png";
+}
+
+async function saveRenderRecord({
+  projectId,
+  prompt,
+  finalPrompt,
+  renderType,
+  roomType,
+  imageUrl,
+  fallback,
+  errorMessage,
+}: {
+  projectId: string;
+  prompt: string;
+  finalPrompt: string;
+  renderType: string;
+  roomType?: string;
+  imageUrl: string;
+  fallback: boolean;
+  errorMessage?: string;
+}) {
+  const render = await prisma.render.create({
+    data: {
+      projectId,
+      prompt: finalPrompt,
+      renderType,
+      roomType,
+      imageUrl,
+      status: fallback ? "REVIEW_REQUIRED" : "COMPLETED",
+    },
+  });
+
+  await prisma.toolRun.create({
+    data: {
+      projectId,
+      toolType:
+        renderType.toLowerCase().includes("exterior")
+          ? "EXTERIOR_ELEVATION"
+          : "INTERIOR_RENDER",
+      inputJson: JSON.stringify({ projectId, prompt, finalPrompt, renderType, roomType }),
+      outputJson: JSON.stringify({
+        renderId: render.id,
+        imageUrl,
+        fallback,
+        errorMessage: errorMessage || null,
+      }),
+      creditsUsed: fallback ? 0 : 5,
+      status: fallback ? "REVIEW_REQUIRED" : "COMPLETED",
+    },
+  });
+
+  return render;
+}
+
+async function createFallbackRender({
+  projectId,
+  prompt,
+  finalPrompt,
+  renderType,
+  roomType,
+  errorMessage,
+}: {
+  projectId: string;
+  prompt: string;
+  finalPrompt: string;
+  renderType: string;
+  roomType?: string;
+  errorMessage?: string;
+}) {
+  const outputDir = path.join(process.cwd(), "public", "generated", "renders");
+  await mkdir(outputDir, { recursive: true });
+
+  const tempId = `demo-${Date.now()}`;
+  const fileName = `${tempId}.png`;
+  const imageUrl = `/generated/renders/${fileName}`;
+
+  const fallbackFile = getFallbackSource(renderType);
+  const sourcePath = path.join(process.cwd(), "public", "tool-images", fallbackFile);
+  const outputPath = path.join(outputDir, fileName);
+
+  await copyFile(sourcePath, outputPath);
+
+  const render = await saveRenderRecord({
+    projectId,
+    prompt,
+    finalPrompt,
+    renderType,
+    roomType,
+    imageUrl,
+    fallback: true,
+    errorMessage,
+  });
+
+  return {
+    ok: true,
+    fallback: true,
+    warning:
+      "Demo fallback image saved. Real AI image generation will work after OpenAI billing is active.",
+    render,
+    imageUrl,
+    providerError: errorMessage || null,
+  };
+}
+
+export async function POST(request: Request) {
+  let projectId = "";
+  let prompt = "";
+  let finalPrompt = "";
+  let renderType = "Interior Render";
+  let roomType: string | undefined;
+
+  try {
     const body = await request.json().catch(() => null);
 
     if (!body || typeof body !== "object") {
@@ -46,10 +165,10 @@ export async function POST(request: Request) {
       );
     }
 
-    const projectId = safeString(body.projectId);
-    const prompt = safeString(body.prompt);
-    const renderType = safeString(body.renderType) || "Interior Render";
-    const roomType = safeString(body.roomType);
+    projectId = safeString(body.projectId) || "";
+    prompt = safeString(body.prompt) || "";
+    renderType = safeString(body.renderType) || "Interior Render";
+    roomType = safeString(body.roomType);
 
     if (!projectId) {
       return NextResponse.json(
@@ -77,68 +196,89 @@ export async function POST(request: Request) {
       );
     }
 
-    const finalPrompt = enhanceArchitecturePrompt(prompt, renderType, roomType);
+    finalPrompt = enhanceArchitecturePrompt(prompt, renderType, roomType);
 
-    const imageResponse = await openai.images.generate({
-      model: "gpt-image-1",
-      prompt: finalPrompt,
-      size: "1024x1024",
-    });
+    if (!process.env.OPENAI_API_KEY) {
+      if (process.env.OPENAI_IMAGE_FALLBACK === "1") {
+        const fallback = await createFallbackRender({
+          projectId,
+          prompt,
+          finalPrompt,
+          renderType,
+          roomType,
+          errorMessage: "OPENAI_API_KEY is missing",
+        });
 
-    const b64 = imageResponse.data?.[0]?.b64_json;
+        return NextResponse.json(fallback);
+      }
 
-    if (!b64) {
       return NextResponse.json(
-        { ok: false, error: "Image generation failed: no image returned" },
+        { ok: false, error: "OPENAI_API_KEY is missing" },
         { status: 500 },
       );
     }
 
-    const render = await prisma.render.create({
-      data: {
-        projectId,
+    try {
+      const imageResponse = await openai.images.generate({
+        model: "gpt-image-1",
         prompt: finalPrompt,
+        size: "1024x1024",
+      });
+
+      const b64 = imageResponse.data?.[0]?.b64_json;
+
+      if (!b64) {
+        throw new Error("Image generation failed: no image returned");
+      }
+
+      const outputDir = path.join(process.cwd(), "public", "generated", "renders");
+      await mkdir(outputDir, { recursive: true });
+
+      const tempId = `ai-${Date.now()}`;
+      const fileName = `${tempId}.png`;
+      const filePath = path.join(outputDir, fileName);
+      const imageUrl = `/generated/renders/${fileName}`;
+
+      const { writeFile } = await import("fs/promises");
+      await writeFile(filePath, Buffer.from(b64, "base64"));
+
+      const render = await saveRenderRecord({
+        projectId,
+        prompt,
+        finalPrompt,
         renderType,
         roomType,
-        status: "COMPLETED",
-      },
-    });
+        imageUrl,
+        fallback: false,
+      });
 
-    const outputDir = path.join(process.cwd(), "public", "generated", "renders");
-    await mkdir(outputDir, { recursive: true });
+      return NextResponse.json({
+        ok: true,
+        fallback: false,
+        render,
+        imageUrl,
+      });
+    } catch (providerError) {
+      const errorMessage =
+        providerError instanceof Error
+          ? providerError.message
+          : "Image provider failed";
 
-    const fileName = `${render.id}.png`;
-    const filePath = path.join(outputDir, fileName);
-    const imageBuffer = Buffer.from(b64, "base64");
+      if (process.env.OPENAI_IMAGE_FALLBACK === "1") {
+        const fallback = await createFallbackRender({
+          projectId,
+          prompt,
+          finalPrompt,
+          renderType,
+          roomType,
+          errorMessage,
+        });
 
-    await writeFile(filePath, imageBuffer);
+        return NextResponse.json(fallback);
+      }
 
-    const imageUrl = `/generated/renders/${fileName}`;
-
-    const updatedRender = await prisma.render.update({
-      where: { id: render.id },
-      data: { imageUrl },
-    });
-
-    await prisma.toolRun.create({
-      data: {
-        projectId,
-        toolType:
-          renderType.toLowerCase().includes("exterior")
-            ? "EXTERIOR_ELEVATION"
-            : "INTERIOR_RENDER",
-        inputJson: JSON.stringify({ projectId, prompt, finalPrompt, renderType, roomType }),
-        outputJson: JSON.stringify({ renderId: render.id, imageUrl }),
-        creditsUsed: 5,
-        status: "COMPLETED",
-      },
-    });
-
-    return NextResponse.json({
-      ok: true,
-      render: updatedRender,
-      imageUrl,
-    });
+      throw providerError;
+    }
   } catch (error) {
     console.error("IMAGE_GENERATION_ERROR", error);
 
