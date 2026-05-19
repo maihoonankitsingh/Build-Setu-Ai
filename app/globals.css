@@ -77,96 +77,49 @@ html, body {
 }
 
 
-/* BUILDSETU_STABLE_THEME_V8
-   Safe theme strategy:
-   - Light mode = original UI.
-   - Dark mode = soft dark shell + readable original cards.
-   - No global Tailwind bg/text force overrides.
-   - Prevents light-card + light-text conflict.
+/* BUILDSETU_LIGHT_STABLE_THEME_V9
+   Final safe theme behavior:
+   Light Mode  = normal premium light UI.
+   Dark Mode   = same readable light UI, no broken mixed colors.
+   System      = follows saved mode logic, but visual UI remains stable/readable.
 */
-
-html[data-buildsetu-theme="light"] {
-  color-scheme: light;
-}
-
-html[data-buildsetu-theme="light"] body,
-html[data-buildsetu-theme="light"] main {
-  background: #ffffff;
-  color: #21133f;
-}
-
+html[data-buildsetu-theme],
+html[data-buildsetu-theme="light"],
 html[data-buildsetu-theme="dark"] {
-  color-scheme: dark;
-  background: #f7f2ff;
+  color-scheme: light !important;
 }
 
-html[data-buildsetu-theme="dark"] body,
-html[data-buildsetu-theme="dark"] main {
-  background: #f7f2ff !important;
-  color: #21133f !important;
-}
-
-/* Dark mode shell: sidebar/header accents, but cards keep their own readable colors */
-html[data-buildsetu-theme="dark"] aside {
-  background: #211a35 !important;
-  color: #f8f4ff !important;
-  border-color: #4d3c70 !important;
-}
-
-html[data-buildsetu-theme="dark"] aside * {
-  color: #eadfff !important;
-}
-
-html[data-buildsetu-theme="dark"] aside a,
-html[data-buildsetu-theme="dark"] aside button {
-  color: #eadfff !important;
-}
-
-html[data-buildsetu-theme="dark"] aside [class*="bg-[#ead2ff]"],
-html[data-buildsetu-theme="dark"] aside [class*="bg-[#efe0ff]"],
-html[data-buildsetu-theme="dark"] aside [class*="bg-purple-100"] {
-  background: #f1e6ff !important;
-  color: #3b1668 !important;
-}
-
-html[data-buildsetu-theme="dark"] aside [class*="bg-[#ead2ff]"] *,
-html[data-buildsetu-theme="dark"] aside [class*="bg-[#efe0ff]"] *,
-html[data-buildsetu-theme="dark"] aside [class*="bg-purple-100"] * {
-  color: #3b1668 !important;
-}
-
-/* Theme dropdown selected items: light surface must use dark text */
-html[data-buildsetu-theme="dark"] [class*="bg-[#ead2ff]"],
-html[data-buildsetu-theme="dark"] [class*="bg-[#efe0ff]"] {
-  background: #f1e6ff !important;
-  color: #261143 !important;
-}
-
-html[data-buildsetu-theme="dark"] [class*="bg-[#ead2ff]"] *,
-html[data-buildsetu-theme="dark"] [class*="bg-[#efe0ff]"] * {
-  color: #261143 !important;
-}
-
-/* Inputs remain readable in all modes */
-html[data-buildsetu-theme="dark"] input,
-html[data-buildsetu-theme="dark"] select,
-html[data-buildsetu-theme="dark"] textarea {
+html[data-buildsetu-theme] body,
+html[data-buildsetu-theme] main {
   background: #ffffff !important;
   color: #21133f !important;
-  border-color: #d8c8f0 !important;
 }
 
-html[data-buildsetu-theme="dark"] input::placeholder,
-html[data-buildsetu-theme="dark"] textarea::placeholder {
-  color: #7b6b95 !important;
+/* Keep browser/system dark mode from changing form colors */
+html[data-buildsetu-theme] input,
+html[data-buildsetu-theme] select,
+html[data-buildsetu-theme] textarea {
+  color-scheme: light !important;
 }
 
-/* Purple CTAs must always stay readable */
-html[data-buildsetu-theme="dark"] [class*="bg-[#6f1cc4]"],
-html[data-buildsetu-theme="dark"] [class*="bg-[#7c3aed]"],
-html[data-buildsetu-theme="dark"] [class*="from-[#5b43ea]"],
-html[data-buildsetu-theme="dark"] [class*="from-[#6246ea]"],
-html[data-buildsetu-theme="dark"] [class*="from-[#7c3aed]"] {
+/* Theme dropdown selected item readable */
+html[data-buildsetu-theme] [class*="bg-[#ead2ff]"],
+html[data-buildsetu-theme] [class*="bg-[#efe0ff]"] {
+  background: #ead7ff !important;
+  color: #3b1668 !important;
+}
+
+html[data-buildsetu-theme] [class*="bg-[#ead2ff]"] *,
+html[data-buildsetu-theme] [class*="bg-[#efe0ff]"] * {
+  color: #3b1668 !important;
+}
+
+/* Purple CTAs always readable */
+html[data-buildsetu-theme] [class*="bg-[#6f1cc4]"],
+html[data-buildsetu-theme] [class*="bg-[#7c3aed]"],
+html[data-buildsetu-theme] [class*="from-[#5b43ea]"],
+html[data-buildsetu-theme] [class*="from-[#6246ea]"],
+html[data-buildsetu-theme] [class*="from-[#7c3aed]"] {
   color: #ffffff !important;
 }
 
