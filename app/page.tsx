@@ -515,25 +515,25 @@ function Sidebar({
   return (
     <aside
       className={cn(
-        "fixed left-0 top-0 z-30 hidden h-screen w-[270px] border-r px-5 py-6 lg:flex lg:flex-col",
+        "fixed left-0 top-0 z-30 hidden h-screen w-[270px] overflow-y-auto border-r px-5 py-4 lg:flex lg:flex-col sb-scroll",
         theme === "dark"
           ? "border-white/10 bg-[#090713]/96 text-white"
           : "border-[#eee7f7] bg-white text-[#21133f]",
       )}
     >
-      <div className="mb-8 flex items-center gap-3">
-        <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-[#7c3aed] via-[#9333ea] to-[#4f46e5] text-white shadow-lg shadow-purple-900/25">
-          <Hammer className="h-6 w-6" />
+      <div className="mb-5 flex items-center gap-3">
+        <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-[#7c3aed] via-[#9333ea] to-[#4f46e5] text-white shadow-lg shadow-purple-900/25">
+          <Hammer className="h-5 w-5" />
         </div>
         <div>
-          <div className={cn("text-[24px] font-bold leading-[0.98] tracking-[-0.055em]", theme === "dark" ? "text-white" : "text-[#21133f]")}>
+          <div className={cn("text-[21px] font-bold leading-[0.98] tracking-[-0.055em]", theme === "dark" ? "text-white" : "text-[#21133f]")}>
             Sikhadenge
           </div>
-          <div className="text-[24px] font-bold leading-[0.98] tracking-[-0.055em] text-[#c4b5fd]">Build</div>
+          <div className="text-[21px] font-bold leading-[0.98] tracking-[-0.055em] text-[#c4b5fd]">Build</div>
         </div>
       </div>
 
-      <nav className="space-y-2">
+      <nav className="space-y-1">
         {navItems.map((item, index) => {
           const Icon = item.icon;
           const selected = active === item.id;
@@ -541,11 +541,11 @@ function Sidebar({
 
           return (
             <div key={item.id}>
-              {withDivider && <div className={cn("my-4 h-px", theme === "dark" ? "bg-white/10" : "bg-[#eee7f7]")} />}
+              {withDivider && <div className={cn("my-2 h-px", theme === "dark" ? "bg-white/10" : "bg-[#eee7f7]")} />}
               <button
                 onClick={() => setActive(item.id)}
                 className={cn(
-                  "flex w-full items-center gap-3 rounded-xl px-3 py-3 text-left text-[15px] font-medium transition",
+                  "flex w-full items-center gap-3 rounded-xl px-3 py-2 text-left text-[14px] font-medium transition",
                   selected
                     ? theme === "dark"
                       ? "bg-[#2b1755] text-white shadow-lg shadow-purple-950/20"
@@ -555,7 +555,7 @@ function Sidebar({
                       : "text-[#5d5077] hover:bg-[#f7f0ff] hover:text-[#6f1cc4]",
                 )}
               >
-                <Icon className="h-5 w-5" />
+                <Icon className="h-4 w-4" />
                 <span>{item.label}</span>
               </button>
             </div>
@@ -563,7 +563,7 @@ function Sidebar({
         })}
       </nav>
 
-      <div className={cn("my-5 h-px", theme === "dark" ? "bg-white/10" : "bg-[#eee7f7]")} />
+      <div className={cn("my-3 h-px", theme === "dark" ? "bg-white/10" : "bg-[#eee7f7]")} />
 
       <div className="space-y-2">
         {bottomNav.map((item) => {
@@ -572,7 +572,7 @@ function Sidebar({
             <button
               key={item.label}
               className={cn(
-                "flex w-full items-center gap-3 rounded-xl px-3 py-3 text-left text-[15px] font-medium transition",
+                "flex w-full items-center gap-3 rounded-xl px-3 py-2 text-left text-[14px] font-medium transition",
                 theme === "dark"
                   ? "text-slate-400 hover:bg-white/[0.06] hover:text-white"
                   : "text-[#5d5077] hover:bg-[#f7f0ff] hover:text-[#6f1cc4]",
@@ -585,10 +585,10 @@ function Sidebar({
         })}
       </div>
 
-      <div className="mt-auto">
+      <div className="mt-4">
         <div
           className={cn(
-            "rounded-2xl border p-4",
+            "rounded-2xl border p-3",
             theme === "dark"
               ? "border-white/10 bg-[#070611]"
               : "border-[#ded5ec] bg-[#fbf8ff]",
@@ -608,7 +608,7 @@ function Sidebar({
           </button>
         </div>
 
-        <div className="mt-4 flex justify-center">
+        <div className="mt-3 flex justify-center">
           <button
             className={cn(
               "rounded-full p-3",
@@ -901,7 +901,7 @@ function Dashboard({
           <div
             key={label as string}
             className={cn(
-              "rounded-2xl border p-4",
+              "rounded-2xl border p-3",
               theme === "dark"
                 ? "border-white/10 bg-white/[0.035]"
                 : "border-[#ded5ec] bg-white light-card-shadow",
@@ -913,7 +913,7 @@ function Dashboard({
                 <p className={cn("mt-2 text-3xl font-semibold", theme === "dark" ? "text-white" : "text-[#21133f]")}>{value as string}</p>
               </div>
               <div className={cn("rounded-xl p-3", theme === "dark" ? "bg-[#2b1755] text-[#d8b4fe]" : "bg-[#f0dcff] text-[#6f1cc4]")}>
-                <Icon className="h-5 w-5" />
+                <Icon className="h-4 w-4" />
               </div>
             </div>
           </div>
