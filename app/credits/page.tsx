@@ -96,7 +96,7 @@ const packs: Pack[] = [
     label: "Most popular",
     desc: "Designers, architects aur contractors ke active workflow ke liye.",
     credits: 100000,
-    price: 4999,
+    price: 1,
     popular: true,
     badge: "MOST POPULAR",
     features: [
@@ -309,9 +309,25 @@ export default function CreditsPage() {
               throw new Error(verifyData.error || "Payment verification failed");
             }
 
-            setNotice(verifyData.message || "Credits added successfully");
-            setCredits(Number(verifyData.credits || 0));
+            const updatedBalance = Number(
+              verifyData.balance ??
+              verifyData.credits ??
+              verifyData.totalCredits ??
+              verifyData.creditsAdded ??
+              credits
+            );
+
+            setNotice(verifyData.message || "Payment verified. Credits added successfully.");
+
+            if (Number.isFinite(updatedBalance)) {
+              setCredits(updatedBalance);
+            }
+
             await loadCredits();
+
+            window.setTimeout(() => {
+              window.location.href = "/account?payment=success";
+            }, 700);
           } catch (error) {
             setNotice(error instanceof Error ? error.message : "Payment verification failed");
           } finally {

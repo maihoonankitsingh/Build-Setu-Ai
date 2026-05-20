@@ -43,12 +43,12 @@ export const CREDIT_PACKS: Record<string, { label: string; credits: number; amou
   "pro": { label: "Pro Credit Pack", credits: 200000, amountPaise: 499900 },
   "pro-credit": { label: "Pro Credit Pack", credits: 200000, amountPaise: 499900 },
   "pro-credit-pack": { label: "Pro Credit Pack", credits: 200000, amountPaise: 499900 },
-  "agency": { label: "Agency Credit Pack", credits: 700000, amountPaise: 1499900 },
+  "agency": { label: "Agency Credit Pack", credits: 700000, amountPaise: 1100 },
 };
 
 export const PLAN_PACKS: Record<string, { label: string; credits: number; amountPaise: number }> = {
   "pro": { label: "BuildSetu Pro", credits: 200000, amountPaise: 499900 },
-  "studio": { label: "BuildSetu Studio", credits: 700000, amountPaise: 1499900 },
+  "studio": { label: "BuildSetu Studio", credits: 700000, amountPaise: 1100 },
   "agency": { label: "BuildSetu Agency", credits: 1500000, amountPaise: 2999900 },
 };
 
