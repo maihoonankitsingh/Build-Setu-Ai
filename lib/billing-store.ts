@@ -135,22 +135,24 @@ export async function addCreditsToUser(userId: string, credits: number) {
 
 export async function setUserPlan(userId: string, planId: string, planName: string) {
   const users = await getUsers();
-  const user = users.find((u) => u.id === userId) as (AuthUser & {
-    planId?: string;
-    planName?: string;
-    planStatus?: string;
-    planUpdatedAt?: string;
-  }) | undefined;
+  const user = users.find((u) => u.id === userId) as any;
 
   if (!user) {
     throw new Error("USER_NOT_FOUND");
   }
 
+  const now = new Date();
+  const expiresAt = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
+
   user.planId = planId;
   user.planName = planName;
   user.planStatus = "active";
-  user.planUpdatedAt = new Date().toISOString();
-  user.updatedAt = new Date().toISOString();
+  user.planCycle = "monthly";
+  user.planStartedAt = now.toISOString();
+  user.planExpiresAt = expiresAt.toISOString();
+  user.planUpdatedAt = now.toISOString();
+  user.subscriptionReminderKeys = [];
+  user.updatedAt = now.toISOString();
 
   await saveUsers(users);
   return user;
