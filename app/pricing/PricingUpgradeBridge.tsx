@@ -68,38 +68,6 @@ function loadRazorpayScript() {
   });
 }
 
-function getClosestText(element: HTMLElement | null) {
-  let current = element;
-
-  for (let i = 0; current && i < 8; i += 1) {
-    const text = (current.textContent || "").replace(/\s+/g, " ").trim();
-
-    if (/starter|pro|agency/i.test(text)) {
-      return text;
-    }
-
-    current = current.parentElement;
-  }
-
-  return document.body.textContent || "";
-}
-
-function inferPlanId(target: HTMLElement, billing: "monthly" | "yearly") {
-  const text = getClosestText(target).toLowerCase();
-
-  let plan = "pro";
-
-  if (text.includes("starter")) {
-    plan = "starter";
-  } else if (text.includes("agency") || text.includes("scale")) {
-    plan = "agency";
-  } else if (text.includes("pro")) {
-    plan = "pro";
-  }
-
-  return `${plan}_${billing}`;
-}
-
 function showToast(message: string) {
   let toast = document.getElementById("buildsetu-plan-toast");
 
@@ -110,7 +78,7 @@ function showToast(message: string) {
     toast.style.right = "24px";
     toast.style.bottom = "24px";
     toast.style.zIndex = "99999";
-    toast.style.maxWidth = "360px";
+    toast.style.maxWidth = "380px";
     toast.style.borderRadius = "18px";
     toast.style.padding = "14px 16px";
     toast.style.background = "#21133f";
@@ -128,9 +96,36 @@ function showToast(message: string) {
   }, 5000);
 }
 
+function inferPlanId(clickable: HTMLElement) {
+  const explicit = clickable.closest<HTMLElement>("[data-plan-id]")?.dataset.planId;
+
+  if (explicit) {
+    return explicit;
+  }
+
+  const text = (clickable.closest("article")?.textContent || document.body.textContent || "")
+    .replace(/\s+/g, " ")
+    .toLowerCase();
+
+  let plan = "pro";
+
+  if (text.includes("ultra")) {
+    plan = "ultra";
+  } else if (text.includes("max")) {
+    plan = "max";
+  } else if (text.includes("pro")) {
+    plan = "pro";
+  }
+
+  const billing = document.querySelector<HTMLElement>("[data-billing-active='yearly']")
+    ? "yearly"
+    : "monthly";
+
+  return `${plan}_${billing}`;
+}
+
 export default function PricingUpgradeBridge() {
   useEffect(() => {
-    let billing: "monthly" | "yearly" = "monthly";
     let isOpening = false;
 
     async function startCheckout(planId: string) {
@@ -143,7 +138,7 @@ export default function PricingUpgradeBridge() {
         const loaded = await loadRazorpayScript();
 
         if (!loaded || !window.Razorpay) {
-          throw new Error("Razorpay checkout load nahi hua. Page refresh karke dobara try karein.");
+          throw new Error("Razorpay checkout load nahi hua. Refresh karke dobara try karein.");
         }
 
         const orderRes = await fetch("/api/plans/order", {
@@ -233,33 +228,22 @@ export default function PricingUpgradeBridge() {
 
       if (!clickable) return;
 
+      const explicitPlanId = clickable.closest<HTMLElement>("[data-plan-id]")?.dataset.planId;
       const text = (clickable.textContent || "").replace(/\s+/g, " ").trim().toLowerCase();
 
-      if (text === "monthly") {
-        billing = "monthly";
-        return;
-      }
-
-      if (text === "yearly" || text === "annual" || text === "annually") {
-        billing = "yearly";
-        return;
-      }
-
       const isUpgradeClick =
+        Boolean(explicitPlanId) ||
         text.includes("subscribe") ||
         text.includes("upgrade") ||
         text.includes("get started") ||
-        text.includes("start now") ||
-        text.includes("choose plan") ||
-        text.includes("buy plan");
+        text.includes("choose plan");
 
       if (!isUpgradeClick) return;
 
       event.preventDefault();
       event.stopPropagation();
 
-      const planId = inferPlanId(clickable, billing);
-      startCheckout(planId);
+      startCheckout(inferPlanId(clickable));
     };
 
     document.addEventListener("click", handleClick, true);
