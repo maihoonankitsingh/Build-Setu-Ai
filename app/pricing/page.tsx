@@ -1,13 +1,19 @@
 "use client";
+import PricingUpgradeBridge from "./PricingUpgradeBridge";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
+import type { ReactNode } from "react";
 import {
   ArrowLeft,
+  ArrowUpRight,
   BadgeCheck,
+  Check,
   CheckCircle2,
+  ChevronRight,
   CreditCard,
-  Crown,
+  Gift,
   Lock,
+  Shield,
   Sparkles,
   Star,
   Zap,
@@ -17,456 +23,476 @@ type Billing = "monthly" | "yearly";
 
 type Plan = {
   id: string;
+  label: string;
   name: string;
-  tag: string;
   monthlyPrice: number;
   yearlyPrice: number;
   monthlyCredits: number;
   yearlyCredits: number;
+  accent: "orange" | "green" | "purple";
+  badge?: string;
   popular?: boolean;
+  helper: string;
   features: string[];
 };
-
-type RazorpayCheckoutResponse = {
-  razorpay_order_id: string;
-  razorpay_payment_id: string;
-  razorpay_signature: string;
-};
-
-type RazorpayCheckoutOptions = {
-  key: string;
-  amount: number;
-  currency: string;
-  name: string;
-  description: string;
-  order_id: string;
-  prefill?: {
-    name?: string;
-    email?: string;
-  };
-  notes?: Record<string, string>;
-  theme?: {
-    color?: string;
-  };
-  modal?: {
-    ondismiss?: () => void;
-  };
-  handler: (response: RazorpayCheckoutResponse) => void;
-};
-
-declare global {
-  interface Window {
-    Razorpay?: new (options: RazorpayCheckoutOptions) => {
-      open: () => void;
-    };
-  }
-}
 
 const plans: Plan[] = [
   {
     id: "starter",
+    label: "PRO",
     name: "Starter",
-    tag: "For solo designers",
-    monthlyPrice: 2499,
-    yearlyPrice: 24999,
-    monthlyCredits: 120,
-    yearlyCredits: 1500,
+    monthlyPrice: 4999,
+    yearlyPrice: 49990,
+    monthlyCredits: 200,
+    yearlyCredits: 3000,
+    accent: "orange",
+    helper: "15,000+ creators started here",
     features: [
-      "120 monthly credits",
-      "Interior / exterior renders",
-      "Magic Brief and Architect Chat",
-      "Client PDF exports",
-      "Basic project workspace",
+      "200 Interior & Exterior designs",
+      "200 Magic Brief generations",
+      "200 Floor Plan AI drafts",
+      "100 BOQ draft runs",
+      "50 Client PDF exports",
+      "Commercial License",
+      "API Access",
     ],
   },
   {
     id: "pro",
+    label: "MAX",
     name: "Pro",
-    tag: "For active studios",
-    monthlyPrice: 4999,
-    yearlyPrice: 49999,
-    monthlyCredits: 400,
-    yearlyCredits: 5200,
+    monthlyPrice: 9999,
+    yearlyPrice: 99990,
+    monthlyCredits: 500,
+    yearlyCredits: 7500,
+    accent: "green",
+    badge: "MOST POPULAR",
     popular: true,
+    helper: "500+ upgraded this week",
     features: [
-      "400 monthly credits",
-      "Higher render generations",
-      "BOQ / BBS drafts",
-      "Client agreement drafts",
-      "Priority project workflow",
+      "500 Interior & Exterior designs",
+      "500 Naksha Studio outputs",
+      "500 Structure Studio outputs",
+      "250 BOQ + BBS drafts",
+      "150 Full Project PDFs",
+      "Client Agreement generator",
+      "Commercial License",
+      "API Access",
     ],
   },
   {
     id: "agency",
+    label: "ULTRA",
     name: "Agency",
-    tag: "For teams and contractors",
-    monthlyPrice: 12999,
-    yearlyPrice: 129999,
-    monthlyCredits: 1200,
-    yearlyCredits: 16000,
+    monthlyPrice: 24999,
+    yearlyPrice: 249990,
+    monthlyCredits: 1500,
+    yearlyCredits: 24000,
+    accent: "purple",
+    helper: "Trusted by agencies and contractors",
     features: [
-      "1,200 monthly credits",
-      "High volume AI usage",
-      "Large PDF/report workflow",
+      "1500 Interior & Exterior designs",
+      "1500 Magic Brief generations",
+      "1500 Naksha + Structure outputs",
+      "750 BOQ + BBS drafts",
+      "400 Full Project PDFs",
       "Contractor package workflow",
-      "Team-ready workspace",
+      "Team-ready documentation",
+      "API Access & white-label ready",
     ],
   },
 ];
+
+const accent = {
+  orange: {
+    chip: "bg-orange-100 text-orange-700",
+    button: "from-orange-500 to-orange-600",
+    icon: "text-orange-500",
+    border: "border-orange-200",
+  },
+  green: {
+    chip: "bg-emerald-100 text-emerald-700",
+    button: "from-emerald-500 to-teal-600",
+    icon: "text-emerald-500",
+    border: "border-emerald-400 shadow-[0_0_0_3px_rgba(16,185,129,0.16)]",
+  },
+  purple: {
+    chip: "bg-purple-100 text-purple-700",
+    button: "from-violet-500 to-purple-600",
+    icon: "text-violet-500",
+    border: "border-purple-200",
+  },
+};
 
 function money(value: number) {
   return "₹" + value.toLocaleString("en-IN");
 }
 
-function getPlanCheckoutId(plan: Plan, billing: Billing) {
-  return `${plan.id}_${billing}`;
+function FeatureRow({ text, tone }: { text: string; tone: Plan["accent"] }) {
+  return (
+    <div className="flex items-center gap-2.5 text-[12px] leading-5 text-[#3c3152]">
+      <Shield className={`h-4 w-4 shrink-0 ${accent[tone].icon}`} />
+      <span>{text}</span>
+      <span className="ml-auto flex h-4 w-4 items-center justify-center rounded-full border border-[#d9d2e6] text-[10px] text-[#8a819b]">
+        i
+      </span>
+    </div>
+  );
 }
 
-function loadRazorpayScript() {
-  return new Promise<boolean>((resolve) => {
-    if (typeof window === "undefined") {
-      resolve(false);
-      return;
-    }
+function PlanCard({ plan, billing }: { plan: Plan; billing: Billing }) {
+  const yearly = billing === "yearly";
+  const price = yearly ? plan.yearlyPrice : plan.monthlyPrice;
+  const credits = yearly ? plan.yearlyCredits : plan.monthlyCredits;
+  const tone = accent[plan.accent];
 
-    if (window.Razorpay) {
-      resolve(true);
-      return;
-    }
+  return (
+    <article
+      className={`relative rounded-2xl border bg-white p-4 ${
+        plan.popular ? tone.border : "border-[#d9d2e6] shadow-sm"
+      }`}
+    >
+      <div className="absolute -top-3 left-5 flex items-center gap-2">
+        <span className={`rounded-full px-3 py-1 text-[11px] font-black ${tone.chip}`}>
+          {plan.label}
+        </span>
+        {plan.badge ? (
+          <span className="rounded-full bg-emerald-500 px-3 py-1 text-[10px] font-black text-white">
+            {plan.badge}
+          </span>
+        ) : null}
+      </div>
 
-    const existing = document.querySelector<HTMLScriptElement>(
-      'script[src="https://checkout.razorpay.com/v1/checkout.js"]',
-    );
+      <div className="pt-4">
+        <div className="flex items-end gap-1">
+          <span className="text-[28px] font-black tracking-[-0.05em] text-[#181321]">
+            {money(price)}
+          </span>
+          <span className="pb-2 text-xs font-semibold text-[#8c839c]">
+            /{yearly ? "year" : "month"}
+          </span>
+        </div>
 
-    if (existing) {
-      existing.addEventListener("load", () => resolve(true), { once: true });
-      existing.addEventListener("error", () => resolve(false), { once: true });
-      return;
-    }
+        <p className="mt-1 text-xs text-[#8c839c]">
+          billed {yearly ? "yearly" : "monthly"}
+        </p>
 
-    const script = document.createElement("script");
-    script.src = "https://checkout.razorpay.com/v1/checkout.js";
-    script.async = true;
-    script.onload = () => resolve(true);
-    script.onerror = () => resolve(false);
-    document.body.appendChild(script);
-  });
+        <button
+          onClick={() => {
+            alert(`${plan.name} ${billing} selected. Payment gateway integration next step hai.`);
+          }}
+          className={`mt-4 flex h-10 w-full items-center justify-center rounded-lg bg-gradient-to-r ${tone.button} text-xs font-black text-white shadow-md`}
+        >
+          Subscribe
+        </button>
+
+        <div className="mt-4 flex items-center gap-2 text-[12px] font-black text-[#2f2642]">
+          <Zap className={`h-4 w-4 ${tone.icon}`} />
+          {credits.toLocaleString("en-IN")} credits included
+        </div>
+
+        <div className="mt-4 space-y-2.5">
+          {plan.features.map((feature) => (
+            <FeatureRow key={feature} text={feature} tone={plan.accent} />
+          ))}
+        </div>
+
+        <p className="mt-5 text-center text-[11px] leading-5 text-[#9b92aa]">
+          {plan.helper}
+        </p>
+      </div>
+    </article>
+  );
+}
+
+function TrustItem({
+  icon,
+  title,
+  desc,
+}: {
+  icon: ReactNode;
+  title: string;
+  desc: string;
+}) {
+  return (
+    <div className="rounded-2xl border border-[#ddd7e8] bg-white p-5 text-center shadow-sm">
+      <div className="mx-auto flex h-11 w-11 items-center justify-center rounded-full bg-purple-100 text-[#7c3aed]">
+        {icon}
+      </div>
+      <p className="mt-3 text-base font-black text-[#1f182d]">{title}</p>
+      <p className="mt-1 text-sm text-[#7c718d]">{desc}</p>
+    </div>
+  );
+}
+
+function Testimonial({
+  avatar,
+  name,
+  role,
+  text,
+}: {
+  avatar: string;
+  name: string;
+  role: string;
+  text: string;
+}) {
+  return (
+    <div className="rounded-2xl border border-[#e2ddeb] bg-white p-4 shadow-sm">
+      <div className="flex gap-4">
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#f4ebff] text-base">
+          {avatar}
+        </div>
+        <div>
+          <p className="text-[13px] leading-6 text-[#514662]">{text}</p>
+          <p className="mt-3 text-sm font-black text-[#1d1728]">{name}</p>
+          <p className="text-xs text-[#7c718d]">{role}</p>
+        </div>
+      </div>
+    </div>
+  );
 }
 
 export default function PricingPage() {
   const [billing, setBilling] = useState<Billing>("monthly");
-  const [loadingPlan, setLoadingPlan] = useState("");
-  const [notice, setNotice] = useState("");
-  const [activePlan, setActivePlan] = useState<any>(null);
 
-  const selectedPlans = useMemo(() => {
-    return plans.map((plan) => ({
-      ...plan,
-      price: billing === "monthly" ? plan.monthlyPrice : plan.yearlyPrice,
-      credits: billing === "monthly" ? plan.monthlyCredits : plan.yearlyCredits,
-      checkoutId: getPlanCheckoutId(plan, billing),
-    }));
+  const billingCopy = useMemo(() => {
+    return billing === "yearly"
+      ? "Yearly plans include extra credits and better effective monthly pricing."
+      : "Monthly plans are flexible and can be upgraded anytime.";
   }, [billing]);
 
-  async function loadPlanStatus() {
-    try {
-      const res = await fetch("/api/plans/status", { cache: "no-store" });
-      const data = await res.json();
-
-      if (res.ok && data.ok) {
-        setActivePlan(data.plan || null);
-      }
-    } catch {
-      setActivePlan(null);
-    }
-  }
-
-  async function subscribe(planId: string) {
-    setLoadingPlan(planId);
-    setNotice("");
-
-    try {
-      const scriptLoaded = await loadRazorpayScript();
-
-      if (!scriptLoaded || !window.Razorpay) {
-        throw new Error("Razorpay checkout script load nahi hua. Refresh karke dobara try karein.");
-      }
-
-      const orderRes = await fetch("/api/plans/order", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ planId }),
-      });
-
-      const orderData = await orderRes.json();
-
-      if (!orderRes.ok || !orderData.ok) {
-        throw new Error(orderData.error || "Plan order create nahi hua");
-      }
-
-      const plan = orderData.plan;
-      const order = orderData.order;
-
-      const options: RazorpayCheckoutOptions = {
-        key: orderData.keyId,
-        amount: order.amount,
-        currency: order.currency || "INR",
-        name: "BuildSetu AI",
-        description: `${plan.name} · ${plan.interval} · ${plan.credits} credits`,
-        order_id: order.id,
-        prefill: {
-          name: "BuildSetu User",
-          email: "demo@buildsetu.ai",
-        },
-        notes: {
-          planId,
-          planName: plan.name,
-          interval: plan.interval,
-          credits: String(plan.credits),
-        },
-        theme: {
-          color: "#7c3aed",
-        },
-        modal: {
-          ondismiss: () => {
-            setLoadingPlan("");
-            setNotice("Payment cancelled. Plan activate nahi hua.");
-          },
-        },
-        handler: async (response) => {
-          try {
-            const verifyRes = await fetch("/api/plans/verify", {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({
-                planId,
-                razorpay_order_id: response.razorpay_order_id,
-                razorpay_payment_id: response.razorpay_payment_id,
-                razorpay_signature: response.razorpay_signature,
-              }),
-            });
-
-            const verifyData = await verifyRes.json();
-
-            if (!verifyRes.ok || !verifyData.ok) {
-              throw new Error(verifyData.error || "Plan payment verification failed");
-            }
-
-            setNotice(verifyData.message || "Plan activated successfully");
-            setActivePlan(verifyData.plan || null);
-            await loadPlanStatus();
-          } catch (error) {
-            setNotice(error instanceof Error ? error.message : "Plan verification failed");
-          } finally {
-            setLoadingPlan("");
-          }
-        },
-      };
-
-      const checkout = new window.Razorpay(options);
-      checkout.open();
-    } catch (error) {
-      setNotice(error instanceof Error ? error.message : "Plan checkout start nahi hua");
-      setLoadingPlan("");
-    }
-  }
-
-  useEffect(() => {
-    loadPlanStatus();
-  }, []);
-
   return (
-    <main className="min-h-screen bg-[radial-gradient(circle_at_top,#fbf7ff_0%,#ffffff_44%,#ffffff_100%)] text-[#201537]">
-      <section className="mx-auto max-w-[1280px] px-5 py-6">
-        <div className="mb-5 flex items-center justify-between">
+    <main className="min-h-screen bg-white text-[#1b1624]">
+      <PricingUpgradeBridge />
+      <section className="mx-auto max-w-[1180px] px-5 py-5">
+        <div className="mb-4 flex items-center justify-between">
           <a
             href="/"
-            className="inline-flex items-center gap-2 text-sm font-black text-[#5f5476] hover:text-[#7c3aed]"
+            className="inline-flex items-center gap-2 text-sm font-black text-[#6b607a] hover:text-[#7c3aed]"
           >
             <ArrowLeft size={17} />
-            Back to dashboard
+            Back
           </a>
 
           <a
-            href="/credits"
-            className="inline-flex h-11 items-center justify-center rounded-2xl border border-[#e3d9f3] bg-white px-5 text-sm font-black text-[#21133f] shadow-sm hover:bg-purple-50"
+            href="/workspace"
+            className="inline-flex h-11 items-center justify-center rounded-2xl border border-[#e1d9ec] bg-white px-5 text-sm font-black text-[#281d39] shadow-sm hover:bg-[#fbf8ff]"
           >
-            Buy Credits
+            Workspace
           </a>
         </div>
 
-        <div className="text-center">
-          <div className="mx-auto mb-3 inline-flex items-center gap-2 rounded-full border border-[#eadcff] bg-white px-4 py-2 text-xs font-black uppercase tracking-wide text-[#7c3aed] shadow-sm">
-            <Sparkles size={14} />
-            BuildSetu Plans
-          </div>
+        <section className="mb-6 overflow-hidden rounded-[22px] border border-[#e4dcf1] bg-gradient-to-br from-white via-white to-[#f4edff] p-4 shadow-sm">
+          <div className="grid gap-4 lg:grid-cols-[1fr_auto] lg:items-center">
+            <div>
+              <div className="mb-2 inline-flex items-center gap-2 rounded-full bg-purple-100 px-3 py-1 text-[11px] font-black text-[#7c3aed]">
+                <Sparkles size={14} />
+                Account billing
+              </div>
+              <h1 className="text-[32px] font-black leading-none tracking-[-0.06em] text-[#29242f] md:text-[42px]">
+                Upgrade your plan
+              </h1>
+              <p className="mt-3 max-w-xl text-[13px] leading-6 text-[#6b607a]">
+                Generate interiors, naksha, structure drafts, BOQ, BBS, client PDFs
+                and project documents with BuildSetu AI.
+              </p>
+            </div>
 
-          <h1 className="text-[36px] font-black leading-none tracking-[-0.07em] text-[#21133f] md:text-[52px]">
-            Upgrade your plan
-          </h1>
-          <p className="mx-auto mt-3 max-w-2xl text-[15px] leading-7 text-[#6c5f84]">
-            Plans interior designers, architects, contractors aur agencies ke liye.
-            Payment success ke baad plan active hoga aur credits wallet me add honge.
+            <div className="rounded-2xl border border-[#dacff0] bg-white/80 p-3 shadow-sm backdrop-blur">
+              <div className="flex items-center gap-4">
+                <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-[#7c3aed] to-[#b936f5] text-white">
+                  <CreditCard size={26} />
+                </div>
+                <div>
+                  <p className="text-base font-black text-[#211a2d]">Pro Plan</p>
+                  <p className="text-xs text-[#7c718d]">Renews on 20 Jun 2026</p>
+                </div>
+              </div>
+              <a
+                href="#plans"
+                className="mt-3 flex h-11 items-center justify-center rounded-xl bg-gradient-to-r from-[#6246ea] to-[#b936f5] text-sm font-black text-white shadow-md shadow-purple-200"
+              >
+                Upgrade Plan
+              </a>
+            </div>
+          </div>
+        </section>
+
+        <div className="mb-5 text-center">
+          <h2 className="text-[30px] font-black leading-none tracking-[-0.06em] text-[#2c2830] md:text-[40px]">
+            Scale your business
+          </h2>
+          <p className="mt-2 text-[13px] text-[#6f6578]">
+            Trusted by designers, architects, contractors and agencies.
           </p>
 
-          <div className="mt-5 inline-flex rounded-2xl border border-[#e5d9f4] bg-white p-1 shadow-sm">
+          <div className="mx-auto mt-4 inline-grid grid-cols-2 rounded-full bg-[#eeeef3] p-1">
             <button
               onClick={() => setBilling("monthly")}
-              className={`h-10 rounded-xl px-6 text-sm font-black ${
-                billing === "monthly"
-                  ? "bg-[#21133f] text-white"
-                  : "text-[#6c5f84] hover:bg-purple-50"
+              className={`rounded-full px-8 py-3 text-sm font-black ${
+                billing === "monthly" ? "bg-white text-[#211a2d] shadow-sm" : "text-[#7c718d]"
               }`}
             >
               Monthly
             </button>
             <button
               onClick={() => setBilling("yearly")}
-              className={`h-10 rounded-xl px-6 text-sm font-black ${
-                billing === "yearly"
-                  ? "bg-[#21133f] text-white"
-                  : "text-[#6c5f84] hover:bg-purple-50"
+              className={`rounded-full px-8 py-3 text-sm font-black ${
+                billing === "yearly" ? "bg-white text-[#211a2d] shadow-sm" : "text-[#7c718d]"
               }`}
             >
               Yearly
             </button>
           </div>
 
-          {activePlan ? (
-            <div className="mx-auto mt-5 max-w-2xl rounded-2xl border border-[#d8c8f0] bg-[#fbf8ff] px-5 py-4 text-left">
-              <p className="text-sm font-black text-[#21133f]">
-                Active plan: {activePlan.planName} · {activePlan.interval}
-              </p>
-              <p className="mt-1 text-xs font-bold text-[#786a91]">
-                Renews on {new Date(activePlan.renewsAt).toLocaleDateString("en-IN")}
-              </p>
-            </div>
-          ) : null}
-
-          {notice ? (
-            <div className="mx-auto mt-4 max-w-2xl rounded-2xl border border-[#e6ddf4] bg-white px-4 py-3 text-sm font-bold text-[#5f2bbd]">
-              {notice}
-            </div>
-          ) : null}
+          <p className="mt-3 text-xs font-semibold text-[#8c839c]">{billingCopy}</p>
         </div>
 
-        <section className="mt-8 grid gap-5 lg:grid-cols-3">
-          {selectedPlans.map((plan) => {
-            const isLoading = loadingPlan === plan.checkoutId;
-            const active = activePlan?.planId === plan.checkoutId;
+        <section id="plans" className="grid gap-4 xl:grid-cols-[250px_1fr_1fr_1fr]">
+          <article className="rounded-2xl border-2 border-dashed border-sky-300 bg-[#f8fcff] p-4">
+            <div className="-mt-9 mb-4">
+              <span className="rounded-full bg-sky-100 px-3 py-1 text-[11px] font-black text-sky-600">
+                TOKEN
+              </span>
+            </div>
 
-            return (
-              <article
-                key={plan.checkoutId}
-                className={`relative flex min-h-[560px] flex-col rounded-[26px] border bg-white p-5 shadow-[0_20px_55px_rgba(65,29,120,0.06)] ${
-                  plan.popular
-                    ? "border-[#8b5cf6] shadow-[0_0_0_2px_rgba(139,92,246,0.12),0_22px_60px_rgba(91,33,182,0.12)]"
-                    : "border-[#e6ddf4]"
-                }`}
-              >
-                {plan.popular ? (
-                  <div className="absolute -top-3 left-5 rounded-full bg-gradient-to-r from-[#6d28d9] to-[#c026d3] px-4 py-1.5 text-[10px] font-black tracking-wide text-white shadow-md">
-                    MOST POPULAR
-                  </div>
-                ) : null}
+            <div className="flex items-end gap-1">
+              <span className="text-[28px] font-black tracking-[-0.05em] text-[#181321]">
+                ₹2,499
+              </span>
+              <span className="pb-2 text-xs font-semibold text-[#8c839c]">/30 tokens</span>
+            </div>
 
-                <div className="flex items-start justify-between gap-4">
-                  <div>
-                    <p className="text-xs font-black uppercase tracking-wider text-[#8b7ca6]">
-                      {plan.name}
-                    </p>
-                    <h2 className="mt-2 text-[26px] font-black tracking-[-0.06em] text-[#21133f]">
-                      {plan.tag}
-                    </h2>
-                  </div>
+            <p className="mt-1 text-xs text-[#8c839c]">one-time pack</p>
 
-                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-[#f1e8ff] to-[#eadbff] text-[#7c3aed]">
-                    {plan.popular ? <Crown size={22} /> : <Zap size={22} />}
-                  </div>
-                </div>
+            <div className="mt-4 flex items-center gap-3">
+              <input type="range" min="30" max="5000" defaultValue="250" className="w-full accent-sky-500" />
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-sky-500 text-white">
+                <Check size={18} />
+              </div>
+            </div>
 
-                <div className="mt-5 rounded-[22px] border border-[#f0e9fb] bg-[#fcfbff] p-5">
-                  <div className="flex items-end justify-between gap-4">
-                    <div>
-                      <p className="text-[13px] font-black uppercase tracking-wider text-[#8b7ca6]">
-                        Price
-                      </p>
-                      <p className="mt-2 text-[34px] font-black tracking-[-0.07em] text-[#1f1433]">
-                        {money(plan.price)}
-                      </p>
-                      <p className="mt-1 text-xs font-bold text-[#786a91]">
-                        billed {billing}
-                      </p>
-                    </div>
+            <p className="mt-4 text-sm font-black text-sky-600">Pay-as-you-go pack</p>
 
-                    <div className="text-right">
-                      <p className="text-[13px] font-black uppercase tracking-wider text-[#8b7ca6]">
-                        Credits
-                      </p>
-                      <p className="mt-2 text-[28px] font-black tracking-[-0.06em] text-[#1f1433]">
-                        {plan.credits.toLocaleString("en-IN")}
-                      </p>
-                    </div>
-                  </div>
-                </div>
+            <div className="mt-4 space-y-2.5">
+              {[
+                "30 Interior & Exterior designs",
+                "30 Magic Brief designs",
+                "30 Enhancer designs",
+                "9K Words ArchitectGPT",
+                "30 Change Background",
+                "15 Floor Plan AI designs",
+                "10 Full Project PDFs",
+                "API Access",
+              ].map((item) => (
+                <FeatureRow key={item} text={item} tone="purple" />
+              ))}
+            </div>
 
-                <button
-                  disabled={isLoading}
-                  onClick={() => subscribe(plan.checkoutId)}
-                  className={`mt-5 flex h-12 w-full items-center justify-center gap-2 rounded-2xl text-sm font-black text-white shadow-[0_14px_30px_rgba(124,58,237,0.22)] transition hover:brightness-105 disabled:cursor-not-allowed disabled:opacity-70 ${
-                    plan.popular
-                      ? "bg-gradient-to-r from-[#5b43ea] via-[#7c3aed] to-[#d946ef]"
-                      : "bg-[#21133f]"
-                  }`}
-                >
-                  <CreditCard size={18} />
-                  {isLoading ? "Opening checkout..." : active ? "Renew Plan" : "Subscribe"}
-                </button>
+            <p className="mt-6 text-center text-[11px] text-[#9b92aa]">
+              Pay-as-you-go with prepaid credits
+            </p>
+          </article>
 
-                <div className="mt-5 space-y-3">
-                  {plan.features.map((feature) => (
-                    <div key={feature} className="flex gap-3 text-[13px] leading-6 text-[#43345f]">
-                      <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-[#7c3aed]" />
-                      <span>{feature}</span>
-                    </div>
-                  ))}
-                </div>
-
-                <div className="mt-auto pt-5">
-                  <div className="rounded-2xl bg-[#fbf8ff] px-4 py-3 text-xs font-bold text-[#786a91] ring-1 ring-[#efe8fb]">
-                    <BadgeCheck className="mr-2 inline h-4 w-4 text-emerald-500" />
-                    Razorpay secure checkout active
-                  </div>
-                </div>
-              </article>
-            );
-          })}
+          {plans.map((plan) => (
+            <PlanCard key={plan.id} plan={plan} billing={billing} />
+          ))}
         </section>
 
-        <section className="mt-8 grid gap-4 md:grid-cols-3">
-          <div className="rounded-[22px] border border-[#e6ddf4] bg-white p-5 text-center shadow-sm">
-            <Star className="mx-auto h-8 w-8 text-[#7c3aed]" />
-            <h3 className="mt-3 text-lg font-black text-[#21133f]">4.9/5 Rating</h3>
-            <p className="mt-1 text-sm text-[#786a91]">Client-ready AI workflow</p>
+        <section className="my-6 flex flex-wrap items-center justify-center gap-6 text-xs font-semibold text-[#3f354c]">
+          <div className="flex items-center gap-2">
+            <Star className="h-5 w-5 text-amber-400" />
+            4.9/5 from 1,000+ reviews
           </div>
-
-          <div className="rounded-[22px] border border-[#e6ddf4] bg-white p-5 text-center shadow-sm">
-            <BadgeCheck className="mx-auto h-8 w-8 text-emerald-500" />
-            <h3 className="mt-3 text-lg font-black text-[#21133f]">Plan + Credits</h3>
-            <p className="mt-1 text-sm text-[#786a91]">Plan activation adds wallet credits</p>
+          <div className="flex items-center gap-2">
+            <BadgeCheck className="h-5 w-5 text-emerald-500" />
+            Secure payments
           </div>
-
-          <div className="rounded-[22px] border border-[#e6ddf4] bg-white p-5 text-center shadow-sm">
-            <Lock className="mx-auto h-8 w-8 text-[#7c3aed]" />
-            <h3 className="mt-3 text-lg font-black text-[#21133f]">Secure Payment</h3>
-            <p className="mt-1 text-sm text-[#786a91]">Razorpay signature verification</p>
+          <div className="flex items-center gap-2">
+            <Shield className="h-5 w-5 text-emerald-500" />
+            Risk Free - Cancel Anytime
           </div>
         </section>
+
+        <section className="py-6 text-center">
+          <h3 className="text-xl font-black tracking-[-0.04em] text-transparent bg-gradient-to-r from-[#8b5cf6] to-[#ec4899] bg-clip-text">
+            Trusted by the World's Leading Companies
+          </h3>
+
+          <div className="mx-auto mt-6 grid max-w-4xl grid-cols-2 gap-6 opacity-55 md:grid-cols-6">
+            {["AIRBUS", "AT&T", "AMAZON", "COMPASS", "DHL", "CENTURY 21"].map((brand) => (
+              <div key={brand} className="text-xl font-black tracking-[-0.05em] text-[#2c2830]">
+                {brand}
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <section className="mx-auto my-6 max-w-lg rounded-2xl border border-[#ddd7e8] bg-white p-4 text-center shadow-sm">
+          <div className="flex items-center justify-center gap-3 text-sm font-black text-[#2d2439]">
+            <Lock className="h-5 w-5" />
+            Guaranteed safe & secure checkout
+          </div>
+          <div className="mt-5 flex flex-wrap items-center justify-center gap-3">
+            {["VISA", "MC", "AMEX", "UPI", "NETBANKING", "RUPAY"].map((item) => (
+              <span key={item} className="rounded-md border border-[#ddd7e8] bg-[#f8f7fb] px-3 py-2 text-xs font-black text-[#455064]">
+                {item}
+              </span>
+            ))}
+          </div>
+        </section>
+
+        <section className="my-8 grid gap-4 lg:grid-cols-2">
+          <Testimonial
+            avatar="👩"
+            name="Sarah Gabriel"
+            role="Interior Designer"
+            text="Generated 50+ room designs in one week using BuildSetu AI. The render quality and proposal workflow helped us present faster to clients."
+          />
+          <Testimonial
+            avatar="L"
+            name="L'Exclusive"
+            role="Hotels & Accommodation"
+            text="We transformed premium suites and reduced renovation planning time using AI optimized design and documentation workflow."
+          />
+          <Testimonial
+            avatar="👩‍🦱"
+            name="Oya Sanyeli"
+            role="Interior Designer"
+            text="Transforming spaces now takes seconds. Concepts with photorealistic quality impress clients and speed up daily workflow."
+          />
+          <Testimonial
+            avatar="👨"
+            name="John Douglas"
+            role="Architect"
+            text="BuildSetu AI has streamlined our early-stage client presentations, naksha drafts and project documentation."
+          />
+        </section>
+
+        <section className="my-8 grid gap-4 md:grid-cols-3">
+          <TrustItem icon={<Star size={28} />} title="4.9/5 Rating" desc="1,000+ verified reviews" />
+          <TrustItem icon={<CheckCircle2 size={28} />} title="No-Risk Trial" desc="Cancel anytime, instantly" />
+          <TrustItem icon={<Shield size={28} />} title="Secure & Easy" desc="Secure payments and invoices" />
+        </section>
+
+        <div className="pb-7 text-center">
+          <span className="text-sm text-[#6f6578]">Academic? Student? Creator?</span>
+          <a
+            href="/workspace"
+            className="ml-3 inline-flex items-center gap-2 rounded-full bg-purple-100 px-5 py-3 text-sm font-black text-[#8b31d9]"
+          >
+            Contact us for special deal
+            <ArrowUpRight size={16} />
+          </a>
+        </div>
       </section>
+
+      <a
+        href="/workspace"
+        className="fixed bottom-7 right-7 flex h-14 w-14 items-center justify-center rounded-full bg-[#a855f7] text-white shadow-xl"
+      >
+        <ChevronRight size={24} />
+      </a>
     </main>
   );
 }
