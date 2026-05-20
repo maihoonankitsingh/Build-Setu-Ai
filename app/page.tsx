@@ -3134,6 +3134,29 @@ function ApiPage({ theme }: { theme: ResolvedTheme }) {
 export default function SikhadengeBuildDashboard() {
 
 
+
+  // BUILDSETU_DASHBOARD_AUTH_GUARD_V1
+  useEffect(() => {
+    const guardDashboard = async () => {
+      try {
+        const res = await fetch("/api/auth/me", {
+          cache: "no-store",
+          credentials: "same-origin",
+        });
+        const data = await res.json().catch(() => null);
+
+        if (!data?.authenticated) {
+          window.location.href = "/login";
+        }
+      } catch (error) {
+        console.error("DASHBOARD_AUTH_GUARD_ERROR", error);
+        window.location.href = "/login";
+      }
+    };
+
+    guardDashboard();
+  }, []);
+
   // BUILDSETU_DASHBOARD_OVERVIEW_V1
   useEffect(() => {
     const setDashboardValue = (label: string, value: number) => {
