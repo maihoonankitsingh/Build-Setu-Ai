@@ -64,12 +64,18 @@ model User {
   phone        String?
   role         UserRole @default(DESIGNER)
   credits      Int      @default(120)
+  passwordHash String?
+  status       String   @default("ACTIVE")
+  lastLoginAt  DateTime?
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
   projects     Project[]
   creditLogs   CreditTransaction[]
   toolRuns     ToolRun[]
+  auditLogs    AuditLog[]
+  subscriptions PlanSubscription[]
+  payments     Payment[]
 }
 
 model Project {
@@ -200,3 +206,61 @@ model CreditTransaction {
 
   user        User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
 }
+
+model Payment {
+  id                String   @id @default(cuid())
+  userId            String?
+  provider          String   @default("RAZORPAY")
+  type              String
+  itemId            String?
+  itemName          String?
+  amount            Int
+  currency          String   @default("INR")
+  credits           Int      @default(0)
+  status            String   @default("CREATED")
+  providerOrderId   String?  @unique
+  providerPaymentId String?  @unique
+  receipt           String?
+  rawJson           String?
+  createdAt         DateTime @default(now())
+  verifiedAt        DateTime?
+  updatedAt         DateTime @updatedAt
+
+  user              User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+}
+
+model PlanSubscription {
+  id                String   @id @default(cuid())
+  userId            String
+  planId            String
+  planName          String
+  interval          String
+  amount            Int
+  credits           Int
+  status            String   @default("ACTIVE")
+  provider          String   @default("RAZORPAY")
+  providerOrderId   String?
+  providerPaymentId String?
+  startedAt         DateTime @default(now())
+  renewsAt          DateTime?
+  cancelledAt       DateTime?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model AuditLog {
+  id          String   @id @default(cuid())
+  userId      String?
+  action      String
+  entityType  String?
+  entityId    String?
+  metadataJson String?
+  ipAddress   String?
+  userAgent   String?
+  createdAt   DateTime @default(now())
+
+  user        User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+}
+
