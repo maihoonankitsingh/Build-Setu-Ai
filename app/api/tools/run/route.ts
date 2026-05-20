@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import fs from "fs/promises";
 import path from "path";
-import { prisma } from "@/lib/db";
+import { AUTH_COOKIE, getUserFromSession, getUsers, saveUsers } from "@/lib/auth-store";
+import { appendHistory } from "@/lib/billing-store";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -9,30 +10,30 @@ export const dynamic = "force-dynamic";
 const DATA_DIR = path.join(process.cwd(), "data", "generated");
 const DATA_FILE = path.join(DATA_DIR, "tool-runs.json");
 
-// BUILDSETU_TOOL_CREDIT_DEDUCTION_V1
-const DEMO_EMAIL = "demo@buildsetu.ai";
-
+// BUILDSETU_TOOL_CREDIT_DEDUCTION_V2_USER_SCOPED
 const TOOL_CREDIT_COSTS: Record<string, number> = {
   "magic-brief": 500,
-  "architect-chat": 500,
-  "floor-plan-ai": 1000,
+  "interior-render": 2500,
+  "exterior-elevation": 2500,
+  "render-enhancer": 2500,
+  "site-photo-redesign": 2500,
   "sketch-to-plan": 1000,
-  "vastu-check": 500,
+  "floor-plan-ai": 1000,
+  "architect-chat": 500,
+  "mood-board": 500,
+  "remove-furniture": 2500,
+  "background-change": 2500,
+  "photo-enhancer": 2500,
   "working-drawings": 1500,
   "boq-generator": 1000,
   "bbs-generator": 1500,
   "column-beam-plan": 1500,
+  "material-palette-ai": 500,
+  "false-ceiling-ai": 500,
+  "vastu-check": 500,
   "client-pdf": 500,
   "client-agreement": 1000,
   "contractor-package": 1500,
-  "material-palette-ai": 500,
-  "false-ceiling-ai": 500,
-  "mood-board": 500,
-  "render-enhancer": 2500,
-  "site-photo-redesign": 2500,
-  "remove-furniture": 2500,
-  "background-change": 2500,
-  "photo-enhancer": 2500,
 };
 
 class NotEnoughCreditsError extends Error {
@@ -46,63 +47,69 @@ class NotEnoughCreditsError extends Error {
   }
 }
 
+class AuthRequiredError extends Error {
+  constructor() {
+    super("Please login to use this tool.");
+  }
+}
+
 function getToolCreditCost(slug: string) {
   return TOOL_CREDIT_COSTS[slug] || 500;
 }
 
-async function deductDemoCredits({
+async function deductUserCredits({
+  request,
   credits,
   note,
   projectId,
+  slug,
+  title,
 }: {
+  request: NextRequest;
   credits: number;
   note: string;
   projectId: string | null;
+  slug: string;
+  title: string;
 }) {
-  return prisma.$transaction(async (tx) => {
-    const user = await tx.user.upsert({
-      where: { email: DEMO_EMAIL },
-      update: {},
-      create: {
-        email: DEMO_EMAIL,
-        name: "BuildSetu Demo User",
-        credits: 120,
-      },
-      select: {
-        id: true,
-        credits: true,
-      },
-    });
+  const token = request.cookies.get(AUTH_COOKIE)?.value;
+  const sessionUser = await getUserFromSession(token);
 
-    if (user.credits < credits) {
-      throw new NotEnoughCreditsError(user.credits, credits);
-    }
+  if (!sessionUser) {
+    throw new AuthRequiredError();
+  }
 
-    const updated = await tx.user.update({
-      where: { id: user.id },
-      data: {
-        credits: {
-          decrement: credits,
-        },
-      },
-      select: {
-        id: true,
-        credits: true,
-      },
-    });
+  const users = await getUsers();
+  const user = users.find((u) => u.id === sessionUser.id) as any;
 
-    await tx.creditTransaction.create({
-      data: {
-        userId: user.id,
-        projectId,
-        actionType: "USE",
-        creditsUsed: -credits,
-        note,
-      },
-    });
+  if (!user) {
+    throw new AuthRequiredError();
+  }
 
-    return updated;
+  const currentCredits = Number(user.credits || 0);
+
+  if (currentCredits < credits) {
+    throw new NotEnoughCreditsError(currentCredits, credits);
+  }
+
+  user.credits = currentCredits - credits;
+  user.updatedAt = new Date().toISOString();
+
+  await saveUsers(users);
+
+  await appendHistory({
+    userId: user.id,
+    email: user.email,
+    type: "USE",
+    credits: -credits,
+    description: `${title || slug} tool run -${credits.toLocaleString("en-IN")} credits`,
   });
+
+  return {
+    id: user.id,
+    email: user.email,
+    credits: Number(user.credits || 0),
+  };
 }
 
 
@@ -335,7 +342,8 @@ export async function POST(req: NextRequest) {
     const projectId = safe(body.projectId, "") || null;
 
     const requiredCredits = getToolCreditCost(slug);
-    const creditResult = await deductDemoCredits({
+    const creditResult = await deductUserCredits({
+      request,
       credits: requiredCredits,
       note: `${profile.title} tool execution`,
       projectId,
