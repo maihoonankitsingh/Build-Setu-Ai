@@ -1,46 +1,27 @@
-import { NextResponse } from "next/server";
-import { prisma } from "@/lib/db";
+import { NextRequest, NextResponse } from "next/server";
+import { AUTH_COOKIE, getUserFromSession } from "@/lib/auth-store";
 
-export const runtime = "nodejs";
-export const dynamic = "force-dynamic";
+export async function GET(request: NextRequest) {
+  const token = request.cookies.get(AUTH_COOKIE)?.value;
+  const user = await getUserFromSession(token);
 
-const DEMO_EMAIL = "demo@buildsetu.ai";
-
-async function getOrCreateDemoUser() {
-  const user = await prisma.user.upsert({
-    where: { email: DEMO_EMAIL },
-    update: {},
-    create: {
-      email: DEMO_EMAIL,
-      name: "BuildSetu Demo User",
-      credits: 120,
-    },
-    select: {
-      id: true,
-      name: true,
-      email: true,
-      credits: true,
-    },
-  });
-
-  return user;
-}
-
-export async function GET() {
-  try {
-    const user = await getOrCreateDemoUser();
-
+  if (!user) {
     return NextResponse.json({
       ok: true,
-      user,
-      credits: user.credits,
+      authenticated: false,
+      credits: 0,
+      balance: 0,
     });
-  } catch (error) {
-    console.error("CREDITS_BALANCE_ERROR", error);
-
-    return NextResponse.json(
-      { ok: false, error: "Failed to fetch credits balance" },
-      { status: 500 },
-    );
   }
+
+  const credits = Number(user.credits || 0);
+
+  return NextResponse.json({
+    ok: true,
+    authenticated: true,
+    userId: user.id,
+    email: user.email,
+    credits,
+    balance: credits,
+  });
 }

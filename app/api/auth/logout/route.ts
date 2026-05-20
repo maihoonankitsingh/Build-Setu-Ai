@@ -1,19 +1,21 @@
-import { NextResponse } from "next/server";
-import { SESSION_COOKIE } from "@/lib/auth";
+import { NextRequest, NextResponse } from "next/server";
+import { AUTH_COOKIE, clearSessionCookie, destroySession } from "@/lib/auth-store";
 
-export const runtime = "nodejs";
-export const dynamic = "force-dynamic";
+const APP_URL = "https://build.sikhadenge.in";
 
-export async function POST() {
-  const response = NextResponse.json({ ok: true });
+async function logout(request: NextRequest) {
+  const token = request.cookies.get(AUTH_COOKIE)?.value;
+  await destroySession(token);
 
-  response.cookies.set(SESSION_COOKIE, "", {
-    httpOnly: true,
-    sameSite: "lax",
-    secure: process.env.NODE_ENV === "production",
-    path: "/",
-    maxAge: 0,
-  });
+  const res = NextResponse.redirect(new URL("/login", APP_URL));
+  clearSessionCookie(res);
+  return res;
+}
 
-  return response;
+export async function GET(request: NextRequest) {
+  return logout(request);
+}
+
+export async function POST(request: NextRequest) {
+  return logout(request);
 }

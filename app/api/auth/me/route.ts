@@ -1,21 +1,21 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getAuthUserFromRequest, publicUser } from "@/lib/auth";
-
-export const runtime = "nodejs";
-export const dynamic = "force-dynamic";
+import { AUTH_COOKIE, getUserFromSession, safeUser } from "@/lib/auth-store";
 
 export async function GET(request: NextRequest) {
-  const user = await getAuthUserFromRequest(request);
+  const token = request.cookies.get(AUTH_COOKIE)?.value;
+  const user = await getUserFromSession(token);
 
   if (!user) {
-    return NextResponse.json(
-      { ok: false, user: null },
-      { status: 401 },
-    );
+    return NextResponse.json({
+      ok: true,
+      authenticated: false,
+      user: null,
+    });
   }
 
   return NextResponse.json({
     ok: true,
-    user: publicUser(user),
+    authenticated: true,
+    user: safeUser(user),
   });
 }

@@ -979,9 +979,9 @@ function Dashboard({
 
       <div className="mb-5 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {[
-          ["Active Projects", "18", FolderKanban],
-          ["Images Generated", "246", ImageIcon],
-          ["Review Pending", "7", ShieldCheck],
+          ["Active Projects", "0", FolderKanban],
+          ["Images Generated", "0", ImageIcon],
+          ["Review Pending", "0", ShieldCheck],
           ["Credits Left", "120", Sparkles],
         ].map(([label, value, Icon]) => (
           <div
