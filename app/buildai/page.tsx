@@ -144,7 +144,7 @@ export default function BuildAiLandingPage() {
           </nav>
 
           <div className="flex items-center gap-2">
-            <a href="/pricing" className="hidden rounded-xl bg-[#6d28d9] px-5 py-2.5 text-xs font-black text-white shadow-[0_14px_30px_rgba(109,40,217,0.25)] md:inline-flex">
+            <a href="/book-demo" className="hidden rounded-xl bg-[#6d28d9] px-5 py-2.5 text-xs font-black text-white shadow-[0_14px_30px_rgba(109,40,217,0.25)] md:inline-flex">
               Book Demo
             </a>
             <a href="/login" className="rounded-xl border border-[#ded4ee] bg-white px-5 py-2.5 text-xs font-black text-[#150d2f] shadow-sm">
@@ -187,7 +187,7 @@ export default function BuildAiLandingPage() {
             <a href="/pricing" className="inline-flex h-12 items-center justify-center rounded-xl bg-gradient-to-r from-[#6d28d9] to-[#8b5cf6] px-7 text-sm font-black text-white shadow-[0_18px_42px_rgba(109,40,217,0.28)]">
               Start Free Trial →
             </a>
-            <a href="/login" className="inline-flex h-12 items-center justify-center rounded-xl border border-[#ddd3ed] bg-white px-7 text-sm font-black text-[#150d2f] shadow-sm">
+            <a href="/book-demo" className="inline-flex h-12 items-center justify-center rounded-xl border border-[#ddd3ed] bg-white px-7 text-sm font-black text-[#150d2f] shadow-sm">
               Book Demo
             </a>
           </div>
@@ -300,7 +300,7 @@ export default function BuildAiLandingPage() {
               <a href="/pricing" className="inline-flex h-12 items-center justify-center rounded-xl bg-emerald-500 px-6 text-sm font-black text-white shadow-lg shadow-emerald-900/20">
                 Start Free Trial →
               </a>
-              <a href="/login" className="inline-flex h-12 items-center justify-center rounded-xl bg-white px-6 text-sm font-black text-[#150d2f]">
+              <a href="/book-demo" className="inline-flex h-12 items-center justify-center rounded-xl bg-white px-6 text-sm font-black text-[#150d2f]">
                 Book Demo
               </a>
             </div>
