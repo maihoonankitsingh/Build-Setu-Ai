@@ -407,7 +407,7 @@ export default function ToolExecutorPage() {
         const data = await res.json();
 
         if (!res.ok || !data.ok) {
-          if (data.code === "NOT_ENOUGH_CREDITS") {
+          if (res.status === 402 || data.code === "NOT_ENOUGH_CREDITS" || data.buyCreditsUrl) {
             throw new Error(`${data.error || "Not enough credits."} Open /credits to buy more credits.`);
           }
           throw new Error(data.error || "Image generation failed");
@@ -564,19 +564,87 @@ export default function ToolExecutorPage() {
       const data = await res.json();
 
       if (!res.ok || !data.ok) {
-        if (data.code === "NOT_ENOUGH_CREDITS") {
+        if (res.status === 402 || data.code === "NOT_ENOUGH_CREDITS" || data.buyCreditsUrl) {
           throw new Error(`${data.error || "Not enough credits."} Open /credits to buy more credits.`);
         }
         throw new Error(data.error || "Tool execution failed");
       }
 
       setRun(data.run);
+
+      if (typeof data.credits === "number") {
+        await refreshToolCredits(data.credits);
+      } else {
+        await refreshToolCredits();
+      }
     } catch (err: any) {
       setError(err?.message || "Tool execution failed");
     } finally {
       setLoading(false);
     }
   }
+
+  // BUILDSETU_TOOL_CREDIT_REFRESH_V1
+  async function refreshToolCredits(nextCredits?: number) {
+    try {
+      let credits = nextCredits;
+
+      if (typeof credits !== "number" || !Number.isFinite(credits)) {
+        const res = await fetch("/api/credits/balance", {
+          cache: "no-store",
+          credentials: "same-origin",
+        });
+        const data = await res.json().catch(() => null);
+
+        if (!res.ok || !data?.ok) return;
+
+        credits = Number(data.credits || 0);
+      }
+
+      const formatted = `${Number(credits || 0).toLocaleString("en-IN")} Credits`;
+
+      let badge = document.getElementById("buildsetu-tool-credit-badge") as HTMLAnchorElement | null;
+
+      if (!badge) {
+        badge = document.createElement("a");
+        badge.id = "buildsetu-tool-credit-badge";
+        badge.href = "/credits";
+        badge.setAttribute(
+          "style",
+          [
+            "position:fixed",
+            "right:18px",
+            "bottom:18px",
+            "z-index:9999",
+            "border-radius:999px",
+            "padding:12px 16px",
+            "background:#21133f",
+            "color:#fff",
+            "font-size:13px",
+            "font-weight:900",
+            "box-shadow:0 18px 45px rgba(33,19,63,0.28)",
+            "text-decoration:none",
+          ].join(";")
+        );
+        document.body.appendChild(badge);
+      }
+
+      badge.textContent = formatted;
+    } catch (error) {
+      console.error("TOOL_CREDITS_REFRESH_ERROR", error);
+    }
+  }
+
+  useEffect(() => {
+    refreshToolCredits();
+
+    const interval = window.setInterval(refreshToolCredits, 15000);
+
+    return () => {
+      window.clearInterval(interval);
+      document.getElementById("buildsetu-tool-credit-badge")?.remove();
+    };
+  }, []);
 
   useEffect(() => {
     loadProjects();
