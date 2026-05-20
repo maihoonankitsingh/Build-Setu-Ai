@@ -51,3 +51,8 @@ public/generated/agreements/*
 # Generated BuildSetu report PDFs
 public/generated/reports/*
 !public/generated/reports/.gitkeep
+
+# BuildSetu local auth runtime data
+data/buildsetu-auth-users.json
+data/buildsetu-auth-sessions.json
+data/buildsetu-auth-otps.json
