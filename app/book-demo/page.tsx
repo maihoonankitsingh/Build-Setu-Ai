@@ -61,7 +61,7 @@ export default function BookDemoPage() {
       `Requirement: ${form.requirement || "-"}`,
     ].join("\n");
 
-    return `https://wa.me/91XXXXXXXXXX?text=${encodeURIComponent(message)}`;
+    return `https://wa.me/916388424652?text=${encodeURIComponent(message)}`;
   }, [form]);
 
   function updateField(key: keyof typeof form, value: string) {
