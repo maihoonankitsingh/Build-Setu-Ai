@@ -29,12 +29,22 @@ const PACKS: Record<
   },
 };
 
+function cleanEnv(value: string | undefined) {
+  return String(value || "")
+    .trim()
+    .replace(/^["']|["']$/g, "");
+}
+
 function getRazorpayClient() {
-  const keyId = process.env.RAZORPAY_KEY_ID || process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID;
-  const keySecret = process.env.RAZORPAY_KEY_SECRET;
+  const keyId = cleanEnv(process.env.RAZORPAY_KEY_ID || process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID);
+  const keySecret = cleanEnv(process.env.RAZORPAY_KEY_SECRET);
 
   if (!keyId || !keySecret) {
-    throw new Error("Razorpay keys are missing");
+    throw new Error("Razorpay keys are missing in BuildSetu .env");
+  }
+
+  if (!keyId.startsWith("rzp_")) {
+    throw new Error("RAZORPAY_KEY_ID format invalid. It should start with rzp_");
   }
 
   return {
@@ -43,6 +53,21 @@ function getRazorpayClient() {
       key_id: keyId,
       key_secret: keySecret,
     }),
+  };
+}
+
+function extractRazorpayError(error: unknown) {
+  const anyError = error as any;
+
+  return {
+    message:
+      anyError?.error?.description ||
+      anyError?.error?.reason ||
+      anyError?.message ||
+      "Failed to create Razorpay order",
+    code: anyError?.error?.code || anyError?.code || null,
+    field: anyError?.error?.field || null,
+    statusCode: anyError?.statusCode || anyError?.status || null,
   };
 }
 
@@ -64,7 +89,7 @@ export async function POST(request: NextRequest) {
     const order = await client.orders.create({
       amount: pack.amount * 100,
       currency: "INR",
-      receipt: `buildsetu_${packId}_${Date.now()}`,
+      receipt: `buildsetu_${packId}_${Date.now()}`.slice(0, 40),
       notes: {
         app: "BuildSetu AI",
         packId,
@@ -83,12 +108,17 @@ export async function POST(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error("CREDITS_RAZORPAY_ORDER_ERROR", error);
+    const details = extractRazorpayError(error);
+
+    console.error("CREDITS_RAZORPAY_ORDER_ERROR", details, error);
 
     return NextResponse.json(
       {
         ok: false,
-        error: error instanceof Error ? error.message : "Failed to create Razorpay order",
+        error: details.message,
+        code: details.code,
+        field: details.field,
+        statusCode: details.statusCode,
       },
       { status: 500 },
     );
