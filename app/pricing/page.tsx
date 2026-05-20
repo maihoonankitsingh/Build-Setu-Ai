@@ -7,7 +7,11 @@ import {
   CheckCircle2,
   CreditCard,
   HelpCircle,
+  Landmark,
   Lock,
+  QrCode,
+  ReceiptText,
+  Smartphone,
   Shield,
   Sparkles,
   Star,
@@ -313,29 +317,68 @@ export default function PricingPage() {
           ))}
         </section>
 
-        <section className="mt-6 grid gap-4 md:grid-cols-3">
-          <div className="flex items-center justify-center gap-2 text-sm font-bold text-[#4b4358]">
-            <Star size={18} className="text-[#f59e0b]" />
-            150,000+ students & users
-          </div>
-          <div className="flex items-center justify-center gap-2 text-sm font-bold text-[#4b4358]">
-            <BadgeCheck size={18} className="text-[#10b981]" />
-            Secure payments via Razorpay
-          </div>
-          <div className="flex items-center justify-center gap-2 text-sm font-bold text-[#4b4358]">
-            <Lock size={18} className="text-[#7c3aed]" />
-            GST invoice workflow ready
-          </div>
-        </section>
+        <section className="mt-8 rounded-[26px] border border-[#e8def7] bg-[linear-gradient(135deg,#ffffff_0%,#fbf8ff_55%,#f3e9ff_100%)] p-5 shadow-[0_16px_42px_rgba(65,29,120,0.06)]">
+          <div className="grid gap-5 lg:grid-cols-[0.9fr_1.4fr] lg:items-center">
+            <div>
+              <div className="inline-flex items-center gap-2 rounded-full bg-white px-3 py-1 text-[11px] font-black uppercase tracking-wide text-[#7c3aed] ring-1 ring-[#eadcff]">
+                <Lock size={13} />
+                Secure checkout
+              </div>
+              <h3 className="mt-3 text-[26px] font-black leading-tight tracking-[-0.06em] text-[#21133f]">
+                Guaranteed safe & secure payment
+              </h3>
+              <p className="mt-2 text-sm leading-6 text-[#786a91]">
+                Razorpay powered checkout with UPI, QR, cards, netbanking, wallets and RuPay support.
+              </p>
+            </div>
 
-        <section className="mt-8 rounded-[22px] border border-[#e8def7] bg-white p-5 text-center shadow-sm">
-          <h3 className="text-lg font-black text-[#21133f]">Guaranteed safe & secure checkout</h3>
-          <div className="mt-4 flex flex-wrap justify-center gap-3">
-            {["VISA", "MC", "AMEX", "UPI", "NETBANKING", "RUPAY"].map((item) => (
-              <span key={item} className="rounded-lg border border-[#e5ddf1] bg-[#fbf8ff] px-4 py-2 text-xs font-black text-[#665a7d]">
-                {item}
-              </span>
-            ))}
+            <div className="grid grid-cols-2 gap-3 md:grid-cols-3">
+              {[
+                { label: "UPI QR", sub: "Scan & pay", icon: QrCode },
+                { label: "UPI", sub: "PhonePe, GPay", icon: Smartphone },
+                { label: "Cards", sub: "Visa, MC, Amex", icon: CreditCard },
+                { label: "Netbanking", sub: "Major banks", icon: Landmark },
+                { label: "Wallets", sub: "Paytm & more", icon: Wallet },
+                { label: "RuPay", sub: "Debit cards", icon: ReceiptText },
+              ].map((method) => {
+                const Icon = method.icon;
+
+                return (
+                  <div
+                    key={method.label}
+                    className="rounded-2xl border border-[#e6ddf4] bg-white p-4 shadow-[0_8px_22px_rgba(65,29,120,0.04)]"
+                  >
+                    <div className="flex items-center gap-3">
+                      <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#f1e6ff] text-[#7c3aed]">
+                        <Icon size={20} />
+                      </span>
+                      <span>
+                        <p className="text-sm font-black text-[#21133f]">{method.label}</p>
+                        <p className="text-[11px] font-bold text-[#8b7ca6]">{method.sub}</p>
+                      </span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          <div className="mt-5 grid gap-3 md:grid-cols-3">
+            <div className="rounded-2xl border border-[#eadff5] bg-white px-4 py-4 text-center">
+              <Star className="mx-auto h-7 w-7 text-[#7c3aed]" />
+              <h4 className="mt-2 text-lg font-black text-[#21133f]">150,000+</h4>
+              <p className="mt-1 text-sm text-[#786a91]">students & users</p>
+            </div>
+            <div className="rounded-2xl border border-[#eadff5] bg-white px-4 py-4 text-center">
+              <BadgeCheck className="mx-auto h-7 w-7 text-[#10b981]" />
+              <h4 className="mt-2 text-lg font-black text-[#21133f]">No-Risk Trial</h4>
+              <p className="mt-1 text-sm text-[#786a91]">Cancel anytime, instantly</p>
+            </div>
+            <div className="rounded-2xl border border-[#eadff5] bg-white px-4 py-4 text-center">
+              <ReceiptText className="mx-auto h-7 w-7 text-[#7c3aed]" />
+              <h4 className="mt-2 text-lg font-black text-[#21133f]">GST Invoice</h4>
+              <p className="mt-1 text-sm text-[#786a91]">Invoice workflow ready</p>
+            </div>
           </div>
         </section>
 
@@ -343,6 +386,9 @@ export default function PricingPage() {
           <h3 className="text-center text-[22px] font-black tracking-[-0.04em] text-[#21133f]">
             Credit usage examples
           </h3>
+          <p className="mt-2 text-center text-sm text-[#786a91]">
+            Credits are deducted only when a tool generates output.
+          </p>
           <div className="mt-4 grid gap-3 md:grid-cols-5">
             {usage.map(([name, cost]) => (
               <div key={name} className="rounded-2xl border border-[#e9e1f5] bg-[#fbf8ff] p-4 text-center">
@@ -350,24 +396,6 @@ export default function PricingPage() {
                 <p className="mt-1 text-xs font-bold text-[#7c3aed]">{cost}</p>
               </div>
             ))}
-          </div>
-        </section>
-
-        <section className="mt-8 grid gap-4 md:grid-cols-3">
-          <div className="rounded-[22px] border border-[#e8def7] bg-white p-5 text-center shadow-sm">
-            <Star className="mx-auto h-8 w-8 text-[#7c3aed]" />
-            <h4 className="mt-3 text-lg font-black text-[#21133f]">150,000+</h4>
-            <p className="mt-1 text-sm text-[#786a91]">Students & Users</p>
-          </div>
-          <div className="rounded-[22px] border border-[#e8def7] bg-white p-5 text-center shadow-sm">
-            <BadgeCheck className="mx-auto h-8 w-8 text-[#10b981]" />
-            <h4 className="mt-3 text-lg font-black text-[#21133f]">No-Risk Trial</h4>
-            <p className="mt-1 text-sm text-[#786a91]">Cancel anytime, instantly</p>
-          </div>
-          <div className="rounded-[22px] border border-[#e8def7] bg-white p-5 text-center shadow-sm">
-            <Shield className="mx-auto h-8 w-8 text-[#7c3aed]" />
-            <h4 className="mt-3 text-lg font-black text-[#21133f]">Secure & Easy</h4>
-            <p className="mt-1 text-sm text-[#786a91]">Secure payments and invoices</p>
           </div>
         </section>
 
