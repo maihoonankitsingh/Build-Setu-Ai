@@ -10,7 +10,7 @@ const openai = new OpenAI({
 
 // BUILDSETU_IMAGE_CREDIT_DEDUCTION_V1
 const DEMO_EMAIL = "demo@buildsetu.ai";
-const IMAGE_CREDIT_COST = 5;
+const IMAGE_CREDIT_COST = 2500;
 
 class NotEnoughCreditsError extends Error {
   currentCredits: number;

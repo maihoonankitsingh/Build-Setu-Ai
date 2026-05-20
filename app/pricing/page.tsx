@@ -30,8 +30,8 @@ const planData = [
     subtitle: "Best for solo designers and small studios",
     monthlyPrice: 4999,
     yearlyPrice: 49999,
-    monthlyCredits: 200,
-    yearlyCredits: 2400,
+    monthlyCredits: 100000,
+    yearlyCredits: 1200000,
     accent: "orange",
     buttonClass: "bg-gradient-to-r from-[#ff5a1f] to-[#ff7a00]",
     features: [
@@ -51,8 +51,8 @@ const planData = [
     subtitle: "Best for active architects and contractors",
     monthlyPrice: 9999,
     yearlyPrice: 99999,
-    monthlyCredits: 500,
-    yearlyCredits: 6000,
+    monthlyCredits: 250000,
+    yearlyCredits: 3000000,
     popular: true,
     accent: "green",
     buttonClass: "bg-gradient-to-r from-[#12b981] to-[#079c86]",
@@ -74,8 +74,8 @@ const planData = [
     subtitle: "Best for agencies and multiple clients",
     monthlyPrice: 24999,
     yearlyPrice: 249999,
-    monthlyCredits: 1500,
-    yearlyCredits: 18000,
+    monthlyCredits: 750000,
+    yearlyCredits: 9000000,
     accent: "purple",
     buttonClass: "bg-gradient-to-r from-[#7c3aed] to-[#c026d3]",
     features: [
@@ -92,11 +92,11 @@ const planData = [
 ];
 
 const usage = [
-  ["Magic Brief", "1 credit"],
-  ["Client PDF", "1 credit"],
-  ["BOQ draft", "2 credits"],
-  ["BBS draft", "3 credits"],
-  ["AI render", "5 credits"],
+  ["Magic Brief", "500 credits"],
+  ["Client PDF", "500 credits"],
+  ["BOQ draft", "1,000 credits"],
+  ["BBS draft", "1,500 credits"],
+  ["AI render", "2,500 credits"],
 ];
 
 const faqs = [

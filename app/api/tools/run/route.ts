@@ -13,21 +13,21 @@ const DATA_FILE = path.join(DATA_DIR, "tool-runs.json");
 const DEMO_EMAIL = "demo@buildsetu.ai";
 
 const TOOL_CREDIT_COSTS: Record<string, number> = {
-  "magic-brief": 1,
-  "architect-chat": 1,
-  "floor-plan-ai": 2,
-  "sketch-to-plan": 2,
-  "vastu-check": 1,
-  "working-drawings": 3,
-  "boq-generator": 2,
-  "bbs-generator": 3,
-  "column-beam-plan": 3,
-  "client-pdf": 1,
-  "client-agreement": 2,
-  "contractor-package": 3,
-  "material-palette-ai": 1,
-  "false-ceiling-ai": 1,
-  "mood-board": 1,
+  "magic-brief": 500,
+  "architect-chat": 500,
+  "floor-plan-ai": 1000,
+  "sketch-to-plan": 1000,
+  "vastu-check": 500,
+  "working-drawings": 1500,
+  "boq-generator": 1000,
+  "bbs-generator": 1500,
+  "column-beam-plan": 1500,
+  "client-pdf": 500,
+  "client-agreement": 1000,
+  "contractor-package": 1500,
+  "material-palette-ai": 500,
+  "false-ceiling-ai": 500,
+  "mood-board": 500,
 };
 
 class NotEnoughCreditsError extends Error {
@@ -42,7 +42,7 @@ class NotEnoughCreditsError extends Error {
 }
 
 function getToolCreditCost(slug: string) {
-  return TOOL_CREDIT_COSTS[slug] || 1;
+  return TOOL_CREDIT_COSTS[slug] || 500;
 }
 
 async function deductDemoCredits({

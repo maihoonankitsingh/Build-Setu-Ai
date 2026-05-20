@@ -20,41 +20,41 @@ const PLANS: Record<
     credits: number;
   }
 > = {
-  starter_monthly: {
-    name: "Starter Plan",
-    interval: "monthly",
-    amount: 2499,
-    credits: 120,
-  },
   pro_monthly: {
     name: "Pro Plan",
     interval: "monthly",
     amount: 4999,
-    credits: 400,
+    credits: 100000,
   },
-  agency_monthly: {
-    name: "Agency Plan",
+  max_monthly: {
+    name: "Max Plan",
     interval: "monthly",
-    amount: 12999,
-    credits: 1200,
+    amount: 9999,
+    credits: 250000,
   },
-  starter_yearly: {
-    name: "Starter Plan",
-    interval: "yearly",
+  ultra_monthly: {
+    name: "Ultra Plan",
+    interval: "monthly",
     amount: 24999,
-    credits: 1500,
+    credits: 750000,
   },
   pro_yearly: {
     name: "Pro Plan",
     interval: "yearly",
     amount: 49999,
-    credits: 5200,
+    credits: 1200000,
   },
-  agency_yearly: {
-    name: "Agency Plan",
+  max_yearly: {
+    name: "Max Plan",
     interval: "yearly",
-    amount: 129999,
-    credits: 16000,
+    amount: 99999,
+    credits: 3000000,
+  },
+  ultra_yearly: {
+    name: "Ultra Plan",
+    interval: "yearly",
+    amount: 249999,
+    credits: 9000000,
   },
 };
 
@@ -112,11 +112,13 @@ async function writeAll(items: PlanStatus[]) {
 
 function addInterval(date: Date, interval: "monthly" | "yearly") {
   const next = new Date(date);
+
   if (interval === "yearly") {
     next.setFullYear(next.getFullYear() + 1);
   } else {
     next.setMonth(next.getMonth() + 1);
   }
+
   return next;
 }
 
