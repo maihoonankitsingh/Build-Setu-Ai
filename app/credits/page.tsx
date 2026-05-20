@@ -181,6 +181,7 @@ function loadRazorpayScript() {
 
 export default function CreditsPage() {
   const [credits, setCredits] = useState(0);
+  const [currentUser, setCurrentUser] = useState<{ name?: string; email?: string; credits?: number } | null>(null);
   const [transactions, setTransactions] = useState<CreditTransaction[]>([]);
   const [loading, setLoading] = useState(true);
   const [buyingPack, setBuyingPack] = useState("");
@@ -190,17 +191,43 @@ export default function CreditsPage() {
 
   async function loadCredits() {
     setLoading(true);
+    setNotice("");
 
     try {
-      const res = await fetch("/api/credits/history", { cache: "no-store" });
-      const data = await res.json();
+      const meRes = await fetch("/api/auth/me", {
+        cache: "no-store",
+        credentials: "same-origin",
+      });
+      const meData = await meRes.json().catch(() => null);
 
-      if (!res.ok || !data.ok) {
-        throw new Error(data.error || "Failed to load credits");
+      if (!meData?.authenticated || !meData?.user) {
+        setCurrentUser(null);
+        setCredits(0);
+        setTransactions([]);
+        setNotice("Please login to purchase or use credits.");
+        return;
       }
 
-      setCredits(Number(data.credits || 0));
-      setTransactions(Array.isArray(data.transactions) ? data.transactions : []);
+      setCurrentUser(meData.user);
+      setCredits(Number(meData.user.credits || 0));
+
+      const res = await fetch("/api/credits/balance", {
+        cache: "no-store",
+        credentials: "same-origin",
+      });
+      const data = await res.json().catch(() => null);
+
+      if (data?.authenticated) {
+        setCredits(Number(data.credits ?? data.balance ?? meData.user.credits ?? 0));
+      }
+
+      const historyRes = await fetch("/api/credits/history", {
+        cache: "no-store",
+        credentials: "same-origin",
+      });
+      const historyData = await historyRes.json().catch(() => null);
+
+      setTransactions(Array.isArray(historyData?.transactions) ? historyData.transactions : []);
     } catch (error) {
       setNotice(error instanceof Error ? error.message : "Failed to load credits");
     } finally {
@@ -244,8 +271,8 @@ export default function CreditsPage() {
         description: `${pack.name} · ${compact(pack.credits)} credits`,
         order_id: order.id,
         prefill: {
-          name: "BuildSetu User",
-          email: "demo@buildsetu.ai",
+          name: currentUser?.name || "BuildSetu User",
+          email: currentUser?.email || "",
         },
         notes: {
           packId,
