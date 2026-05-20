@@ -16,6 +16,73 @@ import {
   Zap,
 } from "lucide-react";
 
+type RazorpayCheckoutResponse = {
+  razorpay_order_id: string;
+  razorpay_payment_id: string;
+  razorpay_signature: string;
+};
+
+type RazorpayCheckoutOptions = {
+  key: string;
+  amount: number;
+  currency: string;
+  name: string;
+  description: string;
+  order_id: string;
+  prefill?: {
+    name?: string;
+    email?: string;
+  };
+  notes?: Record<string, string>;
+  theme?: {
+    color?: string;
+  };
+  modal?: {
+    ondismiss?: () => void;
+  };
+  handler: (response: RazorpayCheckoutResponse) => void;
+};
+
+declare global {
+  interface Window {
+    Razorpay?: new (options: RazorpayCheckoutOptions) => {
+      open: () => void;
+    };
+  }
+}
+
+function loadRazorpayScript() {
+  return new Promise<boolean>((resolve) => {
+    if (typeof window === "undefined") {
+      resolve(false);
+      return;
+    }
+
+    if (window.Razorpay) {
+      resolve(true);
+      return;
+    }
+
+    const existing = document.querySelector<HTMLScriptElement>(
+      'script[src="https://checkout.razorpay.com/v1/checkout.js"]',
+    );
+
+    if (existing) {
+      existing.addEventListener("load", () => resolve(true), { once: true });
+      existing.addEventListener("error", () => resolve(false), { once: true });
+      return;
+    }
+
+    const script = document.createElement("script");
+    script.src = "https://checkout.razorpay.com/v1/checkout.js";
+    script.async = true;
+    script.onload = () => resolve(true);
+    script.onerror = () => resolve(false);
+    document.body.appendChild(script);
+  });
+}
+
+
 type Pack = {
   id: string;
   name: string;
@@ -228,7 +295,13 @@ export default function CreditsPage() {
     setNotice("");
 
     try {
-      const res = await fetch("/api/credits/purchase", {
+      const scriptLoaded = await loadRazorpayScript();
+
+      if (!scriptLoaded || !window.Razorpay) {
+        throw new Error("Razorpay checkout script load nahi hua. Please refresh and try again.");
+      }
+
+      const orderRes = await fetch("/api/credits/order", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -236,18 +309,76 @@ export default function CreditsPage() {
         body: JSON.stringify({ packId }),
       });
 
-      const data = await res.json();
+      const orderData = await orderRes.json();
 
-      if (!res.ok || !data.ok) {
-        throw new Error(data.error || "Failed to add credits");
+      if (!orderRes.ok || !orderData.ok) {
+        throw new Error(orderData.error || "Failed to create Razorpay order");
       }
 
-      setCredits(Number(data.credits || 0));
-      setNotice(data.message || "Credits added");
-      await loadCredits();
+      const pack = orderData.pack;
+      const order = orderData.order;
+
+      const options: RazorpayCheckoutOptions = {
+        key: orderData.keyId,
+        amount: order.amount,
+        currency: order.currency || "INR",
+        name: "BuildSetu AI",
+        description: `${pack.name} · ${pack.credits} credits`,
+        order_id: order.id,
+        prefill: {
+          name: "BuildSetu User",
+          email: "demo@buildsetu.ai",
+        },
+        notes: {
+          packId,
+          packName: pack.name,
+          credits: String(pack.credits),
+        },
+        theme: {
+          color: "#7c3aed",
+        },
+        modal: {
+          ondismiss: () => {
+            setBuyingPack("");
+            setNotice("Payment cancelled. Credits were not added.");
+          },
+        },
+        handler: async (response) => {
+          try {
+            const verifyRes = await fetch("/api/credits/verify", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                packId,
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_signature: response.razorpay_signature,
+              }),
+            });
+
+            const verifyData = await verifyRes.json();
+
+            if (!verifyRes.ok || !verifyData.ok) {
+              throw new Error(verifyData.error || "Payment verification failed");
+            }
+
+            setCredits(Number(verifyData.credits || 0));
+            setNotice(verifyData.message || "Credits added successfully");
+            await loadCredits();
+          } catch (error) {
+            setNotice(error instanceof Error ? error.message : "Payment verification failed");
+          } finally {
+            setBuyingPack("");
+          }
+        },
+      };
+
+      const checkout = new window.Razorpay(options);
+      checkout.open();
     } catch (error) {
-      setNotice(error instanceof Error ? error.message : "Failed to add credits");
-    } finally {
+      setNotice(error instanceof Error ? error.message : "Failed to start Razorpay checkout");
       setBuyingPack("");
     }
   }
@@ -311,7 +442,7 @@ export default function CreditsPage() {
                     </span>
                     <span className="inline-flex items-center gap-2 rounded-full bg-white px-3.5 py-2 text-[12px] font-black text-[#5f5476] shadow-sm ring-1 ring-[#eee6f8]">
                       <Lock size={14} className="text-amber-500" />
-                      Payment gateway next
+                      Secure Razorpay
                     </span>
                   </div>
 
@@ -338,9 +469,9 @@ export default function CreditsPage() {
                       Mode
                     </p>
                     <p className="mt-1 text-[18px] font-black tracking-[-0.03em] text-[#21133f]">
-                      Manual/demo top-up
+                      Razorpay checkout
                     </p>
-                    <p className="mt-1 text-xs text-[#786a91]">Razorpay keys pending</p>
+                    <p className="mt-1 text-xs text-[#786a91]">Payment verification active</p>
                   </div>
                 </div>
               </div>
@@ -401,7 +532,7 @@ export default function CreditsPage() {
           <InfoCard
             icon={<BadgeCheck size={20} />}
             title="Instant top-up"
-            desc="Current demo/manual mode me credits immediately DB me add honge."
+            desc="Payment success ke baad credits database me instantly add honge."
           />
           <InfoCard
             icon={<Shield size={20} />}
@@ -473,7 +604,7 @@ export default function CreditsPage() {
             </span>
             <span className="inline-flex items-center gap-2 rounded-full bg-[#fbf8ff] px-4 py-2 text-xs font-black text-[#665a7d] ring-1 ring-[#efe8fb]">
               <Lock size={14} />
-              Payment verification next
+              Razorpay verification active
             </span>
           </div>
         </section>
