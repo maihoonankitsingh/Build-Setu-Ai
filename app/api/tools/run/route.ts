@@ -28,6 +28,11 @@ const TOOL_CREDIT_COSTS: Record<string, number> = {
   "material-palette-ai": 500,
   "false-ceiling-ai": 500,
   "mood-board": 500,
+  "render-enhancer": 2500,
+  "site-photo-redesign": 2500,
+  "remove-furniture": 2500,
+  "background-change": 2500,
+  "photo-enhancer": 2500,
 };
 
 class NotEnoughCreditsError extends Error {

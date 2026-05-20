@@ -16,17 +16,17 @@ const PACKS: Record<
 > = {
   starter: {
     name: "Starter Credit Pack",
-    credits: 120,
+    credits: 50000,
     amount: 2499,
   },
   pro: {
     name: "Pro Credit Pack",
-    credits: 400,
+    credits: 100000,
     amount: 4999,
   },
   agency: {
     name: "Agency Credit Pack",
-    credits: 1200,
+    credits: 300000,
     amount: 12999,
   },
 };
