@@ -3133,6 +3133,58 @@ function ApiPage({ theme }: { theme: ResolvedTheme }) {
 
 export default function SikhadengeBuildDashboard() {
 
+  // BUILDSETU_LIVE_CREDITS_BALANCE_V1
+  useEffect(() => {
+    const applyCreditsToDom = (credits: number) => {
+      const creditText = `${credits.toLocaleString("en-IN")} Credits`;
+
+      document.querySelectorAll("span, p, div").forEach((node) => {
+        const el = node as HTMLElement;
+        const text = (el.textContent || "").trim();
+
+        if (text === "120 Credits" || /^\d[\d,]* Credits$/.test(text)) {
+          el.textContent = creditText;
+        }
+
+        const parentText = (el.parentElement?.textContent || "").trim();
+        if (text === "120" && parentText.includes("Credits Left")) {
+          el.textContent = credits.toLocaleString("en-IN");
+        }
+      });
+    };
+
+    const loadCredits = async () => {
+      try {
+        const res = await fetch("/api/credits/balance", { cache: "no-store" });
+        const data = await res.json();
+
+        if (!res.ok || !data.ok) return;
+
+        const credits = Number(data.credits || 0);
+        applyCreditsToDom(credits);
+      } catch (error) {
+        console.error("DASHBOARD_CREDITS_LOAD_ERROR", error);
+      }
+    };
+
+    loadCredits();
+
+    const interval = window.setInterval(loadCredits, 15000);
+
+    const observer = new MutationObserver(() => {
+      loadCredits();
+    });
+
+    observer.observe(document.body, { childList: true, subtree: true });
+
+    return () => {
+      window.clearInterval(interval);
+      observer.disconnect();
+    };
+  }, []);
+
+
+
   // BUILDSETU_TOOL_BUTTON_ALIGN_V4
   useEffect(() => {
     const applyToolCardAlignment = () => {
