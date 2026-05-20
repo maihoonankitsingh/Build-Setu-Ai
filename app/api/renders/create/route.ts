@@ -1,5 +1,7 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
+import { AUTH_COOKIE, getUserFromSession } from "@/lib/auth-store";
+import { getOrCreatePrismaUser } from "@/lib/prisma-user";
 
 function safeString(value: unknown) {
   if (typeof value !== "string") return undefined;
@@ -7,8 +9,20 @@ function safeString(value: unknown) {
   return trimmed.length ? trimmed : undefined;
 }
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   try {
+    const token = request.cookies.get(AUTH_COOKIE)?.value;
+    const user = await getUserFromSession(token);
+
+    if (!user) {
+      return NextResponse.json({ ok: false, error: "LOGIN_REQUIRED" }, { status: 401 });
+    }
+
+    const prismaUser = await getOrCreatePrismaUser({
+      email: user.email,
+      name: user.name,
+    });
+
     const body = await request.json().catch(() => null);
 
     if (!body || typeof body !== "object") {
@@ -18,10 +32,10 @@ export async function POST(request: Request) {
       );
     }
 
-    const projectId = safeString(body.projectId);
-    const prompt = safeString(body.prompt);
-    const renderType = safeString(body.renderType) || "Interior Render";
-    const roomType = safeString(body.roomType);
+    const projectId = safeString((body as any).projectId);
+    const prompt = safeString((body as any).prompt);
+    const renderType = safeString((body as any).renderType) || "Interior Render";
+    const roomType = safeString((body as any).roomType);
 
     if (!projectId) {
       return NextResponse.json(
@@ -37,14 +51,17 @@ export async function POST(request: Request) {
       );
     }
 
-    const project = await prisma.project.findUnique({
-      where: { id: projectId },
+    const project = await prisma.project.findFirst({
+      where: {
+        id: projectId,
+        userId: prismaUser.id,
+      },
       select: { id: true },
     });
 
     if (!project) {
       return NextResponse.json(
-        { ok: false, error: "Project not found" },
+        { ok: false, error: "Project not found for current user" },
         { status: 404 },
       );
     }
@@ -55,13 +72,14 @@ export async function POST(request: Request) {
         prompt,
         renderType,
         roomType,
-        imageUrl: safeString(body.imageUrl),
+        imageUrl: safeString((body as any).imageUrl),
         status: "COMPLETED",
       },
     });
 
     await prisma.toolRun.create({
       data: {
+        userId: prismaUser.id,
         projectId,
         toolType:
           renderType.toLowerCase().includes("exterior")
@@ -76,6 +94,8 @@ export async function POST(request: Request) {
 
     return NextResponse.json({
       ok: true,
+      userId: prismaUser.id,
+      email: user.email,
       render,
     });
   } catch (error) {

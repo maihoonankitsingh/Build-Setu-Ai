@@ -1,5 +1,7 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
+import { AUTH_COOKIE, getUserFromSession } from "@/lib/auth-store";
+import { getOrCreatePrismaUser } from "@/lib/prisma-user";
 
 function safeString(value: unknown) {
   if (typeof value !== "string") return undefined;
@@ -7,8 +9,20 @@ function safeString(value: unknown) {
   return trimmed.length ? trimmed : undefined;
 }
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   try {
+    const token = request.cookies.get(AUTH_COOKIE)?.value;
+    const user = await getUserFromSession(token);
+
+    if (!user) {
+      return NextResponse.json({ ok: false, error: "LOGIN_REQUIRED" }, { status: 401 });
+    }
+
+    const prismaUser = await getOrCreatePrismaUser({
+      email: user.email,
+      name: user.name,
+    });
+
     const body = await request.json().catch(() => null);
 
     if (!body || typeof body !== "object") {
@@ -18,8 +32,8 @@ export async function POST(request: Request) {
       );
     }
 
-    const title = safeString(body.title);
-    const rawBrief = safeString(body.rawBrief);
+    const title = safeString((body as any).title);
+    const rawBrief = safeString((body as any).rawBrief);
 
     if (!title && !rawBrief) {
       return NextResponse.json(
@@ -30,25 +44,26 @@ export async function POST(request: Request) {
 
     const project = await prisma.project.create({
       data: {
+        userId: prismaUser.id,
         title: title || "Untitled Build Project",
-        projectType: safeString(body.projectType),
-        location: safeString(body.location),
-        plotSize: safeString(body.plotSize),
-        facing: safeString(body.facing),
-        floors: safeString(body.floors),
-        budget: safeString(body.budget),
+        projectType: safeString((body as any).projectType),
+        location: safeString((body as any).location),
+        plotSize: safeString((body as any).plotSize),
+        facing: safeString((body as any).facing),
+        floors: safeString((body as any).floors),
+        budget: safeString((body as any).budget),
         brief: rawBrief
           ? {
               create: {
                 rawBrief,
-                structuredJson: body.structuredJson
-                  ? JSON.stringify(body.structuredJson)
+                structuredJson: (body as any).structuredJson
+                  ? JSON.stringify((body as any).structuredJson)
                   : undefined,
-                questionsJson: body.questionsJson
-                  ? JSON.stringify(body.questionsJson)
+                questionsJson: (body as any).questionsJson
+                  ? JSON.stringify((body as any).questionsJson)
                   : undefined,
-                answersJson: body.answersJson
-                  ? JSON.stringify(body.answersJson)
+                answersJson: (body as any).answersJson
+                  ? JSON.stringify((body as any).answersJson)
                   : undefined,
               },
             }
@@ -61,6 +76,9 @@ export async function POST(request: Request) {
 
     return NextResponse.json({
       ok: true,
+      userId: user.id,
+      prismaUserId: prismaUser.id,
+      email: user.email,
       project,
     });
   } catch (error) {

@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { promises as fs } from "fs";
 import path from "path";
 import { AUTH_COOKIE, getUserFromSession } from "@/lib/auth-store";
+import { getOrCreatePrismaUser } from "@/lib/prisma-user";
+import { prisma } from "@/lib/db";
 
 const TOOL_RUNS_FILE = path.join(process.cwd(), "data", "generated", "tool-runs.json");
 
@@ -53,6 +55,11 @@ export async function GET(request: NextRequest) {
     });
   }
 
+  const prismaUser = await getOrCreatePrismaUser({
+    email: user.email,
+    name: user.name,
+  });
+
   const runs = await readToolRuns();
 
   const userRuns = runs.filter((run) => {
@@ -61,22 +68,32 @@ export async function GET(request: NextRequest) {
     return false;
   });
 
-  const projectIds = new Set(
-    userRuns
-      .map((run) => run.projectId)
-      .filter((projectId): projectId is string => Boolean(projectId && projectId !== "demo")),
-  );
+  const [activeProjects, prismaImagesGenerated] = await Promise.all([
+    prisma.project.count({
+      where: {
+        userId: prismaUser.id,
+      },
+    }),
+    prisma.render.count({
+      where: {
+        project: {
+          userId: prismaUser.id,
+        },
+      },
+    }),
+  ]);
 
-  const imagesGenerated = userRuns.filter((run) => IMAGE_TOOL_SLUGS.has(String(run.slug || ""))).length;
+  const fileImageRuns = userRuns.filter((run) => IMAGE_TOOL_SLUGS.has(String(run.slug || ""))).length;
+  const imagesGenerated = prismaImagesGenerated + fileImageRuns;
   const reviewPending = userRuns.filter((run) => run.status === "REVIEW_REQUIRED").length;
 
   return NextResponse.json({
     ok: true,
     authenticated: true,
-    userId: user.id,
+    userId: prismaUser.id,
     email: user.email,
     stats: {
-      activeProjects: projectIds.size,
+      activeProjects,
       imagesGenerated,
       reviewPending,
       creditsLeft: Number(user.credits || 0),
