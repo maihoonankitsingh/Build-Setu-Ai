@@ -3,7 +3,10 @@
 import { FormEvent, useMemo, useState } from "react";
 
 const I = {
+  hero: "/buildai/images/landing/hero-main-person-tablet.png",
   explained: "/buildai/images/landing/buildai-explained-dashboard.png",
+  render: "/buildai/images/landing/feature-ai-interior-exterior-render.png",
+  boq: "/buildai/images/landing/feature-boq-estimation-automation.png",
   cta: "/buildai/images/landing/cta-smart-project-workflow-devices.png",
 };
 
@@ -19,19 +22,19 @@ const projectTypes = [
 ];
 
 const modules = [
-  ["AI Renders", "Interior and exterior visuals from project briefs."],
-  ["BOQ & Estimate", "Quantity summaries, costing and reports."],
-  ["BBS Workflow", "Review-ready structural documentation drafts."],
-  ["Client PDFs", "Branded proposals and project documents."],
-  ["Payments", "Lead capture, payment and project tracking."],
-  ["Dashboard", "Credits, analytics and workspace control."],
+  ["AI Renders", "Interior, exterior and client-ready visuals"],
+  ["BOQ & Estimate", "Cost summaries, quantities and reports"],
+  ["BBS Workflow", "Review-ready structural documentation drafts"],
+  ["Client PDFs", "Branded proposals and project documents"],
+  ["Payments", "Lead capture, payment and project tracking"],
+  ["Dashboard", "Credits, analytics and workspace control"],
 ];
 
-const outcomes = [
-  ["01", "Workflow mapping"],
-  ["02", "Live product demo"],
-  ["03", "Plan recommendation"],
-  ["04", "Setup guidance"],
+const agenda = [
+  "Map your current client brief, render, BOQ and document workflow",
+  "Show the BuildSetu AI dashboard, project tools and credit system",
+  "Explain how your team can generate renders, BOQ, BBS and proposals",
+  "Recommend the right plan, onboarding flow and next implementation steps",
 ];
 
 export default function BookDemoPage() {
@@ -72,7 +75,7 @@ export default function BookDemoPage() {
 
   return (
     <main className="min-h-screen bg-[#fbfaff] text-[#120a2f] antialiased">
-      <header className="sticky top-0 z-50 border-b border-[#eee8fb] bg-white/95 shadow-[0_10px_35px_rgba(36,18,74,0.05)] backdrop-blur-xl">
+      <header className="sticky top-0 z-50 border-b border-[#eee8fb] bg-white/94 shadow-[0_10px_35px_rgba(36,18,74,0.04)] backdrop-blur-xl">
         <div className="mx-auto flex max-w-[1180px] items-center justify-between px-4 py-3 md:px-5">
           <a href="/buildai" className="flex items-center gap-3">
             <span className="grid h-10 w-10 place-items-center rounded-2xl bg-gradient-to-br from-[#6d28d9] via-[#7c3aed] to-[#c026d3] text-base font-black text-white shadow-[0_14px_30px_rgba(109,40,217,0.28)]">
@@ -87,167 +90,154 @@ export default function BookDemoPage() {
           </a>
 
           <div className="flex items-center gap-2">
-            <a href="/buildai" className="hidden rounded-xl border border-[#ded4ee] bg-white px-5 py-2.5 text-xs font-black text-[#150d2f] shadow-sm md:inline-flex">
-              Back to BuildAI
-            </a>
-            <a href="/pricing" className="rounded-xl bg-[#6d28d9] px-5 py-2.5 text-xs font-black text-white shadow-[0_14px_30px_rgba(109,40,217,0.25)]">
+            <a href="/pricing" className="hidden rounded-xl border border-[#ded4ee] bg-white px-5 py-2.5 text-xs font-black text-[#150d2f] shadow-sm md:inline-flex">
               View Pricing
+            </a>
+            <a href="/login" className="rounded-xl bg-[#6d28d9] px-5 py-2.5 text-xs font-black text-white shadow-[0_14px_30px_rgba(109,40,217,0.25)]">
+              Login
             </a>
           </div>
         </div>
       </header>
 
-      <section className="relative overflow-hidden bg-[radial-gradient(circle_at_top,#f2e8ff_0%,#ffffff_44%,#fbfaff_100%)]">
+      <section className="relative overflow-hidden bg-[radial-gradient(circle_at_top,#f2e8ff_0%,#ffffff_45%,#fbfaff_100%)]">
         <div
-          className="pointer-events-none absolute inset-0 opacity-[0.23] [mask-image:radial-gradient(circle_at_top,black,transparent_72%)]"
+          className="pointer-events-none absolute inset-0 opacity-[0.22] [mask-image:radial-gradient(circle_at_top,black,transparent_72%)]"
           style={{
             backgroundImage:
               "linear-gradient(#cbb8ef 1px, transparent 1px), linear-gradient(90deg, #cbb8ef 1px, transparent 1px)",
-            backgroundSize: "58px 58px",
+            backgroundSize: "56px 56px",
           }}
         />
-        <div className="pointer-events-none absolute left-[3%] top-20 h-96 w-96 rounded-full bg-[#e8d7ff] opacity-80 blur-3xl" />
-        <div className="pointer-events-none absolute right-[6%] top-28 h-[460px] w-[460px] rounded-full bg-[#eee7ff] opacity-80 blur-3xl" />
+        <div className="pointer-events-none absolute left-[4%] top-24 h-96 w-96 rounded-full bg-[#e9d7ff] opacity-75 blur-3xl" />
+        <div className="pointer-events-none absolute right-[8%] top-32 h-[420px] w-[420px] rounded-full bg-[#ede9ff] opacity-75 blur-3xl" />
 
-        <div className="relative mx-auto grid max-w-[1180px] gap-8 px-4 py-10 md:px-5 lg:grid-cols-2 lg:items-stretch lg:py-14">
-          <div className="flex h-full flex-col rounded-[42px] border border-[#e4d6f7] bg-white/78 p-4 shadow-[0_34px_120px_rgba(76,29,149,0.16)] backdrop-blur md:p-6">
-            <div className="flex-1 rounded-[34px] bg-[radial-gradient(circle_at_top_left,#ffffff_0%,#fbf7ff_52%,#f3eaff_100%)] p-6 md:p-8">
-              <div className="inline-flex items-center gap-2 rounded-full border border-[#e6d7fb] bg-white px-4 py-2 text-[11px] font-black uppercase tracking-[0.1em] text-[#6d28d9] shadow-sm">
-                Private product walkthrough
-              </div>
-
-              <h1 className="mt-5 max-w-[620px] text-[40px] font-black leading-[0.96] tracking-[-0.075em] text-[#120a2f] md:text-[60px]">
-                Book a premium BuildSetu AI demo for your team.
-              </h1>
-
-              <p className="mt-5 max-w-[600px] text-[15px] font-semibold leading-8 text-[#5f536f] md:text-[16px]">
-                See how your architecture, interior or construction workflow can run with AI renders, BOQ drafts, BBS documentation, client PDFs and payments from one workspace.
-              </p>
-
-              <div className="mt-7 grid gap-3 sm:grid-cols-4">
-                {outcomes.map(([num, item]) => (
-                  <div key={item} className="rounded-2xl border border-[#e8ddf7] bg-white/90 p-4 text-center shadow-[0_14px_42px_rgba(65,29,120,0.06)]">
-                    <p className="text-lg font-black text-[#6d28d9]">{num}</p>
-                    <p className="mt-1 text-[12px] font-black leading-4 text-[#3a176d]">{item}</p>
-                  </div>
-                ))}
-              </div>
+        <div className="relative mx-auto grid max-w-[1180px] gap-8 px-4 py-12 md:px-5 lg:grid-cols-[1.02fr_0.98fr] lg:items-center lg:py-16">
+          <div>
+            <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-[#e6d7fb] bg-white px-4 py-2 text-[11px] font-black uppercase tracking-[0.1em] text-[#6d28d9] shadow-sm">
+              Private BuildSetu AI Demo
             </div>
 
-            <div className="mt-4 overflow-hidden rounded-[34px] bg-[radial-gradient(circle_at_top_left,#7c3aed_0%,#3b0f80_42%,#160632_100%)] p-5 text-white shadow-[0_24px_80px_rgba(76,29,149,0.22)] md:p-6">
-              <div className="grid gap-5 md:grid-cols-[0.82fr_1.18fr] md:items-center">
-                <div>
-                  <p className="text-[11px] font-black uppercase tracking-[0.14em] text-purple-200">Demo preview</p>
-                  <h2 className="mt-2 text-[28px] font-black leading-tight tracking-[-0.06em]">
-                    From client brief to proposal-ready workflow
-                  </h2>
-                  <div className="mt-5 space-y-3">
-                    {["AI renders and design previews", "BOQ, BBS and documentation workflow", "Client PDFs and dashboard tracking"].map((item) => (
-                      <p key={item} className="flex gap-2 text-sm font-bold leading-6 text-white/84">
-                        <span className="text-emerald-300">✓</span>
-                        <span>{item}</span>
-                      </p>
-                    ))}
-                  </div>
-                </div>
+            <h1 className="max-w-[660px] text-[44px] font-black leading-[0.94] tracking-[-0.08em] text-[#120a2f] md:text-[72px]">
+              See your design workflow running on BuildSetu AI.
+            </h1>
 
-                <div className="relative">
-                  <img src={I.cta} alt="BuildSetu AI workflow preview" className="rounded-[26px] border border-white/15 shadow-[0_28px_80px_rgba(0,0,0,0.28)]" />
-                  <span className="absolute -bottom-4 left-1/2 -translate-x-1/2 rounded-2xl border border-white/15 bg-white/12 px-4 py-3 text-xs font-black text-white shadow-lg backdrop-blur">
-                    Live workflow demo
-                  </span>
+            <p className="mt-5 max-w-[630px] text-[16px] font-semibold leading-8 text-[#5f536f] md:text-[17px]">
+              Book a guided walkthrough for AI renders, BOQ drafts, BBS documentation, branded proposals, lead capture and credit-based project workflows.
+            </p>
+
+            <div className="mt-7 grid max-w-[620px] gap-3 sm:grid-cols-3">
+              <Stat value="30 min" label="Product walkthrough" />
+              <Stat value="AEC" label="Architecture workflow" />
+              <Stat value="1:1" label="Setup guidance" />
+            </div>
+
+            <div className="mt-8 overflow-hidden rounded-[34px] border border-[#e8ddf7] bg-white/80 p-3 shadow-[0_26px_90px_rgba(76,29,149,0.14)] backdrop-blur">
+              <div className="relative overflow-hidden rounded-[28px] bg-[radial-gradient(circle_at_top_left,#efe3ff,#ffffff_48%,#f8f4ff)] p-4 md:p-5">
+                <div className="grid gap-4 md:grid-cols-[1.1fr_0.9fr] md:items-center">
+                  <div>
+                    <p className="text-xs font-black uppercase tracking-[0.14em] text-[#6d28d9]">Demo preview</p>
+                    <h2 className="mt-2 text-[28px] font-black leading-tight tracking-[-0.06em] text-[#2b1457]">
+                      From client brief to proposal in one workspace
+                    </h2>
+                    <div className="mt-4 space-y-2.5">
+                      {agenda.slice(0, 3).map((item) => (
+                        <p key={item} className="flex gap-2 text-sm font-bold leading-6 text-[#5f5476]">
+                          <span className="mt-0.5 text-[#6d28d9]">✓</span>
+                          <span>{item}</span>
+                        </p>
+                      ))}
+                    </div>
+                  </div>
+                  <img src={I.cta} alt="BuildSetu AI workflow preview" className="rounded-[24px] border border-[#eee8f8] shadow-[0_18px_60px_rgba(76,29,149,0.14)]" />
                 </div>
               </div>
             </div>
           </div>
 
-          <div className="flex h-full">
-            <div className="w-full rounded-[42px] border border-[#e4d6f7] bg-white/88 p-3 shadow-[0_34px_120px_rgba(76,29,149,0.20)] backdrop-blur">
-              <div className="flex h-full flex-col overflow-hidden rounded-[36px] border border-[#efe6fb] bg-white">
-                <div className="relative overflow-hidden bg-[radial-gradient(circle_at_top_left,#efe3ff,#ffffff_55%)] px-6 pb-5 pt-6 md:px-8">
-                  <div className="absolute right-6 top-6 rounded-2xl bg-[#f1e6ff] px-3 py-2 text-xs font-black text-[#6d28d9]">
-                    30 min call
-                  </div>
-                  <h2 className="max-w-[350px] text-[34px] font-black leading-tight tracking-[-0.07em] text-[#2b1457]">
-                    Schedule your demo
-                  </h2>
-                  <p className="mt-3 max-w-[430px] text-sm font-semibold leading-6 text-[#786a91]">
-                    Fill the form. Your request opens on WhatsApp with all details ready to send.
-                  </p>
+          <div className="rounded-[38px] border border-[#e4d6f7] bg-white/82 p-3 shadow-[0_32px_110px_rgba(76,29,149,0.18)] backdrop-blur">
+            <div className="overflow-hidden rounded-[32px] border border-[#efe6fb] bg-white">
+              <div className="relative bg-[radial-gradient(circle_at_top_left,#efe3ff,#ffffff_55%)] px-6 pb-5 pt-6 md:px-8">
+                <div className="absolute right-6 top-6 rounded-2xl bg-[#f1e6ff] px-3 py-2 text-xs font-black text-[#6d28d9]">
+                  Demo Call
+                </div>
+                <h2 className="max-w-[330px] text-[34px] font-black leading-tight tracking-[-0.07em] text-[#2b1457]">
+                  Schedule your workspace demo
+                </h2>
+                <p className="mt-3 max-w-[420px] text-sm font-semibold leading-6 text-[#786a91]">
+                  Share your requirement. The request opens on WhatsApp with all details filled.
+                </p>
+              </div>
+
+              <form onSubmit={submitDemo} className="space-y-4 px-6 pb-7 pt-5 md:px-8">
+                <div className="grid gap-4 md:grid-cols-2">
+                  <Field label="Full name" value={form.name} onChange={(v) => updateField("name", v)} required />
+                  <Field label="Phone number" value={form.phone} onChange={(v) => updateField("phone", v)} required />
                 </div>
 
-                <form onSubmit={submitDemo} className="flex flex-1 flex-col space-y-4 px-6 pb-7 pt-5 md:px-8">
-                  <div className="grid gap-4 md:grid-cols-2">
-                    <Field label="Full name" value={form.name} onChange={(v) => updateField("name", v)} required />
-                    <Field label="Phone number" value={form.phone} onChange={(v) => updateField("phone", v)} required />
-                  </div>
+                <div className="grid gap-4 md:grid-cols-2">
+                  <Field label="Email" type="email" value={form.email} onChange={(v) => updateField("email", v)} />
+                  <Field label="Company / Studio" value={form.company} onChange={(v) => updateField("company", v)} />
+                </div>
 
-                  <div className="grid gap-4 md:grid-cols-2">
-                    <Field label="Email" type="email" value={form.email} onChange={(v) => updateField("email", v)} />
-                    <Field label="Company / Studio" value={form.company} onChange={(v) => updateField("company", v)} />
-                  </div>
-
-                  <div className="grid gap-4 md:grid-cols-2">
-                    <Field label="Your role" value={form.role} onChange={(v) => updateField("role", v)} placeholder="Architect, Designer..." />
-                    <label className="block">
-                      <span className="text-xs font-black uppercase tracking-[0.08em] text-[#6d28d9]">Project type</span>
-                      <select
-                        value={form.projectType}
-                        onChange={(e) => updateField("projectType", e.target.value)}
-                        className="mt-2 h-[52px] w-full rounded-2xl border border-[#e4d7f5] bg-white px-4 text-sm font-bold text-[#2b1457] outline-none transition focus:border-[#6d28d9] focus:ring-4 focus:ring-purple-100"
-                      >
-                        {projectTypes.map((item) => (
-                          <option key={item}>{item}</option>
-                        ))}
-                      </select>
-                    </label>
-                  </div>
-
+                <div className="grid gap-4 md:grid-cols-2">
+                  <Field label="Your role" value={form.role} onChange={(v) => updateField("role", v)} placeholder="Architect, Designer..." />
                   <label className="block">
-                    <span className="text-xs font-black uppercase tracking-[0.08em] text-[#6d28d9]">Requirement</span>
-                    <textarea
-                      value={form.requirement}
-                      onChange={(e) => updateField("requirement", e.target.value)}
-                      placeholder="Example: I want AI renders, BOQ automation, BBS draft and client proposal workflow for my studio."
-                      rows={5}
-                      className="mt-2 w-full rounded-2xl border border-[#e4d7f5] bg-white px-4 py-3 text-sm font-semibold leading-6 text-[#2b1457] outline-none transition placeholder:text-[#a89ab8] focus:border-[#6d28d9] focus:ring-4 focus:ring-purple-100"
-                    />
-                  </label>
-
-                  <div className="mt-auto space-y-4 pt-2">
-                    <button
-                      type="submit"
-                      className="flex h-[56px] w-full items-center justify-center rounded-2xl bg-gradient-to-r from-[#6d28d9] via-[#7c3aed] to-[#8b5cf6] px-6 text-sm font-black text-white shadow-[0_22px_55px_rgba(109,40,217,0.34)] transition hover:-translate-y-0.5"
+                    <span className="text-xs font-black uppercase tracking-[0.08em] text-[#6d28d9]">Project type</span>
+                    <select
+                      value={form.projectType}
+                      onChange={(e) => updateField("projectType", e.target.value)}
+                      className="mt-2 h-[52px] w-full rounded-2xl border border-[#e4d7f5] bg-white px-4 text-sm font-bold text-[#2b1457] outline-none transition focus:border-[#6d28d9] focus:ring-4 focus:ring-purple-100"
                     >
-                      Send Demo Request on WhatsApp →
-                    </button>
+                      {projectTypes.map((item) => (
+                        <option key={item}>{item}</option>
+                      ))}
+                    </select>
+                  </label>
+                </div>
 
-                    <div className="grid gap-3 text-center text-[12px] font-bold text-[#8b7b9d] sm:grid-cols-3">
-                      <span>✓ No obligation</span>
-                      <span>✓ Expert walkthrough</span>
-                      <span>✓ Setup guidance</span>
-                    </div>
-                  </div>
-                </form>
-              </div>
+                <label className="block">
+                  <span className="text-xs font-black uppercase tracking-[0.08em] text-[#6d28d9]">Requirement</span>
+                  <textarea
+                    value={form.requirement}
+                    onChange={(e) => updateField("requirement", e.target.value)}
+                    placeholder="Example: I want AI renders, BOQ automation, BBS draft and client proposal workflow for my studio."
+                    rows={4}
+                    className="mt-2 w-full rounded-2xl border border-[#e4d7f5] bg-white px-4 py-3 text-sm font-semibold leading-6 text-[#2b1457] outline-none transition placeholder:text-[#a89ab8] focus:border-[#6d28d9] focus:ring-4 focus:ring-purple-100"
+                  />
+                </label>
+
+                <button
+                  type="submit"
+                  className="flex h-[54px] w-full items-center justify-center rounded-2xl bg-gradient-to-r from-[#6d28d9] via-[#7c3aed] to-[#8b5cf6] px-6 text-sm font-black text-white shadow-[0_20px_48px_rgba(109,40,217,0.32)] transition hover:-translate-y-0.5"
+                >
+                  Send Demo Request on WhatsApp →
+                </button>
+
+                <div className="grid gap-3 pt-1 text-center text-[12px] font-bold text-[#8b7b9d] sm:grid-cols-3">
+                  <span>✓ No obligation</span>
+                  <span>✓ Expert walkthrough</span>
+                  <span>✓ Setup guidance</span>
+                </div>
+              </form>
             </div>
           </div>
         </div>
       </section>
 
       <section className="mx-auto max-w-[1120px] px-4 py-12 md:px-5">
-        <div className="grid gap-8 lg:grid-cols-2 lg:items-center">
+        <div className="grid gap-5 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
           <div>
-            <p className="text-[11px] font-black uppercase tracking-[0.14em] text-[#6d28d9]">What you will see</p>
+            <p className="text-[11px] font-black uppercase tracking-[0.14em] text-[#6d28d9]">Modules included in demo</p>
             <h2 className="mt-2 text-[34px] font-black leading-tight tracking-[-0.065em] text-[#2b1457] md:text-[48px]">
-              A complete AI workspace for AEC delivery
+              A premium AI workspace for AEC teams
             </h2>
             <p className="mt-4 text-sm font-semibold leading-7 text-[#6b5e7b]">
-              The demo covers project intake, design generation, estimation, structural documentation, client proposals and workspace analytics.
+              The demo shows the real workflow: project brief, design visuals, estimates, structural documentation, client proposals and team dashboard.
             </p>
           </div>
 
-          <div className="overflow-hidden rounded-[34px] border border-[#e8ddf7] bg-white p-3 shadow-[0_26px_90px_rgba(76,29,149,0.11)]">
+          <div className="overflow-hidden rounded-[34px] border border-[#e8ddf7] bg-white p-3 shadow-[0_26px_90px_rgba(76,29,149,0.10)]">
             <img src={I.explained} alt="BuildSetu AI dashboard demo" className="rounded-[28px] border border-[#eee8f8]" />
           </div>
         </div>
@@ -293,5 +283,14 @@ function Field({
         className="mt-2 h-[52px] w-full rounded-2xl border border-[#e4d7f5] bg-white px-4 text-sm font-bold text-[#2b1457] outline-none transition placeholder:text-[#a89ab8] focus:border-[#6d28d9] focus:ring-4 focus:ring-purple-100"
       />
     </label>
+  );
+}
+
+function Stat({ value, label }: { value: string; label: string }) {
+  return (
+    <div className="rounded-[24px] border border-[#e8ddf7] bg-white/86 p-5 text-center shadow-[0_16px_44px_rgba(65,29,120,0.08)] backdrop-blur">
+      <p className="text-3xl font-black tracking-[-0.07em] text-[#6d28d9]">{value}</p>
+      <p className="mt-1 text-xs font-extrabold leading-4 text-[#81758f]">{label}</p>
+    </div>
   );
 }
