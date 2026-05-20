@@ -56,3 +56,7 @@ public/generated/reports/*
 data/buildsetu-auth-users.json
 data/buildsetu-auth-sessions.json
 data/buildsetu-auth-otps.json
+
+# BuildSetu billing runtime data
+data/buildsetu-billing-orders.json
+data/buildsetu-credit-history.json
