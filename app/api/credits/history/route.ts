@@ -1,53 +1,33 @@
-import { NextResponse } from "next/server";
-import { prisma } from "@/lib/db";
+import { NextRequest, NextResponse } from "next/server";
+import { AUTH_COOKIE, getUserFromSession } from "@/lib/auth-store";
+import { readHistory } from "@/lib/billing-store";
 
-export const runtime = "nodejs";
-export const dynamic = "force-dynamic";
+export async function GET(request: NextRequest) {
+  const token = request.cookies.get(AUTH_COOKIE)?.value;
+  const user = await getUserFromSession(token);
 
-const DEMO_EMAIL = "demo@buildsetu.ai";
-
-async function getOrCreateDemoUser() {
-  const user = await prisma.user.upsert({
-    where: { email: DEMO_EMAIL },
-    update: {},
-    create: {
-      email: DEMO_EMAIL,
-      name: "BuildSetu Demo User",
-      credits: 120,
-    },
-    select: {
-      id: true,
-      name: true,
-      email: true,
-      credits: true,
-    },
-  });
-
-  return user;
-}
-
-export async function GET() {
-  try {
-    const user = await getOrCreateDemoUser();
-
-    const transactions = await prisma.creditTransaction.findMany({
-      where: { userId: user.id },
-      orderBy: { createdAt: "desc" },
-      take: 50,
-    });
-
+  if (!user) {
     return NextResponse.json({
       ok: true,
-      user,
-      credits: user.credits,
-      transactions,
+      authenticated: false,
+      history: [],
+      transactions: [],
     });
-  } catch (error) {
-    console.error("CREDITS_HISTORY_ERROR", error);
-
-    return NextResponse.json(
-      { ok: false, error: "Failed to fetch credit history" },
-      { status: 500 },
-    );
   }
+
+  const history = await readHistory();
+  const userHistory = history.filter((item) => {
+    if (item.userId && item.userId === user.id) return true;
+    if (item.email && item.email.toLowerCase() === user.email.toLowerCase()) return true;
+    return false;
+  });
+
+  return NextResponse.json({
+    ok: true,
+    authenticated: true,
+    userId: user.id,
+    email: user.email,
+    history: userHistory,
+    transactions: userHistory,
+  });
 }

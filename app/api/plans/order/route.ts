@@ -1,145 +1,91 @@
 import { NextRequest, NextResponse } from "next/server";
-import Razorpay from "razorpay";
-
-export const runtime = "nodejs";
-export const dynamic = "force-dynamic";
-
-const PLANS: Record<
-  string,
-  {
-    name: string;
-    interval: "monthly" | "yearly";
-    amount: number;
-    credits: number;
-  }
-> = {
-  pro_monthly: {
-    name: "Pro Plan",
-    interval: "monthly",
-    amount: 4999,
-    credits: 100000,
-  },
-  max_monthly: {
-    name: "Max Plan",
-    interval: "monthly",
-    amount: 9999,
-    credits: 250000,
-  },
-  ultra_monthly: {
-    name: "Ultra Plan",
-    interval: "monthly",
-    amount: 24999,
-    credits: 750000,
-  },
-  pro_yearly: {
-    name: "Pro Plan",
-    interval: "yearly",
-    amount: 49999,
-    credits: 1200000,
-  },
-  max_yearly: {
-    name: "Max Plan",
-    interval: "yearly",
-    amount: 99999,
-    credits: 3000000,
-  },
-  ultra_yearly: {
-    name: "Ultra Plan",
-    interval: "yearly",
-    amount: 249999,
-    credits: 9000000,
-  },
-};
-
-function cleanEnv(value: string | undefined) {
-  return String(value || "")
-    .trim()
-    .replace(/^["']|["']$/g, "");
-}
-
-function getRazorpayClient() {
-  const keyId = cleanEnv(process.env.RAZORPAY_KEY_ID || process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID);
-  const keySecret = cleanEnv(process.env.RAZORPAY_KEY_SECRET);
-
-  if (!keyId || !keySecret) {
-    throw new Error("Razorpay keys are missing");
-  }
-
-  return {
-    keyId,
-    client: new Razorpay({
-      key_id: keyId,
-      key_secret: keySecret,
-    }),
-  };
-}
-
-function extractRazorpayError(error: unknown) {
-  const anyError = error as any;
-
-  return {
-    message:
-      anyError?.error?.description ||
-      anyError?.error?.reason ||
-      anyError?.message ||
-      "Failed to create Razorpay plan order",
-    code: anyError?.error?.code || anyError?.code || null,
-    field: anyError?.error?.field || null,
-    statusCode: anyError?.statusCode || anyError?.status || null,
-  };
-}
+import { AUTH_COOKIE, getUserFromSession } from "@/lib/auth-store";
+import {
+  PLAN_PACKS,
+  createRazorpayOrder,
+  makeReceipt,
+  saveBillingOrder,
+} from "@/lib/billing-store";
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json().catch(() => null);
-    const planId = typeof body?.planId === "string" ? body.planId : "";
-    const plan = PLANS[planId];
+    const token = request.cookies.get(AUTH_COOKIE)?.value;
+    const user = await getUserFromSession(token);
 
-    if (!plan) {
-      return NextResponse.json(
-        { ok: false, error: "Invalid plan" },
-        { status: 400 },
-      );
+    if (!user) {
+      return NextResponse.json({ ok: false, error: "LOGIN_REQUIRED" }, { status: 401 });
     }
 
-    const { keyId, client } = getRazorpayClient();
+    const body = await request.json().catch(() => ({}));
+    const planId = String(body.planId || body.packId || "pro");
+    const plan = PLAN_PACKS[planId] || PLAN_PACKS.pro;
 
-    const order = await client.orders.create({
-      amount: plan.amount * 100,
-      currency: "INR",
-      receipt: `buildsetu_plan_${planId}_${Date.now()}`.slice(0, 40),
+    const receipt = makeReceipt("plan");
+    const razorpayOrder = await createRazorpayOrder({
+      amountPaise: plan.amountPaise,
+      receipt,
       notes: {
-        app: "BuildSetu AI",
+        userId: user.id,
+        email: user.email,
+        type: "plan",
         planId,
-        planName: plan.name,
-        interval: plan.interval,
+        planName: plan.label,
         credits: String(plan.credits),
       },
     });
 
+    await saveBillingOrder({
+      id: `bo_${Date.now()}`,
+      razorpayOrderId: razorpayOrder.id,
+      userId: user.id,
+      email: user.email,
+      type: "plan",
+      status: "created",
+      amountPaise: plan.amountPaise,
+      currency: "INR",
+      credits: plan.credits,
+      planId,
+      planName: plan.label,
+      receipt,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    });
+
     return NextResponse.json({
       ok: true,
-      keyId,
-      order,
+      keyId: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || process.env.RAZORPAY_KEY_ID,
+
+      // New flat response
+      orderId: razorpayOrder.id,
+      razorpayOrderId: razorpayOrder.id,
+      amount: plan.amountPaise,
+      amountPaise: plan.amountPaise,
+      currency: "INR",
+      credits: plan.credits,
+      planId,
+      planName: plan.label,
+      userId: user.id,
+      email: user.email,
+
+      // Backward-compatible response for current pricing page
+      order: {
+        id: razorpayOrder.id,
+        amount: plan.amountPaise,
+        currency: "INR",
+        receipt,
+      },
       plan: {
         id: planId,
-        ...plan,
+        key: planId,
+        name: plan.label,
+        label: plan.label,
+        credits: plan.credits,
+        amount: plan.amountPaise,
+        amountPaise: plan.amountPaise,
       },
     });
   } catch (error) {
-    const details = extractRazorpayError(error);
-
-    console.error("PLAN_RAZORPAY_ORDER_ERROR", details, error);
-
-    return NextResponse.json(
-      {
-        ok: false,
-        error: details.message,
-        code: details.code,
-        field: details.field,
-        statusCode: details.statusCode,
-      },
-      { status: 500 },
-    );
+    console.error("plans/order failed", error);
+    return NextResponse.json({ ok: false, error: "PLAN_ORDER_CREATE_FAILED" }, { status: 500 });
   }
 }

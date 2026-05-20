@@ -1,126 +1,91 @@
 import { NextRequest, NextResponse } from "next/server";
-import Razorpay from "razorpay";
-
-export const runtime = "nodejs";
-export const dynamic = "force-dynamic";
-
-const PACKS: Record<
-  string,
-  {
-    name: string;
-    credits: number;
-    amount: number;
-  }
-> = {
-  starter: {
-    name: "Starter Credit Pack",
-    credits: 50000,
-    amount: 2499,
-  },
-  pro: {
-    name: "Pro Credit Pack",
-    credits: 100000,
-    amount: 4999,
-  },
-  agency: {
-    name: "Agency Credit Pack",
-    credits: 300000,
-    amount: 12999,
-  },
-};
-
-function cleanEnv(value: string | undefined) {
-  return String(value || "")
-    .trim()
-    .replace(/^["']|["']$/g, "");
-}
-
-function getRazorpayClient() {
-  const keyId = cleanEnv(process.env.RAZORPAY_KEY_ID || process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID);
-  const keySecret = cleanEnv(process.env.RAZORPAY_KEY_SECRET);
-
-  if (!keyId || !keySecret) {
-    throw new Error("Razorpay keys are missing in BuildSetu .env");
-  }
-
-  if (!keyId.startsWith("rzp_")) {
-    throw new Error("RAZORPAY_KEY_ID format invalid. It should start with rzp_");
-  }
-
-  return {
-    keyId,
-    client: new Razorpay({
-      key_id: keyId,
-      key_secret: keySecret,
-    }),
-  };
-}
-
-function extractRazorpayError(error: unknown) {
-  const anyError = error as any;
-
-  return {
-    message:
-      anyError?.error?.description ||
-      anyError?.error?.reason ||
-      anyError?.message ||
-      "Failed to create Razorpay order",
-    code: anyError?.error?.code || anyError?.code || null,
-    field: anyError?.error?.field || null,
-    statusCode: anyError?.statusCode || anyError?.status || null,
-  };
-}
+import { AUTH_COOKIE, getUserFromSession } from "@/lib/auth-store";
+import {
+  CREDIT_PACKS,
+  createRazorpayOrder,
+  makeReceipt,
+  saveBillingOrder,
+} from "@/lib/billing-store";
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json().catch(() => null);
-    const packId = typeof body?.packId === "string" ? body.packId : "";
-    const pack = PACKS[packId];
+    const token = request.cookies.get(AUTH_COOKIE)?.value;
+    const user = await getUserFromSession(token);
 
-    if (!pack) {
-      return NextResponse.json(
-        { ok: false, error: "Invalid credit pack" },
-        { status: 400 },
-      );
+    if (!user) {
+      return NextResponse.json({ ok: false, error: "LOGIN_REQUIRED" }, { status: 401 });
     }
 
-    const { keyId, client } = getRazorpayClient();
+    const body = await request.json().catch(() => ({}));
+    const packId = String(body.packId || body.planId || body.pack || "pro-credit-pack");
+    const pack = CREDIT_PACKS[packId] || CREDIT_PACKS["pro-credit-pack"];
 
-    const order = await client.orders.create({
-      amount: pack.amount * 100,
-      currency: "INR",
-      receipt: `buildsetu_${packId}_${Date.now()}`.slice(0, 40),
+    if (!pack.amountPaise || pack.amountPaise <= 0) {
+      return NextResponse.json({ ok: false, error: "INVALID_PAID_PACK" }, { status: 400 });
+    }
+
+    const receipt = makeReceipt("cred");
+    const razorpayOrder = await createRazorpayOrder({
+      amountPaise: pack.amountPaise,
+      receipt,
       notes: {
-        app: "BuildSetu AI",
+        userId: user.id,
+        email: user.email,
+        type: "credits",
         packId,
-        packName: pack.name,
         credits: String(pack.credits),
       },
     });
 
+    await saveBillingOrder({
+      id: `bo_${Date.now()}`,
+      razorpayOrderId: razorpayOrder.id,
+      userId: user.id,
+      email: user.email,
+      type: "credits",
+      status: "created",
+      amountPaise: pack.amountPaise,
+      currency: "INR",
+      credits: pack.credits,
+      receipt,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    });
+
     return NextResponse.json({
       ok: true,
-      keyId,
-      order,
+      keyId: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || process.env.RAZORPAY_KEY_ID,
+
+      // New flat response
+      orderId: razorpayOrder.id,
+      razorpayOrderId: razorpayOrder.id,
+      amount: pack.amountPaise,
+      amountPaise: pack.amountPaise,
+      currency: "INR",
+      credits: pack.credits,
+      packId,
+      userId: user.id,
+      email: user.email,
+
+      // Backward-compatible response for current credits page
+      order: {
+        id: razorpayOrder.id,
+        amount: pack.amountPaise,
+        currency: "INR",
+        receipt,
+      },
       pack: {
         id: packId,
-        ...pack,
+        key: packId,
+        name: pack.label,
+        label: pack.label,
+        credits: pack.credits,
+        amount: pack.amountPaise,
+        amountPaise: pack.amountPaise,
       },
     });
   } catch (error) {
-    const details = extractRazorpayError(error);
-
-    console.error("CREDITS_RAZORPAY_ORDER_ERROR", details, error);
-
-    return NextResponse.json(
-      {
-        ok: false,
-        error: details.message,
-        code: details.code,
-        field: details.field,
-        statusCode: details.statusCode,
-      },
-      { status: 500 },
-    );
+    console.error("credits/order failed", error);
+    return NextResponse.json({ ok: false, error: "ORDER_CREATE_FAILED" }, { status: 500 });
   }
 }
