@@ -407,6 +407,9 @@ export default function ToolExecutorPage() {
         const data = await res.json();
 
         if (!res.ok || !data.ok) {
+          if (data.code === "NOT_ENOUGH_CREDITS") {
+            throw new Error(`${data.error || "Not enough credits."} Open /credits to buy more credits.`);
+          }
           throw new Error(data.error || "Image generation failed");
         }
 
@@ -561,6 +564,9 @@ export default function ToolExecutorPage() {
       const data = await res.json();
 
       if (!res.ok || !data.ok) {
+        if (data.code === "NOT_ENOUGH_CREDITS") {
+          throw new Error(`${data.error || "Not enough credits."} Open /credits to buy more credits.`);
+        }
         throw new Error(data.error || "Tool execution failed");
       }
 

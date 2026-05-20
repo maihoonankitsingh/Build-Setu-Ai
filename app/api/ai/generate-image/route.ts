@@ -8,6 +8,95 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
+// BUILDSETU_IMAGE_CREDIT_DEDUCTION_V1
+const DEMO_EMAIL = "demo@buildsetu.ai";
+const IMAGE_CREDIT_COST = 5;
+
+class NotEnoughCreditsError extends Error {
+  currentCredits: number;
+  requiredCredits: number;
+
+  constructor(currentCredits: number, requiredCredits: number) {
+    super("Not enough credits. Please buy more credits to continue.");
+    this.currentCredits = currentCredits;
+    this.requiredCredits = requiredCredits;
+  }
+}
+
+async function getDemoCreditBalance() {
+  const user = await prisma.user.upsert({
+    where: { email: DEMO_EMAIL },
+    update: {},
+    create: {
+      email: DEMO_EMAIL,
+      name: "BuildSetu Demo User",
+      credits: 120,
+    },
+    select: {
+      id: true,
+      credits: true,
+    },
+  });
+
+  return user;
+}
+
+async function deductDemoCredits({
+  credits,
+  note,
+  projectId,
+}: {
+  credits: number;
+  note: string;
+  projectId: string | null;
+}) {
+  return prisma.$transaction(async (tx) => {
+    const user = await tx.user.upsert({
+      where: { email: DEMO_EMAIL },
+      update: {},
+      create: {
+        email: DEMO_EMAIL,
+        name: "BuildSetu Demo User",
+        credits: 120,
+      },
+      select: {
+        id: true,
+        credits: true,
+      },
+    });
+
+    if (user.credits < credits) {
+      throw new NotEnoughCreditsError(user.credits, credits);
+    }
+
+    const updated = await tx.user.update({
+      where: { id: user.id },
+      data: {
+        credits: {
+          decrement: credits,
+        },
+      },
+      select: {
+        id: true,
+        credits: true,
+      },
+    });
+
+    await tx.creditTransaction.create({
+      data: {
+        userId: user.id,
+        projectId,
+        actionType: "USE",
+        creditsUsed: -credits,
+        note,
+      },
+    });
+
+    return updated;
+  });
+}
+
+
 function safeString(value: unknown) {
   if (typeof value !== "string") return undefined;
   const trimmed = value.trim();
@@ -90,7 +179,7 @@ async function saveRenderRecord({
         fallback,
         errorMessage: errorMessage || null,
       }),
-      creditsUsed: fallback ? 0 : 5,
+      creditsUsed: IMAGE_CREDIT_COST,
       status: fallback ? "REVIEW_REQUIRED" : "COMPLETED",
     },
   });
@@ -196,6 +285,22 @@ export async function POST(request: Request) {
       );
     }
 
+    const balance = await getDemoCreditBalance();
+
+    if (balance.credits < IMAGE_CREDIT_COST) {
+      return NextResponse.json(
+        {
+          ok: false,
+          code: "NOT_ENOUGH_CREDITS",
+          error: "Not enough credits. Please buy more credits to continue.",
+          credits: balance.credits,
+          requiredCredits: IMAGE_CREDIT_COST,
+          buyCreditsUrl: "/credits",
+        },
+        { status: 402 },
+      );
+    }
+
     finalPrompt = enhanceArchitecturePrompt(prompt, renderType, roomType);
 
     if (!process.env.OPENAI_API_KEY) {
@@ -209,7 +314,17 @@ export async function POST(request: Request) {
           errorMessage: "OPENAI_API_KEY is missing",
         });
 
-        return NextResponse.json(fallback);
+        const charge = await deductDemoCredits({
+          credits: IMAGE_CREDIT_COST,
+          note: `${renderType} image generation`,
+          projectId,
+        });
+
+        return NextResponse.json({
+          ...fallback,
+          credits: charge.credits,
+          creditsUsed: IMAGE_CREDIT_COST,
+        });
       }
 
       return NextResponse.json(
@@ -252,11 +367,19 @@ export async function POST(request: Request) {
         fallback: false,
       });
 
+      const charge = await deductDemoCredits({
+        credits: IMAGE_CREDIT_COST,
+        note: `${renderType} image generation`,
+        projectId,
+      });
+
       return NextResponse.json({
         ok: true,
         fallback: false,
         render,
         imageUrl,
+        credits: charge.credits,
+        creditsUsed: IMAGE_CREDIT_COST,
       });
     } catch (providerError) {
       const errorMessage =
@@ -274,12 +397,36 @@ export async function POST(request: Request) {
           errorMessage,
         });
 
-        return NextResponse.json(fallback);
+        const charge = await deductDemoCredits({
+          credits: IMAGE_CREDIT_COST,
+          note: `${renderType} image generation`,
+          projectId,
+        });
+
+        return NextResponse.json({
+          ...fallback,
+          credits: charge.credits,
+          creditsUsed: IMAGE_CREDIT_COST,
+        });
       }
 
       throw providerError;
     }
   } catch (error) {
+    if (error instanceof NotEnoughCreditsError) {
+      return NextResponse.json(
+        {
+          ok: false,
+          code: "NOT_ENOUGH_CREDITS",
+          error: error.message,
+          credits: error.currentCredits,
+          requiredCredits: error.requiredCredits,
+          buyCreditsUrl: "/credits",
+        },
+        { status: 402 },
+      );
+    }
+
     console.error("IMAGE_GENERATION_ERROR", error);
 
     const message =

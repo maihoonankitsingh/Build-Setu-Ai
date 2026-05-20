@@ -1,12 +1,105 @@
 import { NextRequest, NextResponse } from "next/server";
 import fs from "fs/promises";
 import path from "path";
+import { prisma } from "@/lib/db";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 const DATA_DIR = path.join(process.cwd(), "data", "generated");
 const DATA_FILE = path.join(DATA_DIR, "tool-runs.json");
+
+// BUILDSETU_TOOL_CREDIT_DEDUCTION_V1
+const DEMO_EMAIL = "demo@buildsetu.ai";
+
+const TOOL_CREDIT_COSTS: Record<string, number> = {
+  "magic-brief": 1,
+  "architect-chat": 1,
+  "floor-plan-ai": 2,
+  "sketch-to-plan": 2,
+  "vastu-check": 1,
+  "working-drawings": 3,
+  "boq-generator": 2,
+  "bbs-generator": 3,
+  "column-beam-plan": 3,
+  "client-pdf": 1,
+  "client-agreement": 2,
+  "contractor-package": 3,
+  "material-palette-ai": 1,
+  "false-ceiling-ai": 1,
+  "mood-board": 1,
+};
+
+class NotEnoughCreditsError extends Error {
+  currentCredits: number;
+  requiredCredits: number;
+
+  constructor(currentCredits: number, requiredCredits: number) {
+    super("Not enough credits. Please buy more credits to continue.");
+    this.currentCredits = currentCredits;
+    this.requiredCredits = requiredCredits;
+  }
+}
+
+function getToolCreditCost(slug: string) {
+  return TOOL_CREDIT_COSTS[slug] || 1;
+}
+
+async function deductDemoCredits({
+  credits,
+  note,
+  projectId,
+}: {
+  credits: number;
+  note: string;
+  projectId: string | null;
+}) {
+  return prisma.$transaction(async (tx) => {
+    const user = await tx.user.upsert({
+      where: { email: DEMO_EMAIL },
+      update: {},
+      create: {
+        email: DEMO_EMAIL,
+        name: "BuildSetu Demo User",
+        credits: 120,
+      },
+      select: {
+        id: true,
+        credits: true,
+      },
+    });
+
+    if (user.credits < credits) {
+      throw new NotEnoughCreditsError(user.credits, credits);
+    }
+
+    const updated = await tx.user.update({
+      where: { id: user.id },
+      data: {
+        credits: {
+          decrement: credits,
+        },
+      },
+      select: {
+        id: true,
+        credits: true,
+      },
+    });
+
+    await tx.creditTransaction.create({
+      data: {
+        userId: user.id,
+        projectId,
+        actionType: "USE",
+        creditsUsed: -credits,
+        note,
+      },
+    });
+
+    return updated;
+  });
+}
+
 
 type ToolRun = {
   id: string;
@@ -236,6 +329,13 @@ export async function POST(req: NextRequest) {
     const prompt = safe(body.prompt, `${profile.title} ke liye output generate karo.`);
     const projectId = safe(body.projectId, "") || null;
 
+    const requiredCredits = getToolCreditCost(slug);
+    const creditResult = await deductDemoCredits({
+      credits: requiredCredits,
+      note: `${profile.title} tool execution`,
+      projectId,
+    });
+
     const run: ToolRun = {
       id: id(),
       createdAt: new Date().toISOString(),
@@ -255,8 +355,22 @@ export async function POST(req: NextRequest) {
     items.unshift(run);
     await writeAll(items.slice(0, 300));
 
-    return NextResponse.json({ ok: true, run });
+    return NextResponse.json({ ok: true, run, credits: creditResult.credits, creditsUsed: requiredCredits });
   } catch (error: any) {
+    if (error instanceof NotEnoughCreditsError) {
+      return NextResponse.json(
+        {
+          ok: false,
+          code: "NOT_ENOUGH_CREDITS",
+          error: error.message,
+          credits: error.currentCredits,
+          requiredCredits: error.requiredCredits,
+          buyCreditsUrl: "/credits",
+        },
+        { status: 402 },
+      );
+    }
+
     return NextResponse.json(
       { ok: false, error: error?.message || "Tool execution failed" },
       { status: 500 }
