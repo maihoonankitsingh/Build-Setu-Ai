@@ -3133,6 +3133,52 @@ function ApiPage({ theme }: { theme: ResolvedTheme }) {
 
 export default function SikhadengeBuildDashboard() {
 
+
+  // BUILDSETU_DASHBOARD_OVERVIEW_V1
+  useEffect(() => {
+    const setDashboardValue = (label: string, value: number) => {
+      const formatted = Number(value || 0).toLocaleString("en-IN");
+
+      document.querySelectorAll("p, span, div").forEach((node) => {
+        const el = node as HTMLElement;
+        const text = (el.textContent || "").trim();
+        const parentText = (el.parentElement?.textContent || "").trim();
+
+        if (parentText.includes(label) && /^\d[\d,]*$/.test(text)) {
+          el.textContent = formatted;
+        }
+      });
+    };
+
+    const loadOverview = async () => {
+      try {
+        const res = await fetch("/api/dashboard/overview", {
+          cache: "no-store",
+          credentials: "same-origin",
+        });
+        const data = await res.json();
+
+        if (!res.ok || !data?.ok || !data?.authenticated) return;
+
+        const stats = data.stats || {};
+
+        setDashboardValue("Active Projects", Number(stats.activeProjects || 0));
+        setDashboardValue("Images Generated", Number(stats.imagesGenerated || 0));
+        setDashboardValue("Review Pending", Number(stats.reviewPending || 0));
+        setDashboardValue("Credits Left", Number(stats.creditsLeft || 0));
+      } catch (error) {
+        console.error("DASHBOARD_OVERVIEW_LOAD_ERROR", error);
+      }
+    };
+
+    loadOverview();
+    const interval = window.setInterval(loadOverview, 15000);
+
+    return () => {
+      window.clearInterval(interval);
+    };
+  }, []);
+
   // BUILDSETU_LIVE_CREDITS_BALANCE_V1
   useEffect(() => {
     const applyCreditsToDom = (credits: number) => {

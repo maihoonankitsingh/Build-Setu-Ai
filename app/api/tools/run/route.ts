@@ -119,6 +119,8 @@ type ToolRun = {
   slug: string;
   title: string;
   projectId: string | null;
+  userId?: string;
+  email?: string;
   prompt: string;
   status: "AI_DRAFT" | "REVIEW_REQUIRED";
   sections: Array<{
@@ -357,6 +359,8 @@ export async function POST(request: NextRequest) {
       slug,
       title: profile.title,
       projectId,
+      userId: creditResult.id,
+      email: creditResult.email,
       prompt,
       status: "REVIEW_REQUIRED",
       sections: profile.sections.map((section) => ({
