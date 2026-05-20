@@ -327,9 +327,9 @@ function buildItems(section: string, title: string, prompt: string) {
   ];
 }
 
-export async function POST(req: NextRequest) {
+export async function POST(request: NextRequest) {
   try {
-    const body = await req.json().catch(() => ({}));
+    const body = await request.json().catch(() => ({}));
     const slug = safe(body.slug);
     const profile = toolProfiles[slug] || {
       title: safe(body.title, "BuildSetu Tool"),
@@ -347,6 +347,8 @@ export async function POST(req: NextRequest) {
       credits: requiredCredits,
       note: `${profile.title} tool execution`,
       projectId,
+      slug,
+      title: profile.title,
     });
 
     const run: ToolRun = {
