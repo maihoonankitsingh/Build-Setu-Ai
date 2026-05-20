@@ -30,14 +30,6 @@ type RazorpayCheckoutOptions = {
   handler: (response: RazorpayCheckoutResponse) => void;
 };
 
-declare global {
-  interface Window {
-    Razorpay?: new (options: RazorpayCheckoutOptions) => {
-      open: () => void;
-    };
-  }
-}
-
 type CurrentUser = {
   id?: string;
   name?: string;
@@ -100,7 +92,7 @@ function loadRazorpayScript() {
       return;
     }
 
-    if (window.Razorpay) {
+    if ((window as any).Razorpay) {
       resolve(true);
       return;
     }
@@ -194,7 +186,7 @@ export default function CreditsPage() {
     try {
       const scriptLoaded = await loadRazorpayScript();
 
-      if (!scriptLoaded || !window.Razorpay) {
+      if (!scriptLoaded || !(window as any).Razorpay) {
         throw new Error("Razorpay checkout load nahi hua. Page refresh karke dobara try karein.");
       }
 
@@ -228,7 +220,7 @@ export default function CreditsPage() {
         throw new Error("Invalid Razorpay order response");
       }
 
-      const checkout = new window.Razorpay({
+      const checkout = new (window as any).Razorpay({
         key: orderData.keyId,
         amount: Number(order.amount),
         currency: order.currency || "INR",
@@ -254,7 +246,7 @@ export default function CreditsPage() {
             setNotice("Payment cancelled. Credits were not added.");
           },
         },
-        handler: async (response) => {
+        handler: async (response: RazorpayCheckoutResponse) => {
           try {
             const verifyRes = await fetch("/api/credits/verify", {
               method: "POST",
