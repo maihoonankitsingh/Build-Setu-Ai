@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import type { ReactNode } from "react";
 import {
   ArrowLeft,
@@ -24,6 +25,14 @@ type Pack = {
   popular?: boolean;
   desc: string;
   features: string[];
+};
+
+type CreditTransaction = {
+  id: string;
+  actionType: string;
+  creditsUsed: number;
+  note?: string | null;
+  createdAt: string;
 };
 
 const packs: Pack[] = [
@@ -85,24 +94,32 @@ function InfoCard({
   desc: string;
 }) {
   return (
-    <div className="flex h-full min-h-[170px] flex-col rounded-[22px] border border-[#e6ddf4] bg-white p-5 shadow-[0_10px_28px_rgba(70,35,130,0.05)]">
+    <div className="flex h-full min-h-[150px] flex-col rounded-[22px] border border-[#e6ddf4] bg-white p-5 shadow-[0_10px_28px_rgba(70,35,130,0.05)]">
       <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-[#f2e8ff] to-[#eadbff] text-[#7c3aed]">
         {icon}
       </div>
       <h3 className="text-[17px] font-black tracking-[-0.03em] text-[#21133f]">
         {title}
       </h3>
-      <p className="mt-2 text-[13px] leading-6 text-[#766987]">
-        {desc}
-      </p>
+      <p className="mt-2 text-[13px] leading-6 text-[#766987]">{desc}</p>
     </div>
   );
 }
 
-function PackCard({ pack }: { pack: Pack }) {
+function PackCard({
+  pack,
+  buyingPack,
+  onBuy,
+}: {
+  pack: Pack;
+  buyingPack: string;
+  onBuy: (packId: string) => void;
+}) {
+  const isBuying = buyingPack === pack.id;
+
   return (
     <article
-      className={`relative flex h-full min-h-[520px] flex-col overflow-hidden rounded-[24px] border bg-white shadow-[0_16px_42px_rgba(65,29,120,0.06)] ${
+      className={`relative flex h-full min-h-[500px] flex-col overflow-hidden rounded-[24px] border bg-white shadow-[0_16px_42px_rgba(65,29,120,0.06)] ${
         pack.popular
           ? "border-[#8b5cf6] shadow-[0_0_0_2px_rgba(139,92,246,0.10),0_18px_48px_rgba(91,33,182,0.10)]"
           : "border-[#e6ddf4]"
@@ -155,13 +172,12 @@ function PackCard({ pack }: { pack: Pack }) {
         </div>
 
         <button
-          onClick={() => {
-            alert(`${pack.name} selected. Next step: payment gateway integration.`);
-          }}
-          className="mt-5 flex h-12 w-full shrink-0 items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-[#5b43ea] via-[#7c3aed] to-[#d946ef] text-sm font-black text-white shadow-[0_12px_28px_rgba(124,58,237,0.24)] transition hover:brightness-105"
+          disabled={isBuying}
+          onClick={() => onBuy(pack.id)}
+          className="mt-5 flex h-12 w-full shrink-0 items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-[#5b43ea] via-[#7c3aed] to-[#d946ef] text-sm font-black text-white shadow-[0_12px_28px_rgba(124,58,237,0.24)] transition hover:brightness-105 disabled:cursor-not-allowed disabled:opacity-70"
         >
           <Plus size={18} />
-          Buy Credits
+          {isBuying ? "Adding Credits..." : "Buy Credits"}
         </button>
 
         <div className="mt-5 space-y-3">
@@ -180,7 +196,67 @@ function PackCard({ pack }: { pack: Pack }) {
 }
 
 export default function CreditsPage() {
-  const availableCredits = 120;
+  const [credits, setCredits] = useState(120);
+  const [transactions, setTransactions] = useState<CreditTransaction[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [buyingPack, setBuyingPack] = useState("");
+  const [notice, setNotice] = useState("");
+
+  async function loadCredits() {
+    setLoading(true);
+    setNotice("");
+
+    try {
+      const res = await fetch("/api/credits/history", { cache: "no-store" });
+      const data = await res.json();
+
+      if (!res.ok || !data.ok) {
+        throw new Error(data.error || "Failed to load credits");
+      }
+
+      setCredits(Number(data.credits || 0));
+      setTransactions(Array.isArray(data.transactions) ? data.transactions : []);
+    } catch (error) {
+      setNotice(error instanceof Error ? error.message : "Failed to load credits");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function buyCredits(packId: string) {
+    setBuyingPack(packId);
+    setNotice("");
+
+    try {
+      const res = await fetch("/api/credits/purchase", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ packId }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok || !data.ok) {
+        throw new Error(data.error || "Failed to add credits");
+      }
+
+      setCredits(Number(data.credits || 0));
+      setNotice(data.message || "Credits added");
+      await loadCredits();
+    } catch (error) {
+      setNotice(error instanceof Error ? error.message : "Failed to add credits");
+    } finally {
+      setBuyingPack("");
+    }
+  }
+
+  useEffect(() => {
+    loadCredits();
+  }, []);
+
+  const recommendedPack = packs.find((p) => p.id === "pro") || packs[1];
 
   return (
     <main className="min-h-screen bg-[radial-gradient(circle_at_top_left,#f8f3ff_0%,#fcfbff_36%,#ffffff_100%)] text-[#201537]">
@@ -202,7 +278,6 @@ export default function CreditsPage() {
           </a>
         </div>
 
-        {/* TOP SECTION - REFINED */}
         <section className="rounded-[26px] border border-[#e7def5] bg-white p-4 shadow-[0_16px_45px_rgba(65,29,120,0.05)]">
           <div className="grid gap-4 lg:grid-cols-[1.65fr_0.85fr]">
             <div className="relative overflow-hidden rounded-[22px] border border-[#ece4f8] bg-[linear-gradient(135deg,#ffffff_0%,#fbf8ff_56%,#f2e7ff_100%)] p-5">
@@ -236,9 +311,15 @@ export default function CreditsPage() {
                     </span>
                     <span className="inline-flex items-center gap-2 rounded-full bg-white px-3.5 py-2 text-[12px] font-black text-[#5f5476] shadow-sm ring-1 ring-[#eee6f8]">
                       <Lock size={14} className="text-amber-500" />
-                      Secure checkout
+                      Payment gateway next
                     </span>
                   </div>
+
+                  {notice ? (
+                    <div className="mt-4 rounded-2xl border border-[#e6ddf4] bg-white px-4 py-3 text-sm font-bold text-[#5f2bbd]">
+                      {notice}
+                    </div>
+                  ) : null}
                 </div>
 
                 <div className="grid gap-3">
@@ -254,12 +335,12 @@ export default function CreditsPage() {
 
                   <div className="rounded-2xl border border-[#efe6fb] bg-white/80 p-4 shadow-sm">
                     <p className="text-[11px] font-black uppercase tracking-wider text-[#8b7ca6]">
-                      Best For
+                      Mode
                     </p>
                     <p className="mt-1 text-[18px] font-black tracking-[-0.03em] text-[#21133f]">
-                      Designers + Contractors
+                      Manual/demo top-up
                     </p>
-                    <p className="mt-1 text-xs text-[#786a91]">Project-wise AI usage</p>
+                    <p className="mt-1 text-xs text-[#786a91]">Razorpay keys pending</p>
                   </div>
                 </div>
               </div>
@@ -272,7 +353,7 @@ export default function CreditsPage() {
                     Available Credits
                   </p>
                   <p className="mt-2 text-[48px] font-black leading-none tracking-[-0.08em] text-[#1f1433]">
-                    {availableCredits}
+                    {loading ? "..." : credits.toLocaleString("en-IN")}
                   </p>
                 </div>
 
@@ -294,75 +375,106 @@ export default function CreditsPage() {
                 <div className="mt-3 flex items-end justify-between gap-3">
                   <div>
                     <p className="text-[24px] font-black tracking-[-0.05em] text-[#21133f]">
-                      400 Credits
+                      {recommendedPack.credits} Credits
                     </p>
                     <p className="mt-1 text-xs text-[#786a91]">Best for active workflows</p>
                   </div>
                   <p className="text-[22px] font-black tracking-[-0.04em] text-[#21133f]">
-                    ₹4,999
+                    {money(recommendedPack.price)}
                   </p>
                 </div>
               </div>
 
-              <a
-                href="#credit-packs"
-                className="mt-4 flex h-11 items-center justify-center gap-2 rounded-2xl bg-[#21133f] text-sm font-black text-white shadow-[0_12px_26px_rgba(33,19,63,0.18)]"
+              <button
+                onClick={() => buyCredits("pro")}
+                disabled={Boolean(buyingPack)}
+                className="mt-4 flex h-11 w-full items-center justify-center gap-2 rounded-2xl bg-[#21133f] text-sm font-black text-white shadow-[0_12px_26px_rgba(33,19,63,0.18)] disabled:cursor-not-allowed disabled:opacity-70"
               >
                 <Plus size={18} />
-                Buy More Credits
-              </a>
+                {buyingPack === "pro" ? "Adding..." : "Buy More Credits"}
+              </button>
             </div>
           </div>
         </section>
 
-        {/* 3 SAME INFO CARDS */}
         <section className="mt-5 grid gap-4 md:grid-cols-3">
           <InfoCard
             icon={<BadgeCheck size={20} />}
             title="Instant top-up"
-            desc="Payment success ke baad credits account me instantly add honge."
+            desc="Current demo/manual mode me credits immediately DB me add honge."
           />
           <InfoCard
             icon={<Shield size={20} />}
             title="Usage control"
-            desc="Har AI run ke according credits deduct honge. Easy and transparent system."
+            desc="Next step me tool run ke according credits deduct honge."
           />
           <InfoCard
             icon={<CreditCard size={20} />}
-            title="Future-ready billing"
-            desc="Payment gateway integration ke liye layout aur credit flow ready hai."
+            title="Razorpay ready"
+            desc="Keys add hone ke baad same flow real payment verification se connect hoga."
           />
         </section>
 
-        {/* EQUAL PRICING CARDS */}
         <section id="credit-packs" className="mt-5 grid gap-4 lg:grid-cols-3">
           {packs.map((pack) => (
-            <PackCard key={pack.id} pack={pack} />
+            <PackCard key={pack.id} pack={pack} buyingPack={buyingPack} onBuy={buyCredits} />
           ))}
         </section>
 
-        {/* BOTTOM BAR */}
         <section className="mt-5 rounded-[24px] border border-[#e7def5] bg-white p-5 shadow-[0_14px_40px_rgba(65,29,120,0.04)]">
-          <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+          <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
             <div>
               <h3 className="text-[22px] font-black tracking-[-0.05em] text-[#1f1632]">
                 Purchase history
               </h3>
               <p className="mt-2 text-sm leading-6 text-[#796c91]">
-                Credit purchase history yahan show hoga after payment integration.
+                Latest credit transactions from database.
               </p>
             </div>
 
-            <div className="flex flex-wrap gap-3">
-              <span className="inline-flex items-center gap-2 rounded-full bg-[#fbf8ff] px-4 py-2 text-xs font-black text-[#665a7d] ring-1 ring-[#efe8fb]">
-                <Star size={14} />
-                Manual billing supported
-              </span>
-              <span className="inline-flex items-center gap-2 rounded-full bg-[#fbf8ff] px-4 py-2 text-xs font-black text-[#665a7d] ring-1 ring-[#efe8fb]">
-                <Lock size={14} />
-                Secure payment ready
-              </span>
-            </div>
+            <button
+              onClick={loadCredits}
+              className="rounded-full bg-[#fbf8ff] px-4 py-2 text-xs font-black text-[#665a7d] ring-1 ring-[#efe8fb]"
+            >
+              Refresh History
+            </button>
+          </div>
+
+          <div className="mt-4 space-y-3">
+            {transactions.length ? (
+              transactions.map((item) => (
+                <div
+                  key={item.id}
+                  className="flex flex-col gap-2 rounded-2xl border border-[#efe8fb] bg-[#fbf8ff] px-4 py-3 md:flex-row md:items-center md:justify-between"
+                >
+                  <div>
+                    <p className="text-sm font-black text-[#21133f]">
+                      {item.actionType} · {item.creditsUsed > 0 ? "+" : ""}
+                      {item.creditsUsed} credits
+                    </p>
+                    <p className="mt-1 text-xs text-[#786a91]">{item.note || "Credit transaction"}</p>
+                  </div>
+                  <p className="text-xs font-bold text-[#8b7ca6]">
+                    {new Date(item.createdAt).toLocaleString("en-IN")}
+                  </p>
+                </div>
+              ))
+            ) : (
+              <div className="rounded-2xl border border-[#efe8fb] bg-[#fbf8ff] px-4 py-4 text-sm text-[#786a91]">
+                No purchase history yet.
+              </div>
+            )}
+          </div>
+
+          <div className="mt-4 flex flex-wrap gap-3">
+            <span className="inline-flex items-center gap-2 rounded-full bg-[#fbf8ff] px-4 py-2 text-xs font-black text-[#665a7d] ring-1 ring-[#efe8fb]">
+              <Star size={14} />
+              Manual billing supported
+            </span>
+            <span className="inline-flex items-center gap-2 rounded-full bg-[#fbf8ff] px-4 py-2 text-xs font-black text-[#665a7d] ring-1 ring-[#efe8fb]">
+              <Lock size={14} />
+              Payment verification next
+            </span>
           </div>
         </section>
       </section>
