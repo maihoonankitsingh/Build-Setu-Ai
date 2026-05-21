@@ -1,45 +1,18 @@
-import { promises as fs } from "fs";
-import path from "path";
 import { cookies } from "next/headers";
 import { AUTH_COOKIE, getUserFromSession } from "@/lib/auth-store";
+import { prisma } from "@/lib/db";
 
 export const dynamic = "force-dynamic";
 
-type DemoLead = {
-  id: string;
-  name: string;
-  phone: string;
-  email: string;
-  company: string;
-  role: string;
-  projectType: string;
-  requirement: string;
-  source: string;
-  status: string;
-  createdAt: string;
-};
-
-const LEADS_FILE = path.join(process.cwd(), "data", "runtime", "book-demo-leads.json");
-
-async function loadLeads(): Promise<DemoLead[]> {
-  try {
-    const raw = await fs.readFile(LEADS_FILE, "utf8");
-    const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) ? parsed : [];
-  } catch {
-    return [];
-  }
-}
-
-function formatDate(value: string) {
+function formatDate(value: Date) {
   try {
     return new Intl.DateTimeFormat("en-IN", {
       dateStyle: "medium",
       timeStyle: "short",
       timeZone: "Asia/Kolkata",
-    }).format(new Date(value));
+    }).format(value);
   } catch {
-    return value;
+    return String(value);
   }
 }
 
@@ -94,7 +67,10 @@ export default async function BookDemoLeadsPage() {
     );
   }
 
-  const leads = await loadLeads();
+  const leads = await prisma.bookDemoLead.findMany({
+    orderBy: { createdAt: "desc" },
+    take: 500,
+  });
 
   return (
     <main className="min-h-screen bg-[#fbfaff] px-4 py-8 text-[#120a2f] md:px-6">
