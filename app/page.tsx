@@ -1115,28 +1115,159 @@ function AllToolsPage({ theme }: { theme: ResolvedTheme }) {
 
 function ProjectsPage({ theme }: { theme: ResolvedTheme }) {
   const [liveProjects, setLiveProjects] = useState<LiveProject[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [notice, setNotice] = useState("");
+  const [editingId, setEditingId] = useState("");
+  const [editForm, setEditForm] = useState({
+    title: "",
+    projectType: "",
+    location: "",
+    plotSize: "",
+    facing: "",
+    floors: "",
+    budget: "",
+  });
 
   async function loadProjects() {
     try {
       setLoading(true);
       setError("");
 
-      const response = await fetch("/api/projects/list", {
+      const res = await fetch("/api/projects/list", {
         cache: "no-store",
+        credentials: "same-origin",
       });
+      const data = await res.json();
 
-      const data = await response.json();
-
-      if (!response.ok || !data.ok) {
-        throw new Error(data.error || "Failed to load projects");
+      if (!res.ok || !data.ok) {
+        throw new Error(data.error || "Projects load failed");
       }
 
       setLiveProjects(data.projects || []);
-    } catch (err) {
-      console.error(err);
-      setError(err instanceof Error ? err.message : "Failed to load projects");
+    } catch (err: any) {
+      setError(err?.message || "Projects load failed");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  function startEdit(project: LiveProject) {
+    const item = project as any;
+
+    setNotice("");
+    setEditingId(item.id || "");
+    setEditForm({
+      title: item.title || "",
+      projectType: item.projectType || "",
+      location: item.location || "",
+      plotSize: item.plotSize || "",
+      facing: item.facing || "",
+      floors: item.floors || "",
+      budget: item.budget || "",
+    });
+  }
+
+  function cancelEdit() {
+    setEditingId("");
+    setEditForm({
+      title: "",
+      projectType: "",
+      location: "",
+      plotSize: "",
+      facing: "",
+      floors: "",
+      budget: "",
+    });
+  }
+
+  async function saveProject(projectId: string) {
+    try {
+      setLoading(true);
+      setError("");
+      setNotice("");
+
+      const res = await fetch("/api/projects/update", {
+        method: "POST",
+        credentials: "same-origin",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          id: projectId,
+          ...editForm,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok || !data.ok) {
+        throw new Error(data.error || "Project update failed");
+      }
+
+      setNotice("Project updated successfully.");
+      cancelEdit();
+      await loadProjects();
+    } catch (err: any) {
+      setError(err?.message || "Project update failed");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function archiveProject(projectId: string) {
+    if (!window.confirm("Archive this project?")) return;
+
+    try {
+      setLoading(true);
+      setError("");
+      setNotice("");
+
+      const res = await fetch("/api/projects/archive", {
+        method: "POST",
+        credentials: "same-origin",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: projectId }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok || !data.ok) {
+        throw new Error(data.error || "Project archive failed");
+      }
+
+      setNotice("Project archived successfully.");
+      await loadProjects();
+    } catch (err: any) {
+      setError(err?.message || "Project archive failed");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function deleteProject(projectId: string) {
+    if (!window.confirm("Delete this project permanently? This cannot be undone.")) return;
+
+    try {
+      setLoading(true);
+      setError("");
+      setNotice("");
+
+      const res = await fetch("/api/projects/delete", {
+        method: "POST",
+        credentials: "same-origin",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: projectId }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok || !data.ok) {
+        throw new Error(data.error || "Project delete failed");
+      }
+
+      setNotice("Project deleted successfully.");
+      await loadProjects();
+    } catch (err: any) {
+      setError(err?.message || "Project delete failed");
     } finally {
       setLoading(false);
     }
@@ -1148,93 +1279,151 @@ function ProjectsPage({ theme }: { theme: ResolvedTheme }) {
 
   return (
     <div>
-      <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+      <div className="mb-5 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
         <PageTitle title="Projects" desc="Database se saved client projects, brief, review status and exports." theme={theme} />
         <button
           onClick={loadProjects}
-          className="rounded-xl bg-[#7c3aed] px-4 py-2.5 text-sm font-medium text-white"
+          className="h-11 rounded-2xl bg-[#21133f] px-5 text-sm font-black text-white"
         >
           Refresh Projects
         </button>
       </div>
 
+      {notice ? (
+        <div className="mb-4 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-bold text-emerald-700">
+          {notice}
+        </div>
+      ) : null}
+
+      {error ? (
+        <div className="mb-4 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-bold text-red-700">
+          {error}
+        </div>
+      ) : null}
+
       {loading && (
-        <div className={cn("rounded-2xl border p-5 text-sm", false ? "border-white/10 bg-white/[0.035] text-slate-300" : "border-[#ded5ec] bg-white text-[#5d5077] light-card-shadow")}>
+        <div className="rounded-2xl border border-[#ded5ec] bg-white p-5 text-sm font-bold text-[#6b5a84]">
           Loading projects...
         </div>
       )}
 
-      {error && (
-        <div className={cn("rounded-2xl border p-5 text-sm", false ? "border-[#ef4444]/30 bg-[#450a0a]/40 text-[#fecaca]" : "border-[#fecaca] bg-[#fef2f2] text-[#991b1b]")}>
-          {error}
-        </div>
-      )}
-
       {!loading && !error && liveProjects.length === 0 && (
-        <div className={cn("rounded-2xl border p-5 text-sm", false ? "border-white/10 bg-white/[0.035] text-slate-300" : "border-[#ded5ec] bg-white text-[#5d5077] light-card-shadow")}>
+        <div className="rounded-2xl border border-[#ded5ec] bg-white p-5 text-sm font-bold text-[#6b5a84]">
           No projects found. New Project section se first project create karo.
         </div>
       )}
 
       {!loading && !error && liveProjects.length > 0 && (
-        <div className="grid gap-4 lg:grid-cols-3">
+        <div className="grid gap-4 xl:grid-cols-2">
           {liveProjects.map((project) => {
-            let structured: Record<string, unknown> | null = null;
-
-            try {
-              structured = project.brief?.structuredJson
-                ? JSON.parse(project.brief.structuredJson)
-                : null;
-            } catch {
-              structured = null;
-            }
+            const item = project as any;
+            const isEditing = editingId === item.id;
+            const status = String(item.status || "AI_DRAFT");
+            const archived = status === "ARCHIVED";
 
             return (
-              <div key={project.id} className={cn("rounded-2xl border p-5", false ? "border-white/10 bg-white/[0.035]" : "border-[#ded5ec] bg-white light-card-shadow")}>
-                <div className="flex items-start justify-between gap-3">
-                  <div>
-                    <h3 className={cn("font-medium", false ? "text-white" : "text-[#21133f]")}>{project.title}</h3>
-                    <p className={cn("mt-1 text-sm", false ? "text-slate-500" : "text-[#817397]")}>
-                      {(project.projectType || "Project")} {project.location ? `• ${project.location}` : ""}
+              <article
+                key={item.id}
+                className={cn(
+                  "rounded-2xl border bg-white p-5 shadow-sm",
+                  archived ? "border-slate-200 opacity-75" : "border-[#ded5ec]",
+                )}
+              >
+                <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+                  <div className="min-w-0">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <h3 className="truncate text-lg font-black text-[#21133f]">
+                        {item.title || "Untitled Project"}
+                      </h3>
+                      <span
+                        className={cn(
+                          "rounded-full px-3 py-1 text-[10px] font-black uppercase tracking-[0.08em]",
+                          archived
+                            ? "bg-slate-100 text-slate-500"
+                            : "bg-[#f0dcff] text-[#6f1cc4]",
+                        )}
+                      >
+                        {status.replaceAll("_", " ")}
+                      </span>
+                    </div>
+                    <p className="mt-2 text-sm font-semibold text-[#786a91]">
+                      {(item.projectType || "Project")} {item.location ? `• ${item.location}` : ""}
+                    </p>
+                    <p className="mt-1 text-xs font-semibold text-[#9a88b3]">
+                      ID: {item.id}
                     </p>
                   </div>
-                  <StatusBadge status={project.status.replaceAll("_", " ")} theme={theme} />
+
+                  <div className="flex flex-wrap gap-2">
+                    <button
+                      type="button"
+                      onClick={() => startEdit(project)}
+                      className="h-9 rounded-xl border border-[#ded5ec] bg-white px-3 text-xs font-black text-[#21133f]"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => archiveProject(item.id)}
+                      disabled={archived}
+                      className="h-9 rounded-xl border border-amber-200 bg-amber-50 px-3 text-xs font-black text-amber-700 disabled:cursor-not-allowed disabled:opacity-50"
+                    >
+                      Archive
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => deleteProject(item.id)}
+                      className="h-9 rounded-xl border border-red-200 bg-red-50 px-3 text-xs font-black text-red-700"
+                    >
+                      Delete
+                    </button>
+                  </div>
                 </div>
 
-                <div className={cn("mt-4 grid grid-cols-2 gap-2 rounded-xl p-3", false ? "bg-black/20" : "bg-[#fbf8ff]")}>
-                  {[
-                    ["Plot", project.plotSize || String(structured?.plotSize || "—")],
-                    ["Facing", project.facing || String(structured?.facing || "—")],
-                    ["Floors", project.floors || String(structured?.floors || "—")],
-                    ["Budget", project.budget || String(structured?.budget || "—")],
-                  ].map(([label, value]) => (
-                    <div key={label}>
-                      <div className={cn("text-xs", false ? "text-slate-500" : "text-[#817397]")}>{label}</div>
-                      <div className={cn("text-sm font-medium", false ? "text-white" : "text-[#21133f]")}>{value}</div>
+                {isEditing ? (
+                  <div className="mt-5 rounded-2xl border border-[#eadcff] bg-[#fbf8ff] p-4">
+                    <div className="grid gap-3 md:grid-cols-2">
+                      <ProjectInput label="Title" value={editForm.title} onChange={(value) => setEditForm((prev) => ({ ...prev, title: value }))} />
+                      <ProjectInput label="Project Type" value={editForm.projectType} onChange={(value) => setEditForm((prev) => ({ ...prev, projectType: value }))} />
+                      <ProjectInput label="Location" value={editForm.location} onChange={(value) => setEditForm((prev) => ({ ...prev, location: value }))} />
+                      <ProjectInput label="Plot Size" value={editForm.plotSize} onChange={(value) => setEditForm((prev) => ({ ...prev, plotSize: value }))} />
+                      <ProjectInput label="Facing" value={editForm.facing} onChange={(value) => setEditForm((prev) => ({ ...prev, facing: value }))} />
+                      <ProjectInput label="Floors" value={editForm.floors} onChange={(value) => setEditForm((prev) => ({ ...prev, floors: value }))} />
+                      <ProjectInput label="Budget" value={editForm.budget} onChange={(value) => setEditForm((prev) => ({ ...prev, budget: value }))} />
                     </div>
-                  ))}
+
+                    <div className="mt-4 flex flex-wrap gap-2">
+                      <button
+                        type="button"
+                        onClick={() => saveProject(item.id)}
+                        className="h-10 rounded-xl bg-[#21133f] px-4 text-xs font-black text-white"
+                      >
+                        Save Changes
+                      </button>
+                      <button
+                        type="button"
+                        onClick={cancelEdit}
+                        className="h-10 rounded-xl border border-[#ded5ec] bg-white px-4 text-xs font-black text-[#21133f]"
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </div>
+                ) : null}
+
+                <div className="mt-5 grid gap-3 sm:grid-cols-4">
+                  <ProjectMetric label="Renders" value={item._count?.renders || 0} />
+                  <ProjectMetric label="BOQ" value={item._count?.boqItems || 0} />
+                  <ProjectMetric label="BBS" value={item._count?.bbsItems || 0} />
+                  <ProjectMetric label="Tools" value={item._count?.toolRuns || 0} />
                 </div>
 
-                <div className="mt-4 flex flex-wrap gap-2">
-                  {[
-                    ["Tool Runs", project._count?.toolRuns || 0],
-                    ["Renders", project._count?.renders || 0],
-                    ["BOQ", project._count?.boqItems || 0],
-                    ["BBS", project._count?.bbsItems || 0],
-                    ["Agreements", project._count?.agreements || 0],
-                  ].map(([label, count]) => (
-                    <span key={label} className={cn("rounded-full border px-2.5 py-1 text-xs", false ? "border-white/10 bg-white/[0.04] text-slate-300" : "border-[#ded5ec] bg-[#fbf8ff] text-[#5d5077]")}>
-                      {label}: {count}
-                    </span>
-                  ))}
-                </div>
-
-                {project.brief?.rawBrief && (
-                  <p className={cn("mt-4 line-clamp-3 text-sm leading-6", false ? "text-slate-400" : "text-[#5d5077]")}>
-                    {project.brief.rawBrief}
+                {item.brief?.rawBrief ? (
+                  <p className="mt-4 rounded-2xl bg-[#fbf8ff] p-4 text-sm font-semibold leading-6 text-[#6b5a84]">
+                    {item.brief.rawBrief}
                   </p>
-                )}
-              </div>
+                ) : null}
+              </article>
             );
           })}
         </div>
@@ -1254,8 +1443,35 @@ function PageTitle({ title, desc, theme }: { title: string; desc: string; theme:
 }
 
 
+function ProjectInput({
+  label,
+  value,
+  onChange,
+}: {
+  label: string;
+  value: string;
+  onChange: (value: string) => void;
+}) {
+  return (
+    <label className="block">
+      <span className="text-xs font-black uppercase tracking-[0.08em] text-[#8b7ca6]">{label}</span>
+      <input
+        value={value}
+        onChange={(event) => onChange(event.target.value)}
+        className="mt-2 h-11 w-full rounded-xl border border-[#ded5ec] bg-white px-3 text-sm font-bold text-[#21133f] outline-none"
+      />
+    </label>
+  );
+}
 
-
+function ProjectMetric({ label, value }: { label: string; value: number }) {
+  return (
+    <div className="rounded-2xl border border-[#eee6f8] bg-[#fbf8ff] p-3">
+      <p className="text-[11px] font-black uppercase text-[#8b7ca6]">{label}</p>
+      <p className="mt-1 text-xl font-black text-[#21133f]">{Number(value || 0).toLocaleString("en-IN")}</p>
+    </div>
+  );
+}
 type LiveProject = {
   id: string;
   title: string;
