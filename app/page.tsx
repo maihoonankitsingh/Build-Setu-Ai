@@ -146,7 +146,7 @@ type Tool = {
   featured?: boolean;
 };
 
-const navItems: Array<{ id: ViewKey; label: string; icon: React.ElementType }> = [
+const navItems: Array<{ id: ViewKey | "credits"; label: string; icon: React.ElementType; href?: string }> = [
   { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
   { id: "tools", label: "All Tools", icon: Boxes },
   { id: "projects", label: "Projects", icon: FolderKanban },
@@ -157,7 +157,7 @@ const navItems: Array<{ id: ViewKey; label: string; icon: React.ElementType }> =
   { id: "reviews", label: "Reviews", icon: ShieldCheck },
   { id: "exports", label: "Exports", icon: FileText },
   { id: "agreements", label: "Client Agreement", icon: ScrollText },
-  { id: "api", label: "API", icon: Code2 },
+  { id: "credits", label: "Credits", icon: CreditCard, href: "/credits" },
 ];
 
 const bottomNav = [
@@ -576,7 +576,7 @@ function ThemeDropdown({
                   selected && (false ? "bg-[#2c1455] text-white" : "bg-[#f0dcff] text-[#6f1cc4]"),
                 )}
               >
-                <Icon className="h-3.5 w-3.5 shrink-0" />
+                <Icon className="h-[13px] w-[13px] shrink-0" />
                 {item.label}
               </button>
             );
@@ -596,28 +596,60 @@ function Sidebar({
   setActive: (id: ViewKey) => void;
   theme: ResolvedTheme;
 }) {
+  const [sidebarCredits, setSidebarCredits] = useState<number | null>(null);
+
+  useEffect(() => {
+    let mounted = true;
+
+    fetch("/api/credits/balance", { cache: "no-store" })
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (!mounted || !data) return;
+
+        const raw =
+          data.credits ??
+          data.balance ??
+          data.creditBalance ??
+          data.user?.credits ??
+          data.wallet?.credits ??
+          null;
+
+        const value = Number(raw);
+        if (Number.isFinite(value)) setSidebarCredits(value);
+      })
+      .catch(() => {
+        if (mounted) setSidebarCredits(null);
+      });
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  const creditLabel =
+    sidebarCredits === null
+      ? "Loading"
+      : new Intl.NumberFormat("en-IN").format(sidebarCredits);
+
   return (
     <aside
       className={cn(
-        "fixed left-0 top-0 z-30 hidden h-screen w-[270px] overflow-y-auto border-r px-5 py-4 lg:flex lg:flex-col sb-scroll",
+        "fixed left-0 top-0 z-30 hidden h-screen w-[244px] overflow-hidden border-r px-4 py-3 lg:flex lg:flex-col",
         false
           ? "border-white/10 bg-[#090713]/96 text-white"
           : "border-[#eee7f7] bg-white text-[#21133f]",
       )}
     >
-      <div className="mb-5 flex items-center gap-3">
-        <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-[#7c3aed] via-[#9333ea] to-[#4f46e5] text-white shadow-lg shadow-purple-900/25">
-          <Hammer className="h-5 w-5" />
+      <div className="mb-2.5 flex items-center gap-2.5">
+        <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-[#7c3aed] via-[#9333ea] to-[#4f46e5] text-white shadow-lg shadow-purple-900/20">
+          <Hammer className="h-4.5 w-4.5" />
         </div>
-        <div>
-          <div className={cn("text-[21px] font-bold leading-[0.98] tracking-[-0.055em]", false ? "text-white" : "text-[#21133f]")}>
-            BuildSetu
-          </div>
-          <div className="text-[21px] font-bold leading-[0.98] tracking-[-0.055em] text-[#c4b5fd]">AI</div>
+        <div className={cn("text-[17px] font-bold leading-none tracking-[-0.035em] whitespace-nowrap", false ? "text-white" : "text-[#21133f]")}>
+          BuildSetu <span className="text-[#b794ff]">AI</span>
         </div>
       </div>
 
-      <nav className="space-y-1">
+      <nav className="space-y-[2px]">
         {navItems.map((item, index) => {
           const Icon = item.icon;
           const selected = active === item.id;
@@ -625,11 +657,23 @@ function Sidebar({
 
           return (
             <div key={item.id}>
-              {withDivider && <div className={cn("my-2 h-px", false ? "bg-white/10" : "bg-[#eee7f7]")} />}
+              {withDivider && <div className={cn("my-1 h-px", false ? "bg-white/10" : "bg-[#eee7f7]")} />}
               <button
-                onClick={() => item.id === "exports" ? (window.location.href = "/reports") : setActive(item.id)}
+                onClick={() => {
+                  if (item.href) {
+                    window.location.href = item.href;
+                    return;
+                  }
+
+                  if (item.id === "exports") {
+                    window.location.href = "/reports";
+                    return;
+                  }
+
+                  setActive(item.id as ViewKey);
+                }}
                 className={cn(
-                  "flex w-full items-center gap-3 rounded-xl px-3 py-2 text-left text-[14px] font-medium transition",
+                  "flex w-full items-center gap-2.5 rounded-xl px-2.5 py-[4px] text-left text-[12px] font-medium transition",
                   selected
                     ? false
                       ? "bg-[#2b1755] text-white shadow-lg shadow-purple-950/20"
@@ -639,73 +683,68 @@ function Sidebar({
                       : "text-[#5d5077] hover:bg-[#f7f0ff] hover:text-[#6f1cc4]",
                 )}
               >
-                <Icon className="h-3.5 w-3.5 shrink-0" />
-                <span>{item.label}</span>
+                <Icon className="h-[15px] w-[15px] shrink-0" />
+                <span className="text-[12px] leading-none tracking-[-0.01em]">{item.label}</span>
               </button>
             </div>
           );
         })}
       </nav>
 
-      <div className={cn("my-3 h-px", false ? "bg-white/10" : "bg-[#eee7f7]")} />
+      <div className={cn("my-1 h-px", false ? "bg-white/10" : "bg-[#eee7f7]")} />
 
-      <div className="space-y-2">
+      <div className="space-y-[2px]">
         {bottomNav.map((item) => {
           const Icon = item.icon;
           return (
             <button
               key={item.label}
               className={cn(
-                "flex w-full items-center gap-3 rounded-xl px-3 py-2 text-left text-[14px] font-medium transition",
+                "flex w-full items-center gap-2.5 rounded-xl px-2.5 py-[4px] text-left text-[12px] font-medium transition",
                 false
                   ? "text-slate-400 hover:bg-white/[0.06] hover:text-white"
                   : "text-[#5d5077] hover:bg-[#f7f0ff] hover:text-[#6f1cc4]",
               )}
             >
-              <Icon className="h-5 w-5" />
-              {item.label}
+              <Icon className="h-[15px] w-[15px] shrink-0" />
+              <span className="text-[12px] leading-none tracking-[-0.01em]">{item.label}</span>
             </button>
           );
         })}
       </div>
 
-      <div className="mt-4">
-        <div
-          className={cn(
-            "rounded-2xl border p-3",
-            false
-              ? "border-white/10 bg-[#070611]"
-              : "border-[#ded5ec] bg-[#fbf8ff]",
-          )}
-        >
-          <div className="mb-3 flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-[#4f46e5] to-[#9333ea] text-white">
-              <CreditCard className="h-5 w-5" />
+      <div className="mt-2">
+        <div className="rounded-2xl bg-gradient-to-br from-[#6d5dfc] via-[#8b5cf6] to-[#c084fc] p-2.5 text-white shadow-lg shadow-purple-900/15">
+          <div className="mb-2 flex items-center gap-2">
+            <div className="flex h-6.5 w-6.5 items-center justify-center rounded-lg bg-white/18">
+              <CreditCard className="h-3.5 w-3.5" />
             </div>
-            <div>
-              <div className={cn("text-sm font-semibold", false ? "text-white" : "text-[#21133f]")}>Pro Plan</div>
-              <div className={cn("text-xs", false ? "text-slate-500" : "text-[#817397]")}>Renews on 20 Jun 2026</div>
-            </div>
+            <div className="text-[11.5px] font-semibold leading-none">Credits</div>
           </div>
-          <button onClick={() => { window.location.href = "/pricing"; }} className="w-full rounded-xl bg-gradient-to-r from-[#4f46e5] to-[#b337ff] px-4 py-3 text-sm font-semibold text-white">
-            Upgrade Plan
-          </button>
-        </div>
 
-        <div className="mt-3 flex justify-center">
+          <div className="text-[20px] font-bold leading-none tracking-[-0.03em]">{creditLabel}</div>
+          <div className="mt-1 text-[12px] font-medium text-white/78">Available Credits</div>
+
+          <div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-white/25">
+            <div className="h-full w-[72%] rounded-full bg-white/65" />
+          </div>
+
+          <div className="mt-2 text-[12px] font-medium text-white/82">Plan: Pro</div>
+
           <button
-            className={cn(
-              "rounded-full p-3",
-              false ? "bg-[#1a102d] text-[#c4b5fd]" : "bg-[#f0dcff] text-[#6f1cc4]",
-            )}
+            onClick={() => {
+              window.location.href = "/pricing";
+            }}
+            className="mt-1.5 w-full rounded-xl border border-white/55 bg-white/10 px-3 py-1.5 text-[11px] font-semibold text-white transition hover:bg-white/18"
           >
-            ‹‹
+            Upgrade Plan
           </button>
         </div>
       </div>
     </aside>
   );
 }
+
 
 function Header({
   setActive,
@@ -809,7 +848,7 @@ function CategoryTabs({
             key={category.label}
             onClick={() => setActiveCategory(category.label)}
             className={cn(
-              "flex min-w-fit items-center gap-2 rounded-xl border px-4 py-3 text-sm font-medium transition",
+              "flex min-w-fit items-center gap-2 rounded-lg border px-4 py-3 text-sm font-medium transition",
               selected
                 ? false
                   ? "border-[#8b5cf6] bg-[#2b1755] text-white shadow-lg shadow-purple-950/20"
@@ -819,7 +858,7 @@ function CategoryTabs({
                   : "border-[#ded5ec] bg-white text-[#4c4166] hover:border-[#b88bea] hover:bg-[#fbf8ff]",
             )}
           >
-            <Icon className="h-3.5 w-3.5 shrink-0" />
+            <Icon className="h-[13px] w-[13px] shrink-0" />
             {category.label}
           </button>
         );
@@ -857,7 +896,7 @@ function ToolCard({ tool, theme }: { tool: Tool; theme: ResolvedTheme }) {
               {tool.title}
             </h3>
             <div className="flex h-9 w-9 items-center justify-center rounded-lg border border-black/15 bg-white/85 text-[#160b25] shadow-sm">
-              <Icon className="h-3.5 w-3.5 shrink-0" />
+              <Icon className="h-[13px] w-[13px] shrink-0" />
             </div>
           </div>
         </div>
@@ -871,7 +910,7 @@ function ToolCard({ tool, theme }: { tool: Tool; theme: ResolvedTheme }) {
               onClick={() => {
                 window.location.href = `/tools/${toolSlug(tool.title)}`;
               }}
-              className="inline-flex flex-1 min-w-0 items-center justify-center gap-1.5 rounded-lg bg-[#6f1cc4] px-3 py-2 text-xs font-semibold leading-none text-white hover:bg-[#55129a]"
+              className="inline-flex flex-1 min-w-0 items-center justify-center gap-2 rounded-lg bg-[#6f1cc4] px-3 py-2 text-xs font-semibold leading-none text-white hover:bg-[#55129a]"
             >
               <span className="whitespace-nowrap">Launch Tool</span> <ArrowRight className="h-3.5 w-3.5 shrink-0" />
             </button>
@@ -906,7 +945,7 @@ function ToolCard({ tool, theme }: { tool: Tool; theme: ResolvedTheme }) {
         </div>
 
         <div className="absolute bottom-4 left-4 right-4">
-          <div className="mb-2 text-[11px] font-medium uppercase tracking-[0.2em] text-[#c4b5fd]">
+          <div className="mb-2 text-[9px] font-medium uppercase tracking-[0.2em] text-[#c4b5fd]">
             {tool.visualLabel}
           </div>
           <h3 className="text-[20px] font-semibold leading-none tracking-[-0.04em] text-white">
@@ -999,7 +1038,7 @@ function Dashboard({
                 <p className={cn("mt-2 text-3xl font-semibold", false ? "text-white" : "text-[#21133f]")}>{value as string}</p>
               </div>
               <div className={cn("rounded-xl p-3", false ? "bg-[#2b1755] text-[#d8b4fe]" : "bg-[#f0dcff] text-[#6f1cc4]")}>
-                <Icon className="h-3.5 w-3.5 shrink-0" />
+                <Icon className="h-[13px] w-[13px] shrink-0" />
               </div>
             </div>
           </div>
@@ -1858,7 +1897,7 @@ function NewProjectPage({ theme }: { theme: ResolvedTheme }) {
               {spaceOptions.map((space) => {
                 const selected = spaces.includes(space);
                 return (
-                  <button key={space} onClick={() => toggleSpace(space)} className={cn("flex items-center gap-2 rounded-xl border px-3 py-2.5 text-left text-sm", selected ? "border-[#7c3aed] bg-[#f4edff] text-[#6f1cc4]" : false ? "border-white/10 bg-black/20 text-slate-300" : "border-[#ded5ec] bg-white text-[#3f315d]")}>
+                  <button key={space} onClick={() => toggleSpace(space)} className={cn("flex items-center gap-2 rounded-lg border px-3 py-2.5 text-left text-sm", selected ? "border-[#7c3aed] bg-[#f4edff] text-[#6f1cc4]" : false ? "border-white/10 bg-black/20 text-slate-300" : "border-[#ded5ec] bg-white text-[#3f315d]")}>
                     <span className={cn("flex h-4 w-4 items-center justify-center rounded border text-[10px]", selected ? "border-[#7c3aed] bg-[#7c3aed] text-white" : false ? "border-white/20" : "border-[#c7bad8]")}>{selected ? "✓" : ""}</span>
                     {space}
                   </button>
@@ -1905,11 +1944,11 @@ function NewProjectPage({ theme }: { theme: ResolvedTheme }) {
             <button
               onClick={handleCreateProject}
               disabled={loading}
-              className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#6d28d9] px-5 py-3 text-sm font-medium text-white shadow-[0_16px_40px_rgba(109,40,217,0.25)] disabled:cursor-not-allowed disabled:opacity-60"
+              className="inline-flex items-center justify-center gap-2 rounded-lg bg-[#6d28d9] px-5 py-3 text-sm font-medium text-white shadow-[0_16px_40px_rgba(109,40,217,0.25)] disabled:cursor-not-allowed disabled:opacity-60"
             >
               {loading ? "Creating..." : "Create Design Brief"} <Sparkles className="h-4 w-4" />
             </button>
-            <button onClick={clearAll} className={cn("inline-flex items-center justify-center gap-2 rounded-xl border px-5 py-3 text-sm font-medium", false ? "border-white/10 bg-white/[0.04] text-white" : "border-[#ded5ec] bg-white text-[#3f315d]")}>
+            <button onClick={clearAll} className={cn("inline-flex items-center justify-center gap-2 rounded-lg border px-5 py-3 text-sm font-medium", false ? "border-white/10 bg-white/[0.04] text-white" : "border-[#ded5ec] bg-white text-[#3f315d]")}>
               <RefreshCcw className="h-4 w-4" /> Clear All
             </button>
           </div>
@@ -1985,7 +2024,7 @@ function NewProjectPage({ theme }: { theme: ResolvedTheme }) {
           <button
             onClick={handleCreateProject}
             disabled={loading}
-            className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#6d28d9] px-5 py-3 text-sm font-medium text-white shadow-[0_16px_40px_rgba(109,40,217,0.25)] disabled:cursor-not-allowed disabled:opacity-60"
+            className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-[#6d28d9] px-5 py-3 text-sm font-medium text-white shadow-[0_16px_40px_rgba(109,40,217,0.25)] disabled:cursor-not-allowed disabled:opacity-60"
           >
             {loading ? "Generating..." : "Generate Design Preview"} <ArrowRight className="h-4 w-4" />
           </button>
@@ -2233,7 +2272,7 @@ function RenderStudio({ theme }: { theme: ResolvedTheme }) {
             <button
               onClick={handleCreateRender}
               disabled={loading}
-              className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#7c3aed] px-5 py-3 text-sm font-medium text-white disabled:cursor-not-allowed disabled:opacity-60"
+              className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-[#7c3aed] px-5 py-3 text-sm font-medium text-white disabled:cursor-not-allowed disabled:opacity-60"
             >
               {loading ? "Generating Preview..." : "Generate Preview Image"} <Sparkles className="h-4 w-4" />
             </button>
@@ -2839,7 +2878,7 @@ function ExportPage({ theme }: { theme: ResolvedTheme }) {
             <Icon className="h-7 w-7 text-[#8b5cf6]" />
             <h3 className={cn("mt-4 font-medium", false ? "text-white" : "text-[#21133f]")}>{title as string}</h3>
             <p className={cn("mt-2 text-sm leading-6", false ? "text-slate-400" : "text-[#817397]")}>{desc as string}</p>
-            <button className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#7c3aed] px-4 py-3 text-sm font-medium text-white">
+            <button className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-[#7c3aed] px-4 py-3 text-sm font-medium text-white">
               Generate PDF <Download className="h-4 w-4" />
             </button>
           </div>
@@ -3301,10 +3340,10 @@ function ApiPage({ theme }: { theme: ResolvedTheme }) {
           </div>
 
           <div className="mt-5 space-y-3">
-            <button className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#7c3aed] px-5 py-3 text-sm font-medium text-white">
+            <button className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-[#7c3aed] px-5 py-3 text-sm font-medium text-white">
               Generate API Key <Code2 className="h-4 w-4" />
             </button>
-            <button className={cn("inline-flex w-full items-center justify-center gap-2 rounded-xl border px-5 py-3 text-sm font-medium", false ? "border-white/10 bg-white/[0.04] text-white" : "border-[#ded5ec] bg-[#fbf8ff] text-[#6f1cc4]")}>
+            <button className={cn("inline-flex w-full items-center justify-center gap-2 rounded-lg border px-5 py-3 text-sm font-medium", false ? "border-white/10 bg-white/[0.04] text-white" : "border-[#ded5ec] bg-[#fbf8ff] text-[#6f1cc4]")}>
               View Documentation
             </button>
           </div>
