@@ -68,8 +68,19 @@ export default function BookDemoPage() {
     setForm((prev) => ({ ...prev, [key]: value }));
   }
 
-  function submitDemo(e: FormEvent<HTMLFormElement>) {
+  async function submitDemo(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
+
+    try {
+      await fetch("/api/book-demo/leads", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...form, source: "book-demo" }),
+      });
+    } catch (error) {
+      console.error("Could not save demo lead", error);
+    }
+
     window.open(whatsappUrl, "_blank", "noopener,noreferrer");
   }
 
