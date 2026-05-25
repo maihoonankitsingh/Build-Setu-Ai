@@ -4489,7 +4489,7 @@ function BbsPage({ theme }: { theme: ResolvedTheme }) {
           <div className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
             {topStats.map(([label, value, icon]) => (
               <div key={label} className="rounded-2xl border border-[#eee8fb] bg-[#fbfaff] p-4">
-                <div className="flex items-center gap-3">
+                <div className="flex h-full items-center gap-3">
                   <div className="grid h-10 w-10 place-items-center rounded-2xl bg-[#efe7ff] text-lg text-[#6d35ff]">
                     {icon}
                   </div>
@@ -4836,7 +4836,7 @@ function BbsPage({ theme }: { theme: ResolvedTheme }) {
             ],
           ].map(([icon, value, label]) => (
             <div key={label} className="flex items-center gap-3 rounded-[20px] border border-[#eee8fb] bg-[#fbfaff] p-3">
-              <span className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl bg-[#f0e8ff] text-lg font-black text-[#6d35ff]">
+              <span className="grid h-12 w-12 shrink-0 place-items-center rounded-[17px] bg-[#efe6ff] text-[19px] font-black leading-none text-[#6d35ff] shadow-[inset_0_0_0_1px_rgba(109,53,255,0.08)]">
                 {icon}
               </span>
               <div className="min-w-0">
