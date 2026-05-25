@@ -3531,6 +3531,50 @@ function BbsPage({ theme }: { theme: ResolvedTheme }) {
       .map(([diameter, weight]) => ({ diameter, weight }));
   }, [items]);
 
+  const diameterUsageSummary = useMemo(() => {
+    const colorPalette = ["#6d35ff", "#5d9cff", "#63d99c", "#ffac45", "#ff6f91", "#8b5cf6", "#22c55e", "#f97316"];
+    const map = new Map<number, { diameter: number; weight: number; bars: number; length: number }>();
+
+    items.forEach((item) => {
+      const diameter = Number(item.diameter || 0);
+      if (!diameter) return;
+
+      const current = map.get(diameter) || { diameter, weight: 0, bars: 0, length: 0 };
+      current.weight = Number((current.weight + Number(item.totalWeight || 0)).toFixed(2));
+      current.bars += Number(item.quantity || 0);
+      current.length = Number((current.length + Number(item.totalLength || 0)).toFixed(2));
+      map.set(diameter, current);
+    });
+
+    const total = Array.from(map.values()).reduce((sum, row) => sum + row.weight, 0);
+
+    return Array.from(map.values())
+      .sort((a, b) => b.weight - a.weight)
+      .map((row, index) => ({
+        ...row,
+        percent: total ? Number(((row.weight / total) * 100).toFixed(1)) : 0,
+        color: colorPalette[index % colorPalette.length],
+      }));
+  }, [items]);
+
+  const topDiameterUsage = diameterUsageSummary[0] || null;
+
+  const diameterConicGradient = useMemo(() => {
+    if (!diameterUsageSummary.length) {
+      return "conic-gradient(#efe7ff 0deg 360deg)";
+    }
+
+    let startPercent = 0;
+    const parts = diameterUsageSummary.map((row) => {
+      const endPercent = startPercent + row.percent;
+      const segment = `${row.color} ${startPercent}% ${endPercent}%`;
+      startPercent = endPercent;
+      return segment;
+    });
+
+    return `conic-gradient(${parts.join(", ")})`;
+  }, [diameterUsageSummary]);
+
   const memberSummary = useMemo(() => {
     const summary = new Map<string, number>();
 
@@ -4212,49 +4256,70 @@ function BbsPage({ theme }: { theme: ResolvedTheme }) {
         <section className="min-w-0 self-start rounded-[24px] border border-[#ece8f8] bg-white p-4 shadow-[0_8px_24px_rgba(33,19,63,0.055)]">
           <div className="grid gap-4">
             
+
+
+            
             <div className="mb-4 rounded-[24px] border border-[#ece8f8] bg-white p-4 shadow-[0_10px_28px_rgba(33,19,63,0.06)]">
               <div className="flex items-center justify-between gap-3">
                 <div>
-                  <h3 className="text-base font-black text-[#161032]">Cost Breakdown</h3>
-                  <p className="mt-1 text-[11px] font-medium text-[#817397]">Estimated reinforcement cost split.</p>
+                  <h3 className="text-base font-black text-[#161032]">Dia-wise Steel Usage</h3>
+                  <p className="mt-1 text-[11px] font-medium text-[#817397]">
+                    Shows which bar diameter is used most in this BBS.
+                  </p>
                 </div>
                 <span className="rounded-full bg-[#f3edff] px-3 py-1 text-[10px] font-black text-[#6d35ff]">
-                  BBS Cost Breakdown
+                  Usage
                 </span>
               </div>
 
               <div className="mt-4 grid gap-4 lg:grid-cols-[145px_1fr]">
-                <div className="relative mx-auto grid h-[145px] w-[145px] place-items-center rounded-full bg-[conic-gradient(#6d35ff_0_42%,#5d9cff_42%_65%,#63d99c_65%_82%,#ffac45_82%_93%,#ff6f91_93%_100%)]">
+                <div className="relative mx-auto grid h-[145px] w-[145px] place-items-center rounded-full" style={{ background: diameterConicGradient }}>
                   <div className="grid h-[92px] w-[92px] place-items-center rounded-full bg-white shadow-inner">
                     <div className="text-center">
-                      <p className="text-[10px] font-bold text-[#817397]">Total Cost</p>
-                      <p className="mt-1 text-sm font-black text-[#161032]">
-                        ₹{numberFormat.format(Math.round((totalWeight || 0) * 92))}
+                      <p className="text-[10px] font-bold text-[#817397]">Most Used</p>
+                      <p className="mt-1 text-lg font-black text-[#161032]">
+                        {topDiameterUsage ? `${topDiameterUsage.diameter} mm` : "—"}
+                      </p>
+                      <p className="text-[10px] font-bold text-[#817397]">
+                        {topDiameterUsage ? `${topDiameterUsage.percent}%` : "No data"}
                       </p>
                     </div>
                   </div>
                 </div>
 
                 <div className="space-y-2">
-                  {[
-                    ["#6d35ff", "Reinforcement", "42.0%", Math.round((totalWeight || 0) * 92 * 0.42)],
-                    ["#5d9cff", "Cutting/Bending", "23.0%", Math.round((totalWeight || 0) * 92 * 0.23)],
-                    ["#63d99c", "Binding & Chairs", "17.0%", Math.round((totalWeight || 0) * 92 * 0.17)],
-                    ["#ffac45", "Wastage", "11.0%", Math.round((totalWeight || 0) * 92 * 0.11)],
-                    ["#ff6f91", "Review/Docs", "7.0%", Math.round((totalWeight || 0) * 92 * 0.07)],
-                  ].map(([color, label, percent, amount]) => (
-                    <div key={label} className="grid grid-cols-[18px_1fr_52px_82px] items-center gap-2 text-[11px]">
-                      <span className="h-3 w-3 rounded-full" style={{ backgroundColor: color as string }} />
-                      <span className="font-bold text-[#5f5471]">{label}</span>
-                      <span className="text-right font-black text-[#817397]">{percent}</span>
-                      <span className="text-right font-black text-[#21133f]">₹{numberFormat.format(Number(amount))}</span>
+                  {diameterUsageSummary.length ? (
+                    diameterUsageSummary.slice(0, 5).map((row) => (
+                      <div key={row.diameter} className="grid grid-cols-[18px_1fr_58px_76px] items-center gap-2 text-[11px]">
+                        <span className="h-3 w-3 rounded-full" style={{ backgroundColor: row.color }} />
+                        <span className="font-bold text-[#5f5471]">{row.diameter} mm bar</span>
+                        <span className="text-right font-black text-[#817397]">{row.percent}%</span>
+                        <span className="text-right font-black text-[#21133f]">{weightFormat.format(row.weight)} kg</span>
+                      </div>
+                    ))
+                  ) : (
+                    <div className="rounded-2xl border border-[#eee8fb] bg-[#fbfaff] p-4 text-[11px] font-bold text-[#817397]">
+                      Generate BBS to see dia-wise steel usage.
                     </div>
-                  ))}
+                  )}
                 </div>
+              </div>
+
+              <div className="mt-3 grid grid-cols-3 gap-2">
+                {[
+                  ["Top Dia", topDiameterUsage ? `${topDiameterUsage.diameter} mm` : "—"],
+                  ["Bars", topDiameterUsage ? numberFormat.format(topDiameterUsage.bars) : "—"],
+                  ["Length", topDiameterUsage ? `${weightFormat.format(topDiameterUsage.length)} m` : "—"],
+                ].map(([label, value]) => (
+                  <div key={label} className="rounded-2xl bg-[#fbfaff] px-3 py-2">
+                    <p className="text-[10px] font-bold text-[#817397]">{label}</p>
+                    <p className="mt-0.5 text-[12px] font-black text-[#21133f]">{value}</p>
+                  </div>
+                ))}
               </div>
             </div>
 
-            <Bbs3DViewer column={selectedColumn} totalBars={totalBars} totalWeight={totalWeight} />
+<Bbs3DViewer column={selectedColumn} totalBars={totalBars} totalWeight={totalWeight} />
 
 
 
