@@ -3848,8 +3848,8 @@ function BbsPage({ theme }: { theme: ResolvedTheme }) {
         </section>
       ) : null}
 
-      <div className="grid min-w-0 gap-5 xl:grid-cols-[minmax(0,1fr)_360px] 2xl:grid-cols-[minmax(0,1fr)_400px]">
-        <section className="min-w-0 self-start rounded-[28px] border border-[#ece8f8] bg-white p-5 shadow-[0_18px_55px_rgba(33,19,63,0.08)]">
+      <div className="grid min-w-0 gap-5 xl:grid-cols-[minmax(0,1fr)_330px] 2xl:grid-cols-[minmax(0,1fr)_360px]">
+        <section className="min-w-0 self-start rounded-[26px] border border-[#ece8f8] bg-white p-5 shadow-[0_14px_38px_rgba(33,19,63,0.07)]">
           <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
             <div>
               <h2 className="text-lg font-black text-[#161032]">Bar Bending Schedule</h2>
@@ -3878,9 +3878,18 @@ function BbsPage({ theme }: { theme: ResolvedTheme }) {
             ))}
           </div>
 
-          <div className="mt-5 overflow-hidden rounded-2xl border border-[#eee8fb] bg-white">
-            <div className="max-h-[360px] overflow-auto overscroll-contain">
-              <table className="min-w-[1180px] w-full table-fixed border-collapse bg-white text-left text-xs">
+          <div className="mt-4 flex items-center justify-between gap-3 rounded-2xl border border-[#eee8fb] bg-[#fbfaff] px-4 py-3">
+            <p className="text-xs font-bold text-[#817397]">
+              Scroll horizontally to view status, drawing reference and edit actions.
+            </p>
+            <span className="rounded-full bg-white px-3 py-1 text-[11px] font-black text-[#6d35ff]">
+              {items.length} rows
+            </span>
+          </div>
+
+          <div className="mt-3 overflow-hidden rounded-2xl border border-[#eee8fb] bg-white">
+            <div className="max-h-[520px] overflow-auto overscroll-contain">
+              <table className="min-w-[1080px] w-full table-fixed border-collapse bg-white text-left text-xs">
                 <thead className="sticky top-0 z-10 bg-[#f5f1ff] text-[#6d35ff]">
                   <tr>
                     {[
@@ -3895,7 +3904,7 @@ function BbsPage({ theme }: { theme: ResolvedTheme }) {
                       "Status",
                       "Actions",
                     ].map((head) => (
-                      <th key={head} className="border-b border-[#e7ddff] px-3 py-3 font-black first:w-[135px]">
+                      <th key={head} className="border-b border-[#e7ddff] px-3 py-2.5 font-black first:w-[145px]">
                         {head}
                       </th>
                     ))}
@@ -3911,24 +3920,24 @@ function BbsPage({ theme }: { theme: ResolvedTheme }) {
                   ) : items.length ? (
                     items.map((item, index) => (
                       <tr key={item.id || `${item.barMark}-${index}`} className="border-b border-[#f0edf7] hover:bg-[#fbfaff]">
-                        <td className="break-words px-3 py-3 font-black text-[#21133f]">{item.barMark || `BBS-${index + 1}`}</td>
-                        <td className="px-3 py-3 font-semibold text-[#21133f]">{item.diameter || "-"} mm</td>
-                        <td className="px-3 py-3">
+                        <td className="break-words px-3 py-2.5 font-black text-[#21133f]">{item.barMark || `BBS-${index + 1}`}</td>
+                        <td className="px-3 py-2.5 font-semibold text-[#21133f]">{item.diameter || "-"} mm</td>
+                        <td className="px-3 py-2.5">
                           <span className="inline-flex min-w-[46px] items-center justify-center rounded-lg border border-[#e7ddff] bg-white px-2 py-1 font-bold text-[#4b2a91]">
                             {item.shapeCode || "—"}
                           </span>
                         </td>
-                        <td className="px-3 py-3 font-semibold text-[#21133f]">{item.quantity || 0}</td>
-                        <td className="px-3 py-3 font-semibold text-[#21133f]">{Number(item.cuttingLength || 0).toFixed(2)} m</td>
-                        <td className="px-3 py-3 font-semibold text-[#21133f]">{Number(item.totalLength || 0).toFixed(2)} m</td>
-                        <td className="px-3 py-3 font-semibold text-[#21133f]">{Number(item.unitWeight || 0).toFixed(3)}</td>
+                        <td className="px-3 py-2.5 font-semibold text-[#21133f]">{item.quantity || 0}</td>
+                        <td className="px-3 py-2.5 font-semibold text-[#21133f]">{Number(item.cuttingLength || 0).toFixed(2)} m</td>
+                        <td className="px-3 py-2.5 font-semibold text-[#21133f]">{Number(item.totalLength || 0).toFixed(2)} m</td>
+                        <td className="px-3 py-2.5 font-semibold text-[#21133f]">{Number(item.unitWeight || 0).toFixed(3)}</td>
                         <td className="px-3 py-3 font-black text-[#21133f]">{weightFormat.format(Number(item.totalWeight || 0))}</td>
-                        <td className="px-3 py-3">
+                        <td className="px-3 py-2.5">
                           <span className="rounded-full bg-[#fff7e8] px-3 py-1 text-[11px] font-black text-[#9a6412]">
                             {item.status || "Review Required"}
                           </span>
                         </td>
-                        <td className="px-3 py-3">
+                        <td className="px-3 py-2.5">
                           <div className="flex items-center gap-2">
                             <button
                               onClick={() => openEditManualRow(item)}
@@ -3986,9 +3995,9 @@ function BbsPage({ theme }: { theme: ResolvedTheme }) {
           </div>
         </section>
 
-        <section className="min-w-0 self-start rounded-[28px] border border-[#ece8f8] bg-white p-5 shadow-[0_18px_55px_rgba(33,19,63,0.08)]">
+        <section className="min-w-0 self-start rounded-[26px] border border-[#ece8f8] bg-white p-5 shadow-[0_14px_38px_rgba(33,19,63,0.07)]">
           <div className="grid gap-4">
-            <div className="relative min-h-[340px] overflow-hidden rounded-[24px] border border-[#eee8fb] bg-[#fbfaff] p-5">
+            <div className="relative min-h-[285px] overflow-hidden rounded-[22px] border border-[#eee8fb] bg-[#fbfaff] p-4">
               <div className="absolute left-4 top-4 z-20 flex flex-col gap-2">
                 {["3D", "2D", "Rotate", "Zoom", "Fit"].map((item, index) => (
                   <button
@@ -4004,15 +4013,15 @@ function BbsPage({ theme }: { theme: ResolvedTheme }) {
                 ))}
               </div>
 
-              <div className="absolute inset-x-0 bottom-8 mx-auto h-16 w-[210px] rotate-[-18deg] rounded-[18px] border border-[#bfb8c9] bg-gradient-to-br from-[#d9d6d0] to-[#aaa5a2] shadow-2xl" />
-              <div className="absolute bottom-[68px] left-1/2 h-10 w-[190px] -translate-x-1/2 rotate-[-18deg] rounded-xl border border-[#7c7578] opacity-80" />
+              <div className="absolute inset-x-0 bottom-7 mx-auto h-14 w-[185px] rotate-[-18deg] rounded-[18px] border border-[#bfb8c9] bg-gradient-to-br from-[#d9d6d0] to-[#aaa5a2] shadow-2xl" />
+              <div className="absolute bottom-[60px] left-1/2 h-9 w-[165px] -translate-x-1/2 rotate-[-18deg] rounded-xl border border-[#7c7578] opacity-80" />
 
-              <div className="absolute left-1/2 top-[34px] h-[220px] w-[120px] -translate-x-1/2">
+              <div className="absolute left-1/2 top-[26px] h-[190px] w-[110px] -translate-x-1/2">
                 {[0, 1, 2, 3].map((bar) => (
                   <div
                     key={bar}
                     className="absolute top-0 h-full w-[7px] rounded-full bg-gradient-to-b from-[#7d43ff] to-[#2c195e] shadow-[0_0_14px_rgba(109,53,255,0.35)]"
-                    style={{ left: `${bar * 34}px` }}
+                    style={{ left: `${bar * 30}px` }}
                   />
                 ))}
 
@@ -4020,23 +4029,23 @@ function BbsPage({ theme }: { theme: ResolvedTheme }) {
                   <div
                     key={`r-${bar}`}
                     className="absolute top-0 h-full w-[7px] rounded-full bg-gradient-to-b from-[#7d43ff] to-[#2c195e] opacity-85"
-                    style={{ left: `${bar * 34 + 16}px`, transform: "translateX(8px) skewY(-18deg)" }}
+                    style={{ left: `${bar * 30 + 14}px`, transform: "translateX(7px) skewY(-18deg)" }}
                   />
                 ))}
 
                 {Array.from({ length: 11 }).map((_, index) => (
                   <div
                     key={index}
-                    className="absolute left-[-8px] h-[12px] w-[136px] rounded-md border-[3px] border-[#372155] bg-transparent shadow-sm"
-                    style={{ top: `${index * 20}px`, transform: "skewY(-18deg)" }}
+                    className="absolute left-[-8px] h-[11px] w-[122px] rounded-md border-[3px] border-[#372155] bg-transparent shadow-sm"
+                    style={{ top: `${index * 17}px`, transform: "skewY(-18deg)" }}
                   />
                 ))}
 
                 {Array.from({ length: 7 }).map((_, index) => (
                   <div
                     key={`tie-${index}`}
-                    className="absolute left-[14px] h-[3px] w-[100px] bg-[#7d43ff] opacity-80"
-                    style={{ top: `${index * 30 + 14}px`, transform: "skewY(-18deg)" }}
+                    className="absolute left-[12px] h-[3px] w-[90px] bg-[#7d43ff] opacity-80"
+                    style={{ top: `${index * 25 + 12}px`, transform: "skewY(-18deg)" }}
                   />
                 ))}
               </div>
@@ -4055,9 +4064,9 @@ function BbsPage({ theme }: { theme: ResolvedTheme }) {
               </div>
             </div>
 
-            <div className="rounded-[24px] border border-[#e7ddff] bg-white p-5">
+            <div className="rounded-[22px] border border-[#e7ddff] bg-white p-4">
               <h3 className="text-lg font-black text-[#6d35ff]">Column {selectedColumn.id}</h3>
-              <div className="mt-5 space-y-1">
+              <div className="mt-4 space-y-0.5">
                 {[
                   ["Section", selectedColumn.section],
                   ["Height", selectedColumn.height],
@@ -4069,18 +4078,18 @@ function BbsPage({ theme }: { theme: ResolvedTheme }) {
                   ["Location", selectedColumn.location],
                   ["Element Type", selectedColumn.type],
                 ].map(([label, value]) => (
-                  <div key={label} className="flex items-center justify-between border-b border-[#f0edf7] py-3 text-xs">
+                  <div key={label} className="flex items-center justify-between border-b border-[#f0edf7] py-2.5 text-xs">
                     <span className="font-bold text-[#817397]">{label}</span>
                     <span className="font-black text-[#21133f]">{value}</span>
                   </div>
                 ))}
               </div>
 
-              <button className="mt-5 w-full rounded-2xl border border-[#d7ccff] bg-[#fbf8ff] px-4 py-3 text-xs font-black text-[#6d35ff]">
+              <button className="mt-4 w-full rounded-2xl border border-[#d7ccff] bg-[#fbf8ff] px-4 py-2.5 text-xs font-black text-[#6d35ff]">
                 ↗ View in Drawing
               </button>
 
-              <div className="mt-5 rounded-2xl bg-[#fffaf0] p-4">
+              <div className="mt-4 rounded-2xl bg-[#fffaf0] p-3">
                 <p className="text-xs font-black text-[#9a6412]">Review Gate</p>
                 <p className="mt-1 text-[11px] leading-5 text-[#9a6412]">
                   Cutting length, bend deduction, lap length and development length must be checked by a structural engineer.
@@ -4091,7 +4100,7 @@ function BbsPage({ theme }: { theme: ResolvedTheme }) {
         </section>
       </div>
 
-      <section className="rounded-[28px] border border-[#ddd2ff] bg-gradient-to-r from-white via-[#fbf8ff] to-white p-5 shadow-[0_18px_55px_rgba(33,19,63,0.08)]">
+      <section className="rounded-[26px] border border-[#ddd2ff] bg-gradient-to-r from-white via-[#fbf8ff] to-white p-5 shadow-[0_14px_38px_rgba(33,19,63,0.07)]">
         <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-5">
           <div className="flex items-center gap-4">
             <div className="grid h-16 w-16 place-items-center rounded-full bg-[#48bd70] text-2xl font-black text-white">
