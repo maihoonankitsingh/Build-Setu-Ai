@@ -4472,7 +4472,7 @@ function BbsPage({ theme }: { theme: ResolvedTheme }) {
         </section>
       ) : null}
 
-      <div className="grid min-w-0 items-start gap-5 xl:grid-cols-[minmax(0,1fr)_410px] 2xl:grid-cols-[minmax(0,1fr)_450px]">
+      <div className="grid min-w-0 items-start gap-5 xl:grid-cols-2">
         <section className="min-w-0 self-start rounded-[24px] border border-[#ece8f8] bg-white p-4 shadow-[0_8px_24px_rgba(33,19,63,0.055)]">
           <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
             <div>
@@ -4561,7 +4561,7 @@ function BbsPage({ theme }: { theme: ResolvedTheme }) {
 
           <div className="mt-3 overflow-hidden rounded-2xl border border-[#eee8fb] bg-white">
             <div className="max-h-[500px] overflow-auto overscroll-contain">
-              <table className="min-w-[1040px] w-full table-fixed border-collapse bg-white text-left text-xs">
+              <table className="min-w-[980px] w-full table-fixed border-collapse bg-white text-left text-xs">
                 <thead className="sticky top-0 z-10 bg-[#f5f1ff] text-[#6d35ff]">
                   <tr>
                     {[
