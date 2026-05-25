@@ -3714,7 +3714,7 @@ function BbsPage({ theme }: { theme: ResolvedTheme }) {
 
   const topStats = [
     ["Total Bars", numberFormat.format(totalBars || 0), "▦"],
-    ["Total Weight", `${weightFormat.format(totalWeight || 0)} kg`, "♟"],
+    ["Total Wt", `${weightFormat.format(totalWeight || 0)} kg`, "♟"],
     ["Concrete Grade", "M30", "⬡"],
     ["Steel Grade", "Fe 500D", "工"],
   ];
@@ -3742,7 +3742,7 @@ function BbsPage({ theme }: { theme: ResolvedTheme }) {
             ))}
           </select>
 
-          <button className="inline-flex h-11 items-center justify-center gap-2 rounded-2xl border border-[#e6e0f5] bg-white px-5 text-sm font-bold text-[#21133f] shadow-sm hover:bg-[#f8f5ff]">
+          <button className="inline-flex h-11 min-w-[150px] items-center justify-center gap-2 whitespace-nowrap rounded-2xl border border-[#e6e0f5] bg-white px-5 text-sm font-bold text-[#21133f] shadow-sm hover:bg-[#f8f5ff]">
             <span>⇧</span>
             Import Drawings
           </button>
@@ -3750,7 +3750,7 @@ function BbsPage({ theme }: { theme: ResolvedTheme }) {
           <button
             onClick={openCreateManualRow}
             disabled={!projectId}
-            className="inline-flex h-11 items-center justify-center gap-2 rounded-2xl border border-[#d7ccff] bg-[#fbf8ff] px-5 text-sm font-bold text-[#6d35ff] shadow-sm disabled:cursor-not-allowed disabled:opacity-60"
+            className="inline-flex h-11 min-w-[160px] items-center justify-center gap-2 whitespace-nowrap rounded-2xl border border-[#d7ccff] bg-[#fbf8ff] px-5 text-sm font-bold text-[#6d35ff] shadow-sm disabled:cursor-not-allowed disabled:opacity-60"
           >
             <span>＋</span>
             Add Manual Row
@@ -3759,7 +3759,7 @@ function BbsPage({ theme }: { theme: ResolvedTheme }) {
           <button
             onClick={generateBbs}
             disabled={generating || !projectId}
-            className="inline-flex h-11 items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-[#6d35ff] to-[#3b1fb5] px-6 text-sm font-bold text-white shadow-lg shadow-[#6d35ff]/25 disabled:cursor-not-allowed disabled:opacity-60"
+            className="inline-flex h-11 min-w-[150px] items-center justify-center gap-2 whitespace-nowrap rounded-2xl bg-gradient-to-r from-[#6d35ff] to-[#3b1fb5] px-6 text-sm font-bold text-white shadow-lg shadow-[#6d35ff]/25 disabled:cursor-not-allowed disabled:opacity-60"
           >
             <span>✦</span>
             {generating ? "Generating..." : "Generate BBS"}
@@ -3798,7 +3798,7 @@ function BbsPage({ theme }: { theme: ResolvedTheme }) {
               ["memberId", "Member ID", "C1"],
               ["barMark", "Bar Mark", "C1-VERT-16-01"],
               ["diameter", "Diameter mm", "16"],
-              ["quantity", "No. of Bars", "8"],
+              ["quantity", "Bars", "8"],
               ["shapeCode", "Shape Code", "Straight"],
               ["cuttingLength", "Cutting Length m", "3.6"],
               ["drawingRef", "Drawing Ref", "STR-101"],
@@ -3818,9 +3818,9 @@ function BbsPage({ theme }: { theme: ResolvedTheme }) {
 
           <div className="mt-5 grid gap-3 md:grid-cols-4">
             {[
-              ["Total Length", `${bbsPreviewTotals(manualForm).totalLength.toFixed(3)} m`],
-              ["Unit Weight", `${bbsPreviewTotals(manualForm).unitWeight.toFixed(3)} kg/m`],
-              ["Total Weight", `${bbsPreviewTotals(manualForm).totalWeight.toFixed(2)} kg`],
+              ["Total Len", `${bbsPreviewTotals(manualForm).totalLength.toFixed(3)} m`],
+              ["Unit Wt", `${bbsPreviewTotals(manualForm).unitWeight.toFixed(3)} kg/m`],
+              ["Total Wt", `${bbsPreviewTotals(manualForm).totalWeight.toFixed(2)} kg`],
               ["Formula", "d²/162"],
             ].map(([label, value]) => (
               <div key={label} className="rounded-2xl border border-[#eee8fb] bg-[#fbfaff] p-4">
@@ -3849,7 +3849,7 @@ function BbsPage({ theme }: { theme: ResolvedTheme }) {
       ) : null}
 
       <div className="grid min-w-0 gap-5 xl:grid-cols-[minmax(0,1fr)_360px] 2xl:grid-cols-[minmax(0,1fr)_400px]">
-        <section className="min-w-0 rounded-[28px] border border-[#ece8f8] bg-white p-5 shadow-[0_18px_55px_rgba(33,19,63,0.08)]">
+        <section className="min-w-0 self-start rounded-[28px] border border-[#ece8f8] bg-white p-5 shadow-[0_18px_55px_rgba(33,19,63,0.08)]">
           <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
             <div>
               <h2 className="text-lg font-black text-[#161032]">Bar Bending Schedule</h2>
@@ -3878,24 +3878,24 @@ function BbsPage({ theme }: { theme: ResolvedTheme }) {
             ))}
           </div>
 
-          <div className="mt-5 overflow-hidden rounded-2xl border border-[#eee8fb]">
-            <div className="max-h-[390px] overflow-auto">
-              <table className="min-w-[1120px] w-full border-collapse bg-white text-left text-xs">
+          <div className="mt-5 overflow-hidden rounded-2xl border border-[#eee8fb] bg-white">
+            <div className="max-h-[360px] overflow-auto overscroll-contain">
+              <table className="min-w-[1180px] w-full table-fixed border-collapse bg-white text-left text-xs">
                 <thead className="sticky top-0 z-10 bg-[#f5f1ff] text-[#6d35ff]">
                   <tr>
                     {[
                       "Mark",
-                      "Bar Diameter",
+                      "Diameter",
                       "Shape Code",
-                      "No. of Bars",
-                      "Cutting Length",
-                      "Total Length",
-                      "Unit Weight",
-                      "Total Weight",
+                      "Bars",
+                      "Cut Length",
+                      "Total Len",
+                      "Unit Wt",
+                      "Total Wt",
                       "Status",
                       "Actions",
                     ].map((head) => (
-                      <th key={head} className="border-b border-[#e7ddff] px-4 py-3 font-black">
+                      <th key={head} className="border-b border-[#e7ddff] px-3 py-3 font-black first:w-[135px]">
                         {head}
                       </th>
                     ))}
@@ -3911,24 +3911,24 @@ function BbsPage({ theme }: { theme: ResolvedTheme }) {
                   ) : items.length ? (
                     items.map((item, index) => (
                       <tr key={item.id || `${item.barMark}-${index}`} className="border-b border-[#f0edf7] hover:bg-[#fbfaff]">
-                        <td className="px-4 py-3 font-black text-[#21133f]">{item.barMark || `BBS-${index + 1}`}</td>
-                        <td className="px-4 py-3 font-semibold text-[#21133f]">{item.diameter || "-"} mm</td>
-                        <td className="px-4 py-3">
+                        <td className="break-words px-3 py-3 font-black text-[#21133f]">{item.barMark || `BBS-${index + 1}`}</td>
+                        <td className="px-3 py-3 font-semibold text-[#21133f]">{item.diameter || "-"} mm</td>
+                        <td className="px-3 py-3">
                           <span className="inline-flex min-w-[46px] items-center justify-center rounded-lg border border-[#e7ddff] bg-white px-2 py-1 font-bold text-[#4b2a91]">
                             {item.shapeCode || "—"}
                           </span>
                         </td>
-                        <td className="px-4 py-3 font-semibold text-[#21133f]">{item.quantity || 0}</td>
-                        <td className="px-4 py-3 font-semibold text-[#21133f]">{Number(item.cuttingLength || 0).toFixed(2)} m</td>
-                        <td className="px-4 py-3 font-semibold text-[#21133f]">{Number(item.totalLength || 0).toFixed(2)} m</td>
-                        <td className="px-4 py-3 font-semibold text-[#21133f]">{Number(item.unitWeight || 0).toFixed(3)}</td>
-                        <td className="px-4 py-3 font-black text-[#21133f]">{weightFormat.format(Number(item.totalWeight || 0))}</td>
-                        <td className="px-4 py-3">
+                        <td className="px-3 py-3 font-semibold text-[#21133f]">{item.quantity || 0}</td>
+                        <td className="px-3 py-3 font-semibold text-[#21133f]">{Number(item.cuttingLength || 0).toFixed(2)} m</td>
+                        <td className="px-3 py-3 font-semibold text-[#21133f]">{Number(item.totalLength || 0).toFixed(2)} m</td>
+                        <td className="px-3 py-3 font-semibold text-[#21133f]">{Number(item.unitWeight || 0).toFixed(3)}</td>
+                        <td className="px-3 py-3 font-black text-[#21133f]">{weightFormat.format(Number(item.totalWeight || 0))}</td>
+                        <td className="px-3 py-3">
                           <span className="rounded-full bg-[#fff7e8] px-3 py-1 text-[11px] font-black text-[#9a6412]">
                             {item.status || "Review Required"}
                           </span>
                         </td>
-                        <td className="px-4 py-3">
+                        <td className="px-3 py-3">
                           <div className="flex items-center gap-2">
                             <button
                               onClick={() => openEditManualRow(item)}
@@ -3961,7 +3961,7 @@ function BbsPage({ theme }: { theme: ResolvedTheme }) {
             </div>
           </div>
 
-          <div className="mt-5 grid gap-3 sm:grid-cols-3">
+          <div className="mt-4 grid gap-3 sm:grid-cols-3">
             <button
               onClick={exportCsv}
               disabled={!items.length}
@@ -3986,7 +3986,7 @@ function BbsPage({ theme }: { theme: ResolvedTheme }) {
           </div>
         </section>
 
-        <section className="min-w-0 rounded-[28px] border border-[#ece8f8] bg-white p-5 shadow-[0_18px_55px_rgba(33,19,63,0.08)]">
+        <section className="min-w-0 self-start rounded-[28px] border border-[#ece8f8] bg-white p-5 shadow-[0_18px_55px_rgba(33,19,63,0.08)]">
           <div className="grid gap-4">
             <div className="relative min-h-[340px] overflow-hidden rounded-[24px] border border-[#eee8fb] bg-[#fbfaff] p-5">
               <div className="absolute left-4 top-4 z-20 flex flex-col gap-2">
