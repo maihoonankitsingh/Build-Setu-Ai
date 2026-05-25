@@ -80,7 +80,7 @@ function CameraController({
       camera.position.set(0, 6.6, 0.01);
       camera.lookAt(0, 1.8, 0);
     } else {
-      camera.position.set(4.1, 3.3, 5.1);
+      camera.position.set(4.0, 3.2, 5.0);
       camera.lookAt(0, 1.8, 0);
     }
 
@@ -213,10 +213,10 @@ export default function Bbs3DViewer({ column, totalBars, totalWeight }: Bbs3DVie
         </span>
       </div>
 
-      <div className="relative h-[390px]">
+      <div className="relative h-[340px]">
         <Canvas
           shadows
-          camera={{ position: [4.1, 3.3, 5.1], fov: 35, near: 0.1, far: 100 }}
+          camera={{ position: [4.0, 3.2, 5.0], fov: 37, near: 0.1, far: 100 }}
           gl={{ antialias: true, alpha: true }}
           onCreated={({ gl }) => {
             gl.setClearColor(new THREE.Color("#fbfaff"), 1);
@@ -263,19 +263,19 @@ export default function Bbs3DViewer({ column, totalBars, totalWeight }: Bbs3DVie
         <div className="absolute right-3 top-3 flex flex-col gap-2">
           <button
             onClick={() => setZoomSignal((value) => value + 1)}
-            className="h-8 w-9 rounded-xl border border-[#ece8f8] bg-white text-[12px] font-black text-[#5f5471] shadow-sm"
+            className="h-8 w-9 rounded-xl border border-[#ece8f8] bg-white text-[12px] font-black text-[#5f5471] shadow-sm hover:border-[#cbbcff] hover:bg-[#f8f5ff]"
           >
             +
           </button>
           <button
             onClick={() => setZoomSignal((value) => value - 1)}
-            className="h-8 w-9 rounded-xl border border-[#ece8f8] bg-white text-[12px] font-black text-[#5f5471] shadow-sm"
+            className="h-8 w-9 rounded-xl border border-[#ece8f8] bg-white text-[12px] font-black text-[#5f5471] shadow-sm hover:border-[#cbbcff] hover:bg-[#f8f5ff]"
           >
             −
           </button>
           <button
             onClick={() => setResetSignal((value) => value + 1)}
-            className="h-8 w-9 rounded-xl border border-[#ece8f8] bg-white text-[9px] font-black text-[#5f5471] shadow-sm"
+            className="h-8 w-9 rounded-xl border border-[#ece8f8] bg-white text-[9px] font-black text-[#5f5471] shadow-sm hover:border-[#cbbcff] hover:bg-[#f8f5ff]"
           >
             Fit
           </button>

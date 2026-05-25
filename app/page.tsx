@@ -154,7 +154,7 @@ function persistBuildSetuViewKey(view: ViewKey) {
 const Bbs3DViewer = dynamic(() => import("@/components/bbs/Bbs3DViewer"), {
   ssr: false,
   loading: () => (
-    <div className="grid h-[390px] place-items-center rounded-[22px] border border-[#eee8fb] bg-[#fbfaff] text-xs font-bold text-[#817397]">
+    <div className="grid h-[340px] place-items-center rounded-[22px] border border-[#eee8fb] bg-[#fbfaff] text-xs font-bold text-[#817397]">
       Loading 3D reinforcement viewer...
     </div>
   ),
@@ -4062,8 +4062,8 @@ function BbsPage({ theme }: { theme: ResolvedTheme }) {
         </section>
       ) : null}
 
-      <div className="grid min-w-0 gap-5 xl:grid-cols-[minmax(0,1fr)_430px] 2xl:grid-cols-[minmax(0,1fr)_480px]">
-        <section className="min-w-0 self-start rounded-[26px] border border-[#ece8f8] bg-white p-4 shadow-[0_14px_38px_rgba(33,19,63,0.07)]">
+      <div className="grid min-w-0 items-start gap-5 xl:grid-cols-[minmax(0,1fr)_380px] 2xl:grid-cols-[minmax(0,1fr)_420px]">
+        <section className="min-w-0 self-start rounded-[24px] border border-[#ece8f8] bg-white p-4 shadow-[0_10px_28px_rgba(33,19,63,0.06)]">
           <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
             <div>
               <h2 className="text-lg font-black text-[#161032]">Bar Bending Schedule</h2>
@@ -4102,8 +4102,8 @@ function BbsPage({ theme }: { theme: ResolvedTheme }) {
           </div>
 
           <div className="mt-3 overflow-hidden rounded-2xl border border-[#eee8fb] bg-white">
-            <div className="max-h-[520px] overflow-auto overscroll-contain">
-              <table className="min-w-[1080px] w-full table-fixed border-collapse bg-white text-left text-xs">
+            <div className="max-h-[500px] overflow-auto overscroll-contain">
+              <table className="min-w-[1040px] w-full table-fixed border-collapse bg-white text-left text-xs">
                 <thead className="sticky top-0 z-10 bg-[#f5f1ff] text-[#6d35ff]">
                   <tr>
                     {[
@@ -4184,7 +4184,7 @@ function BbsPage({ theme }: { theme: ResolvedTheme }) {
             </div>
           </div>
 
-          <div className="mt-4 grid gap-3 sm:grid-cols-3">
+          <div className="mt-3 grid gap-2.5 sm:grid-cols-3">
             <button
               onClick={exportCsv}
               disabled={!items.length}
@@ -4209,60 +4209,11 @@ function BbsPage({ theme }: { theme: ResolvedTheme }) {
           </div>
         </section>
 
-        <section className="min-w-0 self-start rounded-[26px] border border-[#ece8f8] bg-white p-4 shadow-[0_14px_38px_rgba(33,19,63,0.07)]">
+        <section className="min-w-0 self-start rounded-[24px] border border-[#ece8f8] bg-white p-4 shadow-[0_10px_28px_rgba(33,19,63,0.06)]">
           <div className="grid gap-4">
             <Bbs3DViewer column={selectedColumn} totalBars={totalBars} totalWeight={totalWeight} />
 
-          <div className="mt-4 grid gap-3">
-            <div className="rounded-[22px] border border-[#eee8fb] bg-[#fbfaff] p-4">
-              <div className="flex items-center justify-between gap-3">
-                <div>
-                  <h3 className="text-sm font-black text-[#21133f]">BBS Review Snapshot</h3>
-                  <p className="mt-1 text-[11px] font-medium text-[#817397]">
-                    Quick steel and member validation summary.
-                  </p>
-                </div>
-                <span className="rounded-full bg-[#f3edff] px-3 py-1 text-[11px] font-black text-[#6d35ff]">
-                  Review
-                </span>
-              </div>
 
-              <div className="mt-4 grid grid-cols-2 gap-2">
-                {[
-                  ["Bars", numberFormat.format(totalBars || 0)],
-                  ["Weight", `${weightFormat.format(totalWeight || 0)} kg`],
-                  ["Main Bars", selectedColumn.mainBars],
-                  ["Stirrups", selectedColumn.stirrups],
-                ].map(([label, value]) => (
-                  <div key={label} className="rounded-2xl border border-[#eee8fb] bg-white px-3 py-2.5">
-                    <p className="text-[10px] font-black uppercase tracking-wide text-[#8d7aa8]">{label}</p>
-                    <p className="mt-1 text-[12px] font-black text-[#21133f]">{value}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div className="rounded-[22px] border border-[#eee8fb] bg-white p-4">
-              <h3 className="text-sm font-black text-[#21133f]">Diameter Split</h3>
-              <div className="mt-3 grid grid-cols-2 gap-2">
-                {diameterSummary.slice(0, 4).map((row) => (
-                  <div key={row.diameter} className="rounded-2xl bg-[#f8f5ff] px-3 py-2">
-                    <p className="text-[10px] font-bold text-[#817397]">{row.diameter} mm</p>
-                    <p className="mt-0.5 text-[12px] font-black text-[#21133f]">
-                      {weightFormat.format(row.weight)} kg
-                    </p>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div className="rounded-[22px] border border-[#ffe3b3] bg-[#fffaf0] p-4">
-              <p className="text-xs font-black text-[#9a6412]">Engineer Review Gate</p>
-              <p className="mt-1 text-[11px] leading-5 text-[#9a6412]">
-                Cutting length, bend deduction, lap length and development length must be verified before site execution.
-              </p>
-            </div>
-          </div>
 
 
 
@@ -4270,7 +4221,7 @@ function BbsPage({ theme }: { theme: ResolvedTheme }) {
         </section>
       </div>
 
-      <section className="rounded-[24px] border border-[#e7ddff] bg-white p-4 shadow-[0_12px_32px_rgba(33,19,63,0.06)]">
+      <section className="rounded-[22px] border border-[#e7ddff] bg-white p-4 shadow-[0_10px_26px_rgba(33,19,63,0.05)]">
         <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <h3 className="text-lg font-black text-[#6d35ff]">Column {selectedColumn.id}</h3>
@@ -4283,7 +4234,7 @@ function BbsPage({ theme }: { theme: ResolvedTheme }) {
           </span>
         </div>
 
-        <div className="mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+        <div className="mt-3 grid gap-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
           {[
             ["Section", selectedColumn.section],
             ["Height", selectedColumn.height],
@@ -4295,7 +4246,7 @@ function BbsPage({ theme }: { theme: ResolvedTheme }) {
             ["Location", selectedColumn.location],
             ["Element Type", selectedColumn.type],
           ].map(([label, value]) => (
-            <div key={label} className="rounded-2xl border border-[#f0edf7] bg-[#fbfaff] px-4 py-3 text-xs">
+            <div key={label} className="rounded-xl border border-[#f0edf7] bg-[#fbfaff] px-3 py-2.5 text-xs">
               <span className="block font-bold text-[#817397]">{label}</span>
               <span className="mt-1 block font-black text-[#21133f]">{value}</span>
             </div>
@@ -4317,7 +4268,7 @@ function BbsPage({ theme }: { theme: ResolvedTheme }) {
       </section>
 
 
-      <section className="rounded-[22px] border border-[#ddd2ff] bg-gradient-to-r from-white via-[#fbf8ff] to-white p-4 shadow-[0_10px_26px_rgba(33,19,63,0.06)]">
+      <section className="rounded-[22px] border border-[#ddd2ff] bg-white p-4 shadow-[0_10px_24px_rgba(33,19,63,0.05)]">
         <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
           <div className="flex items-center gap-4">
             <div className="grid h-12 w-12 place-items-center rounded-full bg-[#48bd70] text-xl font-black text-white">
