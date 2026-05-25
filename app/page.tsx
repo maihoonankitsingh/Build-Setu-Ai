@@ -4723,7 +4723,7 @@ function BbsPage({ theme }: { theme: ResolvedTheme }) {
         </div>
 
         <div className="mt-4 grid gap-3 lg:grid-cols-2">
-          <div className="rounded-2xl border border-[#eee8fb] bg-white p-3">
+          <div className="hidden rounded-2xl border border-[#eee8fb] bg-white p-3">
             <h3 className="text-[13px] font-black text-[#21133f]">Diameter-wise Steel Summary</h3>
             <div className="mt-2 grid gap-2 sm:grid-cols-2 xl:grid-cols-4">
               {diameterSummary.length ? (
