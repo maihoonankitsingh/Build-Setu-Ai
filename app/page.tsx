@@ -3424,6 +3424,87 @@ function BbsPage({ theme }: { theme: ResolvedTheme }) {
     setManualForm(emptyBbsManualForm);
   }
 
+  const bbsMemberTypeOptions = ["Footing", "Column", "Beam", "Slab", "Staircase", "Lintel", "Chajja", "Retaining Wall", "Pile Cap"];
+  const bbsDiameterOptions = ["6", "8", "10", "12", "16", "20", "25", "32"];
+  const bbsBarsOptions = ["1", "2", "3", "4", "5", "6", "8", "10", "12", "16", "18", "20", "24", "28", "32", "36", "38", "40", "48", "56", "64", "72", "78", "82", "92"];
+  const bbsShapeCodeOptions = ["Straight", "Bent", "L", "U", "Stirrup", "Stirrup/Tie", "Hook"];
+  const bbsCuttingLengthOptions = ["0.45", "0.65", "1.00", "1.15", "1.20", "1.44", "3.10", "3.20", "3.40", "3.50", "3.60", "3.80", "4.20", "4.40", "4.60", "4.80", "6.90"];
+  const bbsStatusOptions = [
+    "Manual Edit - Engineer Review Required",
+    "Engineer Input Required",
+    "Engineer Review Required",
+    "Edited - Engineer Review Required",
+    "Approved by Engineer",
+    "Hold / Missing Input",
+  ];
+
+  function getBbsMemberIdOptions(memberType: string) {
+    const key = memberType.toLowerCase();
+
+    if (key.includes("footing")) return ["F1", "F2", "F3", "F4", "F5", "F6"];
+    if (key.includes("column")) return ["C1", "C2", "C3", "C4", "C5", "C6", "C7", "C8", "C9", "C10", "C11", "C12"];
+    if (key.includes("beam")) return ["B1", "B2", "B3", "B4", "B5", "B6", "B7", "B8", "B9", "B10"];
+    if (key.includes("slab")) return ["S1", "S2", "S3", "S4", "S5", "S6"];
+    if (key.includes("stair")) return ["ST1", "ST2", "ST3", "ST4"];
+    if (key.includes("lintel")) return ["L1", "L2", "L3", "L4"];
+    if (key.includes("chajja")) return ["CH1", "CH2", "CH3", "CH4"];
+    if (key.includes("retaining")) return ["RW1", "RW2", "RW3", "RW4"];
+    if (key.includes("pile")) return ["PC1", "PC2", "PC3", "PC4"];
+
+    return ["M1", "M2", "M3", "M4"];
+  }
+
+  function getBbsDrawingRefOptions(memberType: string) {
+    const key = memberType.toLowerCase();
+
+    if (key.includes("footing")) return ["STR-FOOTING-01", "STR-FOOTING-02", "STR-FOUNDATION-01", "Manual Entry"];
+    if (key.includes("column")) return ["STR-COLUMN-01", "STR-COLUMN-02", "STR-RCC-01", "Manual Entry"];
+    if (key.includes("beam")) return ["STR-BEAM-01", "STR-BEAM-02", "STR-RCC-02", "Manual Entry"];
+    if (key.includes("slab")) return ["STR-SLAB-01", "STR-SLAB-02", "STR-RCC-03", "Manual Entry"];
+    if (key.includes("stair")) return ["STR-STAIR-01", "STR-STAIR-02", "Manual Entry"];
+
+    return ["STR-RCC-01", "Manual Entry"];
+  }
+
+  function updateManualMemberType(memberType: string) {
+    const memberIds = getBbsMemberIdOptions(memberType);
+    const drawingRefs = getBbsDrawingRefOptions(memberType);
+
+    setManualForm((current) => ({
+      ...current,
+      memberType,
+      memberId: memberIds.includes(current.memberId) ? current.memberId : memberIds[0],
+      drawingRef: drawingRefs.includes(current.drawingRef) ? current.drawingRef : drawingRefs[0],
+    }));
+  }
+
+  function bbsShapeTag(shapeCode: string) {
+    const key = shapeCode.toLowerCase();
+
+    if (key.includes("stirrup")) return "STP";
+    if (key.includes("tie")) return "TIE";
+    if (key === "l") return "L";
+    if (key === "u") return "U";
+    if (key.includes("bent")) return "BENT";
+    if (key.includes("hook")) return "HOOK";
+
+    return "MAIN";
+  }
+
+  function applyAutoBarMark() {
+    setManualForm((current) => {
+      const memberId = current.memberId || getBbsMemberIdOptions(current.memberType)[0] || "M1";
+      const diameter = current.diameter || "12";
+      const tag = bbsShapeTag(current.shapeCode);
+      const suffix = Date.now().toString().slice(-4);
+
+      return {
+        ...current,
+        barMark: `${memberId}-${tag}-${diameter}-${suffix}`,
+      };
+    });
+  }
+
   const totalBars = useMemo(
     () => items.reduce((sum, item) => sum + Number(item.quantity || 0), 0),
     [items],
@@ -3805,55 +3886,182 @@ function BbsPage({ theme }: { theme: ResolvedTheme }) {
             </button>
           </div>
 
-          <div className="mt-5 grid gap-3 md:grid-cols-2 xl:grid-cols-5">
-            {[
-              ["memberType", "Member Type", "Column"],
-              ["memberId", "Member ID", "C1"],
-              ["barMark", "Bar Mark", "C1-VERT-16-01"],
-              ["diameter", "Diameter mm", "16"],
-              ["quantity", "Bars", "8"],
-              ["shapeCode", "Shape Code", "Straight"],
-              ["cuttingLength", "Cutting Length m", "3.6"],
-              ["drawingRef", "Drawing Ref", "STR-101"],
-              ["status", "Status", "Engineer Review Required"],
-            ].map(([field, label, placeholder]) => (
-              <label key={field} className={field === "status" ? "xl:col-span-2" : ""}>
-                <span className="text-[11px] font-black uppercase tracking-wide text-[#8d7aa8]">{label}</span>
-                <input
-                  value={manualForm[field as keyof BbsManualForm] || ""}
-                  onChange={(event) => updateManualForm(field as keyof BbsManualForm, event.target.value)}
-                  placeholder={placeholder}
-                  className="mt-2 h-11 w-full rounded-2xl border border-[#e6e0f5] bg-white px-4 text-sm font-semibold text-[#21133f] outline-none focus:border-[#6d35ff]"
-                />
+          <div className="mt-5 rounded-[24px] border border-[#eee8fb] bg-[#fbfaff] p-4">
+            <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-5">
+              <label>
+                <span className="text-[11px] font-black uppercase tracking-wide text-[#8d7aa8]">Member Type</span>
+                <div className="relative mt-2">
+                  <select
+                    value={manualForm.memberType}
+                    onChange={(event) => updateManualMemberType(event.target.value)}
+                    className="h-11 w-full appearance-none rounded-2xl border border-[#e6e0f5] bg-white px-4 pr-10 text-sm font-semibold text-[#21133f] outline-none transition focus:border-[#6d35ff] focus:ring-4 focus:ring-[#6d35ff]/10"
+                  >
+                    {bbsMemberTypeOptions.map((option) => (
+                      <option key={option} value={option}>{option}</option>
+                    ))}
+                  </select>
+                  <span className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-sm font-black text-[#6d35ff]">⌄</span>
+                </div>
               </label>
-            ))}
-          </div>
 
-          <div className="mt-5 grid gap-3 md:grid-cols-4">
-            {[
-              ["Total Len", `${bbsPreviewTotals(manualForm).totalLength.toFixed(3)} m`],
-              ["Unit Wt", `${bbsPreviewTotals(manualForm).unitWeight.toFixed(3)} kg/m`],
-              ["Total Wt", `${bbsPreviewTotals(manualForm).totalWeight.toFixed(2)} kg`],
-              ["Formula", "d²/162"],
-            ].map(([label, value]) => (
-              <div key={label} className="rounded-2xl border border-[#eee8fb] bg-[#fbfaff] p-4">
-                <p className="text-[11px] font-black uppercase tracking-wide text-[#8d7aa8]">{label}</p>
-                <p className="mt-0.5 text-[12px] font-black text-[#21133f]">{value}</p>
-              </div>
-            ))}
+              <label>
+                <span className="text-[11px] font-black uppercase tracking-wide text-[#8d7aa8]">Member ID</span>
+                <div className="relative mt-2">
+                  <select
+                    value={manualForm.memberId}
+                    onChange={(event) => updateManualForm("memberId", event.target.value)}
+                    className="h-11 w-full appearance-none rounded-2xl border border-[#e6e0f5] bg-white px-4 pr-10 text-sm font-semibold text-[#21133f] outline-none transition focus:border-[#6d35ff] focus:ring-4 focus:ring-[#6d35ff]/10"
+                  >
+                    {getBbsMemberIdOptions(manualForm.memberType).map((option) => (
+                      <option key={option} value={option}>{option}</option>
+                    ))}
+                  </select>
+                  <span className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-sm font-black text-[#6d35ff]">⌄</span>
+                </div>
+              </label>
+
+              <label className="xl:col-span-2">
+                <span className="text-[11px] font-black uppercase tracking-wide text-[#8d7aa8]">Bar Mark</span>
+                <div className="mt-2 flex gap-2">
+                  <input
+                    value={manualForm.barMark}
+                    onChange={(event) => updateManualForm("barMark", event.target.value)}
+                    placeholder="C1-MAIN-16-01"
+                    className="h-11 min-w-0 flex-1 rounded-2xl border border-[#e6e0f5] bg-white px-4 text-sm font-semibold text-[#21133f] outline-none transition focus:border-[#6d35ff] focus:ring-4 focus:ring-[#6d35ff]/10"
+                  />
+                  <button
+                    type="button"
+                    onClick={applyAutoBarMark}
+                    className="h-11 whitespace-nowrap rounded-2xl border border-[#d7ccff] bg-white px-4 text-xs font-black text-[#6d35ff] shadow-sm hover:bg-[#f6f1ff]"
+                  >
+                    Auto
+                  </button>
+                </div>
+              </label>
+
+              <label>
+                <span className="text-[11px] font-black uppercase tracking-wide text-[#8d7aa8]">Diameter mm</span>
+                <div className="relative mt-2">
+                  <select
+                    value={manualForm.diameter}
+                    onChange={(event) => updateManualForm("diameter", event.target.value)}
+                    className="h-11 w-full appearance-none rounded-2xl border border-[#e6e0f5] bg-white px-4 pr-10 text-sm font-semibold text-[#21133f] outline-none transition focus:border-[#6d35ff] focus:ring-4 focus:ring-[#6d35ff]/10"
+                  >
+                    {bbsDiameterOptions.map((option) => (
+                      <option key={option} value={option}>{option} mm</option>
+                    ))}
+                  </select>
+                  <span className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-sm font-black text-[#6d35ff]">⌄</span>
+                </div>
+              </label>
+
+              <label>
+                <span className="text-[11px] font-black uppercase tracking-wide text-[#8d7aa8]">Bars</span>
+                <div className="relative mt-2">
+                  <select
+                    value={manualForm.quantity}
+                    onChange={(event) => updateManualForm("quantity", event.target.value)}
+                    className="h-11 w-full appearance-none rounded-2xl border border-[#e6e0f5] bg-white px-4 pr-10 text-sm font-semibold text-[#21133f] outline-none transition focus:border-[#6d35ff] focus:ring-4 focus:ring-[#6d35ff]/10"
+                  >
+                    {bbsBarsOptions.map((option) => (
+                      <option key={option} value={option}>{option}</option>
+                    ))}
+                  </select>
+                  <span className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-sm font-black text-[#6d35ff]">⌄</span>
+                </div>
+              </label>
+
+              <label>
+                <span className="text-[11px] font-black uppercase tracking-wide text-[#8d7aa8]">Shape Code</span>
+                <div className="relative mt-2">
+                  <select
+                    value={manualForm.shapeCode}
+                    onChange={(event) => updateManualForm("shapeCode", event.target.value)}
+                    className="h-11 w-full appearance-none rounded-2xl border border-[#e6e0f5] bg-white px-4 pr-10 text-sm font-semibold text-[#21133f] outline-none transition focus:border-[#6d35ff] focus:ring-4 focus:ring-[#6d35ff]/10"
+                  >
+                    {bbsShapeCodeOptions.map((option) => (
+                      <option key={option} value={option}>{option}</option>
+                    ))}
+                  </select>
+                  <span className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-sm font-black text-[#6d35ff]">⌄</span>
+                </div>
+              </label>
+
+              <label>
+                <span className="text-[11px] font-black uppercase tracking-wide text-[#8d7aa8]">Cutting Length m</span>
+                <div className="relative mt-2">
+                  <select
+                    value={manualForm.cuttingLength}
+                    onChange={(event) => updateManualForm("cuttingLength", event.target.value)}
+                    className="h-11 w-full appearance-none rounded-2xl border border-[#e6e0f5] bg-white px-4 pr-10 text-sm font-semibold text-[#21133f] outline-none transition focus:border-[#6d35ff] focus:ring-4 focus:ring-[#6d35ff]/10"
+                  >
+                    {bbsCuttingLengthOptions.map((option) => (
+                      <option key={option} value={option}>{option} m</option>
+                    ))}
+                  </select>
+                  <span className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-sm font-black text-[#6d35ff]">⌄</span>
+                </div>
+              </label>
+
+              <label>
+                <span className="text-[11px] font-black uppercase tracking-wide text-[#8d7aa8]">Drawing Ref</span>
+                <div className="relative mt-2">
+                  <select
+                    value={manualForm.drawingRef}
+                    onChange={(event) => updateManualForm("drawingRef", event.target.value)}
+                    className="h-11 w-full appearance-none rounded-2xl border border-[#e6e0f5] bg-white px-4 pr-10 text-sm font-semibold text-[#21133f] outline-none transition focus:border-[#6d35ff] focus:ring-4 focus:ring-[#6d35ff]/10"
+                  >
+                    {getBbsDrawingRefOptions(manualForm.memberType).map((option) => (
+                      <option key={option} value={option}>{option}</option>
+                    ))}
+                  </select>
+                  <span className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-sm font-black text-[#6d35ff]">⌄</span>
+                </div>
+              </label>
+
+              <label className="xl:col-span-2">
+                <span className="text-[11px] font-black uppercase tracking-wide text-[#8d7aa8]">Status</span>
+                <div className="relative mt-2">
+                  <select
+                    value={manualForm.status}
+                    onChange={(event) => updateManualForm("status", event.target.value)}
+                    className="h-11 w-full appearance-none rounded-2xl border border-[#e6e0f5] bg-white px-4 pr-10 text-sm font-semibold text-[#21133f] outline-none transition focus:border-[#6d35ff] focus:ring-4 focus:ring-[#6d35ff]/10"
+                  >
+                    {bbsStatusOptions.map((option) => (
+                      <option key={option} value={option}>{option}</option>
+                    ))}
+                  </select>
+                  <span className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-sm font-black text-[#6d35ff]">⌄</span>
+                </div>
+              </label>
+            </div>
+
+            <div className="mt-4 grid gap-3 md:grid-cols-4">
+              {[
+                ["Total Len", `${bbsPreviewTotals(manualForm).totalLength.toFixed(3)} m`],
+                ["Unit Wt", `${bbsPreviewTotals(manualForm).unitWeight.toFixed(3)} kg/m`],
+                ["Total Wt", `${bbsPreviewTotals(manualForm).totalWeight.toFixed(2)} kg`],
+                ["Formula", "d²/162"],
+              ].map(([label, value]) => (
+                <div key={label} className="rounded-2xl border border-[#eee8fb] bg-white px-4 py-3 shadow-sm">
+                  <p className="text-[11px] font-black uppercase tracking-wide text-[#8d7aa8]">{label}</p>
+                  <p className="mt-0.5 text-[13px] font-black text-[#21133f]">{value}</p>
+                </div>
+              ))}
+            </div>
           </div>
 
           <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:justify-end">
             <button
               onClick={closeManualForm}
-              className="rounded-2xl border border-[#eee8fb] bg-white px-5 py-3 text-sm font-black text-[#817397]"
+              className="rounded-2xl border border-[#eee8fb] bg-white px-6 py-3 text-sm font-black text-[#817397] shadow-sm hover:bg-[#f8f5ff]"
             >
               Cancel
             </button>
             <button
               onClick={saveManualRow}
               disabled={manualSaving}
-              className="rounded-2xl bg-[#21133f] px-6 py-3 text-sm font-black text-white disabled:cursor-not-allowed disabled:opacity-60"
+              className="rounded-2xl bg-gradient-to-r from-[#21133f] to-[#6d35ff] px-7 py-3 text-sm font-black text-white shadow-lg shadow-[#6d35ff]/20 disabled:cursor-not-allowed disabled:opacity-60"
             >
               {manualSaving ? "Saving..." : manualForm.id ? "Save Changes" : "Add Row"}
             </button>
