@@ -4689,44 +4689,6 @@ function BbsPage({ theme }: { theme: ResolvedTheme }) {
 
               <div className="mt-4 grid grid-cols-[128px_minmax(0,1fr)] items-center gap-4">
                 <div className="relative grid h-[128px] w-[128px] place-items-center rounded-full" style={{ background: diameterConicGradient }}>
-                  {/* BBS_FULL_WIDTH_SUMMARY_SECTION */}
-      <section className="rounded-[28px] border border-[#ece8f8] bg-white p-5 shadow-[0_14px_38px_rgba(33,19,63,0.06)] lg:p-6">
-        <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-          <div>
-            <h2 className="text-[22px] font-black tracking-[-0.02em] text-[#161032]">
-              Bar Bending Schedule
-            </h2>
-            <p className="mt-1 text-[14px] font-medium leading-6 text-[#817397]">
-              Project-wise member schedule, cutting length and steel quantity.
-            </p>
-          </div>
-
-          <span className="inline-flex w-fit rounded-full bg-[#f3edff] px-4 py-2 text-[12px] font-black text-[#6d35ff]">
-            Engineer Review Required
-          </span>
-        </div>
-
-        <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
-          {[
-            ["▦", "Total Bars", numberFormat.format(totalBars)],
-            ["♟", "Total WT", `${weightFormat.format(totalWeight)} kg`],
-            ["⬡", "Concrete Grade", "M30"],
-            ["工", "Steel Grade", "Fe 500D"],
-          ].map(([icon, label, value]) => (
-            <div key={label} className="rounded-[22px] border border-[#eee8fb] bg-[#fcfbff] p-4">
-              <div className="flex items-center gap-3">
-                <span className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-[#f3edff] text-xl font-black text-[#6d35ff]">
-                  {icon}
-                </span>
-                <div className="min-w-0">
-                  <p className="text-[12px] font-black uppercase tracking-wide text-[#8a7ca6]">{label}</p>
-                  <p className="mt-1 text-[18px] font-black text-[#21133f]">{value}</p>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
 
       <div className="grid h-[78px] w-[78px] place-items-center rounded-full bg-white shadow-inner">
                     <div className="text-center">
@@ -4830,73 +4792,80 @@ function BbsPage({ theme }: { theme: ResolvedTheme }) {
       </section>
 
 
-      <section className="rounded-[22px] border border-[#e7ddff] bg-white p-4 shadow-[0_8px_20px_rgba(33,19,63,0.045)]">
-        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
-          <div className="flex items-center gap-4">
-            <div className="grid h-12 w-12 place-items-center rounded-full bg-[#48bd70] text-xl font-black text-white">
+      <section className="rounded-[28px] border border-[#e7ddff] bg-white p-4 shadow-[0_12px_30px_rgba(33,19,63,0.05)]">
+        <div className="grid gap-4 lg:grid-cols-[1.2fr_repeat(4,minmax(0,1fr))]">
+          <div className="flex items-center gap-3 rounded-[22px] bg-[#f8fff9] p-4">
+            <span className="grid h-12 w-12 shrink-0 place-items-center rounded-full bg-[#42c979] text-2xl font-black text-white">
               ✓
-            </div>
+            </span>
             <div>
-              <p className="text-sm font-black text-[#188a46]">
+              <h3 className="text-[15px] font-black leading-tight text-[#07934c]">
                 {items.length ? "BBS Generated Successfully" : "BBS Ready to Generate"}
-              </p>
-              <p className="mt-1 text-[11px] font-medium leading-5 text-[#817397]">
+              </h3>
+              <p className="mt-1 text-[11px] font-semibold leading-5 text-[#817397]">
                 {items.length
-                  ? "Your Bar Bending Schedule has been generated with review status."
-                  : "Select project and generate a professional BBS draft."}
+                  ? "Your Bar Bending Schedule has generated rows with review status."
+                  : "Select a project and generate a professional BBS draft."}
               </p>
             </div>
           </div>
 
           {[
-            ["▥", numberFormat.format(totalBars || 0), "Total Bars"],
-            ["♟", `${weightFormat.format(totalWeight || 0)} kg`, "Total Weight"],
+            ["▦", numberFormat.format(totalBars), "Total Bars"],
+            ["♟", `${weightFormat.format(totalWeight)} kg`, "Total Weight"],
             ["◎", items.length ? "Review" : "Pending", "Accuracy Gate"],
-            ["◷", lastGeneratedAt || "Not generated", "Generated On"],
+            [
+              "◷",
+              lastGeneratedAt
+                ? new Date(lastGeneratedAt).toLocaleString("en-IN", {
+                    day: "2-digit",
+                    month: "short",
+                    year: "numeric",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })
+                : "Not generated",
+              "Generated On",
+            ],
           ].map(([icon, value, label]) => (
-            <div key={label} className="flex items-center gap-3 border-l border-[#e5ddfb] pl-4">
-              <div className="grid h-10 w-10 place-items-center rounded-xl bg-[#efe7ff] text-lg text-[#6d35ff]">
+            <div key={label} className="flex items-center gap-3 rounded-[22px] border border-[#eee8fb] bg-[#fbfaff] p-4">
+              <span className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl bg-[#f0e8ff] text-lg font-black text-[#6d35ff]">
                 {icon}
-              </div>
-              <div>
-                <p className="text-base font-black text-[#21133f]">{value}</p>
-                <p className="text-[11px] font-bold text-[#817397]">{label}</p>
+              </span>
+              <div className="min-w-0">
+                <p className="truncate text-[16px] font-black text-[#21133f]">{value}</p>
+                <p className="mt-0.5 text-[11px] font-black text-[#817397]">{label}</p>
               </div>
             </div>
           ))}
         </div>
 
-        <div className="mt-4 grid gap-3 lg:grid-cols-2">
-          <div className="hidden rounded-2xl border border-[#eee8fb] bg-white p-3">
-            <h3 className="text-[13px] font-black text-[#21133f]">Diameter-wise Steel Summary</h3>
-            <div className="mt-2 grid gap-2 sm:grid-cols-2 xl:grid-cols-4">
-              {diameterSummary.length ? (
-                diameterSummary.map((row) => (
-                  <div key={row.diameter} className="rounded-xl bg-[#f8f5ff] px-3 py-2.5">
-                    <p className="text-[11px] font-bold text-[#817397]">{row.diameter} mm</p>
-                    <p className="mt-0.5 text-[12px] font-black text-[#21133f]">{weightFormat.format(row.weight)} kg</p>
-                  </div>
-                ))
-              ) : (
-                <p className="text-xs font-semibold text-[#817397]">No summary yet.</p>
-              )}
+        <div className="mt-4 rounded-[24px] border border-[#eee8fb] bg-white p-4">
+          <div className="flex items-center justify-between gap-3">
+            <div>
+              <h3 className="text-[15px] font-black text-[#21133f]">Member-wise Steel Summary</h3>
+              <p className="mt-1 text-[11px] font-semibold text-[#817397]">
+                Total steel weight grouped by structural member type.
+              </p>
             </div>
+            <span className="rounded-full bg-[#f3edff] px-3 py-1 text-[10px] font-black text-[#6d35ff]">
+              {memberSummary.length || 0} groups
+            </span>
           </div>
 
-          <div className="rounded-2xl border border-[#eee8fb] bg-white p-3">
-            <h3 className="text-[13px] font-black text-[#21133f]">Member-wise Steel Summary</h3>
-            <div className="mt-2 grid gap-2 sm:grid-cols-2 xl:grid-cols-4">
-              {memberSummary.length ? (
-                memberSummary.map((row) => (
-                  <div key={row.memberType} className="rounded-xl bg-[#f8f5ff] px-3 py-2.5">
-                    <p className="text-[11px] font-bold text-[#817397]">{row.memberType}</p>
-                    <p className="mt-0.5 text-[12px] font-black text-[#21133f]">{weightFormat.format(row.weight)} kg</p>
-                  </div>
-                ))
-              ) : (
-                <p className="text-xs font-semibold text-[#817397]">No summary yet.</p>
-              )}
-            </div>
+          <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+            {memberSummary.length ? (
+              memberSummary.map((row) => (
+                <div key={row.memberType} className="rounded-[18px] bg-[#f6f1ff] px-4 py-3">
+                  <p className="text-[11px] font-black text-[#817397]">{row.memberType}</p>
+                  <p className="mt-1 text-[15px] font-black text-[#21133f]">{weightFormat.format(row.weight)} kg</p>
+                </div>
+              ))
+            ) : (
+              <div className="rounded-[18px] bg-[#f6f1ff] px-4 py-3 text-[12px] font-bold text-[#817397]">
+                No member summary yet.
+              </div>
+            )}
           </div>
         </div>
       </section>
