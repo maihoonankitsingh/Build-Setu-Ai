@@ -3825,7 +3825,7 @@ function BbsPage({ theme }: { theme: ResolvedTheme }) {
             ].map(([label, value]) => (
               <div key={label} className="rounded-2xl border border-[#eee8fb] bg-[#fbfaff] p-4">
                 <p className="text-[11px] font-black uppercase tracking-wide text-[#8d7aa8]">{label}</p>
-                <p className="mt-1 text-sm font-black text-[#21133f]">{value}</p>
+                <p className="mt-0.5 text-[12px] font-black text-[#21133f]">{value}</p>
               </div>
             ))}
           </div>
@@ -3879,7 +3879,7 @@ function BbsPage({ theme }: { theme: ResolvedTheme }) {
           </div>
 
           <div className="mt-4 flex items-center justify-between gap-3 rounded-2xl border border-[#eee8fb] bg-[#fbfaff] px-4 py-3">
-            <p className="text-xs font-bold text-[#817397]">
+            <p className="text-[11px] font-bold text-[#817397]">
               Scroll horizontally to view status, drawing reference and edit actions.
             </p>
             <span className="rounded-full bg-white px-3 py-1 text-[11px] font-black text-[#6d35ff]">
@@ -3958,7 +3958,7 @@ function BbsPage({ theme }: { theme: ResolvedTheme }) {
                   ) : (
                     <tr>
                       <td colSpan={10} className="px-4 py-12 text-center">
-                        <p className="text-sm font-black text-[#21133f]">No BBS generated yet</p>
+                        <p className="text-[13px] font-black text-[#21133f]">No BBS generated yet</p>
                         <p className="mt-1 text-xs font-medium text-[#817397]">
                           Project select karke Generate BBS button click karo.
                         </p>
@@ -4100,17 +4100,17 @@ function BbsPage({ theme }: { theme: ResolvedTheme }) {
         </section>
       </div>
 
-      <section className="rounded-[26px] border border-[#ddd2ff] bg-gradient-to-r from-white via-[#fbf8ff] to-white p-5 shadow-[0_14px_38px_rgba(33,19,63,0.07)]">
-        <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-5">
+      <section className="rounded-[22px] border border-[#ddd2ff] bg-gradient-to-r from-white via-[#fbf8ff] to-white p-4 shadow-[0_10px_26px_rgba(33,19,63,0.06)]">
+        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
           <div className="flex items-center gap-4">
-            <div className="grid h-16 w-16 place-items-center rounded-full bg-[#48bd70] text-2xl font-black text-white">
+            <div className="grid h-12 w-12 place-items-center rounded-full bg-[#48bd70] text-xl font-black text-white">
               ✓
             </div>
             <div>
-              <p className="text-base font-black text-[#188a46]">
+              <p className="text-sm font-black text-[#188a46]">
                 {items.length ? "BBS Generated Successfully" : "BBS Ready to Generate"}
               </p>
-              <p className="mt-1 text-xs font-medium leading-5 text-[#817397]">
+              <p className="mt-1 text-[11px] font-medium leading-5 text-[#817397]">
                 {items.length
                   ? "Your Bar Bending Schedule has been generated with review status."
                   : "Select project and generate a professional BBS draft."}
@@ -4124,27 +4124,27 @@ function BbsPage({ theme }: { theme: ResolvedTheme }) {
             ["◎", items.length ? "Review" : "Pending", "Accuracy Gate"],
             ["◷", lastGeneratedAt || "Not generated", "Generated On"],
           ].map(([icon, value, label]) => (
-            <div key={label} className="flex items-center gap-4 border-l border-[#e5ddfb] pl-5">
-              <div className="grid h-12 w-12 place-items-center rounded-2xl bg-[#efe7ff] text-xl text-[#6d35ff]">
+            <div key={label} className="flex items-center gap-3 border-l border-[#e5ddfb] pl-4">
+              <div className="grid h-10 w-10 place-items-center rounded-xl bg-[#efe7ff] text-lg text-[#6d35ff]">
                 {icon}
               </div>
               <div>
-                <p className="text-lg font-black text-[#21133f]">{value}</p>
-                <p className="text-xs font-bold text-[#817397]">{label}</p>
+                <p className="text-base font-black text-[#21133f]">{value}</p>
+                <p className="text-[11px] font-bold text-[#817397]">{label}</p>
               </div>
             </div>
           ))}
         </div>
 
-        <div className="mt-5 grid gap-4 lg:grid-cols-2">
-          <div className="rounded-2xl border border-[#eee8fb] bg-white p-4">
-            <h3 className="text-sm font-black text-[#21133f]">Diameter-wise Steel Summary</h3>
-            <div className="mt-3 grid gap-2 sm:grid-cols-2 xl:grid-cols-4">
+        <div className="mt-4 grid gap-3 lg:grid-cols-2">
+          <div className="rounded-2xl border border-[#eee8fb] bg-white p-3">
+            <h3 className="text-[13px] font-black text-[#21133f]">Diameter-wise Steel Summary</h3>
+            <div className="mt-2 grid gap-2 sm:grid-cols-2 xl:grid-cols-4">
               {diameterSummary.length ? (
                 diameterSummary.map((row) => (
-                  <div key={row.diameter} className="rounded-xl bg-[#f8f5ff] p-3">
-                    <p className="text-xs font-bold text-[#817397]">{row.diameter} mm</p>
-                    <p className="mt-1 text-sm font-black text-[#21133f]">{weightFormat.format(row.weight)} kg</p>
+                  <div key={row.diameter} className="rounded-xl bg-[#f8f5ff] px-3 py-2.5">
+                    <p className="text-[11px] font-bold text-[#817397]">{row.diameter} mm</p>
+                    <p className="mt-0.5 text-[12px] font-black text-[#21133f]">{weightFormat.format(row.weight)} kg</p>
                   </div>
                 ))
               ) : (
@@ -4153,14 +4153,14 @@ function BbsPage({ theme }: { theme: ResolvedTheme }) {
             </div>
           </div>
 
-          <div className="rounded-2xl border border-[#eee8fb] bg-white p-4">
-            <h3 className="text-sm font-black text-[#21133f]">Member-wise Steel Summary</h3>
-            <div className="mt-3 grid gap-2 sm:grid-cols-2 xl:grid-cols-4">
+          <div className="rounded-2xl border border-[#eee8fb] bg-white p-3">
+            <h3 className="text-[13px] font-black text-[#21133f]">Member-wise Steel Summary</h3>
+            <div className="mt-2 grid gap-2 sm:grid-cols-2 xl:grid-cols-4">
               {memberSummary.length ? (
                 memberSummary.map((row) => (
-                  <div key={row.memberType} className="rounded-xl bg-[#f8f5ff] p-3">
-                    <p className="text-xs font-bold text-[#817397]">{row.memberType}</p>
-                    <p className="mt-1 text-sm font-black text-[#21133f]">{weightFormat.format(row.weight)} kg</p>
+                  <div key={row.memberType} className="rounded-xl bg-[#f8f5ff] px-3 py-2.5">
+                    <p className="text-[11px] font-bold text-[#817397]">{row.memberType}</p>
+                    <p className="mt-0.5 text-[12px] font-black text-[#21133f]">{weightFormat.format(row.weight)} kg</p>
                   </div>
                 ))
               ) : (
