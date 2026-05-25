@@ -80,7 +80,7 @@ function CameraController({
       camera.position.set(0, 6.6, 0.01);
       camera.lookAt(0, 1.8, 0);
     } else {
-      camera.position.set(4.6, 3.8, 5.8);
+      camera.position.set(4.2, 3.2, 5.2);
       camera.lookAt(0, 1.8, 0);
     }
 
@@ -213,10 +213,10 @@ export default function Bbs3DViewer({ column, totalBars, totalWeight }: Bbs3DVie
         </span>
       </div>
 
-      <div className="relative h-[560px]">
+      <div className="relative h-[360px]">
         <Canvas
           shadows
-          camera={{ position: [4.6, 3.8, 5.8], fov: 32, near: 0.1, far: 100 }}
+          camera={{ position: [4.2, 3.2, 5.2], fov: 38, near: 0.1, far: 100 }}
           gl={{ antialias: true, alpha: true }}
           onCreated={({ gl }) => {
             gl.setClearColor(new THREE.Color("#fbfaff"), 1);

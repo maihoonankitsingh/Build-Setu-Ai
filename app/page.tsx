@@ -154,7 +154,7 @@ function persistBuildSetuViewKey(view: ViewKey) {
 const Bbs3DViewer = dynamic(() => import("@/components/bbs/Bbs3DViewer"), {
   ssr: false,
   loading: () => (
-    <div className="grid h-[560px] place-items-center rounded-[22px] border border-[#eee8fb] bg-[#fbfaff] text-xs font-bold text-[#817397]">
+    <div className="grid h-[360px] place-items-center rounded-[22px] border border-[#eee8fb] bg-[#fbfaff] text-xs font-bold text-[#817397]">
       Loading 3D reinforcement viewer...
     </div>
   ),
@@ -4211,6 +4211,49 @@ function BbsPage({ theme }: { theme: ResolvedTheme }) {
 
         <section className="min-w-0 self-start rounded-[24px] border border-[#ece8f8] bg-white p-4 shadow-[0_8px_24px_rgba(33,19,63,0.055)]">
           <div className="grid gap-4">
+            
+            <div className="mb-4 rounded-[24px] border border-[#ece8f8] bg-white p-4 shadow-[0_10px_28px_rgba(33,19,63,0.06)]">
+              <div className="flex items-center justify-between gap-3">
+                <div>
+                  <h3 className="text-base font-black text-[#161032]">Cost Breakdown</h3>
+                  <p className="mt-1 text-[11px] font-medium text-[#817397]">Estimated reinforcement cost split.</p>
+                </div>
+                <span className="rounded-full bg-[#f3edff] px-3 py-1 text-[10px] font-black text-[#6d35ff]">
+                  BBS Cost Breakdown
+                </span>
+              </div>
+
+              <div className="mt-4 grid gap-4 lg:grid-cols-[145px_1fr]">
+                <div className="relative mx-auto grid h-[145px] w-[145px] place-items-center rounded-full bg-[conic-gradient(#6d35ff_0_42%,#5d9cff_42%_65%,#63d99c_65%_82%,#ffac45_82%_93%,#ff6f91_93%_100%)]">
+                  <div className="grid h-[92px] w-[92px] place-items-center rounded-full bg-white shadow-inner">
+                    <div className="text-center">
+                      <p className="text-[10px] font-bold text-[#817397]">Total Cost</p>
+                      <p className="mt-1 text-sm font-black text-[#161032]">
+                        ₹{numberFormat.format(Math.round((totalWeight || 0) * 92))}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  {[
+                    ["#6d35ff", "Reinforcement", "42.0%", Math.round((totalWeight || 0) * 92 * 0.42)],
+                    ["#5d9cff", "Cutting/Bending", "23.0%", Math.round((totalWeight || 0) * 92 * 0.23)],
+                    ["#63d99c", "Binding & Chairs", "17.0%", Math.round((totalWeight || 0) * 92 * 0.17)],
+                    ["#ffac45", "Wastage", "11.0%", Math.round((totalWeight || 0) * 92 * 0.11)],
+                    ["#ff6f91", "Review/Docs", "7.0%", Math.round((totalWeight || 0) * 92 * 0.07)],
+                  ].map(([color, label, percent, amount]) => (
+                    <div key={label} className="grid grid-cols-[18px_1fr_52px_82px] items-center gap-2 text-[11px]">
+                      <span className="h-3 w-3 rounded-full" style={{ backgroundColor: color as string }} />
+                      <span className="font-bold text-[#5f5471]">{label}</span>
+                      <span className="text-right font-black text-[#817397]">{percent}</span>
+                      <span className="text-right font-black text-[#21133f]">₹{numberFormat.format(Number(amount))}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
             <Bbs3DViewer column={selectedColumn} totalBars={totalBars} totalWeight={totalWeight} />
 
 
