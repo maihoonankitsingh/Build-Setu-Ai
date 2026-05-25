@@ -4503,18 +4503,19 @@ function BbsPage({ theme }: { theme: ResolvedTheme }) {
           </div>
 
 
-          <div className="mt-3 grid gap-2 rounded-2xl border border-[#eee8fb] bg-[#fbfaff] p-3 md:grid-cols-[minmax(0,1.7fr)_118px_135px_135px_72px]">
+          <div className="mt-3 grid gap-2 rounded-2xl border border-[#eee8fb] bg-[#fbfaff] p-2 md:grid-cols-[minmax(0,1.55fr)_112px_128px_128px_66px]">
             <input
               value={bbsSearchQuery}
               onChange={(event) => setBbsSearchQuery(event.target.value)}
               placeholder="Search mark, member, shape, drawing ref..."
-              className="h-10 rounded-xl border border-[#e6e0f5] bg-white px-3 text-xs font-bold text-[#21133f] outline-none transition focus:border-[#6d35ff] focus:ring-4 focus:ring-[#6d35ff]/10"
+              className="h-9 rounded-xl border border-[#e6e0f5] bg-white px-3 text-[11px] font-semibold text-[#21133f] outline-none transition placeholder:text-[#9a8caf] focus:border-[#6d35ff] focus:ring-4 focus:ring-[#6d35ff]/10"
             />
 
+            <div className="relative">
             <select
               value={bbsDiameterFilter}
               onChange={(event) => setBbsDiameterFilter(event.target.value)}
-              className="h-10 rounded-xl border border-[#e6e0f5] bg-white px-3 text-xs font-bold text-[#21133f] outline-none"
+              className="h-9 w-full appearance-none rounded-xl border border-[#e6e0f5] bg-white px-3 pr-8 text-[11px] font-semibold text-[#21133f] outline-none transition focus:border-[#6d35ff] focus:ring-4 focus:ring-[#6d35ff]/10"
             >
               {bbsDiameterFilterOptions.map((option) => (
                 <option key={option} value={option}>
@@ -4522,30 +4523,44 @@ function BbsPage({ theme }: { theme: ResolvedTheme }) {
                 </option>
               ))}
             </select>
+              <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[10px] font-black text-[#6d35ff]">
+                ▾
+              </span>
+            </div>
 
+            <div className="relative">
             <select
               value={bbsMemberFilter}
               onChange={(event) => setBbsMemberFilter(event.target.value)}
-              className="h-10 rounded-xl border border-[#e6e0f5] bg-white px-3 text-xs font-bold text-[#21133f] outline-none"
+              className="h-9 w-full appearance-none rounded-xl border border-[#e6e0f5] bg-white px-3 pr-8 text-[11px] font-semibold text-[#21133f] outline-none transition focus:border-[#6d35ff] focus:ring-4 focus:ring-[#6d35ff]/10"
             >
               {bbsMemberFilterOptions.map((option) => (
                 <option key={option} value={option}>{option === "All" ? "All Members" : option}</option>
               ))}
             </select>
+              <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[10px] font-black text-[#6d35ff]">
+                ▾
+              </span>
+            </div>
 
+            <div className="relative">
             <select
               value={bbsStatusFilter}
               onChange={(event) => setBbsStatusFilter(event.target.value)}
-              className="h-10 rounded-xl border border-[#e6e0f5] bg-white px-3 text-xs font-bold text-[#21133f] outline-none"
+              className="h-9 w-full appearance-none rounded-xl border border-[#e6e0f5] bg-white px-3 pr-8 text-[11px] font-semibold text-[#21133f] outline-none transition focus:border-[#6d35ff] focus:ring-4 focus:ring-[#6d35ff]/10"
             >
               {bbsStatusFilterOptions.map((option) => (
                 <option key={option} value={option}>{option === "All" ? "All Status" : option}</option>
               ))}
             </select>
+              <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[10px] font-black text-[#6d35ff]">
+                ▾
+              </span>
+            </div>
 
             <button
               onClick={clearBbsFilters}
-              className="h-10 rounded-xl border border-[#e4d9ff] bg-white px-2 text-xs font-black text-[#6d35ff] hover:bg-[#f4efff]"
+              className="h-9 rounded-xl border border-[#e4d9ff] bg-white px-2 text-[11px] font-black text-[#6d35ff] transition hover:bg-[#f4efff]"
             >
               Clear
             </button>
