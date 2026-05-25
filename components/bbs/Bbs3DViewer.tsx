@@ -213,7 +213,7 @@ export default function Bbs3DViewer({ column, totalBars, totalWeight }: Bbs3DVie
         </span>
       </div>
 
-      <div className="relative h-[360px]">
+      <div className="relative h-[390px]">
         <Canvas
           shadows
           camera={{ position: [4.2, 3.2, 5.2], fov: 38, near: 0.1, far: 100 }}
@@ -293,18 +293,7 @@ export default function Bbs3DViewer({ column, totalBars, totalWeight }: Bbs3DVie
         </div>
       </div>
 
-      <div className="grid grid-cols-3 border-t border-[#eee8fb] bg-white">
-        {[
-          ["Bars", totalBars || 0],
-          ["Steel", `${totalWeight.toFixed(2)} kg`],
-          ["Grade", column.steel],
-        ].map(([label, value]) => (
-          <div key={label} className="border-r border-[#eee8fb] px-3 py-1.5 last:border-r-0">
-            <p className="text-[9px] font-bold text-[#817397]">{label}</p>
-            <p className="mt-0.5 text-[12px] font-black text-[#21133f]">{value}</p>
-          </div>
-        ))}
-      </div>
+
     </div>
   );
 }

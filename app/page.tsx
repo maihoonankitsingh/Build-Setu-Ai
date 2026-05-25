@@ -3348,6 +3348,10 @@ function BbsPage({ theme }: { theme: ResolvedTheme }) {
   const [manualSaving, setManualSaving] = useState(false);
   const [manualForm, setManualForm] = useState<BbsManualForm>(emptyBbsManualForm);
   const [openBbsDropdown, setOpenBbsDropdown] = useState<string | null>(null);
+  const [bbsSearchQuery, setBbsSearchQuery] = useState("");
+  const [bbsDiameterFilter, setBbsDiameterFilter] = useState("All");
+  const [bbsMemberFilter, setBbsMemberFilter] = useState("All");
+  const [bbsStatusFilter, setBbsStatusFilter] = useState("All");
 
   const numberFormat = useMemo(() => new Intl.NumberFormat("en-IN"), []);
   const weightFormat = useMemo(
@@ -3837,6 +3841,58 @@ function BbsPage({ theme }: { theme: ResolvedTheme }) {
     URL.revokeObjectURL(url);
   }
 
+  async function exportExcel() {
+    if (!filteredBbsItems.length) {
+      setMessage("No filtered BBS rows available to export.");
+      return;
+    }
+
+    try {
+      const XLSX = await import("xlsx");
+
+      const rows = filteredBbsItems.map((item, index) => ({
+        "S.No": index + 1,
+        "Bar Mark": item.barMark || "",
+        "Member Type": item.memberType || "",
+        "Member ID": item.memberId || "",
+        "Diameter (mm)": item.diameter || "",
+        "Shape Code": item.shapeCode || "",
+        "No. of Bars": item.quantity || "",
+        "Cutting Length (m)": item.cuttingLength || "",
+        "Total Length (m)": item.totalLength || "",
+        "Unit Weight (kg/m)": item.unitWeight || "",
+        "Total Weight (kg)": item.totalWeight || "",
+        "Drawing Ref": item.drawingRef || "",
+        "Status": item.status || "",
+      }));
+
+      const worksheet = XLSX.utils.json_to_sheet(rows);
+      worksheet["!cols"] = [
+        { wch: 8 },
+        { wch: 18 },
+        { wch: 16 },
+        { wch: 12 },
+        { wch: 14 },
+        { wch: 14 },
+        { wch: 12 },
+        { wch: 18 },
+        { wch: 18 },
+        { wch: 18 },
+        { wch: 18 },
+        { wch: 18 },
+        { wch: 30 },
+      ];
+
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, "BBS");
+      XLSX.writeFile(workbook, `buildsetu-bbs-${selectedProject?.title || "project"}.xlsx`);
+
+      setMessage("BBS Excel file exported.");
+    } catch {
+      setMessage("Unable to export Excel file.");
+    }
+  }
+
   function shareReport() {
     const text = `BuildSetu AI BBS Report\nProject: ${selectedProject?.title || "Project"}\nTotal Bars: ${totalBars}\nTotal Weight: ${weightFormat.format(totalWeight)} kg\nStatus: Engineer Review Required`;
     navigator.clipboard?.writeText(text);
@@ -3924,6 +3980,52 @@ function BbsPage({ theme }: { theme: ResolvedTheme }) {
         </div>
       </label>
     );
+  }
+
+
+  const bbsMemberFilterOptions = useMemo(() => {
+    return ["All", ...Array.from(new Set(items.map((item) => item.memberType || "Other"))).sort()];
+  }, [items]);
+
+  const bbsDiameterFilterOptions = useMemo(() => {
+    return ["All", ...Array.from(new Set(items.map((item) => Number(item.diameter || 0)).filter(Boolean))).sort((a, b) => a - b).map(String)];
+  }, [items]);
+
+  const bbsStatusFilterOptions = useMemo(() => {
+    return ["All", ...Array.from(new Set(items.map((item) => item.status || "Review Required"))).sort()];
+  }, [items]);
+
+  const filteredBbsItems = useMemo(() => {
+    const query = bbsSearchQuery.trim().toLowerCase();
+
+    return items.filter((item) => {
+      const matchesQuery = !query || [
+        item.barMark,
+        item.memberType,
+        item.memberId,
+        item.shapeCode,
+        item.drawingRef,
+        item.status,
+        item.diameter ? `${item.diameter}mm` : "",
+      ]
+        .filter(Boolean)
+        .join(" ")
+        .toLowerCase()
+        .includes(query);
+
+      const matchesDiameter = bbsDiameterFilter === "All" || String(item.diameter || "") === bbsDiameterFilter;
+      const matchesMember = bbsMemberFilter === "All" || (item.memberType || "Other") === bbsMemberFilter;
+      const matchesStatus = bbsStatusFilter === "All" || (item.status || "Review Required") === bbsStatusFilter;
+
+      return matchesQuery && matchesDiameter && matchesMember && matchesStatus;
+    });
+  }, [bbsDiameterFilter, bbsMemberFilter, bbsSearchQuery, bbsStatusFilter, items]);
+
+  function clearBbsFilters() {
+    setBbsSearchQuery("");
+    setBbsDiameterFilter("All");
+    setBbsMemberFilter("All");
+    setBbsStatusFilter("All");
   }
 
   return (
@@ -4141,8 +4243,56 @@ function BbsPage({ theme }: { theme: ResolvedTheme }) {
               Scroll horizontally to view status, drawing reference and edit actions.
             </p>
             <span className="rounded-full bg-white px-3 py-1 text-[11px] font-black text-[#6d35ff]">
-              {items.length} rows
+              {filteredBbsItems.length} rows
             </span>
+          </div>
+
+          <div className="mt-3 grid gap-2 rounded-2xl border border-[#eee8fb] bg-[#fbfaff] p-3 md:grid-cols-[minmax(0,1fr)_150px_150px_170px_88px]">
+            <input
+              value={bbsSearchQuery}
+              onChange={(event) => setBbsSearchQuery(event.target.value)}
+              placeholder="Search mark, member, shape, drawing ref..."
+              className="h-10 rounded-xl border border-[#e6e0f5] bg-white px-3 text-xs font-bold text-[#21133f] outline-none transition focus:border-[#6d35ff] focus:ring-4 focus:ring-[#6d35ff]/10"
+            />
+
+            <select
+              value={bbsDiameterFilter}
+              onChange={(event) => setBbsDiameterFilter(event.target.value)}
+              className="h-10 rounded-xl border border-[#e6e0f5] bg-white px-3 text-xs font-bold text-[#21133f] outline-none"
+            >
+              {bbsDiameterFilterOptions.map((option) => (
+                <option key={option} value={option}>
+                  {option === "All" ? "All Dia" : `${option} mm`}
+                </option>
+              ))}
+            </select>
+
+            <select
+              value={bbsMemberFilter}
+              onChange={(event) => setBbsMemberFilter(event.target.value)}
+              className="h-10 rounded-xl border border-[#e6e0f5] bg-white px-3 text-xs font-bold text-[#21133f] outline-none"
+            >
+              {bbsMemberFilterOptions.map((option) => (
+                <option key={option} value={option}>{option === "All" ? "All Members" : option}</option>
+              ))}
+            </select>
+
+            <select
+              value={bbsStatusFilter}
+              onChange={(event) => setBbsStatusFilter(event.target.value)}
+              className="h-10 rounded-xl border border-[#e6e0f5] bg-white px-3 text-xs font-bold text-[#21133f] outline-none"
+            >
+              {bbsStatusFilterOptions.map((option) => (
+                <option key={option} value={option}>{option === "All" ? "All Status" : option}</option>
+              ))}
+            </select>
+
+            <button
+              onClick={clearBbsFilters}
+              className="h-10 rounded-xl border border-[#e4d9ff] bg-white px-3 text-xs font-black text-[#6d35ff] hover:bg-[#f4efff]"
+            >
+              Clear
+            </button>
           </div>
 
           <div className="mt-3 overflow-hidden rounded-2xl border border-[#eee8fb] bg-white">
@@ -4175,8 +4325,8 @@ function BbsPage({ theme }: { theme: ResolvedTheme }) {
                         Loading BBS...
                       </td>
                     </tr>
-                  ) : items.length ? (
-                    items.map((item, index) => (
+                  ) : filteredBbsItems.length ? (
+                    filteredBbsItems.map((item, index) => (
                       <tr key={item.id || `${item.barMark}-${index}`} className="border-b border-[#f0edf7] hover:bg-[#fbfaff]">
                         <td className="break-words px-3 py-2.5 font-black text-[#21133f]">{item.barMark || `BBS-${index + 1}`}</td>
                         <td className="px-3 py-2.5 font-semibold text-[#21133f]">{item.diameter || "-"} mm</td>
@@ -4230,7 +4380,7 @@ function BbsPage({ theme }: { theme: ResolvedTheme }) {
 
           <div className="mt-3 grid gap-2 sm:grid-cols-3">
             <button
-              onClick={exportCsv}
+              onClick={exportExcel}
               disabled={!items.length}
               className="rounded-2xl border border-[#d9f2e3] bg-[#f6fff9] px-4 py-3 text-sm font-black text-[#0f8a45] disabled:cursor-not-allowed disabled:opacity-50"
             >
