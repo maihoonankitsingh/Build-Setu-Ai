@@ -77,7 +77,7 @@ function CameraController({
 
   useEffect(() => {
     if (mode === "2d") {
-      camera.position.set(0, 6.6, 0.01);
+      camera.position.set(4.2, 3.2, 5.2);
       camera.lookAt(0, 1.8, 0);
     } else {
       camera.position.set(4.2, 3.2, 5.2);
@@ -213,10 +213,10 @@ export default function Bbs3DViewer({ column, totalBars, totalWeight }: Bbs3DVie
         </span>
       </div>
 
-      <div className="relative h-[390px]">
+      <div className="relative h-[380px] overflow-hidden">
         <Canvas
           shadows
-          camera={{ position: [4.2, 3.2, 5.2], fov: 38, near: 0.1, far: 100 }}
+          camera={{ position: [4.2, 3.2, 5.2], fov: 39, near: 0.1, far: 100 }}
           gl={{ antialias: true, alpha: true }}
           onCreated={({ gl }) => {
             gl.setClearColor(new THREE.Color("#fbfaff"), 1);
@@ -233,7 +233,7 @@ export default function Bbs3DViewer({ column, totalBars, totalWeight }: Bbs3DVie
           />
         </Canvas>
 
-        <div className="absolute left-4 top-4 flex flex-col gap-2">
+        <div className="absolute left-3 top-3 flex flex-col gap-2">
           {(["3d", "2d"] as const).map((nextMode) => (
             <button
               key={nextMode}
@@ -260,7 +260,7 @@ export default function Bbs3DViewer({ column, totalBars, totalWeight }: Bbs3DVie
           </button>
         </div>
 
-        <div className="absolute right-4 top-4 flex flex-col gap-2">
+        <div className="absolute right-3 top-3 flex flex-col gap-2">
           <button
             onClick={() => setZoomSignal((value) => value + 1)}
             className="h-9 w-10 rounded-xl border border-[#ece8f8] bg-white text-[13px] font-black text-[#5f5471] shadow-sm hover:border-[#cbbcff] hover:bg-[#f8f5ff]"

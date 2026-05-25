@@ -4293,7 +4293,7 @@ function BbsPage({ theme }: { theme: ResolvedTheme }) {
   }
 
   return (
-    <div className="max-w-full overflow-x-hidden space-y-6">
+    <div className="mx-auto max-w-[1500px] overflow-x-hidden space-y-5 px-1 pb-8">
       <div className="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
         <PageTitle
           title="BBS Generator"
@@ -4472,7 +4472,7 @@ function BbsPage({ theme }: { theme: ResolvedTheme }) {
         </section>
       ) : null}
 
-      <div className="grid min-w-0 items-start gap-5 xl:grid-cols-[minmax(0,7fr)_minmax(300px,3fr)] 2xl:grid-cols-[minmax(0,7fr)_minmax(340px,3fr)]">
+      <div className="grid min-w-0 items-start gap-5 xl:grid-cols-[minmax(0,7fr)_minmax(340px,3fr)] 2xl:grid-cols-[minmax(0,7fr)_minmax(380px,3fr)]">
         <section className="min-w-0 self-start rounded-[24px] border border-[#ece8f8] bg-white p-4 shadow-[0_8px_24px_rgba(33,19,63,0.055)]">
           <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
             <div>
@@ -4560,8 +4560,8 @@ function BbsPage({ theme }: { theme: ResolvedTheme }) {
           </div>
 
           <div className="mt-3 overflow-hidden rounded-2xl border border-[#eee8fb] bg-white">
-            <div className="max-h-[500px] overflow-auto overscroll-contain">
-              <table className="min-w-[1080px] w-full table-fixed border-collapse bg-white text-left text-xs">
+            <div className="max-h-[470px] overflow-auto overscroll-contain">
+              <table className="min-w-[980px] w-full table-fixed border-collapse bg-white text-left text-xs">
                 <thead className="sticky top-0 z-10 bg-[#f5f1ff] text-[#6d35ff]">
                   <tr>
                     {[
