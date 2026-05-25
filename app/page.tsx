@@ -4213,41 +4213,58 @@ function BbsPage({ theme }: { theme: ResolvedTheme }) {
           <div className="grid gap-4">
             <Bbs3DViewer column={selectedColumn} totalBars={totalBars} totalWeight={totalWeight} />
 
-            <div className="rounded-[22px] border border-[#e7ddff] bg-white p-4">
-              <h3 className="text-lg font-black text-[#6d35ff]">Column {selectedColumn.id}</h3>
-              <div className="mt-4 space-y-0.5">
-                {[
-                  ["Section", selectedColumn.section],
-                  ["Height", selectedColumn.height],
-                  ["Main Bars", selectedColumn.mainBars],
-                  ["Stirrups", selectedColumn.stirrups],
-                  ["Cover", selectedColumn.cover],
-                  ["Concrete Grade", selectedColumn.concrete],
-                  ["Steel Grade", selectedColumn.steel],
-                  ["Location", selectedColumn.location],
-                  ["Element Type", selectedColumn.type],
-                ].map(([label, value]) => (
-                  <div key={label} className="flex items-center justify-between border-b border-[#f0edf7] py-2.5 text-xs">
-                    <span className="font-bold text-[#817397]">{label}</span>
-                    <span className="font-black text-[#21133f]">{value}</span>
-                  </div>
-                ))}
-              </div>
 
-              <button className="mt-4 w-full rounded-2xl border border-[#d7ccff] bg-[#fbf8ff] px-4 py-2.5 text-xs font-black text-[#6d35ff]">
-                ↗ View in Drawing
-              </button>
 
-              <div className="mt-4 rounded-2xl bg-[#fffaf0] p-3">
-                <p className="text-xs font-black text-[#9a6412]">Review Gate</p>
-                <p className="mt-1 text-[11px] leading-5 text-[#9a6412]">
-                  Cutting length, bend deduction, lap length and development length must be checked by a structural engineer.
-                </p>
-              </div>
-            </div>
           </div>
         </section>
       </div>
+
+      <section className="rounded-[24px] border border-[#e7ddff] bg-white p-4 shadow-[0_12px_32px_rgba(33,19,63,0.06)]">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <h3 className="text-lg font-black text-[#6d35ff]">Column {selectedColumn.id}</h3>
+            <p className="mt-1 text-[11px] font-medium text-[#817397]">
+              Selected reinforcement member details for review and drawing verification.
+            </p>
+          </div>
+          <span className="w-fit rounded-full bg-[#f3edff] px-3 py-1 text-[11px] font-black text-[#6d35ff]">
+            Detail Panel
+          </span>
+        </div>
+
+        <div className="mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+          {[
+            ["Section", selectedColumn.section],
+            ["Height", selectedColumn.height],
+            ["Main Bars", selectedColumn.mainBars],
+            ["Stirrups", selectedColumn.stirrups],
+            ["Cover", selectedColumn.cover],
+            ["Concrete Grade", selectedColumn.concrete],
+            ["Steel Grade", selectedColumn.steel],
+            ["Location", selectedColumn.location],
+            ["Element Type", selectedColumn.type],
+          ].map(([label, value]) => (
+            <div key={label} className="rounded-2xl border border-[#f0edf7] bg-[#fbfaff] px-4 py-3 text-xs">
+              <span className="block font-bold text-[#817397]">{label}</span>
+              <span className="mt-1 block font-black text-[#21133f]">{value}</span>
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-4 grid gap-3 lg:grid-cols-[220px_1fr]">
+          <button className="rounded-2xl border border-[#d7ccff] bg-[#fbf8ff] px-4 py-3 text-xs font-black text-[#6d35ff]">
+            ↗ View in Drawing
+          </button>
+
+          <div className="rounded-2xl border border-[#ffe3b3] bg-[#fffaf0] p-3">
+            <p className="text-xs font-black text-[#9a6412]">Review Gate</p>
+            <p className="mt-1 text-[11px] leading-5 text-[#9a6412]">
+              Cutting length, bend deduction, lap length and development length must be checked by a structural engineer.
+            </p>
+          </div>
+        </div>
+      </section>
+
 
       <section className="rounded-[22px] border border-[#ddd2ff] bg-gradient-to-r from-white via-[#fbf8ff] to-white p-4 shadow-[0_10px_26px_rgba(33,19,63,0.06)]">
         <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
