@@ -4689,7 +4689,46 @@ function BbsPage({ theme }: { theme: ResolvedTheme }) {
 
               <div className="mt-4 grid grid-cols-[128px_minmax(0,1fr)] items-center gap-4">
                 <div className="relative grid h-[128px] w-[128px] place-items-center rounded-full" style={{ background: diameterConicGradient }}>
-                  <div className="grid h-[78px] w-[78px] place-items-center rounded-full bg-white shadow-inner">
+                  {/* BBS_FULL_WIDTH_SUMMARY_SECTION */}
+      <section className="rounded-[28px] border border-[#ece8f8] bg-white p-5 shadow-[0_14px_38px_rgba(33,19,63,0.06)] lg:p-6">
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+          <div>
+            <h2 className="text-[22px] font-black tracking-[-0.02em] text-[#161032]">
+              Bar Bending Schedule
+            </h2>
+            <p className="mt-1 text-[14px] font-medium leading-6 text-[#817397]">
+              Project-wise member schedule, cutting length and steel quantity.
+            </p>
+          </div>
+
+          <span className="inline-flex w-fit rounded-full bg-[#f3edff] px-4 py-2 text-[12px] font-black text-[#6d35ff]">
+            Engineer Review Required
+          </span>
+        </div>
+
+        <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+          {[
+            ["▦", "Total Bars", numberFormat.format(totalBars)],
+            ["♟", "Total WT", `${weightFormat.format(totalWeight)} kg`],
+            ["⬡", "Concrete Grade", "M30"],
+            ["工", "Steel Grade", "Fe 500D"],
+          ].map(([icon, label, value]) => (
+            <div key={label} className="rounded-[22px] border border-[#eee8fb] bg-[#fcfbff] p-4">
+              <div className="flex items-center gap-3">
+                <span className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-[#f3edff] text-xl font-black text-[#6d35ff]">
+                  {icon}
+                </span>
+                <div className="min-w-0">
+                  <p className="text-[12px] font-black uppercase tracking-wide text-[#8a7ca6]">{label}</p>
+                  <p className="mt-1 text-[18px] font-black text-[#21133f]">{value}</p>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <div className="grid h-[78px] w-[78px] place-items-center rounded-full bg-white shadow-inner">
                     <div className="text-center">
                       <p className="text-[10px] font-bold text-[#817397]">Most Used</p>
                       <p className="mt-0.5 text-lg font-black text-[#161032]">
