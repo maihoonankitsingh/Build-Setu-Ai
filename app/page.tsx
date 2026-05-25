@@ -1,5 +1,6 @@
 "use client";
 
+import AdvancedBoqWorkspace from "@/components/boq/AdvancedBoqWorkspace";
 import dynamic from "next/dynamic";
 import * as React from "react";
 import { useEffect, useMemo, useState, useRef } from "react";
@@ -3054,491 +3055,8 @@ function SafetyPanel({ theme }: { theme: ResolvedTheme }) {
 
 
 function BoqPage({ theme }: { theme: ResolvedTheme }) {
-  const [projectsList, setProjectsList] = useState<LiveProject[]>([]);
-  const [projectId, setProjectId] = useState("");
-  const [items, setItems] = useState<LiveBoqItem[]>([]);
-  const [totalAmount, setTotalAmount] = useState(0);
-  const [loading, setLoading] = useState(true);
-  const [generating, setGenerating] = useState(false);
-  const [exportingPdf, setExportingPdf] = useState(false);
-  const [message, setMessage] = useState("");
-  const [searchQuery, setSearchQuery] = useState("");
-  const [unitFilter, setUnitFilter] = useState("All");
-  const [statusFilter, setStatusFilter] = useState("All");
-  const [showManualForm, setShowManualForm] = useState(false);
-  const [editingItemId, setEditingItemId] = useState<string | null>(null);
-  const [savingManual, setSavingManual] = useState(false);
-  const [manualForm, setManualForm] = useState({
-    itemCode: "",
-    description: "",
-    unit: "Sqft",
-    quantity: "1",
-    rate: "0",
-    status: "Draft",
-    drawingRef: "Manual Entry",
-  });
-
-  async function loadProjectsAndBoq() {
-    try {
-      setLoading(true);
-      setMessage("");
-
-      const projectsResponse = await fetch("/api/projects/list", { cache: "no-store" });
-      const projectsData = await projectsResponse.json();
-
-      if (!projectsResponse.ok || !projectsData.ok) {
-        throw new Error(projectsData.error || "Failed to load projects");
-      }
-
-      const loadedProjects = projectsData.projects || [];
-      setProjectsList(loadedProjects);
-
-      const selectedProjectId = projectId || loadedProjects[0]?.id || "";
-      if (selectedProjectId && !projectId) {
-        setProjectId(selectedProjectId);
-      }
-
-      if (selectedProjectId) {
-        await loadBoq(selectedProjectId);
-      }
-    } catch (error) {
-      console.error(error);
-      setMessage(error instanceof Error ? error.message : "Failed to load BOQ data");
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  async function loadBoq(nextProjectId: string) {
-    const response = await fetch(`/api/boq/list?projectId=${nextProjectId}`, { cache: "no-store" });
-    const data = await response.json();
-
-    if (!response.ok || !data.ok) {
-      throw new Error(data.error || "Failed to load BOQ");
-    }
-
-    setItems(data.items || []);
-    setTotalAmount(Number(data.totalAmount || 0));
-  }
-
-  async function handleProjectChange(nextProjectId: string) {
-    try {
-      setProjectId(nextProjectId);
-      setLoading(true);
-      setMessage("");
-      await loadBoq(nextProjectId);
-    } catch (error) {
-      console.error(error);
-      setMessage(error instanceof Error ? error.message : "Failed to load BOQ");
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  async function handleGenerateBoq() {
-    try {
-      setGenerating(true);
-      setMessage("");
-
-      if (!projectId) {
-        throw new Error("Project select karo. Pehle New Project section se project create karo.");
-      }
-
-      const response = await fetch("/api/boq/generate", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ projectId }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok || !data.ok) {
-        throw new Error(data.error || "Failed to generate BOQ");
-      }
-
-      setItems(data.items || []);
-      setTotalAmount(Number(data.totalAmount || 0));
-      setMessage(`BOQ generated successfully. ${data.count} items created.`);
-    } catch (error) {
-      console.error(error);
-      setMessage(error instanceof Error ? error.message : "Failed to generate BOQ");
-    } finally {
-      setGenerating(false);
-    }
-  }
-
-  useEffect(() => {
-    loadProjectsAndBoq();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-
-  const manualAmount = useMemo(() => {
-    const quantity = Number(manualForm.quantity || 0);
-    const rate = Number(manualForm.rate || 0);
-    return Number.isFinite(quantity * rate) ? quantity * rate : 0;
-  }, [manualForm.quantity, manualForm.rate]);
-
-  const filteredBoqItems = useMemo(() => {
-    const query = searchQuery.trim().toLowerCase();
-
-    return items.filter((item) => {
-      const matchesQuery =
-        !query ||
-        [item.itemCode, item.description, item.unit, item.status, item.drawingRef]
-          .filter(Boolean)
-          .join(" ")
-          .toLowerCase()
-          .includes(query);
-
-      const matchesUnit = unitFilter === "All" || (item.unit || "Unit") === unitFilter;
-      const matchesStatus = statusFilter === "All" || (item.status || "Draft") === statusFilter;
-
-      return matchesQuery && matchesUnit && matchesStatus;
-    });
-  }, [items, searchQuery, statusFilter, unitFilter]);
-
-  const unitOptions = useMemo(() => {
-    return ["All", ...Array.from(new Set(filteredBoqItems.map((item) => item.unit || "Unit"))).sort()];
-  }, [items]);
-
-  const statusOptions = useMemo(() => {
-    return ["All", ...Array.from(new Set(filteredBoqItems.map((item) => item.status || "Draft"))).sort()];
-  }, [items]);
-
-  function openManualBoqForm() {
-    setEditingItemId(null);
-    setManualForm({
-      itemCode: `M-${String(Date.now()).slice(-5)}`,
-      description: "",
-      unit: "Sqft",
-      quantity: "1",
-      rate: "0",
-      status: "Draft",
-      drawingRef: "Manual Entry",
-    });
-    setShowManualForm(true);
-  }
-
-  function startBoqEdit(item: any) {
-    setEditingItemId(item.id || null);
-    setManualForm({
-      itemCode: item.itemCode || "",
-      description: item.description || "",
-      unit: item.unit || "Sqft",
-      quantity: String(item.quantity || "0"),
-      rate: String(item.rate || "0"),
-      status: item.status || "Draft",
-      drawingRef: item.drawingRef || "Manual Entry",
-    });
-    setShowManualForm(true);
-    setMessage("");
-  }
-
-  async function saveManualBoqItem() {
-    if (!projectId) {
-      setMessage("Select a project first.");
-      return;
-    }
-
-    if (!manualForm.description.trim()) {
-      setMessage("BOQ item description is required.");
-      return;
-    }
-
-    setSavingManual(true);
-    setMessage("");
-
-    try {
-      const endpoint = editingItemId ? "/api/boq/update-item" : "/api/boq/create-item";
-      const payload = editingItemId
-        ? { itemId: editingItemId, ...manualForm }
-        : { projectId, ...manualForm };
-
-      const response = await fetch(endpoint, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          ...payload,
-          quantity: Number(manualForm.quantity || 0),
-          rate: Number(manualForm.rate || 0),
-        }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok || !data.ok) {
-        throw new Error(data.error || "Failed to save BOQ item");
-      }
-
-      await loadBoq(projectId);
-      setShowManualForm(false);
-      setEditingItemId(null);
-      setMessage(editingItemId ? "BOQ item updated." : "Manual BOQ item added.");
-    } catch (error) {
-      setMessage(error instanceof Error ? error.message : "Unable to save BOQ item.");
-    } finally {
-      setSavingManual(false);
-    }
-  }
-
-  async function deleteBoqItem(item: any) {
-    if (!item.id) return;
-
-    const confirmed = window.confirm(`Delete BOQ item ${item.itemCode || item.description || ""}?`);
-    if (!confirmed) return;
-
-    setMessage("");
-
-    try {
-      const response = await fetch("/api/boq/delete-item", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ itemId: item.id }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok || !data.ok) {
-        throw new Error(data.error || "Failed to delete BOQ item");
-      }
-
-      await loadBoq(projectId);
-      setMessage("BOQ item deleted.");
-    } catch (error) {
-      setMessage(error instanceof Error ? error.message : "Unable to delete BOQ item.");
-    }
-  }
-
-  function clearBoqFilters() {
-    setSearchQuery("");
-    setUnitFilter("All");
-    setStatusFilter("All");
-  }
-
-  return (
-    <div>
-      <PageTitle title="BOQ / Estimate" desc="Project-wise draft BOQ, material quantity, amount summary and review status." theme={theme} />
-
-      <section className={cn("rounded-2xl border p-5", false ? "border-white/10 bg-white/[0.035]" : "border-[#ded5ec] bg-white light-card-shadow")}>
-        <div className="mb-5 flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
-          <div className="grid flex-1 gap-3 sm:grid-cols-[1fr_auto]">
-            <select
-              value={projectId}
-              onChange={(event) => handleProjectChange(event.target.value)}
-              className={cn("h-12 rounded-xl border px-4 text-sm outline-none", false ? "border-white/10 bg-black/20 text-white" : "border-[#ded5ec] bg-white text-[#21133f]")}
-            >
-              {!projectsList.length && <option value="">No project found</option>}
-              {projectsList.map((project) => (
-                <option key={project.id} value={project.id}>
-                  {project.title} {project.location ? `- ${project.location}` : ""}
-                </option>
-              ))}
-            </select>
-
-            <button
-              onClick={handleGenerateBoq}
-              disabled={generating || !projectId}
-              className="rounded-xl bg-[#7c3aed] px-4 py-2.5 text-sm font-medium text-white disabled:cursor-not-allowed disabled:opacity-60"
-            >
-              {generating ? "Generating..." : "Generate Draft"}
-            </button>
-          </div>
-
-          <div className={cn("rounded-xl border px-4 py-3 text-sm", false ? "border-white/10 bg-black/20 text-slate-200" : "border-[#ded5ec] bg-[#fbf8ff] text-[#21133f]")}>
-            Total: ₹{totalAmount.toLocaleString("en-IN")}
-          </div>
-        </div>
-
-        <div className="mb-5 flex flex-wrap items-center gap-3">
-          <StatusBadge status="PHASE 3" theme={theme} />
-          <span className={cn("text-sm", false ? "text-slate-400" : "text-[#817397]")}>
-            {items.length} BOQ items
-          </span>
-        </div>
-
-        {message && (
-          <div className={cn("mb-5 rounded-xl border p-3 text-sm", message.includes("success")
-            ? false
-              ? "border-[#22c55e]/30 bg-[#052e16]/40 text-[#bbf7d0]"
-              : "border-[#bbf7d0] bg-[#f0fdf4] text-[#166534]"
-            : false
-              ? "border-[#ef4444]/30 bg-[#450a0a]/40 text-[#fecaca]"
-              : "border-[#fecaca] bg-[#fef2f2] text-[#991b1b]"
-          )}>
-            {message}
-          </div>
-        )}
-
-        {loading && (
-          <div className={cn("rounded-xl border p-4 text-sm", false ? "border-white/10 bg-black/20 text-slate-300" : "border-[#ded5ec] bg-[#fbf8ff] text-[#5d5077]")}>
-            Loading BOQ...
-          </div>
-        )}
-
-        {!loading && items.length === 0 && (
-          <div className={cn("rounded-xl border p-4 text-sm", false ? "border-white/10 bg-black/20 text-slate-300" : "border-[#ded5ec] bg-[#fbf8ff] text-[#5d5077]")}>
-            No BOQ items found. Generate BOQ Draft button click karo.
-          </div>
-        )}
-
-        {!loading && items.length > 0 && (
-          <div className={cn("overflow-hidden rounded-2xl border", false ? "border-white/10" : "border-[#ded5ec]")}>
-    
-        <div className="mb-4 grid gap-3 lg:grid-cols-[minmax(0,1fr)_160px_160px]">
-          <div className="grid gap-2 rounded-2xl border border-[#eee8fb] bg-[#fbfaff] p-2 md:grid-cols-[minmax(0,1.5fr)_120px_140px_72px]">
-            <input
-              value={searchQuery}
-              onChange={(event) => setSearchQuery(event.target.value)}
-              placeholder="Search code, description, unit..."
-              className="h-9 rounded-xl border border-[#e6e0f5] bg-white px-3 text-[11px] font-semibold text-[#21133f] outline-none placeholder:text-[#9a8caf] focus:border-[#6d35ff]"
-            />
-            <select
-              value={unitFilter}
-              onChange={(event) => setUnitFilter(event.target.value)}
-              className="h-9 rounded-xl border border-[#e6e0f5] bg-white px-3 text-[11px] font-semibold text-[#21133f] outline-none"
-            >
-              {unitOptions.map((unit) => (
-                <option key={unit} value={unit}>{unit === "All" ? "All Units" : unit}</option>
-              ))}
-            </select>
-            <select
-              value={statusFilter}
-              onChange={(event) => setStatusFilter(event.target.value)}
-              className="h-9 rounded-xl border border-[#e6e0f5] bg-white px-3 text-[11px] font-semibold text-[#21133f] outline-none"
-            >
-              {statusOptions.map((status) => (
-                <option key={status} value={status}>{status === "All" ? "All Status" : status}</option>
-              ))}
-            </select>
-            <button
-              onClick={clearBoqFilters}
-              className="h-9 rounded-xl border border-[#e4d9ff] bg-white px-2 text-[11px] font-black text-[#6d35ff] hover:bg-[#f4efff]"
-            >
-              Clear
-            </button>
-          </div>
-
-          <button
-            onClick={openManualBoqForm}
-            className="h-full min-h-[44px] rounded-2xl border border-[#e4d9ff] bg-[#fbf8ff] px-4 text-sm font-black text-[#6d35ff] transition hover:bg-[#f3edff]"
-          >
-            + Add Item
-          </button>
-
-          <div className="flex items-center justify-center rounded-2xl border border-[#e7ddff] bg-[#fbfaff] px-4 text-sm font-black text-[#21133f]">
-            {filteredBoqItems.length} visible
-          </div>
-        </div>
-
-        {showManualForm ? (
-          <div className="mb-4 rounded-[24px] border border-[#e7ddff] bg-white p-4 shadow-[0_10px_24px_rgba(33,19,63,0.045)]">
-            <div className="flex items-start justify-between gap-4">
-              <div>
-                <h2 className="text-lg font-black text-[#161032]">{editingItemId ? "Edit BOQ Item" : "Add Manual BOQ Item"}</h2>
-                <p className="mt-1 text-xs font-semibold text-[#817397]">Amount auto-calculate hota hai: quantity × rate.</p>
-              </div>
-              <button
-                onClick={() => {
-                  setShowManualForm(false);
-                  setEditingItemId(null);
-                }}
-                className="rounded-xl border border-[#e4d9ff] bg-white px-4 py-2 text-xs font-black text-[#817397] hover:bg-[#fbf8ff]"
-              >
-                Close
-              </button>
-            </div>
-
-            <div className="mt-4 grid gap-3 md:grid-cols-5">
-              <input value={manualForm.itemCode} onChange={(event) => setManualForm((current) => ({ ...current, itemCode: event.target.value }))} placeholder="Code" className="h-11 rounded-2xl border border-[#e6e0f5] px-3 text-sm font-bold outline-none" />
-              <input value={manualForm.description} onChange={(event) => setManualForm((current) => ({ ...current, description: event.target.value }))} placeholder="Description" className="h-11 rounded-2xl border border-[#e6e0f5] px-3 text-sm font-bold outline-none md:col-span-2" />
-              <select value={manualForm.unit} onChange={(event) => setManualForm((current) => ({ ...current, unit: event.target.value }))} className="h-11 rounded-2xl border border-[#e6e0f5] px-3 text-sm font-bold outline-none">
-                {["Sqft", "Cum", "Kg", "Rft", "Nos", "Lump Sum"].map((unit) => <option key={unit} value={unit}>{unit}</option>)}
-              </select>
-              <select value={manualForm.status} onChange={(event) => setManualForm((current) => ({ ...current, status: event.target.value }))} className="h-11 rounded-2xl border border-[#e6e0f5] px-3 text-sm font-bold outline-none">
-                {["Draft", "Review Required", "Approved", "Locked"].map((status) => <option key={status} value={status}>{status}</option>)}
-              </select>
-              <input value={manualForm.quantity} type="number" onChange={(event) => setManualForm((current) => ({ ...current, quantity: event.target.value }))} placeholder="Qty" className="h-11 rounded-2xl border border-[#e6e0f5] px-3 text-sm font-bold outline-none" />
-              <input value={manualForm.rate} type="number" onChange={(event) => setManualForm((current) => ({ ...current, rate: event.target.value }))} placeholder="Rate" className="h-11 rounded-2xl border border-[#e6e0f5] px-3 text-sm font-bold outline-none" />
-              <div className="flex h-11 items-center rounded-2xl border border-[#e6e0f5] bg-[#fbfaff] px-3 text-sm font-black text-[#21133f]">
-                ₹{manualAmount.toLocaleString("en-IN")}
-              </div>
-              <input value={manualForm.drawingRef} onChange={(event) => setManualForm((current) => ({ ...current, drawingRef: event.target.value }))} placeholder="Drawing / Scope Ref" className="h-11 rounded-2xl border border-[#e6e0f5] px-3 text-sm font-bold outline-none" />
-              <button onClick={saveManualBoqItem} disabled={savingManual} className="h-11 rounded-2xl bg-[#21133f] px-4 text-sm font-black text-white disabled:opacity-60">
-                {savingManual ? "Saving..." : editingItemId ? "Update" : "Add"}
-              </button>
-            </div>
-          </div>
-        ) : null}
-
-        <div className="overflow-x-auto">
-              <table className="w-full min-w-[900px] text-left text-sm">
-                <thead className={cn("text-xs uppercase tracking-wide", false ? "bg-white/[0.04] text-slate-400" : "bg-[#fbf8ff] text-[#817397]")}>
-                  <tr>
-                    <th className="p-3.5">Code</th>
-                    <th>Description</th>
-                    <th>Unit</th>
-                    <th>Qty</th>
-                    <th>Rate</th>
-                    <th>Amount</th>
-                    <th>Status</th>
-                    <th>Actions</th>
-                  </tr>
-                </thead>
-                <tbody className={cn("divide-y", false ? "divide-white/10" : "divide-[#eee7f7]")}>
-                  {filteredBoqItems.map((item) => (
-                    <tr key={item.id}>
-                      <td className={cn("p-4 font-medium", false ? "text-white" : "text-[#21133f]")}>{item.itemCode || "—"}</td>
-                      <td className={false ? "text-slate-300" : "text-[#3f315d]"}>{item.description}</td>
-                      <td className={false ? "text-slate-400" : "text-[#5d5077]"}>{item.unit || "—"}</td>
-                      <td className={false ? "text-slate-400" : "text-[#5d5077]"}>{item.quantity ?? "—"}</td>
-                      <td className={false ? "text-slate-400" : "text-[#5d5077]"}>₹{Number(item.rate || 0).toLocaleString("en-IN")}</td>
-                      <td className={cn("font-medium", false ? "text-white" : "text-[#21133f]")}>₹{Number(item.amount || 0).toLocaleString("en-IN")}</td>
-                      <td>
-                        <span className={cn("rounded-full px-2.5 py-1 text-xs", false ? "bg-[#3b2507] text-[#fde68a]" : "bg-[#fff7ed] text-[#f97316]")}>
-                          {item.status}
-                        </span>
-                      </td>
-                      <td>
-                        <div className="flex gap-2">
-                          <button
-                            onClick={() => startBoqEdit(item)}
-                            className="rounded-lg border border-[#e4d9ff] bg-white px-3 py-1.5 text-[11px] font-black text-[#6d35ff] hover:bg-[#f4efff]"
-                          >
-                            Edit
-                          </button>
-                          <button
-                            onClick={() => deleteBoqItem(item)}
-                            className="rounded-lg border border-[#ffd7d7] bg-[#fff8f8] px-3 py-1.5 text-[11px] font-black text-[#df3d3d] hover:bg-[#fff1f1]"
-                          >
-                            Delete
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        )}
-
-        <div className={cn("mt-5 rounded-xl border p-4 text-sm leading-6", false ? "border-[#facc15]/20 bg-[#3b2507]/30 text-[#fde68a]" : "border-[#fed7aa] bg-[#fff7ed] text-[#9a3412]")}>
-          BOQ draft planning ke liye hai. Final quantity, rates and scope drawings/site verification ke baad lock karein.
-        </div>
-      </section>
-    </div>
-  );
+  return <AdvancedBoqWorkspace theme={theme} />;
 }
-
-
-
 
 function BbsPage({ theme }: { theme: ResolvedTheme }) {
   type BbsProject = {
@@ -7601,6 +7119,8 @@ function ProjectTaskChatInterfaceShell({
 
 function HeaderProfileButton() {
   const [profileUser, setProfileUser] = useState<any>(null);
+  const [open, setOpen] = useState(false);
+  const profileMenuRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     let mounted = true;
@@ -7624,9 +7144,22 @@ function HeaderProfileButton() {
     };
   }, []);
 
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (!profileMenuRef.current) return;
+      if (!profileMenuRef.current.contains(event.target as Node)) {
+        setOpen(false);
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
   const displayName =
     profileUser?.name ||
     profileUser?.fullName ||
+    profileUser?.displayName ||
     profileUser?.email?.split("@")?.[0] ||
     "BuildSetu AI";
 
@@ -7644,41 +7177,116 @@ function HeaderProfileButton() {
     .filter(Boolean)
     .slice(0, 2)
     .map((part) => part[0]?.toUpperCase())
-    .join("") || "SB";
+    .join("") || "BA";
+
+  async function logout() {
+    try {
+      await fetch("/api/auth/logout", {
+        method: "POST",
+        credentials: "include",
+      });
+    } catch {
+      // fallback redirect below
+    }
+
+    window.location.href = "/login";
+  }
 
   return (
-    <button
-      type="button"
-      onClick={() => {
-        window.location.href = "/account";
-      }}
-      aria-label="Open profile and account"
-      title="Open profile and account"
-      className="flex h-[56px] w-[190px] shrink-0 items-center gap-2 rounded-[18px] border border-slate-200 bg-white px-3 py-2 text-left shadow-sm transition hover:bg-slate-50 hover:shadow"
-    >
-      {profileImage ? (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img
-          src={profileImage}
-          alt={displayName}
-          referrerPolicy="no-referrer"
-          className="h-9 w-9 rounded-full border border-slate-200 object-cover"
-        />
-      ) : (
-        <div className="flex h-9 w-9 items-center justify-center rounded-full bg-violet-600 text-xs font-bold text-white">
-          {initials}
+    <div ref={profileMenuRef} className="relative shrink-0">
+      <button
+        type="button"
+        onClick={() => setOpen((current) => !current)}
+        aria-label="Open profile menu"
+        title="Open profile menu"
+        className="group flex h-[50px] w-[238px] items-center gap-3 rounded-[22px] border border-[#e8ddf6] bg-white/95 px-3 py-2 text-left shadow-[0_10px_28px_rgba(54,24,95,0.10)] transition hover:-translate-y-0.5 hover:border-violet-200 hover:shadow-[0_16px_40px_rgba(54,24,95,0.14)]"
+      >
+        <div className="relative h-9 w-9 shrink-0 overflow-hidden rounded-full border border-violet-100 bg-gradient-to-br from-violet-700 to-fuchsia-500 text-white shadow-sm">
+          {profileImage ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={profileImage}
+              alt={displayName}
+              referrerPolicy="no-referrer"
+              className="h-full w-full object-cover"
+            />
+          ) : (
+            <div className="flex h-full w-full items-center justify-center text-xs font-black">
+              {initials}
+            </div>
+          )}
+          <span className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full border-2 border-white bg-emerald-500" />
         </div>
-      )}
 
-      <div className="min-w-0 flex-1">
-        <p className="truncate text-[13px] font-semibold leading-tight text-slate-900">{displayName}</p>
-        <p className="text-[11px] leading-tight text-slate-500">Workspace</p>
-      </div>
+        <div className="min-w-0 flex-1">
+          <p className="truncate text-[13px] font-black uppercase leading-tight tracking-[-0.02em] text-[#16072f]">
+            {displayName}
+          </p>
+          <p className="mt-0.5 truncate text-[11px] font-semibold leading-tight text-violet-900/55">
+            Workspace
+          </p>
+        </div>
 
-      <ChevronDown className="ml-auto h-3.5 w-3.5 shrink-0 text-slate-500" />
-    </button>
+        <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-violet-50 text-violet-700 transition group-hover:bg-violet-100">
+          <ChevronDown className={`h-3.5 w-3.5 transition ${open ? "rotate-180" : ""}`} />
+        </div>
+      </button>
+
+      {open ? (
+        <div className="absolute right-0 top-[58px] z-50 w-[238px] overflow-hidden rounded-[22px] border border-violet-100 bg-white p-2 shadow-[0_22px_70px_rgba(54,24,95,0.18)]">
+          <div className="border-b border-violet-50 px-3 py-2">
+            <p className="truncate text-sm font-black text-[#16072f]">{displayName}</p>
+            <p className="truncate text-xs font-semibold text-violet-900/50">
+              {profileUser?.email || "BuildSetu workspace"}
+            </p>
+          </div>
+
+          <button
+            type="button"
+            onClick={() => {
+              window.location.href = "/account";
+            }}
+            className="mt-2 flex w-full items-center justify-between rounded-2xl px-3 py-2.5 text-left text-sm font-bold text-[#16072f] transition hover:bg-violet-50"
+          >
+            Account profile
+            <span className="text-xs text-violet-500">↗</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => {
+              window.location.href = "/credits";
+            }}
+            className="flex w-full items-center justify-between rounded-2xl px-3 py-2.5 text-left text-sm font-bold text-[#16072f] transition hover:bg-violet-50"
+          >
+            Credits wallet
+            <span className="text-xs text-violet-500">↗</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => {
+              window.location.href = "/pricing";
+            }}
+            className="flex w-full items-center justify-between rounded-2xl px-3 py-2.5 text-left text-sm font-bold text-[#16072f] transition hover:bg-violet-50"
+          >
+            Upgrade plan
+            <span className="text-xs text-violet-500">↗</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={logout}
+            className="mt-2 flex w-full items-center justify-center rounded-2xl bg-[#241044] px-3 py-2.5 text-sm font-black text-white transition hover:bg-[#351969]"
+          >
+            Logout
+          </button>
+        </div>
+      ) : null}
+    </div>
   );
 }
+
 
 
 export default function SikhadengeBuildDashboard() {
