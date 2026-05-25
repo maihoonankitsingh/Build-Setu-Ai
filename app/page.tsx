@@ -4511,7 +4511,7 @@ function BbsPage({ theme }: { theme: ResolvedTheme }) {
             </span>
           </div>
 
-          <div className="mt-3 grid gap-2 rounded-2xl border border-[#eee8fb] bg-[#fbfaff] p-3 md:grid-cols-[minmax(0,1fr)_130px_150px_150px_78px]">
+          <div className="mt-3 grid gap-2 rounded-2xl border border-[#eee8fb] bg-[#fbfaff] p-3 md:grid-cols-[minmax(0,1.7fr)_118px_135px_135px_72px]">
             <input
               value={bbsSearchQuery}
               onChange={(event) => setBbsSearchQuery(event.target.value)}
@@ -4553,7 +4553,7 @@ function BbsPage({ theme }: { theme: ResolvedTheme }) {
 
             <button
               onClick={clearBbsFilters}
-              className="h-10 rounded-xl border border-[#e4d9ff] bg-white px-3 text-xs font-black text-[#6d35ff] hover:bg-[#f4efff]"
+              className="h-10 rounded-xl border border-[#e4d9ff] bg-white px-2 text-xs font-black text-[#6d35ff] hover:bg-[#f4efff]"
             >
               Clear
             </button>
@@ -4674,7 +4674,7 @@ function BbsPage({ theme }: { theme: ResolvedTheme }) {
 
             
 
-            <div className="mb-4 rounded-[24px] border border-[#ece8f8] bg-white p-4 shadow-[0_10px_28px_rgba(33,19,63,0.06)]">
+            <div className="mb-4 rounded-[24px] border border-[#ece8f8] bg-white p-4 shadow-[0_10px_24px_rgba(33,19,63,0.055)]">
               <div className="flex items-start justify-between gap-3">
                 <div>
                   <h3 className="text-base font-black text-[#161032]">Dia-wise Steel Usage</h3>
@@ -4792,8 +4792,8 @@ function BbsPage({ theme }: { theme: ResolvedTheme }) {
       </section>
 
 
-      <section className="rounded-[28px] border border-[#e7ddff] bg-white p-4 shadow-[0_12px_30px_rgba(33,19,63,0.05)]">
-        <div className="grid gap-4 lg:grid-cols-[1.2fr_repeat(4,minmax(0,1fr))]">
+      <section className="rounded-[28px] border border-[#e7ddff] bg-white p-4 shadow-[0_10px_24px_rgba(33,19,63,0.045)]">
+        <div className="grid gap-3 lg:grid-cols-[1.25fr_repeat(4,minmax(0,1fr))]">
           <div className="flex items-center gap-3 rounded-[22px] bg-[#f8fff9] p-4">
             <span className="grid h-12 w-12 shrink-0 place-items-center rounded-full bg-[#42c979] text-2xl font-black text-white">
               ✓
@@ -4828,12 +4828,12 @@ function BbsPage({ theme }: { theme: ResolvedTheme }) {
               "Generated On",
             ],
           ].map(([icon, value, label]) => (
-            <div key={label} className="flex items-center gap-3 rounded-[22px] border border-[#eee8fb] bg-[#fbfaff] p-4">
+            <div key={label} className="flex items-center gap-3 rounded-[20px] border border-[#eee8fb] bg-[#fbfaff] p-3">
               <span className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl bg-[#f0e8ff] text-lg font-black text-[#6d35ff]">
                 {icon}
               </span>
               <div className="min-w-0">
-                <p className="truncate text-[16px] font-black text-[#21133f]">{value}</p>
+                <p className="text-[15px] font-black leading-tight text-[#21133f]">{value}</p>
                 <p className="mt-0.5 text-[11px] font-black text-[#817397]">{label}</p>
               </div>
             </div>
@@ -4856,7 +4856,7 @@ function BbsPage({ theme }: { theme: ResolvedTheme }) {
           <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
             {memberSummary.length ? (
               memberSummary.map((row) => (
-                <div key={row.memberType} className="rounded-[18px] bg-[#f6f1ff] px-4 py-3">
+                <div key={row.memberType} className="rounded-[18px] bg-[#f6f1ff] px-4 py-3 shadow-[inset_0_0_0_1px_rgba(109,53,255,0.04)]">
                   <p className="text-[11px] font-black text-[#817397]">{row.memberType}</p>
                   <p className="mt-1 text-[15px] font-black text-[#21133f]">{weightFormat.format(row.weight)} kg</p>
                 </div>
