@@ -4028,6 +4028,270 @@ function BbsPage({ theme }: { theme: ResolvedTheme }) {
     setBbsStatusFilter("All");
   }
 
+  function exportBbsPdf() {
+    const reportRows = filteredBbsItems;
+
+    if (!reportRows.length) {
+      setMessage("No BBS rows available to export PDF.");
+      return;
+    }
+
+    const projectTitle = selectedProject?.title || "BBS Project";
+    const generatedOn = new Date().toLocaleString("en-IN", { dateStyle: "medium", timeStyle: "short" });
+
+    const tableRows = reportRows
+      .map((item, index) => `
+        <tr>
+          <td>${index + 1}</td>
+          <td>${item.barMark || ""}</td>
+          <td>${item.memberType || ""} ${item.memberId || ""}</td>
+          <td>${item.diameter || ""} mm</td>
+          <td>${item.shapeCode || ""}</td>
+          <td>${item.quantity || 0}</td>
+          <td>${Number(item.cuttingLength || 0).toFixed(2)} m</td>
+          <td>${Number(item.totalLength || 0).toFixed(2)} m</td>
+          <td>${Number(item.unitWeight || 0).toFixed(3)}</td>
+          <td>${weightFormat.format(Number(item.totalWeight || 0))}</td>
+          <td>${item.status || "Review Required"}</td>
+        </tr>
+      `)
+      .join("");
+
+    const diameterRows = diameterSummary
+      .map((row) => `
+        <div class="summary-card">
+          <span>${row.diameter} mm</span>
+          <strong>${weightFormat.format(row.weight)} kg</strong>
+        </div>
+      `)
+      .join("");
+
+    const html = `
+      <!doctype html>
+      <html>
+        <head>
+          <meta charset="utf-8" />
+          <title>BBS Report - ${projectTitle}</title>
+          <style>
+            * {
+              box-sizing: border-box;
+            }
+
+            body {
+              margin: 0;
+              background: #ffffff;
+              color: #161032;
+              font-family: Arial, sans-serif;
+            }
+
+            .page {
+              padding: 28px;
+            }
+
+            .header {
+              display: flex;
+              justify-content: space-between;
+              gap: 24px;
+              border-bottom: 2px solid #eee8fb;
+              padding-bottom: 18px;
+              margin-bottom: 18px;
+            }
+
+            .brand {
+              font-size: 14px;
+              font-weight: 900;
+              color: #6d35ff;
+              margin-bottom: 8px;
+            }
+
+            h1 {
+              margin: 0;
+              font-size: 28px;
+              line-height: 1.15;
+            }
+
+            .muted {
+              color: #766a90;
+              font-size: 12px;
+              line-height: 1.55;
+            }
+
+            .meta {
+              text-align: right;
+              font-size: 12px;
+              line-height: 1.7;
+            }
+
+            .stats {
+              display: grid;
+              grid-template-columns: repeat(4, 1fr);
+              gap: 10px;
+              margin: 18px 0;
+            }
+
+            .stat {
+              border: 1px solid #eee8fb;
+              border-radius: 14px;
+              padding: 12px;
+              background: #fbfaff;
+            }
+
+            .stat span {
+              display: block;
+              color: #817397;
+              font-size: 10px;
+              font-weight: 900;
+              text-transform: uppercase;
+            }
+
+            .stat strong {
+              display: block;
+              margin-top: 5px;
+              font-size: 15px;
+            }
+
+            table {
+              width: 100%;
+              border-collapse: collapse;
+              margin-top: 14px;
+              font-size: 10px;
+            }
+
+            th {
+              background: #f5f1ff;
+              color: #6d35ff;
+              text-align: left;
+              font-weight: 900;
+              border: 1px solid #e7ddff;
+              padding: 8px;
+            }
+
+            td {
+              border: 1px solid #eee8fb;
+              padding: 7px;
+              vertical-align: top;
+              font-weight: 700;
+            }
+
+            .summary {
+              margin-top: 18px;
+              display: grid;
+              grid-template-columns: repeat(4, 1fr);
+              gap: 10px;
+            }
+
+            .summary-card {
+              border: 1px solid #eee8fb;
+              background: #fbfaff;
+              border-radius: 14px;
+              padding: 10px;
+              font-size: 11px;
+            }
+
+            .summary-card span {
+              display: block;
+              color: #817397;
+              font-weight: 900;
+            }
+
+            .summary-card strong {
+              display: block;
+              margin-top: 4px;
+            }
+
+            .note {
+              margin-top: 18px;
+              border: 1px solid #f5d89d;
+              background: #fffaf0;
+              border-radius: 14px;
+              padding: 12px;
+              color: #9a6412;
+              font-size: 11px;
+              line-height: 1.6;
+              font-weight: 700;
+            }
+
+            @page {
+              size: A4 landscape;
+              margin: 12mm;
+            }
+
+            @media print {
+              .page {
+                padding: 0;
+              }
+            }
+          </style>
+        </head>
+        <body>
+          <div class="page">
+            <div class="header">
+              <div>
+                <div class="brand">BuildSetu AI</div>
+                <h1>Bar Bending Schedule Report</h1>
+                <p class="muted">Project-wise reinforcement schedule generated for engineer review.</p>
+              </div>
+              <div class="meta">
+                <strong>${projectTitle}</strong><br/>
+                Generated: ${generatedOn}<br/>
+                Status: Engineer Review Required
+              </div>
+            </div>
+
+            <div class="stats">
+              <div class="stat"><span>Total Bars</span><strong>${numberFormat.format(totalBars || 0)}</strong></div>
+              <div class="stat"><span>Total Weight</span><strong>${weightFormat.format(totalWeight || 0)} kg</strong></div>
+              <div class="stat"><span>Concrete Grade</span><strong>M30</strong></div>
+              <div class="stat"><span>Steel Grade</span><strong>Fe 500D</strong></div>
+            </div>
+
+            <table>
+              <thead>
+                <tr>
+                  <th>S.No</th>
+                  <th>Bar Mark</th>
+                  <th>Member</th>
+                  <th>Dia</th>
+                  <th>Shape</th>
+                  <th>Bars</th>
+                  <th>Cut Length</th>
+                  <th>Total Length</th>
+                  <th>Unit Wt</th>
+                  <th>Total Wt</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>${tableRows}</tbody>
+            </table>
+
+            <h3>Diameter-wise Steel Summary</h3>
+            <div class="summary">${diameterRows || '<div class="summary-card"><span>No summary</span><strong>—</strong></div>'}</div>
+
+            <div class="note">
+              This is an AI-generated BBS draft for planning and discussion only. Final reinforcement, cutting length, bend deduction, lap length, development length, steel cutting, billing and site execution must be verified by a qualified structural engineer.
+            </div>
+          </div>
+        </body>
+      </html>
+    `;
+
+    const printWindow = window.open("", "_blank", "width=1200,height=800");
+
+    if (!printWindow) {
+      setMessage("Popup blocked. Allow popups to export PDF.");
+      return;
+    }
+
+    printWindow.document.open();
+    printWindow.document.write(html);
+    printWindow.document.close();
+
+    printWindow.onload = () => {
+      printWindow.focus();
+      printWindow.print();
+    };
+  }
+
   return (
     <div className="max-w-full overflow-x-hidden space-y-6">
       <div className="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
@@ -4387,7 +4651,7 @@ function BbsPage({ theme }: { theme: ResolvedTheme }) {
               ▣ Export BBS CSV
             </button>
             <button
-              onClick={() => window.print()}
+              onClick={exportBbsPdf}
               disabled={!items.length}
               className="rounded-2xl border border-[#ffe0e0] bg-[#fff8f8] px-4 py-3 text-sm font-black text-[#df3d3d] disabled:cursor-not-allowed disabled:opacity-50"
             >
