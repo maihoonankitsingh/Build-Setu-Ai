@@ -1,3 +1,4 @@
+import { saveUserProfilePhoto } from "@/lib/auth/profile-photo-store";
 import { NextRequest, NextResponse } from "next/server";
 import {
   GOOGLE_STATE_COOKIE,
@@ -76,7 +77,14 @@ export async function GET(request: NextRequest) {
 
     const profile = await profileRes.json();
 
-    if (!profile.email) {
+    
+  const googleProfilePicture =
+    profile?.picture ||
+    profile?.image ||
+    profile?.avatar ||
+    "";
+  saveUserProfilePhoto(profile?.email, googleProfilePicture);
+if (!profile.email) {
       return appRedirect("/login?error=google_email");
     }
 
@@ -84,7 +92,7 @@ export async function GET(request: NextRequest) {
       googleId: String(profile.sub || ""),
       email: String(profile.email || ""),
       name: String(profile.name || profile.email || "BuildSetu User"),
-      avatar: String(profile.picture || ""),
+      avatar: String(googleProfilePicture || profile.picture || ""),
     });
 
     const sessionToken = await createSession(user);

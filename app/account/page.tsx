@@ -1,310 +1,424 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
+  ArrowLeft,
   BadgeCheck,
+  Building2,
   CalendarDays,
+  Coins,
   CreditCard,
-  History,
   LogOut,
-  Shield,
+  Mail,
+  Phone,
+  ShieldCheck,
   User,
   Wallet,
 } from "lucide-react";
 
-type AccountUser = {
-  id?: string;
-  name?: string;
-  email?: string;
-  role?: string;
-  status?: string;
-  credits?: number;
-};
+type AnyRecord = Record<string, any>;
 
-type PlanStatus = {
-  ok?: boolean;
-  authenticated?: boolean;
-  planId?: string | null;
-  planName?: string | null;
-  planStatus?: string | null;
-  planCycle?: string | null;
-  planStartedAt?: string | null;
-  planExpiresAt?: string | null;
-  credits?: number;
-};
-
-type LedgerItem = {
-  id?: string;
-  createdAt?: string;
-  type?: string;
-  credits?: number;
-  description?: string;
-  actionType?: string;
-  creditsUsed?: number;
-  note?: string;
-  amountPaise?: number;
-  razorpayPaymentId?: string;
-};
-
-function formatNumber(value: unknown) {
-  return Number(value || 0).toLocaleString("en-IN");
+function formatCredits(value: any) {
+  const number = Number(value || 0);
+  return new Intl.NumberFormat("en-IN").format(number);
 }
 
-function formatDate(value?: string | null) {
-  if (!value) return "Not set";
-
-  try {
-    return new Date(value).toLocaleString("en-IN", {
-      day: "2-digit",
-      month: "short",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  } catch {
-    return "Not set";
-  }
+function safeText(value: any, fallback = "Not set") {
+  if (value === null || value === undefined || value === "") return fallback;
+  return String(value);
 }
 
-function daysRemaining(value?: string | null) {
-  if (!value) return null;
-
-  const diff = new Date(value).getTime() - Date.now();
-  if (!Number.isFinite(diff)) return null;
-
-  return Math.ceil(diff / (24 * 60 * 60 * 1000));
+function getUserImage(user: AnyRecord | null) {
+  return (
+    user?.image ||
+    user?.picture ||
+    user?.avatar ||
+    user?.avatarUrl ||
+    user?.photoURL ||
+    user?.photoUrl ||
+    user?.profileImage ||
+    ""
+  );
 }
 
-function ledgerType(item: LedgerItem) {
-  return item.type || item.actionType || "TRANSACTION";
-}
+function getInitials(name: string, email: string) {
+  const source = name || email || "BuildSetu AI";
+  const initials = source
+    .replace(/@.*/, "")
+    .split(/[.\s_-]+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0]?.toUpperCase())
+    .join("");
 
-function ledgerCredits(item: LedgerItem) {
-  if (typeof item.credits === "number") return item.credits;
-  if (typeof item.creditsUsed === "number") return item.creditsUsed;
-  return 0;
-}
-
-function ledgerNote(item: LedgerItem) {
-  return item.description || item.note || item.razorpayPaymentId || "Credit transaction";
+  return initials || "BS";
 }
 
 export default function AccountPage() {
-  const [me, setMe] = useState<AccountUser | null>(null);
-  const [balance, setBalance] = useState<any>(null);
-  const [plan, setPlan] = useState<PlanStatus | null>(null);
-  const [history, setHistory] = useState<LedgerItem[]>([]);
+  const [user, setUser] = useState<AnyRecord | null>(null);
+  const [overview, setOverview] = useState<AnyRecord | null>(null);
+  const [balance, setBalance] = useState<AnyRecord | null>(null);
+  const [history, setHistory] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
-  async function load() {
-    try {
-      const meRes = await fetch("/api/auth/me", {
-        cache: "no-store",
-        credentials: "same-origin",
-      });
-      const meData = await meRes.json().catch(() => null);
+  useEffect(() => {
+    let mounted = true;
 
-      if (!meRes.ok || !meData?.ok || !meData?.authenticated) {
-        window.location.href = "/login";
-        return;
-      }
+    async function loadAccount() {
+      setLoading(true);
 
-      setMe(meData.user);
+      const safeFetch = async (url: string) => {
+        try {
+          const res = await fetch(url, {
+            cache: "no-store",
+            credentials: "include",
+          });
+          if (!res.ok) return null;
+          return await res.json();
+        } catch {
+          return null;
+        }
+      };
 
-      const [balRes, planRes, historyRes] = await Promise.all([
-        fetch("/api/credits/balance", {
-          cache: "no-store",
-          credentials: "same-origin",
-        }),
-        fetch("/api/plans/status", {
-          cache: "no-store",
-          credentials: "same-origin",
-        }),
-        fetch("/api/credits/history", {
-          cache: "no-store",
-          credentials: "same-origin",
-        }),
+      const [meData, overviewData, balanceData, historyData] = await Promise.all([
+        safeFetch("/api/auth/me"),
+        safeFetch("/api/dashboard/overview"),
+        safeFetch("/api/credits/balance"),
+        safeFetch("/api/credits/history"),
       ]);
 
-      const balData = await balRes.json().catch(() => null);
-      const planData = await planRes.json().catch(() => null);
-      const historyData = await historyRes.json().catch(() => null);
+      if (!mounted) return;
 
-      setBalance(balData || null);
-      setPlan(planData || null);
+      const authUser = meData?.user || meData || null;
+      setUser(authUser);
+      setOverview(overviewData || null);
+      setBalance(balanceData || null);
 
-      const ledger = historyData?.transactions || historyData?.history || [];
-      setHistory(Array.isArray(ledger) ? ledger : []);
-    } finally {
+      const ledger =
+        historyData?.history ||
+        historyData?.transactions ||
+        historyData?.creditTransactions ||
+        historyData?.items ||
+        [];
+
+      setHistory(Array.isArray(ledger) ? ledger.slice(0, 8) : []);
       setLoading(false);
     }
-  }
+
+    loadAccount();
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  const profile = useMemo(() => {
+    const name =
+      user?.name ||
+      user?.fullName ||
+      user?.displayName ||
+      user?.email?.split("@")?.[0] ||
+      "BuildSetu User";
+
+    const email = user?.email || "";
+    const phone = user?.phone || user?.mobile || "";
+    const company = user?.company || user?.companyName || user?.studioName || "";
+    const role = user?.role || "Designer";
+    const image = getUserImage(user);
+
+    const credits =
+      balance?.credits ??
+      balance?.balance ??
+      overview?.creditsLeft ??
+      user?.credits ??
+      0;
+
+    const plan =
+      user?.plan ||
+      user?.currentPlan ||
+      overview?.plan ||
+      overview?.currentPlan ||
+      "Free";
+
+    const status =
+      user?.status ||
+      user?.accountStatus ||
+      overview?.accountStatus ||
+      "Active";
+
+    const subscriptionStatus =
+      user?.subscriptionStatus ||
+      overview?.subscriptionStatus ||
+      "active";
+
+    return {
+      name,
+      email,
+      phone,
+      company,
+      role,
+      image,
+      credits,
+      plan,
+      status,
+      subscriptionStatus,
+      initials: getInitials(name, email),
+    };
+  }, [user, overview, balance]);
 
   async function logout() {
-    await fetch("/api/auth/logout", {
-      method: "POST",
-      credentials: "same-origin",
-    });
+    try {
+      await fetch("/api/auth/logout", {
+        method: "POST",
+        credentials: "include",
+      });
+    } catch {
+      // fallback below
+    }
+
     window.location.href = "/login";
   }
 
-  useEffect(() => {
-    load();
-  }, []);
-
   if (loading) {
     return (
-      <main className="min-h-screen bg-[#fbf8ff] p-8 text-sm font-bold text-[#21133f]">
-        Loading account...
+      <main className="min-h-screen bg-[#fbf9ff] px-5 py-8 text-[#16072f]">
+        <section className="mx-auto max-w-6xl rounded-[28px] border border-violet-100 bg-white p-8 shadow-sm">
+          <div className="h-8 w-52 animate-pulse rounded-xl bg-violet-100" />
+          <div className="mt-6 grid gap-4 md:grid-cols-3">
+            <div className="h-32 animate-pulse rounded-[24px] bg-violet-50" />
+            <div className="h-32 animate-pulse rounded-[24px] bg-violet-50" />
+            <div className="h-32 animate-pulse rounded-[24px] bg-violet-50" />
+          </div>
+        </section>
       </main>
     );
   }
 
-  const credits = Number(balance?.credits ?? me?.credits ?? plan?.credits ?? 0);
-  const expiryDays = daysRemaining(plan?.planExpiresAt);
-  const isActivePlan = String(plan?.planStatus || "").toLowerCase() === "active";
-
   return (
-    <main className="min-h-screen bg-[radial-gradient(circle_at_top_left,#f3e8ff_0%,#fbf8ff_38%,#ffffff_100%)] p-5 text-[#21133f]">
-      <section className="mx-auto max-w-[1180px]">
-        <header className="mb-5 flex flex-col gap-4 rounded-[28px] border border-[#eadcff] bg-white p-5 shadow-[0_22px_70px_rgba(76,29,149,0.08)] md:flex-row md:items-center md:justify-between">
-          <div>
-            <p className="text-xs font-black uppercase tracking-[0.16em] text-[#7c3aed]">
-              BuildSetu Account
-            </p>
-            <h1 className="mt-1 text-3xl font-black tracking-[-0.06em]">
-              {me?.name || me?.email}
-            </h1>
-            <p className="mt-2 text-sm font-semibold text-[#786a91]">{me?.email}</p>
-          </div>
+    <main className="min-h-screen bg-[#fbf9ff] px-4 py-6 text-[#15042e] md:px-6 md:py-8">
+      <section className="mx-auto max-w-6xl space-y-5">
+        <div className="overflow-hidden rounded-[30px] border border-violet-100 bg-white shadow-[0_18px_60px_rgba(77,33,156,0.08)]">
+          <div className="flex flex-col gap-5 border-b border-violet-100 bg-gradient-to-r from-white via-[#fbf7ff] to-white p-5 md:flex-row md:items-center md:justify-between md:p-7">
+            <div className="flex items-center gap-4">
+              <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-[24px] border border-violet-100 bg-violet-700 text-white shadow-sm">
+                {profile.image ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={profile.image}
+                    alt={profile.name}
+                    referrerPolicy="no-referrer"
+                    className="h-full w-full object-cover"
+                  />
+                ) : (
+                  <div className="flex h-full w-full items-center justify-center text-2xl font-black">
+                    {profile.initials}
+                  </div>
+                )}
+              </div>
 
-          <div className="flex flex-wrap gap-3">
-            <a
-              href="/"
-              className="flex h-11 items-center rounded-2xl border border-[#e6d9f4] bg-[#fbf8ff] px-5 text-sm font-black text-[#21133f]"
-            >
-              Dashboard
-            </a>
-            <button
-              onClick={logout}
-              className="flex h-11 items-center gap-2 rounded-2xl bg-[#21133f] px-5 text-sm font-black text-white"
-            >
-              <LogOut size={17} />
-              Logout
-            </button>
-          </div>
-        </header>
-
-        <section className="grid gap-4 md:grid-cols-4">
-          <div className="rounded-[24px] border border-[#eadcff] bg-white p-5 shadow-sm">
-            <Wallet className="h-7 w-7 text-[#7c3aed]" />
-            <p className="mt-3 text-xs font-black uppercase text-[#8b7ca6]">Credits</p>
-            <p className="mt-1 text-3xl font-black tracking-[-0.06em]">
-              {formatNumber(credits)}
-            </p>
-          </div>
-
-          <div className="rounded-[24px] border border-[#eadcff] bg-white p-5 shadow-sm">
-            <User className="h-7 w-7 text-[#7c3aed]" />
-            <p className="mt-3 text-xs font-black uppercase text-[#8b7ca6]">Role</p>
-            <p className="mt-1 text-xl font-black">{me?.role || "Designer"}</p>
-          </div>
-
-          <div className="rounded-[24px] border border-[#eadcff] bg-white p-5 shadow-sm">
-            <Shield className="h-7 w-7 text-emerald-500" />
-            <p className="mt-3 text-xs font-black uppercase text-[#8b7ca6]">Account Status</p>
-            <p className="mt-1 text-xl font-black">{me?.status || "ACTIVE"}</p>
-          </div>
-
-          <a
-            href="/pricing"
-            className="rounded-[24px] bg-gradient-to-r from-[#6d28d9] to-[#c026d3] p-5 text-white shadow-sm"
-          >
-            <CreditCard className="h-7 w-7" />
-            <p className="mt-3 text-xs font-black uppercase text-white/70">Upgrade</p>
-            <p className="mt-1 text-xl font-black">Plans & Credits</p>
-          </a>
-        </section>
-
-        <section className="mt-5 grid gap-4 lg:grid-cols-[1fr_1.25fr]">
-          <div className="rounded-[28px] border border-[#eadcff] bg-white p-5 shadow-sm">
-            <div className="flex items-center gap-2">
-              <BadgeCheck className="h-5 w-5 text-[#7c3aed]" />
-              <h2 className="text-xl font-black tracking-[-0.04em]">Plan & Subscription</h2>
-            </div>
-
-            <div className="mt-5 grid gap-3">
-              <InfoRow label="Current Plan" value={plan?.planName || "Free"} />
-              <InfoRow label="Plan Status" value={plan?.planStatus || "Free"} />
-              <InfoRow label="Billing Cycle" value={plan?.planCycle || "Free"} />
-              <InfoRow label="Started At" value={formatDate(plan?.planStartedAt)} />
-              <InfoRow label="Expires At" value={formatDate(plan?.planExpiresAt)} />
-            </div>
-
-            <div className="mt-5 rounded-3xl bg-[#fbf8ff] p-4">
-              <div className="flex items-start gap-3">
-                <CalendarDays className="mt-1 h-5 w-5 text-[#7c3aed]" />
-                <div>
-                  <p className="text-sm font-black text-[#21133f]">
-                    {isActivePlan
-                      ? expiryDays !== null
-                        ? `${Math.max(expiryDays, 0)} days remaining`
-                        : "Active monthly subscription"
-                      : "No active paid monthly subscription"}
-                  </p>
-                  <p className="mt-1 text-xs font-semibold leading-5 text-[#786a91]">
-                    Email reminders are currently on hold. Subscription expiry logic is kept in backend for future activation.
-                  </p>
-                </div>
+              <div className="min-w-0">
+                <p className="text-xs font-black uppercase tracking-[0.28em] text-violet-600">
+                  BuildSetu Account
+                </p>
+                <h1 className="mt-1 truncate text-2xl font-black tracking-tight md:text-3xl">
+                  {profile.name}
+                </h1>
+                <p className="mt-1 flex items-center gap-2 text-sm font-semibold text-violet-900/60">
+                  <Mail className="h-4 w-4" />
+                  <span className="truncate">{safeText(profile.email)}</span>
+                </p>
               </div>
             </div>
 
-            <a
-              href="/pricing"
-              className="mt-5 flex h-12 items-center justify-center rounded-2xl bg-[#21133f] text-sm font-black text-white"
-            >
-              Renew / Upgrade Plan
-            </a>
+            <div className="flex flex-wrap gap-3">
+              <button
+                type="button"
+                onClick={() => (window.location.href = "/")}
+                className="inline-flex items-center justify-center gap-2 rounded-2xl border border-violet-100 bg-white px-5 py-3 text-sm font-black text-[#15042e] shadow-sm transition hover:bg-violet-50"
+              >
+                <ArrowLeft className="h-4 w-4" />
+                Dashboard
+              </button>
+
+              <button
+                type="button"
+                onClick={logout}
+                className="inline-flex items-center justify-center gap-2 rounded-2xl bg-[#241044] px-5 py-3 text-sm font-black text-white shadow-sm transition hover:bg-[#351969]"
+              >
+                <LogOut className="h-4 w-4" />
+                Logout
+              </button>
+            </div>
           </div>
 
-          <div className="rounded-[28px] border border-[#eadcff] bg-white p-5 shadow-sm">
-            <div className="flex items-center gap-2">
-              <History className="h-5 w-5 text-[#7c3aed]" />
-              <h2 className="text-xl font-black tracking-[-0.04em]">Recent credit ledger</h2>
+          <div className="grid gap-4 p-5 md:grid-cols-4 md:p-7">
+            <div className="rounded-[24px] border border-violet-100 bg-white p-5 shadow-sm">
+              <Wallet className="h-7 w-7 text-violet-600" />
+              <p className="mt-4 text-xs font-black uppercase tracking-widest text-violet-900/50">
+                Credits
+              </p>
+              <p className="mt-1 text-3xl font-black tracking-tight">
+                {formatCredits(profile.credits)}
+              </p>
             </div>
 
-            <div className="mt-4 space-y-3">
-              {history.length ? (
-                history.slice(0, 20).map((item, index) => {
-                  const amount = ledgerCredits(item);
-                  const positive = amount > 0;
+            <div className="rounded-[24px] border border-violet-100 bg-white p-5 shadow-sm">
+              <User className="h-7 w-7 text-violet-600" />
+              <p className="mt-4 text-xs font-black uppercase tracking-widest text-violet-900/50">
+                Role
+              </p>
+              <p className="mt-1 text-xl font-black capitalize">
+                {safeText(profile.role)}
+              </p>
+            </div>
 
-                  return (
-                    <div
-                      key={item.id || `${item.createdAt || "ledger"}-${index}`}
-                      className="rounded-2xl border border-[#eee6f8] bg-[#fbf8ff] p-4"
-                    >
-                      <div className="flex items-start justify-between gap-3">
-                        <div>
-                          <p className="text-sm font-black">
-                            {ledgerType(item)} · {positive ? "+" : ""}
-                            {formatNumber(amount)} credits
-                          </p>
-                          <p className="mt-1 text-xs text-[#786a91]">{ledgerNote(item)}</p>
-                        </div>
-                        <p className="shrink-0 text-[11px] font-bold text-[#9a88b3]">
-                          {formatDate(item.createdAt)}
-                        </p>
-                      </div>
+            <div className="rounded-[24px] border border-violet-100 bg-white p-5 shadow-sm">
+              <ShieldCheck className="h-7 w-7 text-emerald-500" />
+              <p className="mt-4 text-xs font-black uppercase tracking-widest text-violet-900/50">
+                Account Status
+              </p>
+              <p className="mt-1 text-xl font-black uppercase">
+                {safeText(profile.status)}
+              </p>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => (window.location.href = "/pricing")}
+              className="rounded-[24px] bg-gradient-to-br from-violet-700 to-fuchsia-500 p-5 text-left text-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-lg"
+            >
+              <CreditCard className="h-7 w-7" />
+              <p className="mt-4 text-xs font-black uppercase tracking-widest text-white/70">
+                Upgrade
+              </p>
+              <p className="mt-1 text-xl font-black">Plans & Credits</p>
+            </button>
+          </div>
+        </div>
+
+        <div className="grid gap-5 lg:grid-cols-[0.95fr_1.05fr]">
+          <section className="rounded-[30px] border border-violet-100 bg-white p-5 shadow-[0_18px_60px_rgba(77,33,156,0.08)] md:p-7">
+            <div className="flex items-center justify-between gap-3">
+              <h2 className="flex items-center gap-2 text-xl font-black">
+                <BadgeCheck className="h-5 w-5 text-violet-600" />
+                User Profile
+              </h2>
+              <span className="rounded-full bg-violet-50 px-3 py-1 text-xs font-black uppercase tracking-widest text-violet-700">
+                Google synced
+              </span>
+            </div>
+
+            <div className="mt-5 grid gap-3">
+              <ProfileRow icon={<User />} label="Name" value={profile.name} />
+              <ProfileRow icon={<Mail />} label="Email" value={profile.email} />
+              <ProfileRow icon={<Phone />} label="Phone" value={profile.phone} />
+              <ProfileRow icon={<Building2 />} label="Company / Studio" value={profile.company} />
+              <ProfileRow icon={<ShieldCheck />} label="Role" value={profile.role} />
+            </div>
+
+            <div className="mt-5 rounded-[22px] bg-violet-50 p-4">
+              <p className="text-sm font-bold leading-6 text-violet-950/70">
+                Profile photo Google/Gmail login se auto show hoga, jab auth response me
+                image/picture/avatar available hoga. Phone aur company backend field me set
+                hone ke baad yahin show honge.
+              </p>
+            </div>
+          </section>
+
+          <section className="rounded-[30px] border border-violet-100 bg-white p-5 shadow-[0_18px_60px_rgba(77,33,156,0.08)] md:p-7">
+            <h2 className="flex items-center gap-2 text-xl font-black">
+              <CalendarDays className="h-5 w-5 text-violet-600" />
+              Plan & Subscription
+            </h2>
+
+            <div className="mt-5 grid gap-3">
+              <InfoRow label="Current Plan" value={profile.plan} />
+              <InfoRow label="Plan Status" value={profile.subscriptionStatus} />
+              <InfoRow label="Billing Cycle" value={user?.billingCycle || "free"} />
+              <InfoRow label="Started At" value={user?.subscriptionStartedAt || user?.startedAt || "Not set"} />
+              <InfoRow label="Expires At" value={user?.subscriptionExpiresAt || user?.expiresAt || "Not set"} />
+            </div>
+
+            <button
+              type="button"
+              onClick={() => (window.location.href = "/pricing")}
+              className="mt-5 w-full rounded-2xl bg-[#241044] px-5 py-3 text-sm font-black text-white transition hover:bg-[#351969]"
+            >
+              Renew / Upgrade Plan
+            </button>
+          </section>
+        </div>
+
+        <section className="rounded-[30px] border border-violet-100 bg-white p-5 shadow-[0_18px_60px_rgba(77,33,156,0.08)] md:p-7">
+          <div className="flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
+            <div>
+              <h2 className="flex items-center gap-2 text-xl font-black">
+                <Coins className="h-5 w-5 text-violet-600" />
+                Recent Credit Ledger
+              </h2>
+              <p className="mt-1 text-sm font-semibold text-violet-950/50">
+                Latest credit purchases and tool usage.
+              </p>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => (window.location.href = "/credits")}
+              className="rounded-2xl border border-violet-100 bg-violet-50 px-4 py-2 text-sm font-black text-violet-700 transition hover:bg-violet-100"
+            >
+              View Credits
+            </button>
+          </div>
+
+          <div className="mt-5 space-y-3">
+            {history.length ? (
+              history.map((item, index) => {
+                const type = item.type || item.actionType || item.action || "LEDGER";
+                const amount =
+                  item.creditsUsed ??
+                  item.credits ??
+                  item.amount ??
+                  item.delta ??
+                  0;
+                const description =
+                  item.description ||
+                  item.note ||
+                  item.reason ||
+                  `${type} ${amount} credits`;
+                const createdAt =
+                  item.createdAt ||
+                  item.created_at ||
+                  item.date ||
+                  "";
+
+                return (
+                  <div
+                    key={item.id || index}
+                    className="flex flex-col gap-2 rounded-[22px] border border-violet-100 bg-[#fbf8ff] p-4 md:flex-row md:items-center md:justify-between"
+                  >
+                    <div>
+                      <p className="font-black uppercase">
+                        {type} {Number(amount) > 0 ? "+" : ""}
+                        {formatCredits(amount)} credits
+                      </p>
+                      <p className="mt-1 text-sm font-semibold text-violet-950/50">
+                        {description}
+                      </p>
                     </div>
-                  );
-                })
-              ) : (
-                <p className="rounded-2xl bg-[#fbf8ff] p-4 text-sm text-[#786a91]">
-                  No credit activity yet.
+                    <p className="text-xs font-black text-violet-900/45">
+                      {createdAt ? new Date(createdAt).toLocaleString("en-IN") : ""}
+                    </p>
+                  </div>
+                );
+              })
+            ) : (
+              <div className="rounded-[22px] border border-dashed border-violet-200 bg-violet-50 p-6 text-center">
+                <p className="font-black">No credit ledger found</p>
+                <p className="mt-1 text-sm font-semibold text-violet-950/50">
+                  Purchases and tool usage will appear here.
                 </p>
-              )}
-            </div>
+              </div>
+            )}
           </div>
         </section>
       </section>
@@ -312,11 +426,41 @@ export default function AccountPage() {
   );
 }
 
-function InfoRow({ label, value }: { label: string; value: string }) {
+function ProfileRow({
+  icon,
+  label,
+  value,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  value: any;
+}) {
   return (
-    <div className="flex items-center justify-between gap-4 rounded-2xl border border-[#eee6f8] bg-[#fbf8ff] px-4 py-3">
-      <p className="text-xs font-black uppercase tracking-[0.08em] text-[#8b7ca6]">{label}</p>
-      <p className="text-right text-sm font-black text-[#21133f]">{value}</p>
+    <div className="flex items-center gap-3 rounded-[18px] border border-violet-100 bg-[#fbf8ff] px-4 py-3">
+      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-white text-violet-600 shadow-sm [&_svg]:h-5 [&_svg]:w-5">
+        {icon}
+      </div>
+      <div className="min-w-0 flex-1">
+        <p className="text-[11px] font-black uppercase tracking-widest text-violet-900/45">
+          {label}
+        </p>
+        <p className="truncate text-sm font-black text-[#15042e]">
+          {safeText(value)}
+        </p>
+      </div>
+    </div>
+  );
+}
+
+function InfoRow({ label, value }: { label: string; value: any }) {
+  return (
+    <div className="flex items-center justify-between gap-4 rounded-[18px] border border-violet-100 bg-[#fbf8ff] px-4 py-3">
+      <p className="text-xs font-black uppercase tracking-widest text-violet-900/45">
+        {label}
+      </p>
+      <p className="max-w-[55%] truncate text-sm font-black capitalize text-[#15042e]">
+        {safeText(value)}
+      </p>
     </div>
   );
 }
