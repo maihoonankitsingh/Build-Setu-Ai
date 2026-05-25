@@ -1,5 +1,6 @@
 "use client";
 
+import * as React from "react";
 import { useEffect, useMemo, useState, useRef } from "react";
 import {
   ArrowRight,
@@ -170,14 +171,16 @@ type Tool = {
   desc: string;
   cost: string;
   status: ToolStatus;
-  icon: React.ElementType;
+  icon: BuildSetuIcon;
   visual: string;
   visualLabel: string;
   imageUrl: string;
   featured?: boolean;
 };
 
-const navItems: Array<{ id: ViewKey | "credits"; label: string; icon: React.ElementType; href?: string }> = [
+type BuildSetuIcon = React.ComponentType<{ className?: string }>;
+
+const navItems: Array<{ id: ViewKey | "credits"; label: string; icon: BuildSetuIcon; href?: string }> = [
   { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
   { id: "tools", label: "All Tools", icon: Boxes },
   { id: "projects", label: "Projects", icon: FolderKanban },
@@ -191,12 +194,12 @@ const navItems: Array<{ id: ViewKey | "credits"; label: string; icon: React.Elem
   { id: "credits", label: "Credits", icon: CreditCard, href: "/credits" },
 ];
 
-const bottomNav = [
+const bottomNav: Array<{ label: string; icon: BuildSetuIcon }> = [
   { label: "Support", icon: Headphones },
   { label: "Settings", icon: Settings },
 ];
 
-const categories: Array<{ label: ToolCategory; icon: React.ElementType }> = [
+const categories: Array<{ label: ToolCategory; icon: BuildSetuIcon }> = [
   { label: "All Tools", icon: Boxes },
   { label: "Interior", icon: Home },
   { label: "Exterior", icon: Building2 },
@@ -1261,7 +1264,7 @@ function DashboardStatCard({
   label: string;
   value: string;
   sub: string;
-  icon: React.ElementType;
+  icon: BuildSetuIcon;
   loading: boolean;
 }) {
   return (
