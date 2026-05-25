@@ -4604,7 +4604,7 @@ function BbsPage({ theme }: { theme: ResolvedTheme }) {
               disabled={!items.length}
               className="rounded-2xl border border-[#d9f2e3] bg-[#f6fff9] px-4 py-3 text-sm font-black text-[#0f8a45] disabled:cursor-not-allowed disabled:opacity-50"
             >
-              ▣ Export BBS CSV
+              ▣ Export Excel
             </button>
             <button
               onClick={exportBbsPdf}
