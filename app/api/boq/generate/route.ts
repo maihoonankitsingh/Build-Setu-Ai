@@ -1,7 +1,40 @@
+import { readFile } from "fs/promises";
+import { join } from "path";
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 
-type DynamicBoqItem = {
+type RateMasterCity = {
+  cityMultiplier?: number;
+  labourMultiplier?: number;
+  materialMultiplier?: number;
+};
+
+type RateMasterItem = {
+  itemCode: string;
+  category: string;
+  description: string;
+  unit: string;
+  quantityBasis: "plotArea" | "builtUpArea" | "lumpSum";
+  quantityFactor: number;
+  rate: number;
+  rateType: "material" | "labour" | "materialLabour" | "percentage";
+  percentageOfSubtotal?: number;
+  drawingRef: string;
+};
+
+type RateMaster = {
+  version: string;
+  source: string;
+  note: string;
+  currency: string;
+  defaultCity: string;
+  cities: Record<string, RateMasterCity>;
+  qualityMultipliers: Record<string, number>;
+  projectTypeMultipliers: Record<string, number>;
+  items: RateMasterItem[];
+};
+
+type GeneratedBoqItem = {
   itemCode: string;
   description: string;
   unit: string;
@@ -60,18 +93,52 @@ function inferFloors(project: any, title: string) {
     "stories",
   ]);
 
-  if (directFloors > 0) return Math.max(1, Math.min(10, Math.round(directFloors)));
+  if (directFloors > 0) return Math.max(1, Math.min(20, Math.round(directFloors)));
 
   const gPlusMatch = title.match(/g\s*\+\s*(\d+)/i);
-  if (gPlusMatch) return Math.max(1, Math.min(10, Number(gPlusMatch[1]) + 1));
+  if (gPlusMatch) return Math.max(1, Math.min(20, Number(gPlusMatch[1]) + 1));
 
   const floorMatch = title.match(/(\d+)\s*(?:floor|floors|storey|storeys|story|stories)/i);
-  if (floorMatch) return Math.max(1, Math.min(10, Number(floorMatch[1])));
+  if (floorMatch) return Math.max(1, Math.min(20, Number(floorMatch[1])));
 
   if (/duplex/i.test(title)) return 2;
   if (/villa/i.test(title)) return 2;
 
   return 1;
+}
+
+function inferCity(project: any, title: string, rateMaster: RateMaster) {
+  const text = `${title} ${project?.location || ""} ${project?.city || ""} ${project?.address || ""}`.toLowerCase();
+
+  for (const city of Object.keys(rateMaster.cities)) {
+    if (city !== "Default" && text.includes(city.toLowerCase())) return city;
+  }
+
+  return rateMaster.defaultCity || "Default";
+}
+
+function inferQuality(project: any, title: string, rateMaster: RateMaster) {
+  const text = `${title} ${project?.quality || ""} ${project?.finishQuality || ""} ${project?.package || ""}`.toLowerCase();
+
+  if (text.includes("luxury")) return "Luxury";
+  if (text.includes("premium")) return "Premium";
+  if (text.includes("basic") || text.includes("economy")) return "Basic";
+  if (rateMaster.qualityMultipliers.Standard) return "Standard";
+
+  return Object.keys(rateMaster.qualityMultipliers)[0] || "Standard";
+}
+
+function inferProjectType(project: any, title: string, rateMaster: RateMaster) {
+  const direct = String(project?.projectType || project?.type || "").trim();
+  const text = `${title} ${direct}`.toLowerCase();
+
+  if (text.includes("commercial") || text.includes("office") || text.includes("shop")) return "Commercial";
+  if (text.includes("interior")) return "Interior";
+  if (text.includes("renovation") || text.includes("repair")) return "Renovation";
+  if (text.includes("warehouse") || text.includes("shed")) return "Warehouse";
+  if (rateMaster.projectTypeMultipliers.Residential) return "Residential";
+
+  return Object.keys(rateMaster.projectTypeMultipliers)[0] || "Residential";
 }
 
 function inferAreas(project: any) {
@@ -110,86 +177,95 @@ function inferAreas(project: any) {
     plotArea: round2(plotArea),
     floors,
     builtUpArea: round2(builtUpArea),
+    coverage,
   };
 }
 
-function inferBaseRate(project: any, title: string) {
-  const directRate = readFirstNumber(project, [
-    "ratePerSqft",
-    "budgetRate",
-    "constructionRate",
-    "estimatedRate",
-  ]);
-
-  if (directRate > 0) return directRate;
-
-  const text = `${title} ${project?.projectType || ""} ${project?.type || ""}`.toLowerCase();
-
-  let rate = 1850;
-
-  if (text.includes("commercial") || text.includes("office") || text.includes("shop")) rate = 2450;
-  if (text.includes("interior")) rate = 1250;
-  if (text.includes("renovation") || text.includes("repair")) rate = 950;
-  if (text.includes("warehouse") || text.includes("shed")) rate = 1350;
-  if (text.includes("premium") || text.includes("luxury")) rate *= 1.28;
-  if (text.includes("basic") || text.includes("economy")) rate *= 0.82;
-
-  return Math.round(rate);
+async function loadRateMaster(): Promise<RateMaster> {
+  const filePath = join(process.cwd(), "data/generated/boq-rate-master.json");
+  const raw = await readFile(filePath, "utf-8");
+  return JSON.parse(raw) as RateMaster;
 }
 
-function makeItem(
-  itemCode: string,
-  description: string,
-  unit: string,
-  quantity: number,
-  amount: number,
-  drawingRef: string,
-): DynamicBoqItem {
-  const safeQuantity = Math.max(1, round2(quantity));
-  const safeAmount = Math.max(0, round2(amount));
-  const rate = round2(safeAmount / safeQuantity);
-
-  return {
-    itemCode,
-    description,
-    unit,
-    quantity: safeQuantity,
-    rate,
-    amount: safeAmount,
-    status: "Review Required",
-    drawingRef,
-  };
+function getRateMultiplier(rateType: RateMasterItem["rateType"], cityConfig: RateMasterCity) {
+  if (rateType === "labour") return cityConfig.labourMultiplier || cityConfig.cityMultiplier || 1;
+  if (rateType === "material") return cityConfig.materialMultiplier || cityConfig.cityMultiplier || 1;
+  if (rateType === "materialLabour") return cityConfig.cityMultiplier || 1;
+  return 1;
 }
 
-function buildDynamicBoq(project: any) {
+function getQuantity(item: RateMasterItem, area: ReturnType<typeof inferAreas>) {
+  if (item.quantityBasis === "plotArea") return area.plotArea * item.quantityFactor;
+  if (item.quantityBasis === "builtUpArea") return area.builtUpArea * item.quantityFactor;
+  return item.quantityFactor || 1;
+}
+
+function buildRateMasterBoq(project: any, rateMaster: RateMaster) {
   const area = inferAreas(project);
-  const baseRate = inferBaseRate(project, area.title);
-  const totalBudget = round2(area.builtUpArea * baseRate);
+  const city = inferCity(project, area.title, rateMaster);
+  const quality = inferQuality(project, area.title, rateMaster);
+  const projectType = inferProjectType(project, area.title, rateMaster);
 
-  const items: DynamicBoqItem[] = [
-    makeItem("1.01", "Site clearing, layout marking and temporary setup", "Sqft", area.plotArea, totalBudget * 0.025, "AI-BOQ-SITE"),
-    makeItem("1.02", "Earthwork excavation and foundation trenching", "Cum", area.builtUpArea * 0.035, totalBudget * 0.06, "AI-BOQ-FOUNDATION"),
-    makeItem("2.01", "PCC bed and levelling course", "Cum", area.builtUpArea * 0.018, totalBudget * 0.045, "AI-BOQ-PCC"),
-    makeItem("2.02", "RCC concrete for footing, column, beam and slab", "Cum", area.builtUpArea * 0.085, totalBudget * 0.18, "AI-BOQ-RCC"),
-    makeItem("2.03", "Reinforcement steel cutting, bending and placing", "Kg", area.builtUpArea * 3.8, totalBudget * 0.16, "AI-BOQ-STEEL"),
-    makeItem("3.01", "Brick/block masonry work", "Sqft", area.builtUpArea * 0.75, totalBudget * 0.105, "AI-BOQ-MASONRY"),
-    makeItem("4.01", "Internal and external plaster", "Sqft", area.builtUpArea * 2.25, totalBudget * 0.075, "AI-BOQ-PLASTER"),
-    makeItem("4.02", "Flooring and skirting work", "Sqft", area.builtUpArea * 0.88, totalBudget * 0.105, "AI-BOQ-FLOORING"),
-    makeItem("5.01", "Electrical conduiting, wiring, fixtures and DB points", "Sqft", area.builtUpArea, totalBudget * 0.075, "AI-BOQ-ELECTRICAL"),
-    makeItem("5.02", "Plumbing, sanitary lines, CP fittings and fixtures", "Sqft", area.builtUpArea, totalBudget * 0.07, "AI-BOQ-PLUMBING"),
-    makeItem("6.01", "Doors, windows, grills and hardware", "Sqft", area.builtUpArea, totalBudget * 0.07, "AI-BOQ-JOINERY"),
-    makeItem("7.01", "Putty, primer and painting work", "Sqft", area.builtUpArea * 2.25, totalBudget * 0.055, "AI-BOQ-PAINT"),
-  ];
+  const cityConfig = rateMaster.cities[city] || rateMaster.cities[rateMaster.defaultCity] || { cityMultiplier: 1 };
+  const qualityMultiplier = rateMaster.qualityMultipliers[quality] || 1;
+  const projectTypeMultiplier = rateMaster.projectTypeMultipliers[projectType] || 1;
 
-  const currentTotal = items.reduce((sum, item) => sum + item.amount, 0);
-  const contingency = Math.max(0, totalBudget - currentTotal);
+  const items: GeneratedBoqItem[] = [];
+  let subtotal = 0;
 
-  items.push(makeItem("8.01", "Wastage, handling, tools, supervision and contingency", "Lump Sum", 1, contingency, "AI-BOQ-CONTINGENCY"));
+  for (const rateItem of rateMaster.items) {
+    if (rateItem.rateType === "percentage") continue;
+
+    const quantity = Math.max(1, round2(getQuantity(rateItem, area)));
+    const rateMultiplier = getRateMultiplier(rateItem.rateType, cityConfig);
+    const rate = round2(rateItem.rate * rateMultiplier * qualityMultiplier * projectTypeMultiplier);
+    const amount = round2(quantity * rate);
+
+    subtotal += amount;
+
+    items.push({
+      itemCode: rateItem.itemCode,
+      description: rateItem.description,
+      unit: rateItem.unit,
+      quantity,
+      rate,
+      amount,
+      status: "Review Required",
+      drawingRef: rateItem.drawingRef,
+    });
+  }
+
+  for (const rateItem of rateMaster.items) {
+    if (rateItem.rateType !== "percentage") continue;
+
+    const quantity = 1;
+    const percentage = rateItem.percentageOfSubtotal || 0;
+    const amount = round2((subtotal * percentage) / 100);
+    const rate = amount;
+
+    items.push({
+      itemCode: rateItem.itemCode,
+      description: rateItem.description,
+      unit: rateItem.unit,
+      quantity,
+      rate,
+      amount,
+      status: "Review Required",
+      drawingRef: rateItem.drawingRef,
+    });
+  }
+
+  const totalAmount = round2(items.reduce((sum, item) => sum + item.amount, 0));
 
   return {
     area,
-    baseRate,
-    totalBudget: round2(items.reduce((sum, item) => sum + item.amount, 0)),
+    city,
+    quality,
+    projectType,
+    rateMasterVersion: rateMaster.version,
+    rateSource: rateMaster.source,
+    rateNote: rateMaster.note,
+    totalAmount,
     items,
   };
 }
@@ -211,7 +287,8 @@ export async function POST(request: Request) {
       return NextResponse.json({ ok: false, error: "Project not found" }, { status: 404 });
     }
 
-    const generated = buildDynamicBoq(project);
+    const rateMaster = await loadRateMaster();
+    const generated = buildRateMasterBoq(project, rateMaster);
 
     await prisma.bOQItem.deleteMany({
       where: {
@@ -246,22 +323,30 @@ export async function POST(request: Request) {
       orderBy: { createdAt: "asc" },
     });
 
-    const totalAmount = items.reduce((sum, item) => sum + Number(item.amount || 0), 0);
+    const totalAmount = round2(items.reduce((sum, item) => sum + Number(item.amount || 0), 0));
 
     return NextResponse.json({
       ok: true,
       items,
       count: items.length,
-      totalAmount: round2(totalAmount),
+      totalAmount,
       estimateInputs: {
         plotArea: generated.area.plotArea,
         builtUpArea: generated.area.builtUpArea,
         floors: generated.area.floors,
-        baseRate: generated.baseRate,
+        coverage: generated.area.coverage,
+        city: generated.city,
+        quality: generated.quality,
+        projectType: generated.projectType,
+      },
+      rateSource: {
+        source: generated.rateSource,
+        version: generated.rateMasterVersion,
+        note: generated.rateNote,
       },
     });
   } catch (error) {
-    console.error("BOQ_GENERATE_DYNAMIC_ERROR", error);
-    return NextResponse.json({ ok: false, error: "Failed to generate dynamic BOQ" }, { status: 500 });
+    console.error("BOQ_GENERATE_RATE_MASTER_ERROR", error);
+    return NextResponse.json({ ok: false, error: "Failed to generate rate-master based BOQ" }, { status: 500 });
   }
 }
