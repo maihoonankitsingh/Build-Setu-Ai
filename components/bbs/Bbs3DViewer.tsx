@@ -80,7 +80,7 @@ function CameraController({
       camera.position.set(0, 6.6, 0.01);
       camera.lookAt(0, 1.8, 0);
     } else {
-      camera.position.set(4.4, 3.4, 5.4);
+      camera.position.set(4.6, 3.8, 5.8);
       camera.lookAt(0, 1.8, 0);
     }
 
@@ -213,10 +213,10 @@ export default function Bbs3DViewer({ column, totalBars, totalWeight }: Bbs3DVie
         </span>
       </div>
 
-      <div className="relative h-[420px]">
+      <div className="relative h-[560px]">
         <Canvas
           shadows
-          camera={{ position: [4.4, 3.4, 5.4], fov: 34, near: 0.1, far: 100 }}
+          camera={{ position: [4.6, 3.8, 5.8], fov: 32, near: 0.1, far: 100 }}
           gl={{ antialias: true, alpha: true }}
           onCreated={({ gl }) => {
             gl.setClearColor(new THREE.Color("#fbfaff"), 1);
@@ -281,7 +281,7 @@ export default function Bbs3DViewer({ column, totalBars, totalWeight }: Bbs3DVie
           </button>
         </div>
 
-        <div className="absolute bottom-4 left-4 right-4 rounded-2xl border border-[#eee8fb] bg-white/95 px-4 py-2.5 shadow-[0_10px_24px_rgba(33,19,63,0.10)] backdrop-blur">
+        <div className="absolute bottom-5 left-4 right-4 rounded-2xl border border-[#eee8fb] bg-white/95 px-4 py-2.5 shadow-[0_10px_24px_rgba(33,19,63,0.10)] backdrop-blur">
           <div className="flex flex-wrap items-center justify-between gap-2">
             <p className="text-[10px] font-black text-[#21133f]">
               {column.type} {column.id} • {column.section}

@@ -154,7 +154,7 @@ function persistBuildSetuViewKey(view: ViewKey) {
 const Bbs3DViewer = dynamic(() => import("@/components/bbs/Bbs3DViewer"), {
   ssr: false,
   loading: () => (
-    <div className="grid h-[420px] place-items-center rounded-[22px] border border-[#eee8fb] bg-[#fbfaff] text-xs font-bold text-[#817397]">
+    <div className="grid h-[560px] place-items-center rounded-[22px] border border-[#eee8fb] bg-[#fbfaff] text-xs font-bold text-[#817397]">
       Loading 3D reinforcement viewer...
     </div>
   ),
