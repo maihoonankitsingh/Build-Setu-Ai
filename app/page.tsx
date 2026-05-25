@@ -3868,8 +3868,8 @@ function BbsPage({ theme }: { theme: ResolvedTheme }) {
       ) : null}
 
       {manualFormOpen ? (
-        <section className="rounded-[24px] border border-[#ddd2ff] bg-white p-4 shadow-[0_12px_32px_rgba(33,19,63,0.07)]">
-          <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
+        <section className="rounded-[22px] border border-[#ddd2ff] bg-white p-4 shadow-[0_10px_26px_rgba(33,19,63,0.06)]">
+          <div className="flex flex-col gap-1">
             <div>
               <h2 className="text-lg font-black text-[#161032]">
                 {manualForm.id ? "Edit BBS Row" : "Add Manual BBS Row"}
@@ -3878,23 +3878,18 @@ function BbsPage({ theme }: { theme: ResolvedTheme }) {
                 Enter reinforcement data manually. Total length and steel weight auto-calculate before saving.
               </p>
             </div>
-            <button
-              onClick={closeManualForm}
-              className="w-fit rounded-xl border border-[#eee8fb] bg-white px-3 py-2 text-[11px] font-black text-[#817397] shadow-sm hover:bg-[#f8f5ff]"
-            >
-              Cancel
-            </button>
+
           </div>
 
-          <div className="mt-4 rounded-[20px] border border-[#eee8fb] bg-[#fbfaff] p-3">
-            <div className="grid gap-3 md:grid-cols-3 xl:grid-cols-6">
+          <div className="mt-3 rounded-[18px] border border-[#eee8fb] bg-[#fbfaff] p-3">
+            <div className="grid gap-2.5 md:grid-cols-3 xl:grid-cols-6">
               <label>
                 <span className="text-[10px] font-black uppercase tracking-wide text-[#8d7aa8]">Member Type</span>
                 <div className="relative mt-2">
                   <select
                     value={manualForm.memberType}
                     onChange={(event) => updateManualMemberType(event.target.value)}
-                    className="h-10 w-full appearance-none rounded-xl border border-[#e6e0f5] bg-white px-3 pr-9 text-[13px] font-semibold text-[#21133f] outline-none transition focus:border-[#6d35ff] focus:ring-4 focus:ring-[#6d35ff]/10"
+                    className="h-9 w-full appearance-none rounded-xl border border-[#e6e0f5] bg-white px-3 pr-8 text-[12px] font-semibold text-[#21133f] outline-none transition focus:border-[#6d35ff] focus:ring-4 focus:ring-[#6d35ff]/10"
                   >
                     {bbsMemberTypeOptions.map((option) => (
                       <option key={option} value={option}>{option}</option>
@@ -3910,7 +3905,7 @@ function BbsPage({ theme }: { theme: ResolvedTheme }) {
                   <select
                     value={manualForm.memberId}
                     onChange={(event) => updateManualForm("memberId", event.target.value)}
-                    className="h-10 w-full appearance-none rounded-xl border border-[#e6e0f5] bg-white px-3 pr-9 text-[13px] font-semibold text-[#21133f] outline-none transition focus:border-[#6d35ff] focus:ring-4 focus:ring-[#6d35ff]/10"
+                    className="h-9 w-full appearance-none rounded-xl border border-[#e6e0f5] bg-white px-3 pr-8 text-[12px] font-semibold text-[#21133f] outline-none transition focus:border-[#6d35ff] focus:ring-4 focus:ring-[#6d35ff]/10"
                   >
                     {getBbsMemberIdOptions(manualForm.memberType).map((option) => (
                       <option key={option} value={option}>{option}</option>
@@ -3922,17 +3917,17 @@ function BbsPage({ theme }: { theme: ResolvedTheme }) {
 
               <label className="xl:col-span-2">
                 <span className="text-[10px] font-black uppercase tracking-wide text-[#8d7aa8]">Bar Mark</span>
-                <div className="mt-2 flex gap-2">
+                <div className="mt-1.5 flex gap-2">
                   <input
                     value={manualForm.barMark}
                     onChange={(event) => updateManualForm("barMark", event.target.value)}
                     placeholder="C1-MAIN-16-01"
-                    className="h-10 min-w-0 flex-1 rounded-xl border border-[#e6e0f5] bg-white px-3 text-[13px] font-semibold text-[#21133f] outline-none transition focus:border-[#6d35ff] focus:ring-4 focus:ring-[#6d35ff]/10"
+                    className="h-9 min-w-0 flex-1 rounded-xl border border-[#e6e0f5] bg-white px-3 text-[12px] font-semibold text-[#21133f] outline-none transition focus:border-[#6d35ff] focus:ring-4 focus:ring-[#6d35ff]/10"
                   />
                   <button
                     type="button"
                     onClick={applyAutoBarMark}
-                    className="h-10 whitespace-nowrap rounded-xl border border-[#d7ccff] bg-white px-3 text-[11px] font-black text-[#6d35ff] shadow-sm hover:bg-[#f6f1ff]"
+                    className="h-9 whitespace-nowrap rounded-xl border border-[#d7ccff] bg-white px-3 text-[11px] font-black text-[#6d35ff] shadow-sm hover:bg-[#f6f1ff]"
                   >
                     Auto
                   </button>
@@ -3945,7 +3940,7 @@ function BbsPage({ theme }: { theme: ResolvedTheme }) {
                   <select
                     value={manualForm.diameter}
                     onChange={(event) => updateManualForm("diameter", event.target.value)}
-                    className="h-10 w-full appearance-none rounded-xl border border-[#e6e0f5] bg-white px-3 pr-9 text-[13px] font-semibold text-[#21133f] outline-none transition focus:border-[#6d35ff] focus:ring-4 focus:ring-[#6d35ff]/10"
+                    className="h-9 w-full appearance-none rounded-xl border border-[#e6e0f5] bg-white px-3 pr-8 text-[12px] font-semibold text-[#21133f] outline-none transition focus:border-[#6d35ff] focus:ring-4 focus:ring-[#6d35ff]/10"
                   >
                     {bbsDiameterOptions.map((option) => (
                       <option key={option} value={option}>{option} mm</option>
@@ -3961,7 +3956,7 @@ function BbsPage({ theme }: { theme: ResolvedTheme }) {
                   <select
                     value={manualForm.quantity}
                     onChange={(event) => updateManualForm("quantity", event.target.value)}
-                    className="h-10 w-full appearance-none rounded-xl border border-[#e6e0f5] bg-white px-3 pr-9 text-[13px] font-semibold text-[#21133f] outline-none transition focus:border-[#6d35ff] focus:ring-4 focus:ring-[#6d35ff]/10"
+                    className="h-9 w-full appearance-none rounded-xl border border-[#e6e0f5] bg-white px-3 pr-8 text-[12px] font-semibold text-[#21133f] outline-none transition focus:border-[#6d35ff] focus:ring-4 focus:ring-[#6d35ff]/10"
                   >
                     {bbsBarsOptions.map((option) => (
                       <option key={option} value={option}>{option}</option>
@@ -3977,7 +3972,7 @@ function BbsPage({ theme }: { theme: ResolvedTheme }) {
                   <select
                     value={manualForm.shapeCode}
                     onChange={(event) => updateManualForm("shapeCode", event.target.value)}
-                    className="h-10 w-full appearance-none rounded-xl border border-[#e6e0f5] bg-white px-3 pr-9 text-[13px] font-semibold text-[#21133f] outline-none transition focus:border-[#6d35ff] focus:ring-4 focus:ring-[#6d35ff]/10"
+                    className="h-9 w-full appearance-none rounded-xl border border-[#e6e0f5] bg-white px-3 pr-8 text-[12px] font-semibold text-[#21133f] outline-none transition focus:border-[#6d35ff] focus:ring-4 focus:ring-[#6d35ff]/10"
                   >
                     {bbsShapeCodeOptions.map((option) => (
                       <option key={option} value={option}>{option}</option>
@@ -3993,7 +3988,7 @@ function BbsPage({ theme }: { theme: ResolvedTheme }) {
                   <select
                     value={manualForm.cuttingLength}
                     onChange={(event) => updateManualForm("cuttingLength", event.target.value)}
-                    className="h-10 w-full appearance-none rounded-xl border border-[#e6e0f5] bg-white px-3 pr-9 text-[13px] font-semibold text-[#21133f] outline-none transition focus:border-[#6d35ff] focus:ring-4 focus:ring-[#6d35ff]/10"
+                    className="h-9 w-full appearance-none rounded-xl border border-[#e6e0f5] bg-white px-3 pr-8 text-[12px] font-semibold text-[#21133f] outline-none transition focus:border-[#6d35ff] focus:ring-4 focus:ring-[#6d35ff]/10"
                   >
                     {bbsCuttingLengthOptions.map((option) => (
                       <option key={option} value={option}>{option} m</option>
@@ -4009,7 +4004,7 @@ function BbsPage({ theme }: { theme: ResolvedTheme }) {
                   <select
                     value={manualForm.drawingRef}
                     onChange={(event) => updateManualForm("drawingRef", event.target.value)}
-                    className="h-10 w-full appearance-none rounded-xl border border-[#e6e0f5] bg-white px-3 pr-9 text-[13px] font-semibold text-[#21133f] outline-none transition focus:border-[#6d35ff] focus:ring-4 focus:ring-[#6d35ff]/10"
+                    className="h-9 w-full appearance-none rounded-xl border border-[#e6e0f5] bg-white px-3 pr-8 text-[12px] font-semibold text-[#21133f] outline-none transition focus:border-[#6d35ff] focus:ring-4 focus:ring-[#6d35ff]/10"
                   >
                     {getBbsDrawingRefOptions(manualForm.memberType).map((option) => (
                       <option key={option} value={option}>{option}</option>
@@ -4025,7 +4020,7 @@ function BbsPage({ theme }: { theme: ResolvedTheme }) {
                   <select
                     value={manualForm.status}
                     onChange={(event) => updateManualForm("status", event.target.value)}
-                    className="h-10 w-full appearance-none rounded-xl border border-[#e6e0f5] bg-white px-3 pr-9 text-[13px] font-semibold text-[#21133f] outline-none transition focus:border-[#6d35ff] focus:ring-4 focus:ring-[#6d35ff]/10"
+                    className="h-9 w-full appearance-none rounded-xl border border-[#e6e0f5] bg-white px-3 pr-8 text-[12px] font-semibold text-[#21133f] outline-none transition focus:border-[#6d35ff] focus:ring-4 focus:ring-[#6d35ff]/10"
                   >
                     {bbsStatusOptions.map((option) => (
                       <option key={option} value={option}>{option}</option>
@@ -4036,14 +4031,14 @@ function BbsPage({ theme }: { theme: ResolvedTheme }) {
               </label>
             </div>
 
-            <div className="mt-3 grid gap-3 md:grid-cols-4">
+            <div className="mt-3 grid gap-2.5 md:grid-cols-4">
               {[
                 ["Total Len", `${bbsPreviewTotals(manualForm).totalLength.toFixed(3)} m`],
                 ["Unit Wt", `${bbsPreviewTotals(manualForm).unitWeight.toFixed(3)} kg/m`],
                 ["Total Wt", `${bbsPreviewTotals(manualForm).totalWeight.toFixed(2)} kg`],
                 ["Formula", "d²/162"],
               ].map(([label, value]) => (
-                <div key={label} className="rounded-xl border border-[#eee8fb] bg-white px-3 py-2.5 shadow-sm">
+                <div key={label} className="rounded-xl border border-[#eee8fb] bg-white px-3 py-2 shadow-sm">
                   <p className="text-[10px] font-black uppercase tracking-wide text-[#8d7aa8]">{label}</p>
                   <p className="mt-0.5 text-[12px] font-black text-[#21133f]">{value}</p>
                 </div>
@@ -4051,17 +4046,17 @@ function BbsPage({ theme }: { theme: ResolvedTheme }) {
             </div>
           </div>
 
-          <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:justify-end">
+          <div className="mt-3 flex flex-col gap-2 sm:flex-row sm:justify-end">
             <button
               onClick={closeManualForm}
-              className="rounded-xl border border-[#eee8fb] bg-white px-5 py-2.5 text-[13px] font-black text-[#817397] shadow-sm hover:bg-[#f8f5ff]"
+              className="rounded-xl border border-[#eee8fb] bg-white px-5 py-2 text-[12px] font-black text-[#817397] shadow-sm hover:bg-[#f8f5ff]"
             >
               Cancel
             </button>
             <button
               onClick={saveManualRow}
               disabled={manualSaving}
-              className="rounded-xl bg-gradient-to-r from-[#21133f] to-[#6d35ff] px-6 py-2.5 text-[13px] font-black text-white shadow-lg shadow-[#6d35ff]/20 disabled:cursor-not-allowed disabled:opacity-60"
+              className="rounded-xl bg-gradient-to-r from-[#21133f] to-[#6d35ff] px-6 py-2 text-[12px] font-black text-white shadow-lg shadow-[#6d35ff]/20 disabled:cursor-not-allowed disabled:opacity-60"
             >
               {manualSaving ? "Saving..." : manualForm.id ? "Save Changes" : "Add Row"}
             </button>
