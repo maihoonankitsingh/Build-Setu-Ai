@@ -213,10 +213,10 @@ export default function Bbs3DViewer({ column, totalBars, totalWeight }: Bbs3DVie
         </span>
       </div>
 
-      <div className="relative h-[380px] overflow-hidden">
+      <div className="relative h-[360px] overflow-hidden">
         <Canvas
           shadows
-          camera={{ position: [4.2, 3.2, 5.2], fov: 39, near: 0.1, far: 100 }}
+          camera={{ position: [4.2, 3.2, 5.2], fov: 40, near: 0.1, far: 100 }}
           gl={{ antialias: true, alpha: true }}
           onCreated={({ gl }) => {
             gl.setClearColor(new THREE.Color("#fbfaff"), 1);
