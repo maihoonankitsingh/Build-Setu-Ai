@@ -854,21 +854,7 @@ function Header({
             <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-[#7c3aed]" />
           </button>
 
-          <button
-            className={cn(
-              "flex items-center gap-3 rounded-2xl border px-3 py-2",
-              false ? "border-white/10 bg-white/[0.04] text-white" : "border-[#ded5ec] bg-white text-[#21133f] light-card-shadow",
-            )}
-          >
-            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-[#7c3aed] to-[#4f46e5] text-sm font-bold text-white">
-              SB
-            </div>
-            <div className="hidden text-left lg:block">
-              <div className="text-sm font-semibold leading-none">BuildSetu AI</div>
-              <div className="mt-1 text-xs text-[#817397]">Workspace</div>
-            </div>
-            <ChevronDown className="h-4 w-4 text-[#817397]" />
-          </button>
+          <HeaderProfileButton />
         </div>
       </div>
     </header>
@@ -3076,6 +3062,21 @@ function BoqPage({ theme }: { theme: ResolvedTheme }) {
   const [generating, setGenerating] = useState(false);
   const [exportingPdf, setExportingPdf] = useState(false);
   const [message, setMessage] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [unitFilter, setUnitFilter] = useState("All");
+  const [statusFilter, setStatusFilter] = useState("All");
+  const [showManualForm, setShowManualForm] = useState(false);
+  const [editingItemId, setEditingItemId] = useState<string | null>(null);
+  const [savingManual, setSavingManual] = useState(false);
+  const [manualForm, setManualForm] = useState({
+    itemCode: "",
+    description: "",
+    unit: "Sqft",
+    quantity: "1",
+    rate: "0",
+    status: "Draft",
+    drawingRef: "Manual Entry",
+  });
 
   async function loadProjectsAndBoq() {
     try {
@@ -3173,6 +3174,154 @@ function BoqPage({ theme }: { theme: ResolvedTheme }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+
+  const manualAmount = useMemo(() => {
+    const quantity = Number(manualForm.quantity || 0);
+    const rate = Number(manualForm.rate || 0);
+    return Number.isFinite(quantity * rate) ? quantity * rate : 0;
+  }, [manualForm.quantity, manualForm.rate]);
+
+  const filteredBoqItems = useMemo(() => {
+    const query = searchQuery.trim().toLowerCase();
+
+    return items.filter((item) => {
+      const matchesQuery =
+        !query ||
+        [item.itemCode, item.description, item.unit, item.status, item.drawingRef]
+          .filter(Boolean)
+          .join(" ")
+          .toLowerCase()
+          .includes(query);
+
+      const matchesUnit = unitFilter === "All" || (item.unit || "Unit") === unitFilter;
+      const matchesStatus = statusFilter === "All" || (item.status || "Draft") === statusFilter;
+
+      return matchesQuery && matchesUnit && matchesStatus;
+    });
+  }, [items, searchQuery, statusFilter, unitFilter]);
+
+  const unitOptions = useMemo(() => {
+    return ["All", ...Array.from(new Set(filteredBoqItems.map((item) => item.unit || "Unit"))).sort()];
+  }, [items]);
+
+  const statusOptions = useMemo(() => {
+    return ["All", ...Array.from(new Set(filteredBoqItems.map((item) => item.status || "Draft"))).sort()];
+  }, [items]);
+
+  function openManualBoqForm() {
+    setEditingItemId(null);
+    setManualForm({
+      itemCode: `M-${String(Date.now()).slice(-5)}`,
+      description: "",
+      unit: "Sqft",
+      quantity: "1",
+      rate: "0",
+      status: "Draft",
+      drawingRef: "Manual Entry",
+    });
+    setShowManualForm(true);
+  }
+
+  function startBoqEdit(item: any) {
+    setEditingItemId(item.id || null);
+    setManualForm({
+      itemCode: item.itemCode || "",
+      description: item.description || "",
+      unit: item.unit || "Sqft",
+      quantity: String(item.quantity || "0"),
+      rate: String(item.rate || "0"),
+      status: item.status || "Draft",
+      drawingRef: item.drawingRef || "Manual Entry",
+    });
+    setShowManualForm(true);
+    setMessage("");
+  }
+
+  async function saveManualBoqItem() {
+    if (!projectId) {
+      setMessage("Select a project first.");
+      return;
+    }
+
+    if (!manualForm.description.trim()) {
+      setMessage("BOQ item description is required.");
+      return;
+    }
+
+    setSavingManual(true);
+    setMessage("");
+
+    try {
+      const endpoint = editingItemId ? "/api/boq/update-item" : "/api/boq/create-item";
+      const payload = editingItemId
+        ? { itemId: editingItemId, ...manualForm }
+        : { projectId, ...manualForm };
+
+      const response = await fetch(endpoint, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          ...payload,
+          quantity: Number(manualForm.quantity || 0),
+          rate: Number(manualForm.rate || 0),
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok || !data.ok) {
+        throw new Error(data.error || "Failed to save BOQ item");
+      }
+
+      await loadBoq(projectId);
+      setShowManualForm(false);
+      setEditingItemId(null);
+      setMessage(editingItemId ? "BOQ item updated." : "Manual BOQ item added.");
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "Unable to save BOQ item.");
+    } finally {
+      setSavingManual(false);
+    }
+  }
+
+  async function deleteBoqItem(item: any) {
+    if (!item.id) return;
+
+    const confirmed = window.confirm(`Delete BOQ item ${item.itemCode || item.description || ""}?`);
+    if (!confirmed) return;
+
+    setMessage("");
+
+    try {
+      const response = await fetch("/api/boq/delete-item", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ itemId: item.id }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok || !data.ok) {
+        throw new Error(data.error || "Failed to delete BOQ item");
+      }
+
+      await loadBoq(projectId);
+      setMessage("BOQ item deleted.");
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "Unable to delete BOQ item.");
+    }
+  }
+
+  function clearBoqFilters() {
+    setSearchQuery("");
+    setUnitFilter("All");
+    setStatusFilter("All");
+  }
+
   return (
     <div>
       <PageTitle title="BOQ / Estimate" desc="Project-wise draft BOQ, material quantity, amount summary and review status." theme={theme} />
@@ -3198,7 +3347,7 @@ function BoqPage({ theme }: { theme: ResolvedTheme }) {
               disabled={generating || !projectId}
               className="rounded-xl bg-[#7c3aed] px-4 py-2.5 text-sm font-medium text-white disabled:cursor-not-allowed disabled:opacity-60"
             >
-              {generating ? "Generating..." : "Generate BOQ Draft"}
+              {generating ? "Generating..." : "Generate Draft"}
             </button>
           </div>
 
@@ -3241,7 +3390,94 @@ function BoqPage({ theme }: { theme: ResolvedTheme }) {
 
         {!loading && items.length > 0 && (
           <div className={cn("overflow-hidden rounded-2xl border", false ? "border-white/10" : "border-[#ded5ec]")}>
-            <div className="overflow-x-auto">
+    
+        <div className="mb-4 grid gap-3 lg:grid-cols-[minmax(0,1fr)_160px_160px]">
+          <div className="grid gap-2 rounded-2xl border border-[#eee8fb] bg-[#fbfaff] p-2 md:grid-cols-[minmax(0,1.5fr)_120px_140px_72px]">
+            <input
+              value={searchQuery}
+              onChange={(event) => setSearchQuery(event.target.value)}
+              placeholder="Search code, description, unit..."
+              className="h-9 rounded-xl border border-[#e6e0f5] bg-white px-3 text-[11px] font-semibold text-[#21133f] outline-none placeholder:text-[#9a8caf] focus:border-[#6d35ff]"
+            />
+            <select
+              value={unitFilter}
+              onChange={(event) => setUnitFilter(event.target.value)}
+              className="h-9 rounded-xl border border-[#e6e0f5] bg-white px-3 text-[11px] font-semibold text-[#21133f] outline-none"
+            >
+              {unitOptions.map((unit) => (
+                <option key={unit} value={unit}>{unit === "All" ? "All Units" : unit}</option>
+              ))}
+            </select>
+            <select
+              value={statusFilter}
+              onChange={(event) => setStatusFilter(event.target.value)}
+              className="h-9 rounded-xl border border-[#e6e0f5] bg-white px-3 text-[11px] font-semibold text-[#21133f] outline-none"
+            >
+              {statusOptions.map((status) => (
+                <option key={status} value={status}>{status === "All" ? "All Status" : status}</option>
+              ))}
+            </select>
+            <button
+              onClick={clearBoqFilters}
+              className="h-9 rounded-xl border border-[#e4d9ff] bg-white px-2 text-[11px] font-black text-[#6d35ff] hover:bg-[#f4efff]"
+            >
+              Clear
+            </button>
+          </div>
+
+          <button
+            onClick={openManualBoqForm}
+            className="h-full min-h-[44px] rounded-2xl border border-[#e4d9ff] bg-[#fbf8ff] px-4 text-sm font-black text-[#6d35ff] transition hover:bg-[#f3edff]"
+          >
+            + Add Item
+          </button>
+
+          <div className="flex items-center justify-center rounded-2xl border border-[#e7ddff] bg-[#fbfaff] px-4 text-sm font-black text-[#21133f]">
+            {filteredBoqItems.length} visible
+          </div>
+        </div>
+
+        {showManualForm ? (
+          <div className="mb-4 rounded-[24px] border border-[#e7ddff] bg-white p-4 shadow-[0_10px_24px_rgba(33,19,63,0.045)]">
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <h2 className="text-lg font-black text-[#161032]">{editingItemId ? "Edit BOQ Item" : "Add Manual BOQ Item"}</h2>
+                <p className="mt-1 text-xs font-semibold text-[#817397]">Amount auto-calculate hota hai: quantity × rate.</p>
+              </div>
+              <button
+                onClick={() => {
+                  setShowManualForm(false);
+                  setEditingItemId(null);
+                }}
+                className="rounded-xl border border-[#e4d9ff] bg-white px-4 py-2 text-xs font-black text-[#817397] hover:bg-[#fbf8ff]"
+              >
+                Close
+              </button>
+            </div>
+
+            <div className="mt-4 grid gap-3 md:grid-cols-5">
+              <input value={manualForm.itemCode} onChange={(event) => setManualForm((current) => ({ ...current, itemCode: event.target.value }))} placeholder="Code" className="h-11 rounded-2xl border border-[#e6e0f5] px-3 text-sm font-bold outline-none" />
+              <input value={manualForm.description} onChange={(event) => setManualForm((current) => ({ ...current, description: event.target.value }))} placeholder="Description" className="h-11 rounded-2xl border border-[#e6e0f5] px-3 text-sm font-bold outline-none md:col-span-2" />
+              <select value={manualForm.unit} onChange={(event) => setManualForm((current) => ({ ...current, unit: event.target.value }))} className="h-11 rounded-2xl border border-[#e6e0f5] px-3 text-sm font-bold outline-none">
+                {["Sqft", "Cum", "Kg", "Rft", "Nos", "Lump Sum"].map((unit) => <option key={unit} value={unit}>{unit}</option>)}
+              </select>
+              <select value={manualForm.status} onChange={(event) => setManualForm((current) => ({ ...current, status: event.target.value }))} className="h-11 rounded-2xl border border-[#e6e0f5] px-3 text-sm font-bold outline-none">
+                {["Draft", "Review Required", "Approved", "Locked"].map((status) => <option key={status} value={status}>{status}</option>)}
+              </select>
+              <input value={manualForm.quantity} type="number" onChange={(event) => setManualForm((current) => ({ ...current, quantity: event.target.value }))} placeholder="Qty" className="h-11 rounded-2xl border border-[#e6e0f5] px-3 text-sm font-bold outline-none" />
+              <input value={manualForm.rate} type="number" onChange={(event) => setManualForm((current) => ({ ...current, rate: event.target.value }))} placeholder="Rate" className="h-11 rounded-2xl border border-[#e6e0f5] px-3 text-sm font-bold outline-none" />
+              <div className="flex h-11 items-center rounded-2xl border border-[#e6e0f5] bg-[#fbfaff] px-3 text-sm font-black text-[#21133f]">
+                ₹{manualAmount.toLocaleString("en-IN")}
+              </div>
+              <input value={manualForm.drawingRef} onChange={(event) => setManualForm((current) => ({ ...current, drawingRef: event.target.value }))} placeholder="Drawing / Scope Ref" className="h-11 rounded-2xl border border-[#e6e0f5] px-3 text-sm font-bold outline-none" />
+              <button onClick={saveManualBoqItem} disabled={savingManual} className="h-11 rounded-2xl bg-[#21133f] px-4 text-sm font-black text-white disabled:opacity-60">
+                {savingManual ? "Saving..." : editingItemId ? "Update" : "Add"}
+              </button>
+            </div>
+          </div>
+        ) : null}
+
+        <div className="overflow-x-auto">
               <table className="w-full min-w-[900px] text-left text-sm">
                 <thead className={cn("text-xs uppercase tracking-wide", false ? "bg-white/[0.04] text-slate-400" : "bg-[#fbf8ff] text-[#817397]")}>
                   <tr>
@@ -3252,10 +3488,11 @@ function BoqPage({ theme }: { theme: ResolvedTheme }) {
                     <th>Rate</th>
                     <th>Amount</th>
                     <th>Status</th>
+                    <th>Actions</th>
                   </tr>
                 </thead>
                 <tbody className={cn("divide-y", false ? "divide-white/10" : "divide-[#eee7f7]")}>
-                  {items.map((item) => (
+                  {filteredBoqItems.map((item) => (
                     <tr key={item.id}>
                       <td className={cn("p-4 font-medium", false ? "text-white" : "text-[#21133f]")}>{item.itemCode || "—"}</td>
                       <td className={false ? "text-slate-300" : "text-[#3f315d]"}>{item.description}</td>
@@ -3267,6 +3504,22 @@ function BoqPage({ theme }: { theme: ResolvedTheme }) {
                         <span className={cn("rounded-full px-2.5 py-1 text-xs", false ? "bg-[#3b2507] text-[#fde68a]" : "bg-[#fff7ed] text-[#f97316]")}>
                           {item.status}
                         </span>
+                      </td>
+                      <td>
+                        <div className="flex gap-2">
+                          <button
+                            onClick={() => startBoqEdit(item)}
+                            className="rounded-lg border border-[#e4d9ff] bg-white px-3 py-1.5 text-[11px] font-black text-[#6d35ff] hover:bg-[#f4efff]"
+                          >
+                            Edit
+                          </button>
+                          <button
+                            onClick={() => deleteBoqItem(item)}
+                            className="rounded-lg border border-[#ffd7d7] bg-[#fff8f8] px-3 py-1.5 text-[11px] font-black text-[#df3d3d] hover:bg-[#fff1f1]"
+                          >
+                            Delete
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))}
@@ -7344,6 +7597,89 @@ function ProjectTaskChatInterfaceShell({
     </div>
   );
 }
+
+
+function HeaderProfileButton() {
+  const [profileUser, setProfileUser] = useState<any>(null);
+
+  useEffect(() => {
+    let mounted = true;
+
+    fetch("/api/auth/me", {
+      cache: "no-store",
+      credentials: "include",
+    })
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (!mounted) return;
+        const user = data?.user || data || null;
+        setProfileUser(user);
+      })
+      .catch(() => {
+        if (mounted) setProfileUser(null);
+      });
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  const displayName =
+    profileUser?.name ||
+    profileUser?.fullName ||
+    profileUser?.email?.split("@")?.[0] ||
+    "BuildSetu AI";
+
+  const profileImage =
+    profileUser?.image ||
+    profileUser?.picture ||
+    profileUser?.avatar ||
+    profileUser?.avatarUrl ||
+    profileUser?.photoURL ||
+    profileUser?.photoUrl ||
+    "";
+
+  const initials = String(displayName)
+    .split(" ")
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0]?.toUpperCase())
+    .join("") || "SB";
+
+  return (
+    <button
+      type="button"
+      onClick={() => {
+        window.location.href = "/account";
+      }}
+      aria-label="Open profile and account"
+      title="Open profile and account"
+      className="flex h-[56px] w-[190px] shrink-0 items-center gap-2 rounded-[18px] border border-slate-200 bg-white px-3 py-2 text-left shadow-sm transition hover:bg-slate-50 hover:shadow"
+    >
+      {profileImage ? (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          src={profileImage}
+          alt={displayName}
+          referrerPolicy="no-referrer"
+          className="h-9 w-9 rounded-full border border-slate-200 object-cover"
+        />
+      ) : (
+        <div className="flex h-9 w-9 items-center justify-center rounded-full bg-violet-600 text-xs font-bold text-white">
+          {initials}
+        </div>
+      )}
+
+      <div className="min-w-0 flex-1">
+        <p className="truncate text-[13px] font-semibold leading-tight text-slate-900">{displayName}</p>
+        <p className="text-[11px] leading-tight text-slate-500">Workspace</p>
+      </div>
+
+      <ChevronDown className="ml-auto h-3.5 w-3.5 shrink-0 text-slate-500" />
+    </button>
+  );
+}
+
 
 export default function SikhadengeBuildDashboard() {
   function handleTopBackNavigation() {
