@@ -61,3 +61,4 @@ data/buildsetu-auth-otps.json
 data/buildsetu-billing-orders.json
 data/buildsetu-credit-history.json
 data/runtime/book-demo-leads.json
+data/generated/user-profile-photos.json
