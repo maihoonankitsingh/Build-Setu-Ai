@@ -205,15 +205,15 @@ export default function Bbs3DViewer({ column, totalBars, totalWeight }: Bbs3DVie
     <div className="overflow-hidden rounded-[22px] border border-[#eee8fb] bg-[#fbfaff]">
       <div className="flex items-center justify-between gap-3 border-b border-[#eee8fb] bg-white/80 px-3 py-2">
         <div>
-          <p className="text-[12px] font-black text-[#21133f]">Live 3D Reinforcement Viewer</p>
-          <p className="text-[10px] font-semibold text-[#817397]">Drag to rotate 360° • Scroll to zoom</p>
+          <p className="text-[10px] font-black text-[#21133f]">Live 3D Reinforcement Viewer</p>
+          <p className="text-[9px] font-semibold text-[#817397]">Drag to rotate 360° • Scroll to zoom</p>
         </div>
         <span className="rounded-full bg-[#f3edff] px-3 py-1 text-[10px] font-black text-[#6d35ff]">
           {column.id}
         </span>
       </div>
 
-      <div className="relative h-[310px]">
+      <div className="relative h-[285px]">
         <Canvas
           shadows
           camera={{ position: [3.8, 3.1, 4.8], fov: 38, near: 0.1, far: 100 }}
@@ -263,30 +263,30 @@ export default function Bbs3DViewer({ column, totalBars, totalWeight }: Bbs3DVie
         <div className="absolute right-3 top-3 flex flex-col gap-2">
           <button
             onClick={() => setZoomSignal((value) => value + 1)}
-            className="h-9 w-10 rounded-xl border border-[#ece8f8] bg-white text-[13px] font-black text-[#5f5471] shadow-sm"
+            className="h-8 w-9 rounded-xl border border-[#ece8f8] bg-white text-[12px] font-black text-[#5f5471] shadow-sm"
           >
             +
           </button>
           <button
             onClick={() => setZoomSignal((value) => value - 1)}
-            className="h-9 w-10 rounded-xl border border-[#ece8f8] bg-white text-[13px] font-black text-[#5f5471] shadow-sm"
+            className="h-8 w-9 rounded-xl border border-[#ece8f8] bg-white text-[12px] font-black text-[#5f5471] shadow-sm"
           >
             −
           </button>
           <button
             onClick={() => setResetSignal((value) => value + 1)}
-            className="h-9 w-10 rounded-xl border border-[#ece8f8] bg-white text-[10px] font-black text-[#5f5471] shadow-sm"
+            className="h-8 w-9 rounded-xl border border-[#ece8f8] bg-white text-[9px] font-black text-[#5f5471] shadow-sm"
           >
             Fit
           </button>
         </div>
 
-        <div className="absolute bottom-3 left-3 right-3 rounded-2xl border border-[#eee8fb] bg-white/90 px-3 py-2 shadow-sm backdrop-blur">
+        <div className="absolute bottom-3 left-3 right-3 rounded-xl border border-[#eee8fb] bg-white/90 px-3 py-2 shadow-sm backdrop-blur">
           <div className="flex flex-wrap items-center justify-between gap-2">
-            <p className="text-[11px] font-black text-[#21133f]">
+            <p className="text-[10px] font-black text-[#21133f]">
               {column.type} {column.id} • {column.section}
             </p>
-            <p className="text-[10px] font-bold text-[#817397]">
+            <p className="text-[9px] font-bold text-[#817397]">
               {column.mainBars} • {column.stirrups}
             </p>
           </div>
@@ -299,8 +299,8 @@ export default function Bbs3DViewer({ column, totalBars, totalWeight }: Bbs3DVie
           ["Steel", `${totalWeight.toFixed(2)} kg`],
           ["Grade", column.steel],
         ].map(([label, value]) => (
-          <div key={label} className="border-r border-[#eee8fb] px-3 py-2 last:border-r-0">
-            <p className="text-[10px] font-bold text-[#817397]">{label}</p>
+          <div key={label} className="border-r border-[#eee8fb] px-3 py-1.5 last:border-r-0">
+            <p className="text-[9px] font-bold text-[#817397]">{label}</p>
             <p className="mt-0.5 text-[12px] font-black text-[#21133f]">{value}</p>
           </div>
         ))}
