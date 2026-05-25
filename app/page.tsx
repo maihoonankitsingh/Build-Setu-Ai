@@ -154,7 +154,7 @@ function persistBuildSetuViewKey(view: ViewKey) {
 const Bbs3DViewer = dynamic(() => import("@/components/bbs/Bbs3DViewer"), {
   ssr: false,
   loading: () => (
-    <div className="grid h-[285px] place-items-center rounded-[22px] border border-[#eee8fb] bg-[#fbfaff] text-xs font-bold text-[#817397]">
+    <div className="grid h-[390px] place-items-center rounded-[22px] border border-[#eee8fb] bg-[#fbfaff] text-xs font-bold text-[#817397]">
       Loading 3D reinforcement viewer...
     </div>
   ),
@@ -4062,8 +4062,8 @@ function BbsPage({ theme }: { theme: ResolvedTheme }) {
         </section>
       ) : null}
 
-      <div className="grid min-w-0 gap-4 xl:grid-cols-[minmax(0,1fr)_330px] 2xl:grid-cols-[minmax(0,1fr)_360px]">
-        <section className="min-w-0 self-start rounded-[24px] border border-[#ece8f8] bg-white p-4 shadow-[0_12px_32px_rgba(33,19,63,0.06)]">
+      <div className="grid min-w-0 gap-5 xl:grid-cols-[minmax(0,1fr)_430px] 2xl:grid-cols-[minmax(0,1fr)_480px]">
+        <section className="min-w-0 self-start rounded-[26px] border border-[#ece8f8] bg-white p-4 shadow-[0_14px_38px_rgba(33,19,63,0.07)]">
           <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
             <div>
               <h2 className="text-lg font-black text-[#161032]">Bar Bending Schedule</h2>
@@ -4209,7 +4209,7 @@ function BbsPage({ theme }: { theme: ResolvedTheme }) {
           </div>
         </section>
 
-        <section className="min-w-0 self-start rounded-[24px] border border-[#ece8f8] bg-white p-4 shadow-[0_12px_32px_rgba(33,19,63,0.06)]">
+        <section className="min-w-0 self-start rounded-[26px] border border-[#ece8f8] bg-white p-4 shadow-[0_14px_38px_rgba(33,19,63,0.07)]">
           <div className="grid gap-4">
             <Bbs3DViewer column={selectedColumn} totalBars={totalBars} totalWeight={totalWeight} />
 
