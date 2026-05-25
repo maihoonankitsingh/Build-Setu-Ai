@@ -1,5 +1,6 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import * as React from "react";
 import { useEffect, useMemo, useState, useRef } from "react";
 import {
@@ -149,6 +150,15 @@ function persistBuildSetuViewKey(view: ViewKey) {
   } catch {}
 }
 
+
+const Bbs3DViewer = dynamic(() => import("@/components/bbs/Bbs3DViewer"), {
+  ssr: false,
+  loading: () => (
+    <div className="grid h-[310px] place-items-center rounded-[22px] border border-[#eee8fb] bg-[#fbfaff] text-xs font-bold text-[#817397]">
+      Loading 3D reinforcement viewer...
+    </div>
+  ),
+});
 
 type ThemeMode = "light" | "dark" | "system";
 type ResolvedTheme = "light" | "dark";
@@ -4000,72 +4010,7 @@ function BbsPage({ theme }: { theme: ResolvedTheme }) {
 
         <section className="min-w-0 self-start rounded-[26px] border border-[#ece8f8] bg-white p-5 shadow-[0_14px_38px_rgba(33,19,63,0.07)]">
           <div className="grid gap-4">
-            <div className="relative min-h-[285px] overflow-hidden rounded-[22px] border border-[#eee8fb] bg-[#fbfaff] p-4">
-              <div className="absolute left-4 top-4 z-20 flex flex-col gap-2">
-                {["3D", "2D", "Rotate", "Zoom", "Fit"].map((item, index) => (
-                  <button
-                    key={item}
-                    className={`h-11 w-11 rounded-xl border text-[10px] font-black shadow-sm ${
-                      index === 0
-                        ? "border-[#6d35ff] bg-[#f4efff] text-[#6d35ff]"
-                        : "border-[#ece8f8] bg-white text-[#5f5471]"
-                    }`}
-                  >
-                    {item}
-                  </button>
-                ))}
-              </div>
-
-              <div className="absolute inset-x-0 bottom-7 mx-auto h-14 w-[185px] rotate-[-18deg] rounded-[18px] border border-[#bfb8c9] bg-gradient-to-br from-[#d9d6d0] to-[#aaa5a2] shadow-2xl" />
-              <div className="absolute bottom-[60px] left-1/2 h-9 w-[165px] -translate-x-1/2 rotate-[-18deg] rounded-xl border border-[#7c7578] opacity-80" />
-
-              <div className="absolute left-1/2 top-[26px] h-[190px] w-[110px] -translate-x-1/2">
-                {[0, 1, 2, 3].map((bar) => (
-                  <div
-                    key={bar}
-                    className="absolute top-0 h-full w-[7px] rounded-full bg-gradient-to-b from-[#7d43ff] to-[#2c195e] shadow-[0_0_14px_rgba(109,53,255,0.35)]"
-                    style={{ left: `${bar * 30}px` }}
-                  />
-                ))}
-
-                {[0, 1, 2, 3].map((bar) => (
-                  <div
-                    key={`r-${bar}`}
-                    className="absolute top-0 h-full w-[7px] rounded-full bg-gradient-to-b from-[#7d43ff] to-[#2c195e] opacity-85"
-                    style={{ left: `${bar * 30 + 14}px`, transform: "translateX(7px) skewY(-18deg)" }}
-                  />
-                ))}
-
-                {Array.from({ length: 11 }).map((_, index) => (
-                  <div
-                    key={index}
-                    className="absolute left-[-8px] h-[11px] w-[122px] rounded-md border-[3px] border-[#372155] bg-transparent shadow-sm"
-                    style={{ top: `${index * 17}px`, transform: "skewY(-18deg)" }}
-                  />
-                ))}
-
-                {Array.from({ length: 7 }).map((_, index) => (
-                  <div
-                    key={`tie-${index}`}
-                    className="absolute left-[12px] h-[3px] w-[90px] bg-[#7d43ff] opacity-80"
-                    style={{ top: `${index * 25 + 12}px`, transform: "skewY(-18deg)" }}
-                  />
-                ))}
-              </div>
-
-              <div className="absolute bottom-7 right-7 grid h-14 w-14 place-items-center rounded-xl border border-[#ded8ea] bg-white text-[10px] font-black text-[#817397] shadow-lg">
-                TOP
-                <br />
-                VIEW
-              </div>
-
-              <div className="absolute bottom-5 left-5 rounded-2xl border border-[#eee8fb] bg-white/90 px-4 py-3 shadow-sm backdrop-blur">
-                <p className="text-xs font-black text-[#21133f]">3D Reinforcement Preview</p>
-                <p className="mt-1 text-[11px] font-medium text-[#817397]">
-                  Visual reference only. Final steel detailing requires engineer-approved drawings.
-                </p>
-              </div>
-            </div>
+            <Bbs3DViewer column={selectedColumn} totalBars={totalBars} totalWeight={totalWeight} />
 
             <div className="rounded-[22px] border border-[#e7ddff] bg-white p-4">
               <h3 className="text-lg font-black text-[#6d35ff]">Column {selectedColumn.id}</h3>
