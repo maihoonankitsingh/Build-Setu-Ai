@@ -4213,6 +4213,57 @@ function BbsPage({ theme }: { theme: ResolvedTheme }) {
           <div className="grid gap-4">
             <Bbs3DViewer column={selectedColumn} totalBars={totalBars} totalWeight={totalWeight} />
 
+          <div className="mt-4 grid gap-3">
+            <div className="rounded-[22px] border border-[#eee8fb] bg-[#fbfaff] p-4">
+              <div className="flex items-center justify-between gap-3">
+                <div>
+                  <h3 className="text-sm font-black text-[#21133f]">BBS Review Snapshot</h3>
+                  <p className="mt-1 text-[11px] font-medium text-[#817397]">
+                    Quick steel and member validation summary.
+                  </p>
+                </div>
+                <span className="rounded-full bg-[#f3edff] px-3 py-1 text-[11px] font-black text-[#6d35ff]">
+                  Review
+                </span>
+              </div>
+
+              <div className="mt-4 grid grid-cols-2 gap-2">
+                {[
+                  ["Bars", numberFormat.format(totalBars || 0)],
+                  ["Weight", `${weightFormat.format(totalWeight || 0)} kg`],
+                  ["Main Bars", selectedColumn.mainBars],
+                  ["Stirrups", selectedColumn.stirrups],
+                ].map(([label, value]) => (
+                  <div key={label} className="rounded-2xl border border-[#eee8fb] bg-white px-3 py-2.5">
+                    <p className="text-[10px] font-black uppercase tracking-wide text-[#8d7aa8]">{label}</p>
+                    <p className="mt-1 text-[12px] font-black text-[#21133f]">{value}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="rounded-[22px] border border-[#eee8fb] bg-white p-4">
+              <h3 className="text-sm font-black text-[#21133f]">Diameter Split</h3>
+              <div className="mt-3 grid grid-cols-2 gap-2">
+                {diameterSummary.slice(0, 4).map((row) => (
+                  <div key={row.diameter} className="rounded-2xl bg-[#f8f5ff] px-3 py-2">
+                    <p className="text-[10px] font-bold text-[#817397]">{row.diameter} mm</p>
+                    <p className="mt-0.5 text-[12px] font-black text-[#21133f]">
+                      {weightFormat.format(row.weight)} kg
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="rounded-[22px] border border-[#ffe3b3] bg-[#fffaf0] p-4">
+              <p className="text-xs font-black text-[#9a6412]">Engineer Review Gate</p>
+              <p className="mt-1 text-[11px] leading-5 text-[#9a6412]">
+                Cutting length, bend deduction, lap length and development length must be verified before site execution.
+              </p>
+            </div>
+          </div>
+
 
 
           </div>
