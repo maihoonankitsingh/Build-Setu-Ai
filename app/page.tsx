@@ -3296,6 +3296,32 @@ function BbsPage({ theme }: { theme: ResolvedTheme }) {
     totalWeight?: number | null;
     drawingRef?: string | null;
     status?: string | null;
+    createdAt?: string | null;
+  };
+
+  type BbsManualForm = {
+    id?: string;
+    memberType: string;
+    memberId: string;
+    barMark: string;
+    diameter: string;
+    quantity: string;
+    shapeCode: string;
+    cuttingLength: string;
+    drawingRef: string;
+    status: string;
+  };
+
+  const emptyBbsManualForm: BbsManualForm = {
+    memberType: "Column",
+    memberId: "",
+    barMark: "",
+    diameter: "12",
+    quantity: "1",
+    shapeCode: "Straight",
+    cuttingLength: "1",
+    drawingRef: "Manual Entry",
+    status: "Manual Edit - Engineer Review Required",
   };
 
   const [projects, setProjects] = useState<BbsProject[]>([]);
@@ -3305,6 +3331,9 @@ function BbsPage({ theme }: { theme: ResolvedTheme }) {
   const [generating, setGenerating] = useState(false);
   const [message, setMessage] = useState("");
   const [lastGeneratedAt, setLastGeneratedAt] = useState<string | null>(null);
+  const [manualFormOpen, setManualFormOpen] = useState(false);
+  const [manualSaving, setManualSaving] = useState(false);
+  const [manualForm, setManualForm] = useState<BbsManualForm>(emptyBbsManualForm);
 
   const numberFormat = useMemo(() => new Intl.NumberFormat("en-IN"), []);
   const weightFormat = useMemo(
@@ -3320,6 +3349,67 @@ function BbsPage({ theme }: { theme: ResolvedTheme }) {
     () => projects.find((project) => project.id === projectId) || null,
     [projects, projectId],
   );
+
+  function bbsUnitWeight(diameterValue: string | number) {
+    const diameter = Number(diameterValue || 0);
+    if (!Number.isFinite(diameter) || diameter <= 0) return 0;
+    return Number(((diameter * diameter) / 162).toFixed(3));
+  }
+
+  function bbsPreviewTotals(form: BbsManualForm) {
+    const diameter = Number(form.diameter || 0);
+    const quantity = Number(form.quantity || 0);
+    const cuttingLength = Number(form.cuttingLength || 0);
+    const unitWeight = bbsUnitWeight(diameter);
+    const totalLength = Number((quantity * cuttingLength).toFixed(3));
+    const totalWeight = Number((totalLength * unitWeight).toFixed(2));
+
+    return {
+      diameter,
+      quantity,
+      cuttingLength,
+      unitWeight,
+      totalLength,
+      totalWeight,
+    };
+  }
+
+  function updateManualForm(field: keyof BbsManualForm, value: string) {
+    setManualForm((current) => ({
+      ...current,
+      [field]: value,
+    }));
+  }
+
+  function openCreateManualRow() {
+    setManualForm({
+      ...emptyBbsManualForm,
+      memberId: `M${items.length + 1}`,
+      barMark: `MANUAL-${items.length + 1}-${Date.now().toString().slice(-5)}`,
+    });
+    setManualFormOpen(true);
+  }
+
+  function openEditManualRow(item: BbsItem) {
+    setManualForm({
+      id: item.id,
+      memberType: item.memberType || "Column",
+      memberId: item.memberId || "",
+      barMark: item.barMark || "",
+      diameter: String(item.diameter || ""),
+      quantity: String(item.quantity || ""),
+      shapeCode: item.shapeCode || "Straight",
+      cuttingLength: String(item.cuttingLength || ""),
+      drawingRef: item.drawingRef || "Manual Entry",
+      status: item.status || "Manual Edit - Engineer Review Required",
+    });
+    setManualFormOpen(true);
+  }
+
+  function closeManualForm() {
+    setManualFormOpen(false);
+    setManualForm(emptyBbsManualForm);
+  }
 
   const totalBars = useMemo(
     () => items.reduce((sum, item) => sum + Number(item.quantity || 0), 0),
@@ -3362,20 +3452,27 @@ function BbsPage({ theme }: { theme: ResolvedTheme }) {
   }, [items]);
 
   const selectedColumn = useMemo(() => {
-    const columnItem = items.find((item) => (item.memberType || "").toLowerCase().includes("column"));
-    const stirrupItem = items.find((item) => (item.shapeCode || "").toLowerCase().includes("stirrup"));
+    const columnRows = items.filter((item) => (item.memberType || "").toLowerCase().includes("column"));
+    const mainBarItem =
+      columnRows.find((item) => (item.barMark || "").toLowerCase().includes("vert")) ||
+      columnRows.find((item) => Number(item.diameter || 0) >= 12) ||
+      columnRows[0];
+
+    const stirrupItem =
+      columnRows.find((item) => (item.shapeCode || "").toLowerCase().includes("stirrup")) ||
+      columnRows.find((item) => (item.shapeCode || "").toLowerCase().includes("tie"));
 
     return {
-      id: columnItem?.memberId || "C1",
+      id: mainBarItem?.memberId || "C1",
       section: "450 × 450 mm",
       height: "4200 mm",
-      mainBars: columnItem?.diameter ? `${columnItem.quantity || 8}-${columnItem.diameter}mm` : "12-16mm",
+      mainBars: mainBarItem?.diameter ? `${mainBarItem.quantity || 8}-${mainBarItem.diameter}mm` : "12-16mm",
       stirrups: stirrupItem?.diameter ? `${stirrupItem.diameter}mm @ 150mm` : "8mm @ 150mm",
       cover: "40 mm",
       concrete: "M30",
       steel: "Fe 500D",
       location: selectedProject?.location || "Ground Floor",
-      type: columnItem?.memberType || "Column",
+      type: mainBarItem?.memberType || "Column",
     };
   }, [items, selectedProject]);
 
@@ -3413,7 +3510,11 @@ function BbsPage({ theme }: { theme: ResolvedTheme }) {
         throw new Error(data.error || "Failed to load BBS");
       }
 
-      setItems(Array.isArray(data.items) ? data.items : []);
+      const nextItems = Array.isArray(data.items) ? data.items : [];
+      setItems(nextItems);
+      if (nextItems[0]?.createdAt) {
+        setLastGeneratedAt(new Date(nextItems[0].createdAt).toLocaleString("en-IN", { dateStyle: "medium", timeStyle: "short" }));
+      }
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "Failed to load BBS data");
     } finally {
@@ -3445,13 +3546,109 @@ function BbsPage({ theme }: { theme: ResolvedTheme }) {
         throw new Error(data.error || "Failed to generate BBS");
       }
 
-      setItems(Array.isArray(data.items) ? data.items : []);
-      setLastGeneratedAt(new Date().toLocaleString("en-IN", { dateStyle: "medium", timeStyle: "short" }));
+      const nextItems = Array.isArray(data.items) ? data.items : [];
+      setItems(nextItems);
+      setLastGeneratedAt(
+        nextItems[0]?.createdAt
+          ? new Date(nextItems[0].createdAt).toLocaleString("en-IN", { dateStyle: "medium", timeStyle: "short" })
+          : new Date().toLocaleString("en-IN", { dateStyle: "medium", timeStyle: "short" }),
+      );
       setMessage(`BBS generated successfully. ${data.count || data.items?.length || 0} items created.`);
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "Failed to generate BBS");
     } finally {
       setGenerating(false);
+    }
+  }
+
+  async function saveManualRow() {
+    if (!projectId) {
+      setMessage("Please select a project first.");
+      return;
+    }
+
+    const totals = bbsPreviewTotals(manualForm);
+
+    if (!manualForm.memberType.trim() || !manualForm.memberId.trim() || !manualForm.barMark.trim()) {
+      setMessage("Member type, member ID and bar mark are required.");
+      return;
+    }
+
+    if (!totals.diameter || !totals.quantity || !totals.cuttingLength) {
+      setMessage("Diameter, number of bars and cutting length are required.");
+      return;
+    }
+
+    setManualSaving(true);
+    setMessage("");
+
+    try {
+      const response = await fetch(manualForm.id ? "/api/bbs/update-row" : "/api/bbs/create-row", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          id: manualForm.id,
+          projectId,
+          memberType: manualForm.memberType,
+          memberId: manualForm.memberId,
+          barMark: manualForm.barMark,
+          diameter: totals.diameter,
+          quantity: totals.quantity,
+          shapeCode: manualForm.shapeCode,
+          cuttingLength: totals.cuttingLength,
+          drawingRef: manualForm.drawingRef,
+          status: manualForm.status,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok || !data.ok) {
+        throw new Error(data.error || "Failed to save BBS row");
+      }
+
+      setMessage(manualForm.id ? "BBS row updated successfully." : "Manual BBS row added successfully.");
+      closeManualForm();
+      await loadBbs(projectId);
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "Failed to save BBS row");
+    } finally {
+      setManualSaving(false);
+    }
+  }
+
+  async function deleteManualRow(item: BbsItem) {
+    if (!item.id) {
+      setMessage("BBS row ID missing.");
+      return;
+    }
+
+    const ok = window.confirm(`Delete BBS row ${item.barMark || item.id}?`);
+    if (!ok) return;
+
+    setMessage("");
+
+    try {
+      const response = await fetch("/api/bbs/delete-row", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ id: item.id }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok || !data.ok) {
+        throw new Error(data.error || "Failed to delete BBS row");
+      }
+
+      setMessage("BBS row deleted successfully.");
+      await loadBbs(projectId);
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "Failed to delete BBS row");
     }
   }
 
@@ -3551,6 +3748,15 @@ function BbsPage({ theme }: { theme: ResolvedTheme }) {
           </button>
 
           <button
+            onClick={openCreateManualRow}
+            disabled={!projectId}
+            className="inline-flex h-11 items-center justify-center gap-2 rounded-2xl border border-[#d7ccff] bg-[#fbf8ff] px-5 text-sm font-bold text-[#6d35ff] shadow-sm disabled:cursor-not-allowed disabled:opacity-60"
+          >
+            <span>＋</span>
+            Add Manual Row
+          </button>
+
+          <button
             onClick={generateBbs}
             disabled={generating || !projectId}
             className="inline-flex h-11 items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-[#6d35ff] to-[#3b1fb5] px-6 text-sm font-bold text-white shadow-lg shadow-[#6d35ff]/25 disabled:cursor-not-allowed disabled:opacity-60"
@@ -3565,6 +3771,81 @@ function BbsPage({ theme }: { theme: ResolvedTheme }) {
         <div className="rounded-2xl border border-[#e7ddff] bg-[#fbf8ff] px-5 py-3 text-sm font-semibold text-[#4b2a91]">
           {message}
         </div>
+      ) : null}
+
+      {manualFormOpen ? (
+        <section className="rounded-[28px] border border-[#ddd2ff] bg-white p-5 shadow-[0_18px_55px_rgba(33,19,63,0.08)]">
+          <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
+            <div>
+              <h2 className="text-lg font-black text-[#161032]">
+                {manualForm.id ? "Edit BBS Row" : "Add Manual BBS Row"}
+              </h2>
+              <p className="mt-1 text-xs font-medium text-[#817397]">
+                Enter reinforcement data manually. Total length and steel weight auto-calculate before saving.
+              </p>
+            </div>
+            <button
+              onClick={closeManualForm}
+              className="w-fit rounded-2xl border border-[#eee8fb] bg-white px-4 py-2 text-xs font-black text-[#817397]"
+            >
+              Cancel
+            </button>
+          </div>
+
+          <div className="mt-5 grid gap-3 md:grid-cols-2 xl:grid-cols-5">
+            {[
+              ["memberType", "Member Type", "Column"],
+              ["memberId", "Member ID", "C1"],
+              ["barMark", "Bar Mark", "C1-VERT-16-01"],
+              ["diameter", "Diameter mm", "16"],
+              ["quantity", "No. of Bars", "8"],
+              ["shapeCode", "Shape Code", "Straight"],
+              ["cuttingLength", "Cutting Length m", "3.6"],
+              ["drawingRef", "Drawing Ref", "STR-101"],
+              ["status", "Status", "Engineer Review Required"],
+            ].map(([field, label, placeholder]) => (
+              <label key={field} className={field === "status" ? "xl:col-span-2" : ""}>
+                <span className="text-[11px] font-black uppercase tracking-wide text-[#8d7aa8]">{label}</span>
+                <input
+                  value={manualForm[field as keyof BbsManualForm] || ""}
+                  onChange={(event) => updateManualForm(field as keyof BbsManualForm, event.target.value)}
+                  placeholder={placeholder}
+                  className="mt-2 h-11 w-full rounded-2xl border border-[#e6e0f5] bg-white px-4 text-sm font-semibold text-[#21133f] outline-none focus:border-[#6d35ff]"
+                />
+              </label>
+            ))}
+          </div>
+
+          <div className="mt-5 grid gap-3 md:grid-cols-4">
+            {[
+              ["Total Length", `${bbsPreviewTotals(manualForm).totalLength.toFixed(3)} m`],
+              ["Unit Weight", `${bbsPreviewTotals(manualForm).unitWeight.toFixed(3)} kg/m`],
+              ["Total Weight", `${bbsPreviewTotals(manualForm).totalWeight.toFixed(2)} kg`],
+              ["Formula", "d²/162"],
+            ].map(([label, value]) => (
+              <div key={label} className="rounded-2xl border border-[#eee8fb] bg-[#fbfaff] p-4">
+                <p className="text-[11px] font-black uppercase tracking-wide text-[#8d7aa8]">{label}</p>
+                <p className="mt-1 text-sm font-black text-[#21133f]">{value}</p>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:justify-end">
+            <button
+              onClick={closeManualForm}
+              className="rounded-2xl border border-[#eee8fb] bg-white px-5 py-3 text-sm font-black text-[#817397]"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={saveManualRow}
+              disabled={manualSaving}
+              className="rounded-2xl bg-[#21133f] px-6 py-3 text-sm font-black text-white disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              {manualSaving ? "Saving..." : manualForm.id ? "Save Changes" : "Add Row"}
+            </button>
+          </div>
+        </section>
       ) : null}
 
       <div className="grid min-w-0 gap-5 xl:grid-cols-[minmax(0,1fr)_360px] 2xl:grid-cols-[minmax(0,1fr)_400px]">
@@ -3599,7 +3880,7 @@ function BbsPage({ theme }: { theme: ResolvedTheme }) {
 
           <div className="mt-5 overflow-hidden rounded-2xl border border-[#eee8fb]">
             <div className="max-h-[390px] overflow-auto">
-              <table className="min-w-[980px] w-full border-collapse bg-white text-left text-xs">
+              <table className="min-w-[1120px] w-full border-collapse bg-white text-left text-xs">
                 <thead className="sticky top-0 z-10 bg-[#f5f1ff] text-[#6d35ff]">
                   <tr>
                     {[
@@ -3612,6 +3893,7 @@ function BbsPage({ theme }: { theme: ResolvedTheme }) {
                       "Unit Weight",
                       "Total Weight",
                       "Status",
+                      "Actions",
                     ].map((head) => (
                       <th key={head} className="border-b border-[#e7ddff] px-4 py-3 font-black">
                         {head}
@@ -3622,7 +3904,7 @@ function BbsPage({ theme }: { theme: ResolvedTheme }) {
                 <tbody>
                   {loading ? (
                     <tr>
-                      <td colSpan={9} className="px-4 py-10 text-center font-semibold text-[#817397]">
+                      <td colSpan={10} className="px-4 py-10 text-center font-semibold text-[#817397]">
                         Loading BBS...
                       </td>
                     </tr>
@@ -3646,11 +3928,27 @@ function BbsPage({ theme }: { theme: ResolvedTheme }) {
                             {item.status || "Review Required"}
                           </span>
                         </td>
+                        <td className="px-4 py-3">
+                          <div className="flex items-center gap-2">
+                            <button
+                              onClick={() => openEditManualRow(item)}
+                              className="rounded-xl border border-[#d7ccff] bg-[#fbf8ff] px-3 py-1.5 text-[11px] font-black text-[#6d35ff]"
+                            >
+                              Edit
+                            </button>
+                            <button
+                              onClick={() => deleteManualRow(item)}
+                              className="rounded-xl border border-[#ffd7d7] bg-[#fff8f8] px-3 py-1.5 text-[11px] font-black text-[#df3d3d]"
+                            >
+                              Delete
+                            </button>
+                          </div>
+                        </td>
                       </tr>
                     ))
                   ) : (
                     <tr>
-                      <td colSpan={9} className="px-4 py-12 text-center">
+                      <td colSpan={10} className="px-4 py-12 text-center">
                         <p className="text-sm font-black text-[#21133f]">No BBS generated yet</p>
                         <p className="mt-1 text-xs font-medium text-[#817397]">
                           Project select karke Generate BBS button click karo.
@@ -3706,15 +4004,15 @@ function BbsPage({ theme }: { theme: ResolvedTheme }) {
                 ))}
               </div>
 
-              <div className="absolute inset-x-0 bottom-8 mx-auto h-20 w-[240px] rotate-[-18deg] rounded-[18px] border border-[#bfb8c9] bg-gradient-to-br from-[#d9d6d0] to-[#aaa5a2] shadow-2xl" />
-              <div className="absolute bottom-[78px] left-1/2 h-12 w-[220px] -translate-x-1/2 rotate-[-18deg] rounded-xl border border-[#7c7578] opacity-80" />
+              <div className="absolute inset-x-0 bottom-8 mx-auto h-16 w-[210px] rotate-[-18deg] rounded-[18px] border border-[#bfb8c9] bg-gradient-to-br from-[#d9d6d0] to-[#aaa5a2] shadow-2xl" />
+              <div className="absolute bottom-[68px] left-1/2 h-10 w-[190px] -translate-x-1/2 rotate-[-18deg] rounded-xl border border-[#7c7578] opacity-80" />
 
-              <div className="absolute left-1/2 top-[38px] h-[245px] w-[132px] -translate-x-1/2">
+              <div className="absolute left-1/2 top-[34px] h-[220px] w-[120px] -translate-x-1/2">
                 {[0, 1, 2, 3].map((bar) => (
                   <div
                     key={bar}
                     className="absolute top-0 h-full w-[7px] rounded-full bg-gradient-to-b from-[#7d43ff] to-[#2c195e] shadow-[0_0_14px_rgba(109,53,255,0.35)]"
-                    style={{ left: `${bar * 40}px` }}
+                    style={{ left: `${bar * 34}px` }}
                   />
                 ))}
 
@@ -3722,23 +4020,23 @@ function BbsPage({ theme }: { theme: ResolvedTheme }) {
                   <div
                     key={`r-${bar}`}
                     className="absolute top-0 h-full w-[7px] rounded-full bg-gradient-to-b from-[#7d43ff] to-[#2c195e] opacity-85"
-                    style={{ left: `${bar * 40 + 19}px`, transform: "translateX(10px) skewY(-18deg)" }}
+                    style={{ left: `${bar * 34 + 16}px`, transform: "translateX(8px) skewY(-18deg)" }}
                   />
                 ))}
 
                 {Array.from({ length: 11 }).map((_, index) => (
                   <div
                     key={index}
-                    className="absolute left-[-8px] h-[13px] w-[150px] rounded-md border-[3px] border-[#372155] bg-transparent shadow-sm"
-                    style={{ top: `${index * 22}px`, transform: "skewY(-18deg)" }}
+                    className="absolute left-[-8px] h-[12px] w-[136px] rounded-md border-[3px] border-[#372155] bg-transparent shadow-sm"
+                    style={{ top: `${index * 20}px`, transform: "skewY(-18deg)" }}
                   />
                 ))}
 
                 {Array.from({ length: 7 }).map((_, index) => (
                   <div
                     key={`tie-${index}`}
-                    className="absolute left-[16px] h-[3px] w-[112px] bg-[#7d43ff] opacity-80"
-                    style={{ top: `${index * 34 + 16}px`, transform: "skewY(-18deg)" }}
+                    className="absolute left-[14px] h-[3px] w-[100px] bg-[#7d43ff] opacity-80"
+                    style={{ top: `${index * 30 + 14}px`, transform: "skewY(-18deg)" }}
                   />
                 ))}
               </div>
