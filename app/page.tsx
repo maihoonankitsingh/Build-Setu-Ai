@@ -3347,6 +3347,7 @@ function BbsPage({ theme }: { theme: ResolvedTheme }) {
   const [manualFormOpen, setManualFormOpen] = useState(false);
   const [manualSaving, setManualSaving] = useState(false);
   const [manualForm, setManualForm] = useState<BbsManualForm>(emptyBbsManualForm);
+  const [openBbsDropdown, setOpenBbsDropdown] = useState<string | null>(null);
 
   const numberFormat = useMemo(() => new Intl.NumberFormat("en-IN"), []);
   const weightFormat = useMemo(
@@ -3813,6 +3814,74 @@ function BbsPage({ theme }: { theme: ResolvedTheme }) {
     ["Steel Grade", "Fe 500D", "工"],
   ];
 
+  function BbsManualSelect({
+    label,
+    value,
+    options,
+    onChange,
+    className = "",
+  }: {
+    label: string;
+    value: string;
+    options: string[];
+    onChange: (value: string) => void;
+    className?: string;
+  }) {
+    const dropdownKey = `bbs-${label}`;
+    const open = openBbsDropdown === dropdownKey;
+
+    return (
+      <label className={className}>
+        <span className="text-[10px] font-black uppercase tracking-wide text-[#8d7aa8]">{label}</span>
+        <div className="relative mt-1.5">
+          <button
+            type="button"
+            onClick={() => setOpenBbsDropdown(open ? null : dropdownKey)}
+            className={`flex h-9 w-full items-center justify-between gap-3 rounded-xl border bg-white px-3 text-left text-[12px] font-semibold text-[#21133f] shadow-sm outline-none transition ${
+              open
+                ? "border-[#6d35ff] ring-4 ring-[#6d35ff]/10"
+                : "border-[#e6e0f5] hover:border-[#cbbcff]"
+            }`}
+          >
+            <span className="truncate">{value || "Select"}</span>
+            <span className={`grid h-5 w-5 shrink-0 place-items-center rounded-lg bg-[#f4efff] text-[#6d35ff] transition ${open ? "rotate-180" : ""}`}>
+              <svg width="12" height="12" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </span>
+          </button>
+
+          {open ? (
+            <div className="absolute left-0 right-0 top-[calc(100%+7px)] z-[120] max-h-60 overflow-auto rounded-2xl border border-[#e6e0f5] bg-white p-1.5 shadow-[0_18px_45px_rgba(33,19,63,0.16)]">
+              {options.map((option) => {
+                const selected = option === value;
+
+                return (
+                  <button
+                    key={option}
+                    type="button"
+                    onClick={() => {
+                      onChange(option);
+                      setOpenBbsDropdown(null);
+                    }}
+                    className={`flex w-full items-center justify-between gap-3 rounded-xl px-3 py-2 text-left text-[12px] font-bold transition ${
+                      selected
+                        ? "bg-[#6d35ff] text-white"
+                        : "text-[#21133f] hover:bg-[#f6f1ff] hover:text-[#6d35ff]"
+                    }`}
+                  >
+                    <span className="truncate">{option}</span>
+                    {selected ? <span className="text-[11px]">✓</span> : null}
+                  </button>
+                );
+              })}
+            </div>
+          ) : null}
+        </div>
+      </label>
+    );
+  }
+
   return (
     <div className="max-w-full overflow-x-hidden space-y-6">
       <div className="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
@@ -3883,37 +3952,19 @@ function BbsPage({ theme }: { theme: ResolvedTheme }) {
 
           <div className="mt-3 rounded-[18px] border border-[#eee8fb] bg-[#fbfaff] p-3">
             <div className="grid gap-2.5 md:grid-cols-3 xl:grid-cols-6">
-              <label>
-                <span className="text-[10px] font-black uppercase tracking-wide text-[#8d7aa8]">Member Type</span>
-                <div className="relative mt-2">
-                  <select
-                    value={manualForm.memberType}
-                    onChange={(event) => updateManualMemberType(event.target.value)}
-                    className="h-9 w-full appearance-none rounded-xl border border-[#e6e0f5] bg-white px-3 pr-8 text-[12px] font-semibold text-[#21133f] outline-none transition focus:border-[#6d35ff] focus:ring-4 focus:ring-[#6d35ff]/10"
-                  >
-                    {bbsMemberTypeOptions.map((option) => (
-                      <option key={option} value={option}>{option}</option>
-                    ))}
-                  </select>
-                  <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-sm font-black text-[#6d35ff]">⌄</span>
-                </div>
-              </label>
+              <BbsManualSelect
+                label="Member Type"
+                value={manualForm.memberType}
+                options={bbsMemberTypeOptions}
+                onChange={updateManualMemberType}
+              />
 
-              <label>
-                <span className="text-[10px] font-black uppercase tracking-wide text-[#8d7aa8]">Member ID</span>
-                <div className="relative mt-2">
-                  <select
-                    value={manualForm.memberId}
-                    onChange={(event) => updateManualForm("memberId", event.target.value)}
-                    className="h-9 w-full appearance-none rounded-xl border border-[#e6e0f5] bg-white px-3 pr-8 text-[12px] font-semibold text-[#21133f] outline-none transition focus:border-[#6d35ff] focus:ring-4 focus:ring-[#6d35ff]/10"
-                  >
-                    {getBbsMemberIdOptions(manualForm.memberType).map((option) => (
-                      <option key={option} value={option}>{option}</option>
-                    ))}
-                  </select>
-                  <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-sm font-black text-[#6d35ff]">⌄</span>
-                </div>
-              </label>
+              <BbsManualSelect
+                label="Member ID"
+                value={manualForm.memberId}
+                options={getBbsMemberIdOptions(manualForm.memberType)}
+                onChange={(value) => updateManualForm("memberId", value)}
+              />
 
               <label className="xl:col-span-2">
                 <span className="text-[10px] font-black uppercase tracking-wide text-[#8d7aa8]">Bar Mark</span>
@@ -3922,7 +3973,7 @@ function BbsPage({ theme }: { theme: ResolvedTheme }) {
                     value={manualForm.barMark}
                     onChange={(event) => updateManualForm("barMark", event.target.value)}
                     placeholder="C1-MAIN-16-01"
-                    className="h-9 min-w-0 flex-1 rounded-xl border border-[#e6e0f5] bg-white px-3 text-[12px] font-semibold text-[#21133f] outline-none transition focus:border-[#6d35ff] focus:ring-4 focus:ring-[#6d35ff]/10"
+                    className="h-9 min-w-0 flex-1 rounded-xl border border-[#e6e0f5] bg-white px-3 text-[12px] font-semibold text-[#21133f] shadow-sm outline-none transition focus:border-[#6d35ff] focus:ring-4 focus:ring-[#6d35ff]/10"
                   />
                   <button
                     type="button"
@@ -3934,101 +3985,48 @@ function BbsPage({ theme }: { theme: ResolvedTheme }) {
                 </div>
               </label>
 
-              <label>
-                <span className="text-[10px] font-black uppercase tracking-wide text-[#8d7aa8]">Diameter mm</span>
-                <div className="relative mt-2">
-                  <select
-                    value={manualForm.diameter}
-                    onChange={(event) => updateManualForm("diameter", event.target.value)}
-                    className="h-9 w-full appearance-none rounded-xl border border-[#e6e0f5] bg-white px-3 pr-8 text-[12px] font-semibold text-[#21133f] outline-none transition focus:border-[#6d35ff] focus:ring-4 focus:ring-[#6d35ff]/10"
-                  >
-                    {bbsDiameterOptions.map((option) => (
-                      <option key={option} value={option}>{option} mm</option>
-                    ))}
-                  </select>
-                  <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-sm font-black text-[#6d35ff]">⌄</span>
-                </div>
-              </label>
+              <BbsManualSelect
+                label="Diameter mm"
+                value={`${manualForm.diameter} mm`}
+                options={bbsDiameterOptions.map((option) => `${option} mm`)}
+                onChange={(value) => updateManualForm("diameter", value.replace(" mm", ""))}
+              />
 
-              <label>
-                <span className="text-[10px] font-black uppercase tracking-wide text-[#8d7aa8]">Bars</span>
-                <div className="relative mt-2">
-                  <select
-                    value={manualForm.quantity}
-                    onChange={(event) => updateManualForm("quantity", event.target.value)}
-                    className="h-9 w-full appearance-none rounded-xl border border-[#e6e0f5] bg-white px-3 pr-8 text-[12px] font-semibold text-[#21133f] outline-none transition focus:border-[#6d35ff] focus:ring-4 focus:ring-[#6d35ff]/10"
-                  >
-                    {bbsBarsOptions.map((option) => (
-                      <option key={option} value={option}>{option}</option>
-                    ))}
-                  </select>
-                  <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-sm font-black text-[#6d35ff]">⌄</span>
-                </div>
-              </label>
+              <BbsManualSelect
+                label="Bars"
+                value={manualForm.quantity}
+                options={bbsBarsOptions}
+                onChange={(value) => updateManualForm("quantity", value)}
+              />
 
-              <label>
-                <span className="text-[10px] font-black uppercase tracking-wide text-[#8d7aa8]">Shape Code</span>
-                <div className="relative mt-2">
-                  <select
-                    value={manualForm.shapeCode}
-                    onChange={(event) => updateManualForm("shapeCode", event.target.value)}
-                    className="h-9 w-full appearance-none rounded-xl border border-[#e6e0f5] bg-white px-3 pr-8 text-[12px] font-semibold text-[#21133f] outline-none transition focus:border-[#6d35ff] focus:ring-4 focus:ring-[#6d35ff]/10"
-                  >
-                    {bbsShapeCodeOptions.map((option) => (
-                      <option key={option} value={option}>{option}</option>
-                    ))}
-                  </select>
-                  <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-sm font-black text-[#6d35ff]">⌄</span>
-                </div>
-              </label>
+              <BbsManualSelect
+                label="Shape Code"
+                value={manualForm.shapeCode}
+                options={bbsShapeCodeOptions}
+                onChange={(value) => updateManualForm("shapeCode", value)}
+              />
 
-              <label>
-                <span className="text-[10px] font-black uppercase tracking-wide text-[#8d7aa8]">Cutting Length m</span>
-                <div className="relative mt-2">
-                  <select
-                    value={manualForm.cuttingLength}
-                    onChange={(event) => updateManualForm("cuttingLength", event.target.value)}
-                    className="h-9 w-full appearance-none rounded-xl border border-[#e6e0f5] bg-white px-3 pr-8 text-[12px] font-semibold text-[#21133f] outline-none transition focus:border-[#6d35ff] focus:ring-4 focus:ring-[#6d35ff]/10"
-                  >
-                    {bbsCuttingLengthOptions.map((option) => (
-                      <option key={option} value={option}>{option} m</option>
-                    ))}
-                  </select>
-                  <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-sm font-black text-[#6d35ff]">⌄</span>
-                </div>
-              </label>
+              <BbsManualSelect
+                label="Cutting Length m"
+                value={`${manualForm.cuttingLength} m`}
+                options={bbsCuttingLengthOptions.map((option) => `${option} m`)}
+                onChange={(value) => updateManualForm("cuttingLength", value.replace(" m", ""))}
+              />
 
-              <label>
-                <span className="text-[10px] font-black uppercase tracking-wide text-[#8d7aa8]">Drawing Ref</span>
-                <div className="relative mt-2">
-                  <select
-                    value={manualForm.drawingRef}
-                    onChange={(event) => updateManualForm("drawingRef", event.target.value)}
-                    className="h-9 w-full appearance-none rounded-xl border border-[#e6e0f5] bg-white px-3 pr-8 text-[12px] font-semibold text-[#21133f] outline-none transition focus:border-[#6d35ff] focus:ring-4 focus:ring-[#6d35ff]/10"
-                  >
-                    {getBbsDrawingRefOptions(manualForm.memberType).map((option) => (
-                      <option key={option} value={option}>{option}</option>
-                    ))}
-                  </select>
-                  <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-sm font-black text-[#6d35ff]">⌄</span>
-                </div>
-              </label>
+              <BbsManualSelect
+                label="Drawing Ref"
+                value={manualForm.drawingRef}
+                options={getBbsDrawingRefOptions(manualForm.memberType)}
+                onChange={(value) => updateManualForm("drawingRef", value)}
+              />
 
-              <label className="xl:col-span-2">
-                <span className="text-[10px] font-black uppercase tracking-wide text-[#8d7aa8]">Status</span>
-                <div className="relative mt-2">
-                  <select
-                    value={manualForm.status}
-                    onChange={(event) => updateManualForm("status", event.target.value)}
-                    className="h-9 w-full appearance-none rounded-xl border border-[#e6e0f5] bg-white px-3 pr-8 text-[12px] font-semibold text-[#21133f] outline-none transition focus:border-[#6d35ff] focus:ring-4 focus:ring-[#6d35ff]/10"
-                  >
-                    {bbsStatusOptions.map((option) => (
-                      <option key={option} value={option}>{option}</option>
-                    ))}
-                  </select>
-                  <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-sm font-black text-[#6d35ff]">⌄</span>
-                </div>
-              </label>
+              <BbsManualSelect
+                label="Status"
+                value={manualForm.status}
+                options={bbsStatusOptions}
+                onChange={(value) => updateManualForm("status", value)}
+                className="xl:col-span-2"
+              />
             </div>
 
             <div className="mt-3 grid gap-2.5 md:grid-cols-4">
