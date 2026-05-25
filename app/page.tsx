@@ -4502,14 +4502,6 @@ function BbsPage({ theme }: { theme: ResolvedTheme }) {
             ))}
           </div>
 
-          <div className="mt-4 flex items-center justify-between gap-3 rounded-2xl border border-[#eee8fb] bg-[#fbfaff] px-4 py-3">
-            <p className="text-[11px] font-bold text-[#817397]">
-              Scroll horizontally to view status, drawing reference and edit actions.
-            </p>
-            <span className="rounded-full bg-white px-3 py-1 text-[11px] font-black text-[#6d35ff]">
-              {filteredBbsItems.length} rows
-            </span>
-          </div>
 
           <div className="mt-3 grid gap-2 rounded-2xl border border-[#eee8fb] bg-[#fbfaff] p-3 md:grid-cols-[minmax(0,1.7fr)_118px_135px_135px_72px]">
             <input
