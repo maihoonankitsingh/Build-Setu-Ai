@@ -80,7 +80,7 @@ function CameraController({
       camera.position.set(0, 6.6, 0.01);
       camera.lookAt(0, 1.8, 0);
     } else {
-      camera.position.set(4.0, 3.2, 5.0);
+      camera.position.set(4.4, 3.4, 5.4);
       camera.lookAt(0, 1.8, 0);
     }
 
@@ -213,10 +213,10 @@ export default function Bbs3DViewer({ column, totalBars, totalWeight }: Bbs3DVie
         </span>
       </div>
 
-      <div className="relative h-[340px]">
+      <div className="relative h-[420px]">
         <Canvas
           shadows
-          camera={{ position: [4.0, 3.2, 5.0], fov: 37, near: 0.1, far: 100 }}
+          camera={{ position: [4.4, 3.4, 5.4], fov: 34, near: 0.1, far: 100 }}
           gl={{ antialias: true, alpha: true }}
           onCreated={({ gl }) => {
             gl.setClearColor(new THREE.Color("#fbfaff"), 1);
@@ -233,7 +233,7 @@ export default function Bbs3DViewer({ column, totalBars, totalWeight }: Bbs3DVie
           />
         </Canvas>
 
-        <div className="absolute left-3 top-3 flex flex-col gap-2">
+        <div className="absolute left-4 top-4 flex flex-col gap-2">
           {(["3d", "2d"] as const).map((nextMode) => (
             <button
               key={nextMode}
@@ -260,28 +260,28 @@ export default function Bbs3DViewer({ column, totalBars, totalWeight }: Bbs3DVie
           </button>
         </div>
 
-        <div className="absolute right-3 top-3 flex flex-col gap-2">
+        <div className="absolute right-4 top-4 flex flex-col gap-2">
           <button
             onClick={() => setZoomSignal((value) => value + 1)}
-            className="h-8 w-9 rounded-xl border border-[#ece8f8] bg-white text-[12px] font-black text-[#5f5471] shadow-sm hover:border-[#cbbcff] hover:bg-[#f8f5ff]"
+            className="h-9 w-10 rounded-xl border border-[#ece8f8] bg-white text-[13px] font-black text-[#5f5471] shadow-sm hover:border-[#cbbcff] hover:bg-[#f8f5ff]"
           >
             +
           </button>
           <button
             onClick={() => setZoomSignal((value) => value - 1)}
-            className="h-8 w-9 rounded-xl border border-[#ece8f8] bg-white text-[12px] font-black text-[#5f5471] shadow-sm hover:border-[#cbbcff] hover:bg-[#f8f5ff]"
+            className="h-9 w-10 rounded-xl border border-[#ece8f8] bg-white text-[13px] font-black text-[#5f5471] shadow-sm hover:border-[#cbbcff] hover:bg-[#f8f5ff]"
           >
             −
           </button>
           <button
             onClick={() => setResetSignal((value) => value + 1)}
-            className="h-8 w-9 rounded-xl border border-[#ece8f8] bg-white text-[9px] font-black text-[#5f5471] shadow-sm hover:border-[#cbbcff] hover:bg-[#f8f5ff]"
+            className="h-9 w-10 rounded-xl border border-[#ece8f8] bg-white text-[10px] font-black text-[#5f5471] shadow-sm hover:border-[#cbbcff] hover:bg-[#f8f5ff]"
           >
             Fit
           </button>
         </div>
 
-        <div className="absolute bottom-4 left-4 right-4 rounded-2xl border border-[#eee8fb] bg-white/90 px-4 py-2.5 shadow-sm backdrop-blur">
+        <div className="absolute bottom-4 left-4 right-4 rounded-2xl border border-[#eee8fb] bg-white/95 px-4 py-2.5 shadow-[0_10px_24px_rgba(33,19,63,0.10)] backdrop-blur">
           <div className="flex flex-wrap items-center justify-between gap-2">
             <p className="text-[10px] font-black text-[#21133f]">
               {column.type} {column.id} • {column.section}

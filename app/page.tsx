@@ -154,7 +154,7 @@ function persistBuildSetuViewKey(view: ViewKey) {
 const Bbs3DViewer = dynamic(() => import("@/components/bbs/Bbs3DViewer"), {
   ssr: false,
   loading: () => (
-    <div className="grid h-[340px] place-items-center rounded-[22px] border border-[#eee8fb] bg-[#fbfaff] text-xs font-bold text-[#817397]">
+    <div className="grid h-[420px] place-items-center rounded-[22px] border border-[#eee8fb] bg-[#fbfaff] text-xs font-bold text-[#817397]">
       Loading 3D reinforcement viewer...
     </div>
   ),
@@ -4062,8 +4062,8 @@ function BbsPage({ theme }: { theme: ResolvedTheme }) {
         </section>
       ) : null}
 
-      <div className="grid min-w-0 items-start gap-5 xl:grid-cols-[minmax(0,1fr)_380px] 2xl:grid-cols-[minmax(0,1fr)_420px]">
-        <section className="min-w-0 self-start rounded-[24px] border border-[#ece8f8] bg-white p-4 shadow-[0_10px_28px_rgba(33,19,63,0.06)]">
+      <div className="grid min-w-0 items-start gap-5 xl:grid-cols-[minmax(0,1fr)_410px] 2xl:grid-cols-[minmax(0,1fr)_450px]">
+        <section className="min-w-0 self-start rounded-[24px] border border-[#ece8f8] bg-white p-4 shadow-[0_8px_24px_rgba(33,19,63,0.055)]">
           <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
             <div>
               <h2 className="text-lg font-black text-[#161032]">Bar Bending Schedule</h2>
@@ -4184,7 +4184,7 @@ function BbsPage({ theme }: { theme: ResolvedTheme }) {
             </div>
           </div>
 
-          <div className="mt-3 grid gap-2.5 sm:grid-cols-3">
+          <div className="mt-3 grid gap-2 sm:grid-cols-3">
             <button
               onClick={exportCsv}
               disabled={!items.length}
@@ -4209,7 +4209,7 @@ function BbsPage({ theme }: { theme: ResolvedTheme }) {
           </div>
         </section>
 
-        <section className="min-w-0 self-start rounded-[24px] border border-[#ece8f8] bg-white p-4 shadow-[0_10px_28px_rgba(33,19,63,0.06)]">
+        <section className="min-w-0 self-start rounded-[24px] border border-[#ece8f8] bg-white p-4 shadow-[0_8px_24px_rgba(33,19,63,0.055)]">
           <div className="grid gap-4">
             <Bbs3DViewer column={selectedColumn} totalBars={totalBars} totalWeight={totalWeight} />
 
@@ -4268,7 +4268,7 @@ function BbsPage({ theme }: { theme: ResolvedTheme }) {
       </section>
 
 
-      <section className="rounded-[22px] border border-[#ddd2ff] bg-white p-4 shadow-[0_10px_24px_rgba(33,19,63,0.05)]">
+      <section className="rounded-[22px] border border-[#e7ddff] bg-white p-4 shadow-[0_8px_20px_rgba(33,19,63,0.045)]">
         <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
           <div className="flex items-center gap-4">
             <div className="grid h-12 w-12 place-items-center rounded-full bg-[#48bd70] text-xl font-black text-white">
