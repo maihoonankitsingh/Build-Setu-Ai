@@ -232,7 +232,6 @@ const navItems: Array<{ id: ViewKey | "credits"; label: string; icon: BuildSetuI
 ];
 
 const bottomNav: Array<{ id: ViewKey; label: string; icon: BuildSetuIcon }> = [
-  { id: "support", label: "Support", icon: Headphones },
   { id: "settings", label: "Settings", icon: Settings },
 ];
 
@@ -863,6 +862,15 @@ function Header({
         </div>
 
         <div className="ml-auto flex items-center gap-3">
+          {/* BUILDSETU_HEADER_SUPPORT_BUTTON */}
+          <button
+            type="button"
+            onClick={() => setActive("support")}
+            className="hidden h-11 items-center gap-2 rounded-2xl border border-[#e7ddff] bg-white px-4 text-sm font-semibold text-[#5f5471] shadow-[0_8px_20px_rgba(33,19,63,0.04)] transition hover:border-[#c7b6ff] hover:bg-[#fbf8ff] hover:text-[#6d35ff] lg:inline-flex"
+          >
+            <Headphones className="h-4 w-4" />
+            Support
+          </button>
           <button
             onClick={() => setThemeMode(themeMode === "light" ? "system" : "light")}
             className={cn(
