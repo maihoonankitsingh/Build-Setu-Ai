@@ -786,7 +786,7 @@ function Sidebar({
       </div>
 
       <div className="mt-4">
-        <div className="rounded-2xl bg-gradient-to-br from-[#6d5dfc] via-[#8b5cf6] to-[#c084fc] p-2.5 text-white shadow-lg shadow-purple-900/15">
+        <div className="rounded-2xl bg-gradient-to-br from-[#6d5dfc] via-[#8b5cf6] to-[#c084fc] p-2.5 text-white shadow-lg shadow-purple-900/15 buildsetu-credit-card-polished">
           <div className="mb-2 flex items-center gap-2">
             <div className="flex h-6.5 w-6.5 items-center justify-center rounded-lg bg-white/18">
               <CreditCard className="h-3.5 w-3.5" />

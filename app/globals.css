@@ -162,3 +162,68 @@ select:not([multiple]) {
 select:not([multiple])::-ms-expand {
   display: none;
 }
+
+
+
+
+
+/* BuildSetu workspace sidebar polish */
+.buildsetu-sidebar-polished {
+  width: 292px;
+  border-right: 1px solid #eee8fb;
+  background: linear-gradient(180deg, #ffffff 0%, #fefcff 100%);
+}
+
+.buildsetu-sidebar-polished nav {
+  padding-left: 14px;
+  padding-right: 14px;
+}
+
+.buildsetu-sidebar-polished nav button {
+  min-height: 38px !important;
+  border-radius: 999px !important;
+  padding: 0 12px !important;
+  gap: 11px !important;
+  font-size: 14px !important;
+  line-height: 1 !important;
+  font-weight: 500 !important;
+  color: #5f5471;
+  transition: background-color 160ms ease, color 160ms ease;
+}
+
+.buildsetu-sidebar-polished nav button:hover {
+  background: #fbf8ff !important;
+  color: #6d35ff !important;
+}
+
+.buildsetu-sidebar-polished nav button[class*="bg-[#f1e4ff]"],
+.buildsetu-sidebar-polished nav button[class*="bg-[#f3e8ff]"],
+.buildsetu-sidebar-polished nav button[class*="text-[#6d35ff]"] {
+  background: #f1e4ff !important;
+  color: #6d35ff !important;
+  font-weight: 600 !important;
+}
+
+.buildsetu-sidebar-polished nav button svg {
+  width: 18px !important;
+  height: 18px !important;
+  flex: 0 0 18px !important;
+  stroke-width: 2 !important;
+}
+
+.buildsetu-sidebar-polished .sidebar-divider,
+.buildsetu-sidebar-polished hr {
+  margin-top: 10px !important;
+  margin-bottom: 10px !important;
+  border-color: #eee8fb !important;
+}
+
+.buildsetu-sidebar-polished [class*="Available Credits"] {
+  font-weight: 500 !important;
+}
+
+.buildsetu-sidebar-polished .buildsetu-credit-card-polished {
+  margin: 12px 14px 16px !important;
+  border-radius: 22px !important;
+  box-shadow: 0 18px 34px rgba(109, 53, 255, 0.22) !important;
+}
