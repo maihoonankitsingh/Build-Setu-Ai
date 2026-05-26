@@ -213,7 +213,7 @@ export function BackendWorkspaceSupportPage({ theme }: PageProps) {
   ];
 
   const normalizedSearch = searchQuery.trim().toLowerCase();
-  const visibleGroups = faqGroups
+  const matchedGroups = faqGroups
     .map((group) => ({
       ...group,
       items: group.items.filter((item) => {
@@ -223,13 +223,16 @@ export function BackendWorkspaceSupportPage({ theme }: PageProps) {
     }))
     .filter((group) => group.items.length > 0);
 
+  const visibleGroups = matchedGroups.length ? matchedGroups : faqGroups;
+  const showNoExactMatch = Boolean(normalizedSearch && !matchedGroups.length);
+
   return (
     <div className="mx-auto max-w-[980px] pb-10">
       <section className="pt-6 text-center">
-        <span className="inline-flex items-center rounded-full bg-[#f3edff] px-3 py-1 text-[11px] font-black uppercase tracking-wide text-[#6d35ff]">
+        <span className="inline-flex items-center rounded-full bg-[#f3edff] px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-[#6d35ff]">
           BuildSetu AI Help Center
         </span>
-        <h1 className="mt-5 text-4xl font-black tracking-[-0.05em] text-[#161032]">
+        <h1 className="mt-5 text-4xl font-bold tracking-[-0.04em] text-[#161032]">
           Get Help
         </h1>
         <p className="mx-auto mt-3 max-w-xl text-sm font-semibold leading-6 text-[#817397]">
@@ -239,19 +242,19 @@ export function BackendWorkspaceSupportPage({ theme }: PageProps) {
 
       <section className="mx-auto mt-7 max-w-[620px]">
         <button
-          onClick={() => setSearchQuery("Which BuildSetu tool should I use?")}
-          className="group flex h-[70px] w-full items-center justify-between rounded-2xl border border-[#cbb8ff] bg-white px-5 text-left shadow-[0_14px_35px_rgba(109,53,255,0.08)] transition hover:border-[#6d35ff] hover:bg-[#fbf8ff]"
+          onClick={() => setSearchQuery("")}
+          className="group flex h-[70px] w-full items-center justify-between rounded-2xl border border-[#cbb8ff] bg-white px-5 text-left shadow-[0_10px_28px_rgba(109,53,255,0.07)] transition hover:border-[#6d35ff] hover:bg-[#fbf8ff]"
         >
           <span className="flex items-center gap-4">
             <span className="grid h-11 w-11 place-items-center rounded-2xl bg-gradient-to-br from-[#6d35ff] to-[#c084fc] text-lg text-white shadow-[0_12px_24px_rgba(109,53,255,0.25)]">
               ◉
             </span>
             <span>
-              <span className="block text-sm font-black text-[#161032]">Help me find the right tool</span>
+              <span className="block text-sm font-semibold text-[#161032]">Help me find the right tool</span>
               <span className="mt-1 block text-xs font-semibold text-[#817397]">BOQ, BBS, Reports, Render Studio or Settings</span>
             </span>
           </span>
-          <span className="text-2xl font-black text-[#6d35ff] transition group-hover:translate-x-1">→</span>
+          <span className="text-2xl font-semibold text-[#6d35ff] transition group-hover:translate-x-1">→</span>
         </button>
       </section>
 
@@ -261,13 +264,13 @@ export function BackendWorkspaceSupportPage({ theme }: PageProps) {
         </div>
       ) : null}
 
-      <section className="mt-7 rounded-[22px] border border-[#e4d9ff] bg-white p-5 shadow-[0_14px_36px_rgba(33,19,63,0.05)]">
+      <section className="mt-7 rounded-[24px] border border-[#e9e2f8] bg-white p-5 shadow-[0_12px_30px_rgba(33,19,63,0.04)]">
         <div className="flex items-center justify-between gap-4">
           <div>
-            <h2 className="text-lg font-black text-[#161032]">Contact us</h2>
+            <h2 className="text-lg font-semibold text-[#161032]">Contact us</h2>
             <p className="mt-1 text-xs font-semibold text-[#817397]">Ticket backend me save hoga aur Recent Tickets me dikhega.</p>
           </div>
-          <span className="rounded-full bg-[#f3edff] px-3 py-1 text-[10px] font-black uppercase tracking-wide text-[#6d35ff]">
+          <span className="rounded-full bg-[#f3edff] px-3 py-1 text-[10px] font-semibold uppercase tracking-wide text-[#6d35ff]">
             Backend Saved
           </span>
         </div>
@@ -276,7 +279,7 @@ export function BackendWorkspaceSupportPage({ theme }: PageProps) {
           <select
             value={ticket.area}
             onChange={(event) => updateTicket("area", event.target.value)}
-            className="h-10 rounded-xl border border-[#e6e0f5] bg-white px-3 text-xs font-bold text-[#21133f] outline-none focus:border-[#6d35ff]"
+            className="h-11 rounded-2xl border border-[#e6e0f5] bg-white px-4 text-sm font-medium text-[#21133f] outline-none transition focus:border-[#6d35ff] focus:ring-4 focus:ring-[#efe7ff]"
           >
             {["Workspace", "BOQ / Estimate", "BBS", "Reports / Exports", "Credits", "Account"].map((item) => (
               <option key={item} value={item}>{item}</option>
@@ -286,7 +289,7 @@ export function BackendWorkspaceSupportPage({ theme }: PageProps) {
           <select
             value={ticket.priority}
             onChange={(event) => updateTicket("priority", event.target.value)}
-            className="h-10 rounded-xl border border-[#e6e0f5] bg-white px-3 text-xs font-bold text-[#21133f] outline-none focus:border-[#6d35ff]"
+            className="h-11 rounded-2xl border border-[#e6e0f5] bg-white px-4 text-sm font-medium text-[#21133f] outline-none transition focus:border-[#6d35ff] focus:ring-4 focus:ring-[#efe7ff]"
           >
             {["Low", "Medium", "High", "Urgent"].map((item) => (
               <option key={item} value={item}>{item}</option>
@@ -297,21 +300,21 @@ export function BackendWorkspaceSupportPage({ theme }: PageProps) {
             value={ticket.contact}
             onChange={(event) => updateTicket("contact", event.target.value)}
             placeholder="Phone or email"
-            className="h-10 rounded-xl border border-[#e6e0f5] bg-white px-3 text-xs font-bold text-[#21133f] outline-none placeholder:text-[#9a8caf] focus:border-[#6d35ff]"
+            className="h-11 rounded-2xl border border-[#e6e0f5] bg-white px-4 text-sm font-medium text-[#21133f] outline-none placeholder:text-[#9a8caf] transition focus:border-[#6d35ff] focus:ring-4 focus:ring-[#efe7ff]"
           />
 
           <textarea
             value={ticket.details}
             onChange={(event) => updateTicket("details", event.target.value)}
             placeholder="Describe what you need help with..."
-            className="min-h-[135px] rounded-2xl border border-[#d9d1e8] bg-[#fbfbfd] px-4 py-3 text-sm font-semibold text-[#21133f] outline-none placeholder:text-[#9a8caf] focus:border-[#6d35ff] md:col-span-3"
+            className="min-h-[120px] resize-none rounded-2xl border border-[#e1d8f1] bg-[#fbfbfd] px-4 py-3 text-sm font-medium leading-6 text-[#21133f] outline-none placeholder:text-[#9a8caf] transition focus:border-[#6d35ff] focus:bg-white focus:ring-4 focus:ring-[#efe7ff] md:col-span-3"
           />
         </div>
 
         <button
           onClick={submitTicket}
           disabled={submitting}
-          className="mt-4 h-12 w-full rounded-2xl bg-gradient-to-r from-[#6d35ff] to-[#c084fc] text-sm font-black text-white shadow-[0_14px_28px_rgba(109,53,255,0.25)] transition hover:brightness-105 disabled:opacity-60"
+          className="mt-4 h-12 w-full rounded-2xl bg-gradient-to-r from-[#6d35ff] to-[#a855f7] text-sm font-semibold text-white shadow-[0_12px_24px_rgba(109,53,255,0.22)] transition hover:brightness-105 disabled:opacity-60"
         >
           {submitting ? "Sending..." : "✈ Send message"}
         </button>
@@ -324,16 +327,21 @@ export function BackendWorkspaceSupportPage({ theme }: PageProps) {
             value={searchQuery}
             onChange={(event) => setSearchQuery(event.target.value)}
             placeholder="Search for help..."
-            className="h-12 w-full rounded-2xl border border-[#eee8fb] bg-[#f6f4f9] pl-11 pr-4 text-sm font-semibold text-[#21133f] outline-none placeholder:text-[#9a8caf] focus:border-[#6d35ff] focus:bg-white focus:ring-4 focus:ring-[#efe7ff]"
+            className="h-12 w-full rounded-2xl border border-[#eee8fb] bg-[#f6f4f9] pl-11 pr-4 text-sm font-medium text-[#21133f] outline-none placeholder:text-[#9a8caf] focus:border-[#6d35ff] focus:bg-white focus:ring-4 focus:ring-[#efe7ff]"
           />
         </div>
       </section>
 
       <section className="mt-8 space-y-7">
-        {visibleGroups.length ? (
-          visibleGroups.map((group) => (
+        {showNoExactMatch ? (
+          <div className="rounded-2xl border border-[#e4d9ff] bg-[#fbf8ff] px-5 py-4 text-sm font-medium text-[#6d5f7d]">
+            No exact match found. Showing popular BuildSetu help topics below.
+          </div>
+        ) : null}
+
+        {visibleGroups.map((group) => (
             <div key={group.id}>
-              <h2 className="mb-3 text-lg font-black text-[#161032]">{group.title}</h2>
+              <h2 className="mb-3 text-lg font-semibold text-[#161032]">{group.title}</h2>
               <div className="space-y-2">
                 {group.items.map((item, index) => {
                   const faqId = `${group.id}-${index}`;
@@ -345,8 +353,8 @@ export function BackendWorkspaceSupportPage({ theme }: PageProps) {
                         onClick={() => setOpenFaq(isOpen ? "" : faqId)}
                         className="flex min-h-[48px] w-full items-center justify-between gap-4 px-4 py-3 text-left"
                       >
-                        <span className="text-sm font-black text-[#21133f]">{item.q}</span>
-                        <span className="text-base font-black text-[#817397]">{isOpen ? "⌃" : "⌄"}</span>
+                        <span className="text-sm font-medium text-[#21133f]">{item.q}</span>
+                        <span className="text-base font-semibold text-[#817397]">{isOpen ? "⌃" : "⌄"}</span>
                       </button>
                       {isOpen ? (
                         <div className="border-t border-[#eee8fb] bg-[#fbfaff] px-4 py-3 text-sm font-medium leading-6 text-[#6d5f7d]">
@@ -358,18 +366,13 @@ export function BackendWorkspaceSupportPage({ theme }: PageProps) {
                 })}
               </div>
             </div>
-          ))
-        ) : (
-          <div className="rounded-2xl border border-[#e4d9ff] bg-[#fbf8ff] px-5 py-6 text-center text-sm font-bold text-[#817397]">
-            No help article found. Send a message from Contact us.
-          </div>
-        )}
+          ))}
       </section>
 
-      <section className="mt-8 rounded-[22px] border border-[#e4d9ff] bg-white p-5 shadow-[0_14px_36px_rgba(33,19,63,0.05)]">
+      <section className="mt-8 rounded-[24px] border border-[#e9e2f8] bg-white p-5 shadow-[0_12px_30px_rgba(33,19,63,0.04)]">
         <div className="flex items-center justify-between gap-4">
-          <h2 className="text-lg font-black text-[#161032]">Recent Tickets</h2>
-          <span className="rounded-full bg-[#f3edff] px-3 py-1 text-[10px] font-black text-[#6d35ff]">
+          <h2 className="text-lg font-semibold text-[#161032]">Recent Tickets</h2>
+          <span className="rounded-full bg-[#f3edff] px-3 py-1 text-[10px] font-semibold text-[#6d35ff]">
             {recentTickets.length} total
           </span>
         </div>
@@ -379,10 +382,10 @@ export function BackendWorkspaceSupportPage({ theme }: PageProps) {
             recentTickets.slice(0, 5).map((item) => (
               <div key={item.id} className="flex items-center justify-between gap-4 rounded-2xl bg-[#fbfaff] px-4 py-3 ring-1 ring-[#eee8fb]">
                 <div className="min-w-0">
-                  <p className="truncate text-sm font-black text-[#21133f]">{item.subject}</p>
+                  <p className="truncate text-sm font-medium text-[#21133f]">{item.subject}</p>
                   <p className="mt-1 text-[11px] font-bold text-[#817397]">{item.id} • {item.priority} • {item.area}</p>
                 </div>
-                <span className="shrink-0 rounded-full bg-[#f3edff] px-3 py-1 text-[10px] font-black text-[#6d35ff]">
+                <span className="shrink-0 rounded-full bg-[#f3edff] px-3 py-1 text-[10px] font-semibold text-[#6d35ff]">
                   {item.status}
                 </span>
               </div>
