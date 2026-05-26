@@ -227,3 +227,18 @@ select:not([multiple])::-ms-expand {
   border-radius: 22px !important;
   box-shadow: 0 18px 34px rgba(109, 53, 255, 0.22) !important;
 }
+
+
+/* BuildSetu sidebar icon text size tune */
+.buildsetu-sidebar-polished nav button {
+  min-height: 40px !important;
+  gap: 12px !important;
+  font-size: 16px !important;
+  line-height: 1.1 !important;
+}
+
+.buildsetu-sidebar-polished nav button svg {
+  width: 20px !important;
+  height: 20px !important;
+  flex: 0 0 20px !important;
+}
