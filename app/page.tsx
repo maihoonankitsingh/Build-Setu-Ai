@@ -11,6 +11,7 @@ import {
   Building2,
   Calculator,
   CheckCircle2,
+  AlertTriangle,
   ChevronDown,
   ClipboardList,
   Code2,
@@ -119,7 +120,7 @@ type ViewKey =
   | "exports"
   | "agreements"
   | "reviews"
-  | "api"  | "projectWorkspace";
+  | "api"  | "projectWorkspace" | "support" | "settings";
 
 const BUILDSETU_ACTIVE_VIEW_STORAGE_KEY = "buildsetu_active_view";
 
@@ -132,16 +133,43 @@ function isBuildSetuViewKey(value: unknown): value is ViewKey {
 function getInitialBuildSetuViewKey(): ViewKey {
   if (typeof window === "undefined") return "dashboard";
 
-  try {
-    const hashValue = window.location.hash.replace(/^#\/?/, "").trim();
-    if (isBuildSetuViewKey(hashValue)) return hashValue;
+  const params = new URLSearchParams(window.location.search);
+  const view = params.get("view");
 
-    const savedValue = window.localStorage.getItem(BUILDSETU_ACTIVE_VIEW_STORAGE_KEY);
-    if (isBuildSetuViewKey(savedValue)) return savedValue;
-  } catch {}
-
-  return "dashboard";
+  switch (view) {
+    case "dashboard":
+      return "dashboard";
+    case "tools":
+      return "tools";
+    case "projects":
+      return "projects";
+    case "studio":
+    case "new-project":
+      return "studio";
+    case "renders":
+    case "render-studio":
+      return "renders";
+    case "boq":
+      return "boq";
+    case "bbs":
+      return "bbs";
+    case "exports":
+      return "exports";
+    case "agreements":
+      return "agreements";
+    case "reviews":
+    case "verification":
+      return "reviews";
+    case "api":
+      return "api";
+    case "projectWorkspace":
+      return "projectWorkspace";
+    default:
+      return "dashboard";
+  }
 }
+
+
 
 function persistBuildSetuViewKey(view: ViewKey) {
   if (typeof window === "undefined") return;
@@ -205,9 +233,9 @@ const navItems: Array<{ id: ViewKey | "credits"; label: string; icon: BuildSetuI
   { id: "credits", label: "Credits", icon: CreditCard, href: "/credits" },
 ];
 
-const bottomNav: Array<{ label: string; icon: BuildSetuIcon }> = [
-  { label: "Support", icon: Headphones },
-  { label: "Settings", icon: Settings },
+const bottomNav: Array<{ id: ViewKey; label: string; icon: BuildSetuIcon }> = [
+  { id: "support", label: "Support", icon: Headphones },
+  { id: "settings", label: "Settings", icon: Settings },
 ];
 
 const categories: Array<{ label: ToolCategory; icon: BuildSetuIcon }> = [
@@ -1025,8 +1053,8 @@ function PageShell({
         false ? "bg-[#070611] text-white" : "bg-white text-[#21133f]",
       )}
     >
-      <Sidebar active={active} setActive={setActive} theme={theme} />
-      <Header setActive={setActive} themeMode={themeMode} setThemeMode={setThemeMode} theme={theme} />
+      <Sidebar active={active} setActive={handleBuildSetuSetActive} theme={theme} />
+      <Header setActive={handleBuildSetuSetActive} themeMode={themeMode} setThemeMode={setThemeMode} theme={theme} />
       <main className="lg:ml-[244px]">
         <div className="px-4 py-3 lg:px-6">{children}</div>
       </main>
@@ -1242,11 +1270,11 @@ function Dashboard({
         <section className="grid gap-3 xl:grid-cols-3">
           <ProjectsByStage totalProjects={totalProjects || 24} />
           <MonthlyActivity />
-          <CreditUsage usedCredits={usedCredits} totalCredits={totalCredits} creditPercent={creditPercent} setActive={setActive} />
+          <CreditUsage usedCredits={usedCredits} totalCredits={totalCredits} creditPercent={creditPercent} setActive={handleBuildSetuSetActive} />
         </section>
       </div>
 
-      <DashboardAiAssistant setActive={setActive} />
+      <DashboardAiAssistant setActive={handleBuildSetuSetActive} />
     </div>
   );
 }
@@ -1531,7 +1559,7 @@ function DashboardAiAssistant({ setActive }: { setActive: (id: ViewKey) => void 
       desc: "Client proposal draft",
       icon: FileText,
       prompt: "Client ke liye ek professional project proposal structure bana do.",
-      action: () => setActive("exports"),
+      action: () => { setActive("exports"); setUrlView("exports"); },
     },
     {
       title: "Material Takeoff",
@@ -2160,7 +2188,7 @@ function ProjectsPage({ theme, setActive, setSelectedProject }: { theme: Resolve
                         <button
                           type="button"
                           onClick={() => startEdit(project)}
-                          className="h-8 rounded-xl border border-[#ded5ec] bg-white px-3 text-[11px] font-semibold text-[#21133f]"
+                          className="h-8 rounded-xl border border-[#ded5ec] bg-white px-3 text-[11px] font-semibold text-[#21133f] bs-project-action-btn bs-project-edit-btn"
                         >
                           Edit
                         </button>
@@ -2177,7 +2205,7 @@ function ProjectsPage({ theme, setActive, setSelectedProject }: { theme: Resolve
                           <button
                             type="button"
                             onClick={() => archiveProject(item.id)}
-                            className="h-8 rounded-xl border border-amber-200 bg-amber-50 px-3 text-[11px] font-semibold text-amber-700"
+                            className="h-8 rounded-xl border border-amber-200 bg-amber-50 px-3 text-[11px] font-semibold text-amber-700 bs-project-action-btn bs-project-archive-btn"
                           >
                             Archive
                           </button>
@@ -2186,7 +2214,7 @@ function ProjectsPage({ theme, setActive, setSelectedProject }: { theme: Resolve
                         <button
                           type="button"
                           onClick={() => deleteProject(item.id)}
-                          className="h-8 rounded-xl border border-red-200 bg-red-50 px-3 text-[11px] font-semibold text-red-700"
+                          className="h-8 rounded-xl border border-red-200 bg-red-50 px-3 text-[11px] font-semibold text-red-700 bs-project-action-btn bs-project-delete-btn"
                         >
                           Delete
                         </button>
@@ -2218,7 +2246,7 @@ function ProjectsPage({ theme, setActive, setSelectedProject }: { theme: Resolve
                           } catch {}
                           setActive("projectWorkspace");
                         }}
-                        className="rounded-xl bg-[#21133f] px-3.5 py-1.5 text-[11px] font-semibold text-white"
+                        className="rounded-xl bg-[#21133f] px-3.5 py-1.5 text-[11px] font-semibold text-white bs-project-open-btn"
                       >
                         Open Project
                       </button>
@@ -2949,7 +2977,7 @@ function RenderStudio({ theme }: { theme: ResolvedTheme }) {
                 <div key={render.id} className={cn("overflow-hidden rounded-2xl border", false ? "border-white/10 bg-black/20" : "border-[#ded5ec] bg-white")}>
                   <div className="relative aspect-[4/3] overflow-hidden bg-[#0d0a17]">
                     {render.imageUrl ? (
-                      <img src={render.imageUrl} alt="" className="h-full w-full object-cover" />
+                      <img src={render.imageUrl} alt="" className="h-full w-full rounded-full object-cover" />
                     ) : (
                       <div className="flex h-full items-center justify-center">
                         <ImageIcon className={cn("h-12 w-12", false ? "text-white/40" : "text-[#6b5a84]")} />
@@ -4640,7 +4668,7 @@ function BbsPage({ theme }: { theme: ResolvedTheme }) {
                 </div>
               ))
             ) : (
-              <div className="rounded-[18px] bg-[#f6f1ff] px-4 py-3 text-[12px] font-bold text-[#817397]">
+              <div data-export-card="true" className="rounded-[18px] bg-[#f6f1ff] px-4 py-3 text-[12px] font-bold text-[#817397]">
                 No member summary yet.
               </div>
             )}
@@ -4659,21 +4687,69 @@ function BbsPage({ theme }: { theme: ResolvedTheme }) {
 
 
 function ExportPage({ theme }: { theme: ResolvedTheme }) {
+  const exportCards = [
+    {
+      title: "Client Concept PDF",
+      desc: "Brief, renders, material palette and rough budget summary for client presentation.",
+      icon: FileText,
+    },
+    {
+      title: "Contractor Package",
+      desc: "Drawing index, BOQ, material summary and work sequence for execution handoff.",
+      icon: Wrench,
+    },
+    {
+      title: "Structural Verification Package",
+      desc: "Plan, grid, column/beam/slab draft and verification checklist for review.",
+      icon: ShieldCheck,
+    },
+  ];
+
   return (
-    <div>
-      <PageTitle title="Exports" desc="Client PDF, contractor package and structural review package." theme={theme} />
-      <div className="grid gap-4 md:grid-cols-3">
-        {[
-          ["Client Concept PDF", "Brief, renders, material palette, rough budget.", FileText],
-          ["Contractor Package", "Drawing index, BOQ, material summary, work sequence.", Wrench],
-          ["Structural Verification Package", "Plan, grid, column/beam/slab draft, checklist.", ShieldCheck],
-        ].map(([title, desc, Icon]) => (
-          <div key={title as string} className={cn("rounded-2xl border p-5", false ? "border-white/10 bg-white/[0.035]" : "border-[#ded5ec] bg-white light-card-shadow")}>
-            <Icon className="h-7 w-7 text-[#8b5cf6]" />
-            <h3 className={cn("mt-4 font-medium", false ? "text-white" : "text-[#21133f]")}>{title as string}</h3>
-            <p className={cn("mt-2 text-sm leading-6", false ? "text-slate-400" : "text-[#817397]")}>{desc as string}</p>
-            <button className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-[#7c3aed] px-4 py-3 text-sm font-medium text-white">
-              Generate PDF <Download className="h-4 w-4" />
+    <div className="bs-exports-view">
+      <PageTitle
+        title="Exports"
+        desc="Client PDF, contractor package and structural review package."
+        theme={theme}
+      />
+
+      <div className="mt-5 grid items-stretch gap-5 md:grid-cols-3">
+        {exportCards.map(({ title, desc, icon: Icon }) => (
+          <div
+            key={title}
+            className={cn(
+              "flex min-h-[255px] flex-col rounded-[22px] border p-6",
+              false
+                ? "border-white/10 bg-white/[0.035]"
+                : "border-[#ded5ec] bg-white light-card-shadow"
+            )}
+          >
+            <Icon className="h-8 w-8 shrink-0 text-[#8b5cf6]" />
+
+            <h3
+              className={cn(
+                "mt-5 text-[19px] font-black leading-tight tracking-[-0.035em]",
+                false ? "text-white" : "text-[#21133f]"
+              )}
+            >
+              {title}
+            </h3>
+
+            <p
+              className={cn(
+                "mt-3 min-h-[58px] text-sm font-medium leading-6",
+                false ? "text-slate-400" : "text-[#817397]"
+              )}
+            >
+              {desc}
+            </p>
+
+            <button
+              type="button"
+              className="mt-auto inline-flex h-12 min-h-12 w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-[#6d28d9] via-[#7c3aed] to-[#8b5cf6] px-4 text-sm font-black tracking-[-0.02em] text-white shadow-[0_14px_30px_rgba(109,40,217,0.18)] transition hover:-translate-y-0.5 hover:shadow-[0_18px_38px_rgba(109,40,217,0.24)]"
+            >
+              Generate PDF
+              <Download className="h-4 w-4 shrink-0" />
             </button>
           </div>
         ))}
@@ -4682,28 +4758,159 @@ function ExportPage({ theme }: { theme: ResolvedTheme }) {
   );
 }
 
+
 function VerificationPage({ theme }: { theme: ResolvedTheme }) {
+  const stages = [
+    ["AI Draft", "Generated outputs ready for first review.", "12", FileText],
+    ["Under Verification", "BOQ, BBS or drawing currently being checked.", "4", ShieldCheck],
+    ["Changes Required", "Items returned for correction before approval.", "2", AlertTriangle],
+    ["Approved", "Reviewed output ready for client/export use.", "8", CheckCircle2],
+  ] as const;
+
+  const reviewItems = [
+    {
+      title: "BOQ Quantity Review",
+      desc: "Check quantities, units, rate assumptions and category totals.",
+      status: "Under Verification",
+      action: "Open BOQ",
+      view: "boq" as ViewKey,
+    },
+    {
+      title: "BBS Engineer Review",
+      desc: "Verify bar marks, dia, spacing, steel weight and member schedule.",
+      status: "Changes Required",
+      action: "Open BBS",
+      view: "bbs" as ViewKey,
+    },
+    {
+      title: "Client Export Review",
+      desc: "Confirm PDF content before sharing with client or contractor.",
+      status: "AI Draft",
+      action: "Open Exports",
+      view: "exports" as ViewKey,
+    },
+  ];
+
+  const checklist = [
+    "Project details match selected project",
+    "BOQ quantity and unit checked",
+    "Rates and estimate assumptions checked",
+    "BBS steel dia, spacing and weight checked",
+    "Drawing/export package reviewed",
+    "Final engineer/client approval captured",
+  ];
+
   return (
-    <div>
-      <PageTitle title="Verifications" desc="Professional review workflow for BOQ, BBS, drawings and structural drafts." theme={theme} />
-      <section className={cn("rounded-2xl border p-5", false ? "border-white/10 bg-white/[0.035]" : "border-[#ded5ec] bg-white light-card-shadow")}>
-        <div className="grid gap-4 md:grid-cols-4">
-          {["AI Draft", "Under Verification", "Changes Required", "Approved"].map((step, index) => (
-            <div key={step} className={cn("rounded-2xl border p-5 text-center", false ? "border-white/10 bg-black/20" : "border-[#eee7f7] bg-[#fbf8ff]")}>
-              <div className={cn("mx-auto mb-3 flex h-10 w-10 items-center justify-center rounded-xl text-sm font-medium", false ? "bg-[#2b1755] text-[#d8b4fe]" : "bg-[#f0dcff] text-[#6f1cc4]")}>
-                {index + 1}
+    <div className="space-y-5">
+      <PageTitle
+        title="Verifications"
+        desc="Review workflow for AI drafts, BOQ, BBS, drawings and export packages."
+        theme={theme}
+      />
+
+      <section className="grid gap-4 md:grid-cols-4">
+        {stages.map(([label, desc, count, Icon]) => (
+          <article
+            key={label}
+            className="rounded-[22px] border border-[#ded5ec] bg-white p-5 light-card-shadow"
+          >
+            <div className="flex items-start justify-between gap-3">
+              <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#f0dcff] text-[#6f1cc4]">
+                <Icon className="h-5 w-5" />
               </div>
-              <div className={cn("text-sm font-medium", false ? "text-white" : "text-[#21133f]")}>{step}</div>
+              <span className="rounded-full bg-[#fbf8ff] px-3 py-1 text-xs font-black text-[#6f1cc4]">
+                {count}
+              </span>
             </div>
-          ))}
+            <h3 className="mt-4 text-base font-black text-[#21133f]">{label}</h3>
+            <p className="mt-1 min-h-[42px] text-xs font-medium leading-5 text-[#817397]">
+              {desc}
+            </p>
+          </article>
+        ))}
+      </section>
+
+      <section className="grid gap-5 xl:grid-cols-[1.15fr_0.85fr]">
+        <div className="rounded-[24px] border border-[#ded5ec] bg-white p-5 light-card-shadow">
+          <div className="flex items-end justify-between gap-4">
+            <div>
+              <h2 className="text-xl font-black tracking-[-0.035em] text-[#21133f]">
+                Pending Review Items
+              </h2>
+              <p className="mt-1 text-sm font-medium text-[#817397]">
+                AI generated outputs ko final approval se pehle verify karo.
+              </p>
+            </div>
+          </div>
+
+          <div className="mt-5 space-y-3">
+            {reviewItems.map((item) => (
+              <div
+                key={item.title}
+                className="rounded-[18px] border border-[#eee7f7] bg-[#fbf8ff] p-4"
+              >
+                <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+                  <div>
+                    <div className="flex flex-wrap items-center gap-2">
+                      <h3 className="text-sm font-black text-[#21133f]">{item.title}</h3>
+                      <span className="rounded-full bg-white px-2.5 py-1 text-[10px] font-black uppercase tracking-wider text-[#6f1cc4]">
+                        {item.status}
+                      </span>
+                    </div>
+                    <p className="mt-1 text-xs font-medium leading-5 text-[#817397]">
+                      {item.desc}
+                    </p>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (item.view === "exports") setUrlView("exports");
+                      window.dispatchEvent(new CustomEvent("buildsetu:navigate", { detail: item.view }));
+                    }}
+                    className="inline-flex h-10 shrink-0 items-center justify-center rounded-2xl bg-[#21133f] px-4 text-xs font-black text-white shadow-sm transition hover:-translate-y-0.5"
+                  >
+                    {item.action}
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
+
+        <aside className="rounded-[24px] border border-[#ded5ec] bg-white p-5 light-card-shadow">
+          <h2 className="text-xl font-black tracking-[-0.035em] text-[#21133f]">
+            Review Checklist
+          </h2>
+          <p className="mt-1 text-sm font-medium text-[#817397]">
+            Final approval ke pehle minimum checklist.
+          </p>
+
+          <div className="mt-5 space-y-3">
+            {checklist.map((item) => (
+              <div
+                key={item}
+                className="flex items-center gap-3 rounded-2xl border border-[#eee7f7] bg-[#fbf8ff] px-3 py-2.5"
+              >
+                <CheckCircle2 className="h-4 w-4 shrink-0 text-[#6f1cc4]" />
+                <span className="text-xs font-bold text-[#5d5077]">{item}</span>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-5 rounded-[18px] border border-amber-200 bg-amber-50 p-4">
+            <p className="text-xs font-black uppercase tracking-widest text-amber-700">
+              Safety Gate
+            </p>
+            <p className="mt-2 text-xs font-semibold leading-5 text-amber-800">
+              AI output final construction document nahi hai. BOQ, BBS aur structural items engineer/client review ke baad hi final use karo.
+            </p>
+          </div>
+        </aside>
       </section>
     </div>
   );
 }
-
-
-
 
 
 
@@ -5181,6 +5388,303 @@ function ApiPage({ theme }: { theme: ResolvedTheme }) {
 
 
 
+function WorkspaceSupportPage({ theme }: { theme: ResolvedTheme }) {
+  void theme;
+
+  const [ticket, setTicket] = useState({
+    type: "BOQ / Estimate Issue",
+    priority: "Medium",
+    area: "BOQ / Estimate",
+    subject: "",
+    details: "",
+    contact: "",
+  });
+  const [submitted, setSubmitted] = useState("");
+
+  function updateTicket(key: keyof typeof ticket, value: string) {
+    setTicket((current) => ({ ...current, [key]: value }));
+  }
+
+  function submitTicket() {
+    if (!ticket.subject.trim() || !ticket.details.trim()) {
+      setSubmitted("Subject aur details required hain.");
+      return;
+    }
+
+    const payload = {
+      ...ticket,
+      createdAt: new Date().toISOString(),
+      status: "Open",
+    };
+
+    try {
+      const existing = JSON.parse(localStorage.getItem("buildsetu_support_tickets") || "[]");
+      localStorage.setItem("buildsetu_support_tickets", JSON.stringify([payload, ...existing].slice(0, 20)));
+      setSubmitted("Support ticket draft saved. Backend ticket API next phase me connect karna hai.");
+      setTicket((current) => ({ ...current, subject: "", details: "" }));
+    } catch {
+      setSubmitted("Ticket draft ready hai, local save fail hua.");
+    }
+  }
+
+  const commonIssues = [
+    "BOQ amount project size ke hisaab se wrong aa raha hai",
+    "BBS steel weight mismatch aa raha hai",
+    "PDF/CSV export open nahi ho raha",
+    "Project data save/update nahi ho raha",
+    "Credits deduct hue but output generate nahi hua",
+  ];
+
+  return (
+    <div className="mx-auto max-w-[1480px] space-y-5 pb-8">
+      <PageTitle title="Support" desc="Raise tickets, report product issues and track BuildSetu AI workspace support." theme={theme} />
+
+      {submitted ? (
+        <div className="rounded-2xl border border-[#e4d9ff] bg-[#fbf8ff] px-4 py-3 text-sm font-bold text-[#6d35ff]">
+          {submitted}
+        </div>
+      ) : null}
+
+      <section className="grid gap-4 lg:grid-cols-3">
+        {[
+          ["Technical Support", "BOQ, BBS, exports, login aur project data issues report karein.", "24h", "Target response"],
+          ["Billing & Credits", "Credits, subscription, payment verification aur invoice related support.", "Pro", "Workspace plan"],
+          ["Project Review", "Generated BOQ/BBS output review, wrong quantity, wrong rate ya missing item report karein.", "Review", "Engineer gate"],
+        ].map(([title, desc, stat, label]) => (
+          <div key={title} className="rounded-[24px] border border-[#e7ddff] bg-white p-5 shadow-[0_12px_30px_rgba(33,19,63,0.045)]">
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <h2 className="text-lg font-black text-[#161032]">{title}</h2>
+                <p className="mt-2 text-sm font-medium leading-6 text-[#817397]">{desc}</p>
+              </div>
+              <div className="rounded-2xl bg-[#f3edff] px-4 py-3 text-center">
+                <p className="text-lg font-black text-[#6d35ff]">{stat}</p>
+                <p className="mt-1 text-[10px] font-black uppercase text-[#8a7ca6]">{label}</p>
+              </div>
+            </div>
+          </div>
+        ))}
+      </section>
+
+      <section className="grid gap-5 xl:grid-cols-[minmax(0,1.5fr)_minmax(320px,0.8fr)]">
+        <div className="rounded-[28px] border border-[#e7ddff] bg-white p-5 shadow-[0_12px_30px_rgba(33,19,63,0.045)]">
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <h2 className="text-xl font-black text-[#161032]">Create Support Ticket</h2>
+              <p className="mt-1 text-sm font-medium text-[#817397]">Issue details clear likho taaki support faster resolve kar sake.</p>
+            </div>
+            <span className="rounded-full bg-[#f3edff] px-3 py-1 text-[11px] font-black text-[#6d35ff]">Draft Ticket</span>
+          </div>
+
+          <div className="mt-5 grid gap-3 md:grid-cols-3">
+            <select value={ticket.type} onChange={(event) => updateTicket("type", event.target.value)} className="h-11 rounded-2xl border border-[#e6e0f5] bg-white px-3 text-sm font-bold text-[#21133f] outline-none focus:border-[#6d35ff]">
+              {["BOQ / Estimate Issue", "BBS Issue", "Export Issue", "Credits / Billing", "Login / Account", "Bug Report", "Feature Request"].map((item) => <option key={item} value={item}>{item}</option>)}
+            </select>
+
+            <select value={ticket.priority} onChange={(event) => updateTicket("priority", event.target.value)} className="h-11 rounded-2xl border border-[#e6e0f5] bg-white px-3 text-sm font-bold text-[#21133f] outline-none focus:border-[#6d35ff]">
+              {["Low", "Medium", "High", "Urgent"].map((item) => <option key={item} value={item}>{item}</option>)}
+            </select>
+
+            <select value={ticket.area} onChange={(event) => updateTicket("area", event.target.value)} className="h-11 rounded-2xl border border-[#e6e0f5] bg-white px-3 text-sm font-bold text-[#21133f] outline-none focus:border-[#6d35ff]">
+              {["BOQ / Estimate", "BBS", "Projects", "Exports", "Credits", "Account"].map((item) => <option key={item} value={item}>{item}</option>)}
+            </select>
+
+            <input value={ticket.subject} onChange={(event) => updateTicket("subject", event.target.value)} placeholder="Subject: 59x71 BBS steel quantity mismatch" className="h-11 rounded-2xl border border-[#e6e0f5] bg-white px-3 text-sm font-bold text-[#21133f] outline-none placeholder:text-[#9a8caf] focus:border-[#6d35ff] md:col-span-2" />
+            <input value={ticket.contact} onChange={(event) => updateTicket("contact", event.target.value)} placeholder="Phone or email" className="h-11 rounded-2xl border border-[#e6e0f5] bg-white px-3 text-sm font-bold text-[#21133f] outline-none placeholder:text-[#9a8caf] focus:border-[#6d35ff]" />
+
+            <textarea value={ticket.details} onChange={(event) => updateTicket("details", event.target.value)} placeholder="Issue reproduce steps, expected output, actual output, project name and screenshot note..." className="min-h-[135px] rounded-2xl border border-[#e6e0f5] bg-white px-3 py-3 text-sm font-bold text-[#21133f] outline-none placeholder:text-[#9a8caf] focus:border-[#6d35ff] md:col-span-3" />
+          </div>
+
+          <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
+            <p className="text-xs font-semibold text-[#817397]">Backend ticket API next phase me connect karna hai.</p>
+            <button onClick={submitTicket} className="rounded-2xl bg-[#6d35ff] px-5 py-3 text-sm font-black text-white shadow-[0_14px_28px_rgba(109,53,255,0.25)] hover:bg-[#5b26e8]">
+              Submit Ticket
+            </button>
+          </div>
+        </div>
+
+        <aside className="space-y-4">
+          <div className="rounded-[24px] border border-[#e7ddff] bg-white p-5 shadow-[0_12px_30px_rgba(33,19,63,0.045)]">
+            <h3 className="text-lg font-black text-[#161032]">Common Issues</h3>
+            <div className="mt-4 space-y-2">
+              {commonIssues.map((issue) => (
+                <div key={issue} className="rounded-2xl bg-[#fbfaff] px-4 py-3 text-xs font-bold leading-5 text-[#5f5471] ring-1 ring-[#eee8fb]">
+                  {issue}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="rounded-[24px] border border-[#e7ddff] bg-white p-5 shadow-[0_12px_30px_rgba(33,19,63,0.045)]">
+            <h3 className="text-lg font-black text-[#161032]">Support Channels</h3>
+            <div className="mt-4 grid gap-3">
+              {[
+                ["Workspace", "In-app ticket support"],
+                ["Email", "support@buildsetu.ai"],
+                ["Priority", "Credits, payment, blocker"],
+              ].map(([label, value]) => (
+                <div key={label} className="flex items-center justify-between rounded-2xl bg-[#fbfaff] px-4 py-3">
+                  <span className="text-xs font-black text-[#817397]">{label}</span>
+                  <span className="text-xs font-black text-[#21133f]">{value}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </aside>
+      </section>
+    </div>
+  );
+}
+
+function WorkspaceSettingsPage({ theme }: { theme: ResolvedTheme }) {
+  void theme;
+
+  const defaultSettings = {
+    companyName: "BuildSetu AI",
+    city: "Raipur",
+    quality: "Standard",
+    currency: "INR",
+    coverageRatio: "78",
+    steelFactor: "3.8",
+    contingency: "5",
+    gst: "18",
+    rateSource: "BuildSetu Internal Starter Rate Library",
+    approvalGate: "Engineer Review Required",
+  };
+
+  const [settings, setSettings] = useState(defaultSettings);
+  const [saved, setSaved] = useState("");
+
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem("buildsetu_workspace_settings");
+      if (stored) setSettings({ ...defaultSettings, ...JSON.parse(stored) });
+    } catch {
+      setSaved("Saved settings load nahi ho payi.");
+    }
+  }, []);
+
+  function updateSetting(key: keyof typeof settings, value: string) {
+    setSettings((current) => ({ ...current, [key]: value }));
+  }
+
+  function saveSettings() {
+    try {
+      localStorage.setItem("buildsetu_workspace_settings", JSON.stringify(settings));
+      setSaved("Settings saved locally. Next phase me BOQ/BBS APIs ko in settings se connect karna hai.");
+    } catch {
+      setSaved("Settings save fail hua.");
+    }
+  }
+
+  function resetSettings() {
+    setSettings(defaultSettings);
+    localStorage.removeItem("buildsetu_workspace_settings");
+    setSaved("Settings reset ho gayi.");
+  }
+
+  return (
+    <div className="mx-auto max-w-[1480px] space-y-5 pb-8">
+      <PageTitle title="Settings" desc="Configure workspace defaults, BOQ rate assumptions, BBS steel factors and export settings." theme={theme} />
+
+      {saved ? (
+        <div className="rounded-2xl border border-[#e4d9ff] bg-[#fbf8ff] px-4 py-3 text-sm font-bold text-[#6d35ff]">
+          {saved}
+        </div>
+      ) : null}
+
+      <section className="grid gap-4 lg:grid-cols-3">
+        {[
+          ["Workspace Profile", "Company, city aur workspace defaults.", [["Company Name", settings.companyName], ["Default City", settings.city], ["Currency", settings.currency]]],
+          ["BOQ Defaults", "Rate master, quality and estimate calculation controls.", [["Quality", settings.quality], ["Coverage Ratio", `${settings.coverageRatio}%`], ["Contingency", `${settings.contingency}%`]]],
+          ["BBS Defaults", "Steel estimation and review gate controls.", [["Steel Factor", `${settings.steelFactor} kg/sq.ft`], ["Approval Gate", settings.approvalGate], ["Rate Source", "Internal"]]],
+        ].map(([title, desc, items]) => (
+          <div key={String(title)} className="rounded-[24px] border border-[#e7ddff] bg-white p-5 shadow-[0_12px_30px_rgba(33,19,63,0.045)]">
+            <h2 className="text-lg font-black text-[#161032]">{title}</h2>
+            <p className="mt-2 text-sm font-medium leading-6 text-[#817397]">{desc}</p>
+            <div className="mt-4 space-y-2">
+              {(items as string[][]).map(([label, value]) => (
+                <div key={label} className="flex items-center justify-between rounded-2xl bg-[#fbfaff] px-4 py-3 ring-1 ring-[#eee8fb]">
+                  <span className="text-xs font-black text-[#817397]">{label}</span>
+                  <span className="text-xs font-black text-[#21133f]">{value}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        ))}
+      </section>
+
+      <section className="grid gap-5 xl:grid-cols-[minmax(0,1.4fr)_minmax(320px,0.8fr)]">
+        <div className="rounded-[28px] border border-[#e7ddff] bg-white p-5 shadow-[0_12px_30px_rgba(33,19,63,0.045)]">
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <h2 className="text-xl font-black text-[#161032]">Workspace Configuration</h2>
+              <p className="mt-1 text-sm font-medium text-[#817397]">Ye defaults future BOQ/BBS generation controls ke liye base rahenge.</p>
+            </div>
+            <span className="rounded-full bg-[#f3edff] px-3 py-1 text-[11px] font-black text-[#6d35ff]">Local Settings</span>
+          </div>
+
+          <div className="mt-5 grid gap-4 md:grid-cols-2">
+            <input value={settings.companyName} onChange={(event) => updateSetting("companyName", event.target.value)} className="h-11 rounded-2xl border border-[#e6e0f5] bg-white px-3 text-sm font-bold text-[#21133f] outline-none focus:border-[#6d35ff]" />
+
+            <select value={settings.city} onChange={(event) => updateSetting("city", event.target.value)} className="h-11 rounded-2xl border border-[#e6e0f5] bg-white px-3 text-sm font-bold text-[#21133f] outline-none focus:border-[#6d35ff]">
+              {["Raipur", "Bhopal", "Indore", "Delhi", "Mumbai", "Bangalore", "Default"].map((city) => <option key={city} value={city}>{city}</option>)}
+            </select>
+
+            <select value={settings.quality} onChange={(event) => updateSetting("quality", event.target.value)} className="h-11 rounded-2xl border border-[#e6e0f5] bg-white px-3 text-sm font-bold text-[#21133f] outline-none focus:border-[#6d35ff]">
+              {["Basic", "Standard", "Premium", "Luxury"].map((quality) => <option key={quality} value={quality}>{quality}</option>)}
+            </select>
+
+            <select value={settings.currency} onChange={(event) => updateSetting("currency", event.target.value)} className="h-11 rounded-2xl border border-[#e6e0f5] bg-white px-3 text-sm font-bold text-[#21133f] outline-none focus:border-[#6d35ff]">
+              {["INR", "USD"].map((currency) => <option key={currency} value={currency}>{currency}</option>)}
+            </select>
+
+            <input value={settings.coverageRatio} type="number" onChange={(event) => updateSetting("coverageRatio", event.target.value)} className="h-11 rounded-2xl border border-[#e6e0f5] bg-white px-3 text-sm font-bold text-[#21133f] outline-none focus:border-[#6d35ff]" />
+            <input value={settings.steelFactor} type="number" step="0.1" onChange={(event) => updateSetting("steelFactor", event.target.value)} className="h-11 rounded-2xl border border-[#e6e0f5] bg-white px-3 text-sm font-bold text-[#21133f] outline-none focus:border-[#6d35ff]" />
+            <input value={settings.contingency} type="number" onChange={(event) => updateSetting("contingency", event.target.value)} className="h-11 rounded-2xl border border-[#e6e0f5] bg-white px-3 text-sm font-bold text-[#21133f] outline-none focus:border-[#6d35ff]" />
+            <input value={settings.gst} type="number" onChange={(event) => updateSetting("gst", event.target.value)} className="h-11 rounded-2xl border border-[#e6e0f5] bg-white px-3 text-sm font-bold text-[#21133f] outline-none focus:border-[#6d35ff]" />
+            <input value={settings.rateSource} onChange={(event) => updateSetting("rateSource", event.target.value)} className="h-11 rounded-2xl border border-[#e6e0f5] bg-white px-3 text-sm font-bold text-[#21133f] outline-none focus:border-[#6d35ff] md:col-span-2" />
+          </div>
+
+          <div className="mt-5 flex flex-wrap justify-end gap-3">
+            <button onClick={resetSettings} className="rounded-2xl border border-[#e4d9ff] bg-white px-5 py-3 text-sm font-black text-[#817397] hover:bg-[#fbf8ff]">Reset</button>
+            <button onClick={saveSettings} className="rounded-2xl bg-[#6d35ff] px-5 py-3 text-sm font-black text-white shadow-[0_14px_28px_rgba(109,53,255,0.25)] hover:bg-[#5b26e8]">Save Settings</button>
+          </div>
+        </div>
+
+        <aside className="space-y-4">
+          <div className="rounded-[24px] border border-[#e7ddff] bg-white p-5 shadow-[0_12px_30px_rgba(33,19,63,0.045)]">
+            <h3 className="text-lg font-black text-[#161032]">Generation Defaults</h3>
+            <div className="mt-4 space-y-2">
+              {[
+                ["BOQ Rate Base", settings.rateSource],
+                ["City", settings.city],
+                ["Quality", settings.quality],
+                ["Coverage", `${settings.coverageRatio}%`],
+                ["Steel Factor", `${settings.steelFactor} kg/sq.ft`],
+                ["Contingency", `${settings.contingency}%`],
+              ].map(([label, value]) => (
+                <div key={label} className="flex items-center justify-between rounded-2xl bg-[#fbfaff] px-4 py-3 ring-1 ring-[#eee8fb]">
+                  <span className="text-xs font-black text-[#817397]">{label}</span>
+                  <span className="max-w-[170px] truncate text-right text-xs font-black text-[#21133f]">{value}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="rounded-[24px] border border-[#f5d89d] bg-[#fffaf0] p-5">
+            <h3 className="text-lg font-black text-[#9a6412]">Important</h3>
+            <p className="mt-2 text-sm font-bold leading-6 text-[#9a6412]">
+              Abhi settings local workspace me save hoti hain. Next phase me in settings ko BOQ/BBS APIs se connect karna hoga.
+            </p>
+          </div>
+        </aside>
+      </section>
+    </div>
+  );
+}
+
+
 function ProjectWorkspaceShell({
   project,
   setActive,
@@ -5470,7 +5974,7 @@ function ProjectWorkspaceShell({
           <p className="mt-1 text-xs text-[#817397]">
             Yaha project PDFs, reports, agreement, exported drawings aur uploaded reference files save honge.
           </p>
-          <button onClick={() => setActive("exports")} className="mt-4 rounded-xl bg-[#21133f] px-4 py-2 text-xs font-semibold text-white">
+          <button onClick={() => { setActive("exports"); setUrlView("exports"); }} className="mt-4 rounded-xl bg-[#21133f] px-4 py-2 text-xs font-semibold text-white">
             Open Reports
           </button>
         </section>
@@ -6015,7 +6519,7 @@ function ProjectWorkspaceTaskBoardShell({
           <FileText className="mx-auto h-8 w-8 text-[#6f1cc4]" />
           <h2 className="mt-3 text-base font-bold text-[#21133f]">Files and reports</h2>
           <p className="mt-1 text-xs text-[#817397]">Project PDFs, reports, agreements, exported drawings aur uploaded reference files yaha save honge.</p>
-          <button onClick={() => setActive("exports")} className="mt-4 rounded-xl bg-[#21133f] px-4 py-2 text-xs font-semibold text-white">Open Reports</button>
+          <button onClick={() => { setActive("exports"); setUrlView("exports"); }} className="mt-4 rounded-xl bg-[#21133f] px-4 py-2 text-xs font-semibold text-white">Open Reports</button>
         </section>
       ) : null}
     </div>
@@ -7201,7 +7705,7 @@ function HeaderProfileButton() {
         title="Open profile menu"
         className="group flex h-[50px] w-[238px] items-center gap-3 rounded-[22px] border border-[#e8ddf6] bg-white/95 px-3 py-2 text-left shadow-[0_10px_28px_rgba(54,24,95,0.10)] transition hover:-translate-y-0.5 hover:border-violet-200 hover:shadow-[0_16px_40px_rgba(54,24,95,0.14)]"
       >
-        <div className="relative h-9 w-9 shrink-0 overflow-hidden rounded-full border border-violet-100 bg-gradient-to-br from-violet-700 to-fuchsia-500 text-white shadow-sm">
+        <div className="relative h-9 w-9 shrink-0 rounded-full border border-violet-100 bg-gradient-to-br from-violet-700 to-fuchsia-500 text-white shadow-sm">
           {profileImage ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
@@ -7211,11 +7715,11 @@ function HeaderProfileButton() {
               className="h-full w-full object-cover"
             />
           ) : (
-            <div className="flex h-full w-full items-center justify-center text-xs font-black">
+            <div className="flex h-full w-full items-center justify-center rounded-full text-xs font-black">
               {initials}
             </div>
           )}
-          <span className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full border-2 border-white bg-emerald-500" />
+          <span className="absolute -bottom-1 -right-1 z-10 h-3.5 w-3.5 rounded-full border-[3px] border-white bg-emerald-500 shadow-[0_2px_8px_rgba(16,185,129,0.35)]" />
         </div>
 
         <div className="min-w-0 flex-1">
@@ -7285,6 +7789,16 @@ function HeaderProfileButton() {
       ) : null}
     </div>
   );
+}
+
+
+
+
+function setUrlView(view: ViewKey) {
+  if (typeof window === "undefined") return;
+
+  const url = view === "dashboard" ? "/" : `/?view=${view}`;
+  window.history.replaceState(null, "", url);
 }
 
 
@@ -7637,7 +8151,38 @@ export default function SikhadengeBuildDashboard() {
 
   const [active, setActive] = useState<ViewKey>(() => getInitialBuildSetuViewKey());
 
+  const handleBuildSetuSetActive = (id: ViewKey) => {
+    setActive(id);
+    setUrlView(id);
+  };
+
   useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const params = new URLSearchParams(window.location.search);
+    const currentView = params.get("view");
+
+    if (currentView && currentView !== active) {
+      setUrlView(active);
+    }
+  }, [active]);
+
+
+  
+  useEffect(() => {
+    function buildsetuOpenExportsFromUrl() {
+      if (typeof window === "undefined") return;
+      const params = new URLSearchParams(window.location.search);
+      if (params.get("view") === "exports") {
+        setActive("exports");
+      }
+    }
+
+    buildsetuOpenExportsFromUrl();
+    window.addEventListener("popstate", buildsetuOpenExportsFromUrl);
+    return () => window.removeEventListener("popstate", buildsetuOpenExportsFromUrl);
+  }, []);
+useEffect(() => {
     persistBuildSetuViewKey(active);
   }, [active]);
 
@@ -7660,21 +8205,21 @@ export default function SikhadengeBuildDashboard() {
   const theme = useResolvedTheme(themeMode);
 
   const content = () => {
-    if (active === "dashboard") return <Dashboard setActive={setActive} theme={theme} />;
+    if (active === "dashboard") return <Dashboard setActive={handleBuildSetuSetActive} theme={theme} />;
     if (active === "tools") return <AllToolsPage theme={theme} />;
     if (active === "projectWorkspace") {
       return (
         <ProjectTaskChatInterfaceShell
           project={selectedProject}
-          setActive={setActive}
+          setActive={handleBuildSetuSetActive}
           theme={theme}
         />
       );
     }
     if (active === "projects") {
-      return <ProjectsPage theme={theme} setActive={setActive} setSelectedProject={setSelectedProject} />;
+      return <ProjectsPage theme={theme} setActive={handleBuildSetuSetActive} setSelectedProject={setSelectedProject} />;
     }
-    if (active === "studio") return <NewProjectPage theme={theme} setActive={setActive} setSelectedProject={setSelectedProject} />;
+    if (active === "studio") return <NewProjectPage theme={theme} setActive={handleBuildSetuSetActive} setSelectedProject={setSelectedProject} />;
     if (active === "renders") return <RenderStudio theme={theme} />;
     if (active === "boq") return <BoqPage theme={theme} />;
     if (active === "bbs") return <BbsPage theme={theme} />;
@@ -7682,13 +8227,15 @@ export default function SikhadengeBuildDashboard() {
     if (active === "agreements") return <ClientAgreementPage theme={theme} />;
     if (active === "reviews") return <VerificationPage theme={theme} />;
     if (active === "api") return <ApiPage theme={theme} />;
-    return <Dashboard setActive={setActive} theme={theme} />;
+    if (active === "support") return <WorkspaceSupportPage theme={theme} />;
+    if (active === "settings") return <WorkspaceSettingsPage theme={theme} />;
+    return <Dashboard setActive={handleBuildSetuSetActive} theme={theme} />;
   };
 
   return (
     <PageShell
       active={active}
-      setActive={setActive}
+      setActive={handleBuildSetuSetActive}
       themeMode={themeMode}
       setThemeMode={setThemeMode}
       theme={theme}
