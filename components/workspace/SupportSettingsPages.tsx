@@ -268,10 +268,10 @@ export function BackendWorkspaceSupportPage({ theme }: PageProps) {
         <div className="flex items-center justify-between gap-4">
           <div>
             <h2 className="text-lg font-semibold text-[#161032]">Contact us</h2>
-            <p className="mt-1 text-xs font-semibold text-[#817397]">Ticket backend me save hoga aur Recent Tickets me dikhega.</p>
+            <p className="mt-1 text-xs font-semibold text-[#817397]">Describe your issue. Our team will review it and keep the ticket saved in your workspace.</p>
           </div>
           <span className="rounded-full bg-[#f3edff] px-3 py-1 text-[10px] font-semibold uppercase tracking-wide text-[#6d35ff]">
-            Backend Saved
+            Ticket System
           </span>
         </div>
 
@@ -314,27 +314,34 @@ export function BackendWorkspaceSupportPage({ theme }: PageProps) {
         <button
           onClick={submitTicket}
           disabled={submitting}
-          className="mt-4 h-12 w-full rounded-2xl bg-gradient-to-r from-[#6d35ff] to-[#a855f7] text-sm font-semibold text-white shadow-[0_12px_24px_rgba(109,53,255,0.22)] transition hover:brightness-105 disabled:opacity-60"
+          className="mt-4 h-11 w-full rounded-[16px] bg-gradient-to-r from-[#6d35ff] to-[#9b5cff] text-sm font-semibold text-white shadow-[0_12px_24px_rgba(109,53,255,0.22)] transition hover:brightness-105 disabled:opacity-60"
         >
           {submitting ? "Sending..." : "✈ Send message"}
         </button>
       </section>
 
       <section className="mt-6">
-        <div className="relative">
-          <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-[#9a8caf]">⌕</span>
+        <div className="relative rounded-[18px] border border-[#e8defb] bg-white shadow-[0_10px_26px_rgba(33,19,63,0.035)] transition-within:border-[#bda8ff]">
+          <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-[15px] text-[#8f7ca8]">
+            ⌕
+          </span>
+
           <input
             value={searchQuery}
             onChange={(event) => setSearchQuery(event.target.value)}
-            placeholder="Search for help..."
-            className="h-12 w-full rounded-2xl border border-[#eee8fb] bg-[#f6f4f9] pl-11 pr-4 text-sm font-medium text-[#21133f] outline-none placeholder:text-[#9a8caf] focus:border-[#6d35ff] focus:bg-white focus:ring-4 focus:ring-[#efe7ff]"
+            placeholder="Search help articles, BOQ, BBS, exports..."
+            className="h-12 w-full rounded-[18px] border-0 bg-transparent pl-11 pr-20 text-[14px] font-medium text-[#21133f] outline-none placeholder:text-[#9a8caf] focus:ring-0"
           />
+
+          <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 rounded-full bg-[#f3edff] px-3 py-1 text-[10px] font-semibold text-[#6d35ff]">
+            FAQ
+          </span>
         </div>
       </section>
 
       <section className="mt-8 space-y-7">
         {showNoExactMatch ? (
-          <div className="rounded-2xl border border-[#e4d9ff] bg-[#fbf8ff] px-5 py-4 text-sm font-medium text-[#6d5f7d]">
+          <div className="rounded-[16px] border border-[#eadfff] bg-[#fcfaff] px-4 py-3 text-[13px] font-medium text-[#6d5f7d]">
             No exact match found. Showing popular BuildSetu help topics below.
           </div>
         ) : null}
