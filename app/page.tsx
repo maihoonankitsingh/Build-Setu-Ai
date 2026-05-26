@@ -125,7 +125,21 @@ type ViewKey =
 
 const BUILDSETU_ACTIVE_VIEW_STORAGE_KEY = "buildsetu_active_view";
 
-const BUILDSETU_VIEW_KEYS = ['dashboard', 'tools', 'projects', 'studio', 'renders', 'boq', 'bbs', 'exports', 'agreements', 'reviews', 'api', 'projectWorkspace'] as ViewKey[];
+const BUILDSETU_VIEW_KEYS = [
+  "dashboard",
+  "all-tools",
+  "projects",
+  "new-project",
+  "render-studio",
+  "boq",
+  "bbs",
+  "exports",
+  "client-agreement",
+  "credits",
+  "api",
+  "support",
+  "settings",
+] as ViewKey[];
 
 function isBuildSetuViewKey(value: unknown): value is ViewKey {
   return typeof value === "string" && BUILDSETU_VIEW_KEYS.includes(value as ViewKey);
@@ -134,37 +148,24 @@ function isBuildSetuViewKey(value: unknown): value is ViewKey {
 function getInitialBuildSetuViewKey(): ViewKey {
   if (typeof window === "undefined") return "dashboard";
 
-  const params = new URLSearchParams(window.location.search);
-  const view = params.get("view");
+  try {
+    const params = new URLSearchParams(window.location.search);
+    const urlView = params.get("view");
 
-  switch (view) {
-    case "dashboard":
-      return "dashboard";
-    case "tools":
-      return "tools";
-    case "projects":
-      return "projects";
-    case "studio":
-    case "new-project":
-      return "studio";
-    case "renders":
-    case "render-studio":
-      return "renders";
-    case "boq":
-      return "boq";
-    case "bbs":
-      return "bbs";
-    case "exports":
-      return "exports";
-    case "agreements":
-      return "agreements";
-    case "api":
-      return "api";
-    case "projectWorkspace":
-      return "projectWorkspace";
-    default:
-      return "dashboard";
+    if (isBuildSetuViewKey(urlView)) {
+      return urlView;
+    }
+
+    const savedView = window.localStorage.getItem(BUILDSETU_ACTIVE_VIEW_STORAGE_KEY);
+
+    if (isBuildSetuViewKey(savedView)) {
+      return savedView;
+    }
+  } catch {
+    return "dashboard";
   }
+
+  return "dashboard";
 }
 
 
@@ -8220,6 +8221,18 @@ export default function SikhadengeBuildDashboard() {
 
 
   const [active, setActive] = useState<ViewKey>(() => getInitialBuildSetuViewKey());
+
+  useEffect(() => {
+    try {
+      window.localStorage.setItem(BUILDSETU_ACTIVE_VIEW_STORAGE_KEY, active);
+
+      const url = new URL(window.location.href);
+      url.searchParams.set("view", active);
+      window.history.replaceState(null, "", `${url.pathname}?${url.searchParams.toString()}${url.hash}`);
+    } catch {
+      // ignore storage/history errors
+    }
+  }, [active]);
 
   const handleBuildSetuSetActive = (id: ViewKey) => {
     setActive(id);
