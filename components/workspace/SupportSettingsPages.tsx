@@ -361,7 +361,13 @@ export function BackendWorkspaceSupportPage({ theme }: PageProps) {
                         className="flex min-h-[48px] w-full items-center justify-between gap-4 px-4 py-3 text-left"
                       >
                         <span className="text-sm font-medium text-[#21133f]">{item.q}</span>
-                        <span className="text-base font-semibold text-[#817397]">{isOpen ? "⌃" : "⌄"}</span>
+                        <span
+                          className={`grid h-10 w-10 shrink-0 place-items-center rounded-2xl border border-[#e4d9ff] bg-white text-[#2563eb] shadow-[0_8px_18px_rgba(33,19,63,0.06)] transition ${isOpen ? "rotate-180 border-[#c7b6ff] bg-[#fbf8ff]" : "hover:border-[#c7b6ff] hover:bg-[#fbf8ff]"}`}
+                        >
+                          <svg width="18" height="18" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                            <path d="M6 8L10 12L14 8" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+                          </svg>
+                        </span>
                       </button>
                       {isOpen ? (
                         <div className="border-t border-[#eee8fb] bg-[#fbfaff] px-4 py-3 text-sm font-medium leading-6 text-[#6d5f7d]">
