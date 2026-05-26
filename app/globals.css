@@ -974,3 +974,34 @@ aside:has(nav) button:focus-visible {
     margin-right: 16px !important;
   }
 }
+
+
+/* BuildSetu sidebar equal menu spacing only */
+.buildsetu-sidebar-nav-primary,
+.buildsetu-sidebar-nav-secondary {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 6px !important;
+}
+
+.buildsetu-sidebar-nav-primary > *,
+.buildsetu-sidebar-nav-secondary > * {
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+}
+
+.buildsetu-sidebar-nav-primary button,
+.buildsetu-sidebar-nav-secondary button {
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+}
+
+/* Fallback if sidebar wrapper classes are missing */
+aside nav {
+  row-gap: 6px !important;
+}
+
+aside nav > * {
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+}
