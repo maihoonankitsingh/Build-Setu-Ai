@@ -322,7 +322,7 @@ export function BackendWorkspaceSupportPage({ theme }: PageProps) {
 
       <section className="mt-6">
         <div className="relative rounded-[18px] border border-[#e8defb] bg-white shadow-[0_10px_26px_rgba(33,19,63,0.035)] transition-within:border-[#bda8ff]">
-          <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-[15px] text-[#8f7ca8]">
+          <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-[20px] leading-none text-[#7c5aa8]">
             ⌕
           </span>
 
