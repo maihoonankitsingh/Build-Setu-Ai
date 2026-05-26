@@ -768,7 +768,9 @@ function Sidebar({
           const Icon = item.icon;
           return (
             <button
-              key={item.label}
+                type="button"
+                onClick={() => setActive(item.id)}
+              key={item.id}
               className={cn(
                 "flex w-full items-center gap-2.5 rounded-xl px-2.5 py-[5px] text-left text-[14px] font-medium transition",
                 false
