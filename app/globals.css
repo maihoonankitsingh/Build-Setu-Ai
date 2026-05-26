@@ -306,23 +306,6 @@ aside:has(nav) div:has([class*="Available Credits"]) {
 }
 
 
-/* BuildSetu sidebar fit layout final */
-aside:has(nav) {
-  width: 272px !important;
-  min-width: 272px !important;
-  max-width: 272px !important;
-  height: 100vh !important;
-  max-height: 100vh !important;
-  overflow-y: auto !important;
-  overflow-x: hidden !important;
-  border-right: 1px solid #eee8fb !important;
-  background: #ffffff !important;
-  scrollbar-width: none;
-}
-
-aside:has(nav)::-webkit-scrollbar {
-  display: none;
-}
 
 /* Logo area */
 aside:has(nav) > div:first-child {
@@ -425,6 +408,135 @@ aside:has(nav) [class*="bg-gradient"] {
     padding-bottom: 10px !important;
   }
 
+  aside:has(nav) nav button {
+    height: 33px !important;
+    min-height: 33px !important;
+    font-size: 14px !important;
+  }
+
+  aside:has(nav) nav button svg {
+    width: 17px !important;
+    height: 17px !important;
+    min-width: 17px !important;
+    flex-basis: 17px !important;
+  }
+
+  aside:has(nav) nav > :not([hidden]) ~ :not([hidden]) {
+    margin-top: 2px !important;
+  }
+}
+
+
+/* BuildSetu sidebar no overlap final */
+aside:has(nav) {
+  height: 100vh !important;
+  max-height: 100vh !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  border-right: 1px solid #eee8fb !important;
+  background: #ffffff !important;
+  scrollbar-width: none;
+}
+
+aside:has(nav)::-webkit-scrollbar {
+  display: none;
+}
+
+/* Do not force sidebar width. Layout owns width. */
+aside:has(nav) {
+  width: auto !important;
+  min-width: unset !important;
+  max-width: unset !important;
+}
+
+/* Logo and menu padding */
+aside:has(nav) > div:first-child {
+  padding-left: 16px !important;
+  padding-right: 16px !important;
+}
+
+aside:has(nav) nav {
+  padding-left: 16px !important;
+  padding-right: 16px !important;
+}
+
+/* Equal row spacing */
+aside:has(nav) nav > :not([hidden]) ~ :not([hidden]) {
+  margin-top: 3px !important;
+}
+
+/* Menu item */
+aside:has(nav) nav button {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  width: 100% !important;
+  height: 36px !important;
+  min-height: 36px !important;
+  border: 0 !important;
+  border-radius: 13px !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+  padding: 0 11px !important;
+  gap: 11px !important;
+  background: transparent !important;
+  color: #5f5471 !important;
+  font-size: 15px !important;
+  line-height: 1 !important;
+  font-weight: 500 !important;
+  text-align: left !important;
+  white-space: nowrap !important;
+}
+
+/* Icon column */
+aside:has(nav) nav button svg {
+  width: 18px !important;
+  height: 18px !important;
+  min-width: 18px !important;
+  flex: 0 0 18px !important;
+  stroke-width: 2 !important;
+  color: currentColor !important;
+}
+
+aside:has(nav) nav button:hover {
+  background: #fbf8ff !important;
+  color: #6d35ff !important;
+}
+
+/* Active item */
+aside:has(nav) nav button[class*="bg-[#f1e4ff]"],
+aside:has(nav) nav button[class*="bg-[#f3e8ff]"],
+aside:has(nav) nav button[class*="bg-[#ead7ff]"],
+aside:has(nav) nav button[class*="text-[#6d35ff]"] {
+  background: #f1e4ff !important;
+  color: #6d35ff !important;
+  font-weight: 600 !important;
+  border: 0 !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+}
+
+/* Divider */
+aside:has(nav) hr,
+aside:has(nav) [class*="border-t"],
+aside:has(nav) [class*="border-b"] {
+  border-color: #eee8fb !important;
+}
+
+/* Credit card fit */
+aside:has(nav) [class*="Available Credits"] {
+  font-size: 13px !important;
+  line-height: 1.25 !important;
+  font-weight: 500 !important;
+}
+
+aside:has(nav) [class*="Upgrade Plan"] {
+  font-size: 15px !important;
+  font-weight: 600 !important;
+}
+
+/* Small screen height */
+@media (max-height: 820px) {
   aside:has(nav) nav button {
     height: 33px !important;
     min-height: 33px !important;
