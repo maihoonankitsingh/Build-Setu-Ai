@@ -230,3 +230,30 @@ aside [class*="Upgrade Plan"] {
   font-size: 16px !important;
   font-weight: 600 !important;
 }
+
+
+/* BuildSetu sidebar compact spacing */
+aside nav {
+  gap: 2px !important;
+}
+
+aside nav > :not([hidden]) ~ :not([hidden]) {
+  margin-top: 2px !important;
+  margin-bottom: 0 !important;
+}
+
+aside nav button {
+  min-height: 34px !important;
+  height: 34px !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+}
+
+aside [class*="space-y-"] > :not([hidden]) ~ :not([hidden]) {
+  margin-top: 2px !important;
+  margin-bottom: 0 !important;
+}
+
+aside [class*="py-"] nav button {
+  line-height: 1 !important;
+}
