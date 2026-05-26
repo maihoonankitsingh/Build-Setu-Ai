@@ -152,10 +152,10 @@ select:not([multiple]) {
   appearance: none;
   -webkit-appearance: none;
   -moz-appearance: none;
-  padding-right: 3.25rem !important;
-  background-image: url("data:image/svg+xml,%3Csvg width='34' height='34' viewBox='0 0 34 34' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='1' y='1' width='32' height='32' rx='16' fill='%23F3EDFF'/%3E%3Cpath d='M12.5 14.5L17 19L21.5 14.5' stroke='%236D35FF' stroke-width='2.3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") !important;
-  background-position: right 0.75rem center !important;
-  background-size: 34px 34px !important;
+  padding-right: 2.75rem !important;
+  background-image: url("data:image/svg+xml,%3Csvg width='28' height='28' viewBox='0 0 28 28' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='0.75' y='0.75' width='26.5' height='26.5' rx='13.25' fill='%23F3EDFF'/%3E%3Cpath d='M10.5 12L14 15.5L17.5 12' stroke='%236D35FF' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") !important;
+  background-position: right 0.85rem center !important;
+  background-size: 28px 28px !important;
   background-repeat: no-repeat !important;
 }
 
