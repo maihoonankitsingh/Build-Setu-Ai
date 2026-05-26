@@ -981,7 +981,7 @@ aside:has(nav) button:focus-visible {
 .buildsetu-sidebar-nav-secondary {
   display: flex !important;
   flex-direction: column !important;
-  gap: 6px !important;
+  gap: 3px !important;
 }
 
 .buildsetu-sidebar-nav-primary > *,
@@ -998,7 +998,7 @@ aside:has(nav) button:focus-visible {
 
 /* Fallback if sidebar wrapper classes are missing */
 aside nav {
-  row-gap: 6px !important;
+  row-gap: 3px !important;
 }
 
 aside nav > * {
