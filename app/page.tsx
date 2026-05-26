@@ -157,9 +157,6 @@ function getInitialBuildSetuViewKey(): ViewKey {
       return "exports";
     case "agreements":
       return "agreements";
-    case "reviews":
-    case "verification":
-      return "reviews";
     case "api":
       return "api";
     case "projectWorkspace":
@@ -227,7 +224,6 @@ const navItems: Array<{ id: ViewKey | "credits"; label: string; icon: BuildSetuI
   { id: "renders", label: "Render Studio", icon: ImageIcon },
   { id: "boq", label: "BOQ / Estimate", icon: Calculator },
   { id: "bbs", label: "BBS", icon: ClipboardList },
-  { id: "reviews", label: "Verifications", icon: ShieldCheck },
   { id: "exports", label: "Exports", icon: FileText },
   { id: "agreements", label: "Client Agreement", icon: ScrollText },
   { id: "credits", label: "Credits", icon: CreditCard, href: "/credits" },
@@ -1053,8 +1049,8 @@ function PageShell({
         false ? "bg-[#070611] text-white" : "bg-white text-[#21133f]",
       )}
     >
-      <Sidebar active={active} setActive={handleBuildSetuSetActive} theme={theme} />
-      <Header setActive={handleBuildSetuSetActive} themeMode={themeMode} setThemeMode={setThemeMode} theme={theme} />
+      <Sidebar active={active} setActive={setActive} theme={theme} />
+      <Header setActive={setActive} themeMode={themeMode} setThemeMode={setThemeMode} theme={theme} />
       <main className="lg:ml-[244px]">
         <div className="px-4 py-3 lg:px-6">{children}</div>
       </main>
@@ -1270,11 +1266,11 @@ function Dashboard({
         <section className="grid gap-3 xl:grid-cols-3">
           <ProjectsByStage totalProjects={totalProjects || 24} />
           <MonthlyActivity />
-          <CreditUsage usedCredits={usedCredits} totalCredits={totalCredits} creditPercent={creditPercent} setActive={handleBuildSetuSetActive} />
+          <CreditUsage usedCredits={usedCredits} totalCredits={totalCredits} creditPercent={creditPercent} setActive={setActive} />
         </section>
       </div>
 
-      <DashboardAiAssistant setActive={handleBuildSetuSetActive} />
+      <DashboardAiAssistant setActive={setActive} />
     </div>
   );
 }
