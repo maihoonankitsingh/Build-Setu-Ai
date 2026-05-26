@@ -1,5 +1,6 @@
 "use client";
 
+import { BackendWorkspaceSettingsPage, BackendWorkspaceSupportPage } from "@/components/workspace/SupportSettingsPages";
 import AdvancedBoqWorkspace from "@/components/boq/AdvancedBoqWorkspace";
 import dynamic from "next/dynamic";
 import * as React from "react";
@@ -4683,72 +4684,143 @@ function BbsPage({ theme }: { theme: ResolvedTheme }) {
 
 
 function ExportPage({ theme }: { theme: ResolvedTheme }) {
+  const [projects, setProjects] = useState<LiveProject[]>([]);
+  const [generatingType, setGeneratingType] = useState("");
+  const [message, setMessage] = useState("");
+
   const exportCards = [
     {
+      type: "client-concept",
       title: "Client Concept PDF",
-      desc: "Brief, renders, material palette and rough budget summary for client presentation.",
+      desc: "Brief, renders, material palette, rough budget.",
       icon: FileText,
     },
     {
+      type: "contractor-package",
       title: "Contractor Package",
-      desc: "Drawing index, BOQ, material summary and work sequence for execution handoff.",
+      desc: "Drawing index, BOQ, material summary, work sequence.",
       icon: Wrench,
     },
     {
+      type: "structural-verification",
       title: "Structural Verification Package",
-      desc: "Plan, grid, column/beam/slab draft and verification checklist for review.",
+      desc: "Plan, grid, column/beam/slab draft, checklist.",
       icon: ShieldCheck,
     },
   ];
 
+  useEffect(() => {
+    fetch("/api/projects/list", {
+      cache: "no-store",
+      credentials: "include",
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        const list = Array.isArray(data?.projects) ? data.projects : [];
+        setProjects(list);
+      })
+      .catch(() => setProjects([]));
+  }, []);
+
+  async function generatePdf(packageType: string) {
+    const projectId = String((projects[0] as any)?.id || "");
+
+    if (!projectId) {
+      setMessage("Project nahi mila. Pehle ek project create/select karo.");
+      return;
+    }
+
+    try {
+      setGeneratingType(packageType);
+      setMessage("");
+
+      const res = await fetch("/api/reports/project-pdf", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ projectId, packageType }),
+      });
+
+      const contentType = res.headers.get("content-type") || "";
+
+      if (!res.ok) {
+        const data = await res.json().catch(() => null);
+        throw new Error(data?.error || data?.message || "PDF generate nahi ho paaya.");
+      }
+
+      if (contentType.includes("application/pdf")) {
+        const blob = await res.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `buildsetu-${packageType}.pdf`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        window.URL.revokeObjectURL(url);
+        setMessage("PDF download start ho gaya.");
+        return;
+      }
+
+      const data = await res.json().catch(() => null);
+      if (data?.downloadUrl) {
+        window.location.href = data.downloadUrl;
+        setMessage("PDF download start ho gaya.");
+      } else {
+        setMessage("PDF generated, lekin download URL missing hai.");
+      }
+    } catch (error: any) {
+      setMessage(error?.message || "PDF generate failed.");
+    } finally {
+      setGeneratingType("");
+    }
+  }
+
   return (
-    <div className="bs-exports-view">
+    <div>
       <PageTitle
         title="Exports"
         desc="Client PDF, contractor package and structural review package."
         theme={theme}
       />
 
-      <div className="mt-5 grid items-stretch gap-5 md:grid-cols-3">
-        {exportCards.map(({ title, desc, icon: Icon }) => (
-          <div
-            key={title}
-            className={cn(
-              "flex min-h-[255px] flex-col rounded-[22px] border p-6",
-              false
-                ? "border-white/10 bg-white/[0.035]"
-                : "border-[#ded5ec] bg-white light-card-shadow"
-            )}
-          >
-            <Icon className="h-8 w-8 shrink-0 text-[#8b5cf6]" />
+      {message ? (
+        <div className="mb-4 rounded-2xl border border-[#ded5ec] bg-[#fbf8ff] px-4 py-3 text-sm font-bold text-[#6f1cc4]">
+          {message}
+        </div>
+      ) : null}
 
-            <h3
-              className={cn(
-                "mt-5 text-[19px] font-black leading-tight tracking-[-0.035em]",
-                false ? "text-white" : "text-[#21133f]"
-              )}
-            >
-              {title}
-            </h3>
+      <div className="grid items-stretch gap-5 md:grid-cols-3">
+        {exportCards.map(({ type, title, desc, icon: Icon }) => {
+          const isGenerating = generatingType === type;
 
-            <p
-              className={cn(
-                "mt-3 min-h-[58px] text-sm font-medium leading-6",
-                false ? "text-slate-400" : "text-[#817397]"
-              )}
+          return (
+            <div
+              key={title}
+              className="flex min-h-[255px] flex-col rounded-[22px] border border-[#ded5ec] bg-white p-6 light-card-shadow"
             >
-              {desc}
-            </p>
+              <Icon className="h-8 w-8 shrink-0 text-[#8b5cf6]" />
 
-            <button
-              type="button"
-              className="mt-auto inline-flex h-12 min-h-12 w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-[#6d28d9] via-[#7c3aed] to-[#8b5cf6] px-4 text-sm font-black tracking-[-0.02em] text-white shadow-[0_14px_30px_rgba(109,40,217,0.18)] transition hover:-translate-y-0.5 hover:shadow-[0_18px_38px_rgba(109,40,217,0.24)]"
-            >
-              Generate PDF
-              <Download className="h-4 w-4 shrink-0" />
-            </button>
-          </div>
-        ))}
+              <h3 className="mt-5 text-[20px] font-medium leading-tight text-[#21133f]">
+                {title}
+              </h3>
+
+              <p className="mt-4 min-h-[54px] text-[15px] font-medium leading-7 text-[#817397]">
+                {desc}
+              </p>
+
+              <button
+                type="button"
+                onClick={() => generatePdf(type)}
+                disabled={isGenerating}
+                className="mt-auto inline-flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-[#7c3aed] px-4 text-[15px] font-medium text-white transition hover:bg-[#6d28d9] disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                {isGenerating ? "Generating..." : "Generate PDF"}
+                <Download className="h-4 w-4 shrink-0" />
+              </button>
+            </div>
+          );
+        })}
       </div>
     </div>
   );
@@ -8223,8 +8295,8 @@ useEffect(() => {
     if (active === "agreements") return <ClientAgreementPage theme={theme} />;
     if (active === "reviews") return <VerificationPage theme={theme} />;
     if (active === "api") return <ApiPage theme={theme} />;
-    if (active === "support") return <WorkspaceSupportPage theme={theme} />;
-    if (active === "settings") return <WorkspaceSettingsPage theme={theme} />;
+    if (active === "support") return <BackendWorkspaceSupportPage theme={theme} />;
+    if (active === "settings") return <BackendWorkspaceSettingsPage theme={theme} />;
     return <Dashboard setActive={handleBuildSetuSetActive} theme={theme} />;
   };
 
