@@ -719,7 +719,7 @@ function Sidebar({
         </div>
       </div>
 
-      <nav className="space-y-0.5">
+      <nav className="space-y-0.5 buildsetu-sidebar-force-size">
         {navItems.map((item, index) => {
           const Icon = item.icon;
           const selected = active === item.id;
@@ -763,7 +763,7 @@ function Sidebar({
 
       <div className={cn("my-1.5 h-px", false ? "bg-white/10" : "bg-[#eee7f7]")} />
 
-      <div className="space-y-0.5">
+      <div className="space-y-0.5 buildsetu-sidebar-force-size">
         {bottomNav.map((item) => {
           const Icon = item.icon;
           return (
