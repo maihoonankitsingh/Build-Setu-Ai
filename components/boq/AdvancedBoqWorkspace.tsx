@@ -7,6 +7,7 @@ import BoqManualForm from "./BoqManualForm";
 import BoqProjectStrip from "./BoqProjectStrip";
 import BoqSidebar from "./BoqSidebar";
 import BoqTable from "./BoqTable";
+import BoqTabPanel from "./BoqTabPanel";
 
 const emptyForm: BoqFormState = {
   itemCode: "",
@@ -297,6 +298,48 @@ export default function AdvancedBoqWorkspace({ theme }: { theme?: unknown }) {
     URL.revokeObjectURL(url);
   }
 
+
+  // BOQ_ACTIVE_TAB_META
+  const activeTabMeta = useMemo(() => {
+    switch (activeTab) {
+      case "Quantity Takeoff":
+        return {
+          title: "Quantity Takeoff",
+          desc: `${formatNumber(totalQuantity)} total quantity across ${items.length} BOQ rows.`,
+        };
+      case "Rate Analysis":
+        return {
+          title: "Rate Analysis",
+          desc: `Review item rates, edit row rate, and auto-update amount from quantity × rate.`,
+        };
+      case "Cost Estimate":
+        return {
+          title: "Cost Estimate",
+          desc: `${formatCurrency(totalAmount)} total estimated BOQ cost for selected project.`,
+        };
+      case "AI Insights":
+        return {
+          title: "AI Insights",
+          desc: `${categorySummary.length} cost heads detected. Review high-value categories before approval.`,
+        };
+      case "BOQ Comparison":
+        return {
+          title: "BOQ Comparison",
+          desc: `Compare generated BOQ, manual changes, and future saved versions from this workspace.`,
+        };
+      case "Version History":
+        return {
+          title: "Version History",
+          desc: `Current editable BOQ draft is active. Version save/restore can be added next.`,
+        };
+      default:
+        return {
+          title: "BOQ Summary",
+          desc: `${filteredItems.length} visible rows from ${items.length} total BOQ items.`,
+        };
+    }
+  }, [activeTab, categorySummary.length, filteredItems.length, items.length, totalAmount, totalQuantity]);
+
   return (
     <div className="mx-auto max-w-[1500px] space-y-4 pb-8">
       <div>
@@ -312,13 +355,13 @@ export default function AdvancedBoqWorkspace({ theme }: { theme?: unknown }) {
 
       <BoqProjectStrip project={selectedProject} />
 
-      <div className="rounded-[24px] border border-[#e7ddff] bg-white shadow-[0_12px_30px_rgba(33,19,63,0.045)]">
-        <div className="flex flex-wrap gap-2 border-b border-[#eee8fb] px-4 pt-3">
+      <div className="rounded-[20px] border border-[#e7ddff] bg-white shadow-[0_10px_22px_rgba(33,19,63,0.04)]">
+        <div className="flex flex-wrap items-center gap-1 border-b border-[#eee8fb] px-3 pt-2">
           {tabs.map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`border-b-2 px-3 py-3 text-xs font-black transition ${
+              className={`border-b-2 px-2.5 py-2 text-[11px] font-black transition ${
                 activeTab === tab ? "border-[#6d35ff] text-[#6d35ff]" : "border-transparent text-[#817397] hover:text-[#21133f]"
               }`}
             >
@@ -327,18 +370,30 @@ export default function AdvancedBoqWorkspace({ theme }: { theme?: unknown }) {
           ))}
         </div>
 
-        <div className="p-4">
-          <div className="grid gap-3 lg:grid-cols-[180px_minmax(0,1fr)_120px_120px_46px]">
-            <select value={categoryFilter} onChange={(event) => setCategoryFilter(event.target.value)} className="h-11 rounded-2xl border border-[#e6e0f5] bg-white px-3 text-xs font-bold text-[#21133f] outline-none">
+        <div className="p-3">
+          <div className="grid gap-2 lg:grid-cols-[150px_minmax(0,1fr)_88px_92px_40px]">
+            <select value={categoryFilter} onChange={(event) => setCategoryFilter(event.target.value)} className="h-9 rounded-xl border border-[#e6e0f5] bg-white px-3 text-[11px] font-semibold text-[#21133f] outline-none">
               {categories.map((category) => <option key={category} value={category}>{category}</option>)}
             </select>
 
-            <input value={searchQuery} onChange={(event) => setSearchQuery(event.target.value)} placeholder="Search item or description..." className="h-11 rounded-2xl border border-[#e6e0f5] bg-white px-3 text-xs font-bold text-[#21133f] outline-none placeholder:text-[#9a8caf]" />
+            <input value={searchQuery} onChange={(event) => setSearchQuery(event.target.value)} placeholder="Search item or description..." className="h-9 rounded-xl border border-[#e6e0f5] bg-white px-3 text-[11px] font-semibold text-[#21133f] outline-none placeholder:text-[#9a8caf]" />
 
-            <button onClick={() => setSearchQuery("")} className="h-11 rounded-2xl border border-[#e4d9ff] bg-white px-3 text-xs font-black text-[#6d35ff] hover:bg-[#f4efff]">Clear</button>
-            <button onClick={openManualForm} className="h-11 rounded-2xl border border-[#e4d9ff] bg-[#fbf8ff] px-3 text-xs font-black text-[#6d35ff] hover:bg-[#f3edff]">+ Add</button>
-            <button onClick={exportCsv} className="h-11 rounded-2xl border border-[#e4d9ff] bg-white text-[#6d35ff] hover:bg-[#fbf8ff]">⇩</button>
+            <button onClick={() => { setSearchQuery(""); setCategoryFilter("All Categories"); }} className="h-9 rounded-xl border border-[#e4d9ff] bg-white px-2 text-[11px] font-black text-[#6d35ff] hover:bg-[#f4efff]">Clear</button>
+            <button onClick={openManualForm} className="h-9 rounded-xl border border-[#e4d9ff] bg-[#fbf8ff] px-2 text-[11px] font-black text-[#6d35ff] hover:bg-[#f3edff]">+ Add</button>
+            <button onClick={exportCsv} className="h-9 rounded-xl border border-[#e4d9ff] bg-white text-[13px] font-black text-[#6d35ff] hover:bg-[#fbf8ff]">⇩</button>
           </div>
+
+          <BoqTabPanel
+            activeTab={activeTab}
+            items={items}
+            filteredItems={filteredItems}
+            totalAmount={totalAmount}
+            totalQuantity={totalQuantity}
+            categorySummary={categorySummary}
+            onAddItem={openManualForm}
+            onExportCsv={exportCsv}
+          />
+
         </div>
       </div>
 
