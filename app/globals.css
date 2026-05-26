@@ -257,3 +257,9 @@ aside [class*="space-y-"] > :not([hidden]) ~ :not([hidden]) {
 aside [class*="py-"] nav button {
   line-height: 1 !important;
 }
+
+
+/* BuildSetu sidebar text size only */
+aside nav button {
+  font-size: 15px !important;
+}
