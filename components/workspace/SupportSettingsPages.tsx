@@ -276,25 +276,39 @@ export function BackendWorkspaceSupportPage({ theme }: PageProps) {
         </div>
 
         <div className="mt-4 grid gap-3 md:grid-cols-3">
-          <select
+          <div className="relative">
+            <select
             value={ticket.area}
             onChange={(event) => updateTicket("area", event.target.value)}
-            className="h-11 rounded-2xl border border-[#e6e0f5] bg-white px-4 text-sm font-medium text-[#21133f] outline-none transition focus:border-[#6d35ff] focus:ring-4 focus:ring-[#efe7ff]"
+            className="h-11 w-full appearance-none rounded-[16px] border border-[#e7ddff] bg-white px-4 pr-12 text-[14px] font-medium text-[#21133f] outline-none transition hover:border-[#d8c8ff] focus:border-[#6d35ff] focus:ring-4 focus:ring-[#efe7ff]"
           >
             {["Workspace", "BOQ / Estimate", "BBS", "Reports / Exports", "Credits", "Account"].map((item) => (
               <option key={item} value={item}>{item}</option>
             ))}
           </select>
+            <span className="pointer-events-none absolute right-4 top-1/2 grid h-7 w-7 -translate-y-1/2 place-items-center rounded-xl bg-[#f3edff] text-[#6d35ff]">
+              <svg width="16" height="16" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                <path d="M6 8L10 12L14 8" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </span>
+          </div>
 
-          <select
+          <div className="relative">
+            <select
             value={ticket.priority}
             onChange={(event) => updateTicket("priority", event.target.value)}
-            className="h-11 rounded-2xl border border-[#e6e0f5] bg-white px-4 text-sm font-medium text-[#21133f] outline-none transition focus:border-[#6d35ff] focus:ring-4 focus:ring-[#efe7ff]"
+            className="h-11 w-full appearance-none rounded-[16px] border border-[#e7ddff] bg-white px-4 pr-12 text-[14px] font-medium text-[#21133f] outline-none transition hover:border-[#d8c8ff] focus:border-[#6d35ff] focus:ring-4 focus:ring-[#efe7ff]"
           >
             {["Low", "Medium", "High", "Urgent"].map((item) => (
               <option key={item} value={item}>{item}</option>
             ))}
           </select>
+            <span className="pointer-events-none absolute right-4 top-1/2 grid h-7 w-7 -translate-y-1/2 place-items-center rounded-xl bg-[#f3edff] text-[#6d35ff]">
+              <svg width="16" height="16" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                <path d="M6 8L10 12L14 8" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </span>
+          </div>
 
           <input
             value={ticket.contact}
