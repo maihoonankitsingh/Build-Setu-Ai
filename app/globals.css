@@ -169,37 +169,55 @@ select:not([multiple])::-ms-expand {
 
 
 
-/* BuildSetu sidebar clean final */
-aside nav {
+
+
+
+
+
+/* BuildSetu sidebar compact final */
+aside:has(nav) {
+  height: 100vh !important;
+  max-height: 100vh !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  scrollbar-width: none;
+  border-right: 1px solid #eee8fb !important;
+}
+
+aside:has(nav)::-webkit-scrollbar {
+  display: none;
+}
+
+aside:has(nav) nav {
   padding-left: 14px !important;
   padding-right: 14px !important;
 }
 
-aside nav button {
-  min-height: 36px !important;
-  height: 36px !important;
-  border-radius: 13px !important;
+aside:has(nav) nav button {
+  min-height: 34px !important;
+  height: 34px !important;
+  border-radius: 12px !important;
   border: 0 !important;
   outline: 0 !important;
   box-shadow: none !important;
   padding: 0 10px !important;
   gap: 10px !important;
-  font-size: 14px !important;
+  font-size: 15px !important;
   line-height: 1 !important;
   font-weight: 500 !important;
   color: #5f5471 !important;
   background: transparent !important;
 }
 
-aside nav button:hover {
+aside:has(nav) nav button:hover {
   background: #fbf8ff !important;
   color: #6d35ff !important;
 }
 
-aside nav button[class*="bg-[#f1e4ff]"],
-aside nav button[class*="bg-[#f3e8ff]"],
-aside nav button[class*="bg-[#ead7ff]"],
-aside nav button[class*="text-[#6d35ff]"] {
+aside:has(nav) nav button[class*="bg-[#f1e4ff]"],
+aside:has(nav) nav button[class*="bg-[#f3e8ff]"],
+aside:has(nav) nav button[class*="bg-[#ead7ff]"],
+aside:has(nav) nav button[class*="text-[#6d35ff]"] {
   background: #f1e4ff !important;
   color: #6d35ff !important;
   font-weight: 600 !important;
@@ -208,92 +226,39 @@ aside nav button[class*="text-[#6d35ff]"] {
   box-shadow: none !important;
 }
 
-aside nav button svg {
+aside:has(nav) nav button svg {
   width: 17px !important;
   height: 17px !important;
   min-width: 17px !important;
   stroke-width: 2 !important;
 }
 
-aside hr,
-aside [class*="border-t"],
-aside [class*="border-b"] {
+aside:has(nav) hr,
+aside:has(nav) [class*="border-t"],
+aside:has(nav) [class*="border-b"] {
   border-color: #eee8fb !important;
 }
 
-aside [class*="Available Credits"] {
-  font-size: 14px !important;
+aside:has(nav) [class*="rounded"][class*="bg-gradient"],
+aside:has(nav) [class*="from-[#6d35ff]"],
+aside:has(nav) [class*="from-["][class*="to-["] {
+  margin: 12px 14px 14px !important;
+  border-radius: 20px !important;
+  box-shadow: 0 16px 30px rgba(109, 53, 255, 0.2) !important;
+}
+
+aside:has(nav) [class*="Available Credits"] {
+  font-size: 13px !important;
   font-weight: 500 !important;
 }
 
-aside [class*="Upgrade Plan"] {
-  font-size: 16px !important;
+aside:has(nav) [class*="Upgrade Plan"] {
+  font-size: 15px !important;
   font-weight: 600 !important;
 }
 
-
-/* BuildSetu sidebar compact spacing */
-aside nav {
-  gap: 2px !important;
-}
-
-aside nav > :not([hidden]) ~ :not([hidden]) {
-  margin-top: 2px !important;
-  margin-bottom: 0 !important;
-}
-
-aside nav button {
-  min-height: 34px !important;
-  height: 34px !important;
-  padding-top: 0 !important;
-  padding-bottom: 0 !important;
-}
-
-aside [class*="space-y-"] > :not([hidden]) ~ :not([hidden]) {
-  margin-top: 2px !important;
-  margin-bottom: 0 !important;
-}
-
-aside [class*="py-"] nav button {
-  line-height: 1 !important;
-}
-
-
-/* BuildSetu sidebar text size only */
-aside nav button {
-  font-size: 15px !important;
-}
-
-
-/* BuildSetu sidebar settings section polish */
-aside nav:last-of-type {
-  margin-top: 8px !important;
-  padding-top: 8px !important;
-  border-top: 1px solid #eee8fb !important;
-}
-
-aside nav:last-of-type button {
-  height: 36px !important;
-  min-height: 36px !important;
-  border-radius: 13px !important;
-  font-size: 15px !important;
-  font-weight: 500 !important;
-  color: #5f5471 !important;
-}
-
-aside nav:last-of-type button:hover {
-  background: #fbf8ff !important;
-  color: #6d35ff !important;
-}
-
-aside nav:last-of-type button svg {
-  width: 17px !important;
-  height: 17px !important;
-  min-width: 17px !important;
-}
-
-aside nav:last-of-type + div,
-aside nav:last-of-type ~ div[class*="bg-gradient"],
-aside nav:last-of-type ~ div[class*="from-[#6d35ff]"] {
-  margin-top: 12px !important;
+aside:has(nav) button:focus,
+aside:has(nav) button:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
 }
