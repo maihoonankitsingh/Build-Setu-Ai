@@ -719,7 +719,7 @@ function Sidebar({
         </div>
       </div>
 
-      <nav className="space-y-0.5 buildsetu-sidebar-force-size">
+      <nav className="space-y-0.5 buildsetu-sidebar-force-size buildsetu-sidebar-nav-primary">
         {navItems.map((item, index) => {
           const Icon = item.icon;
           const selected = active === item.id;
@@ -763,7 +763,7 @@ function Sidebar({
 
       <div className={cn("my-1.5 h-px", false ? "bg-white/10" : "bg-[#eee7f7]")} />
 
-      <div className="space-y-0.5 buildsetu-sidebar-force-size">
+      <div className="space-y-0.5 buildsetu-sidebar-force-size buildsetu-sidebar-nav-secondary">
         {bottomNav.map((item) => {
           const Icon = item.icon;
           return (
@@ -795,7 +795,7 @@ function Sidebar({
           </div>
 
           <div className="text-[19px] font-bold leading-none tracking-[-0.03em]">{creditLabel}</div>
-          <div className="mt-1 text-[14px] font-medium text-white/78">Available Credits</div>
+          <div className="mt-1 text-[14px] font-medium text-white/78 buildsetu-sidebar-credit-card">Available Credits</div>
 
           <div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-white/25">
             <div className="h-full w-[72%] rounded-full bg-white/65" />
