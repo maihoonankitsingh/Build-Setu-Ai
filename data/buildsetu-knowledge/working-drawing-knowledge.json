@@ -1,0 +1,193 @@
+{
+  "version": "1.0",
+  "purpose": "Working plan and working drawing package knowledge for BuildSetu agent.",
+  "globalRules": [
+    "Differentiate concept design, presentation drawing, approval drawing, working drawing, GFC drawing and as-built drawing.",
+    "Working drawings are execution-support documents, not automatically certified drawings.",
+    "GFC / Good For Construction drawings require final professional review, coordination and approval.",
+    "Never claim municipal, structural, fire, MEP or legal approval without licensed professional/local authority verification.",
+    "For each drawing package, separate architecture, structure, MEP, interior, BOQ/BBS and site execution documents."
+  ],
+  "floorPlanDrawingStages": {
+    "conceptPlan": {
+      "purpose": "Early layout options and client discussion.",
+      "includes": ["room zoning", "basic room sizes", "entry", "parking", "staircase", "toilets", "kitchen", "ventilation idea", "vastu preference if asked"],
+      "notFinalFor": ["construction", "approval", "structural design", "MEP execution"]
+    },
+    "presentationPlan": {
+      "purpose": "Client-facing readable plan.",
+      "includes": ["furnished plan", "room labels", "basic dimensions", "north arrow", "visual clarity", "optional color/furniture"]
+    },
+    "approvalOrSanctionDrawing": {
+      "purpose": "Submission to local authority where applicable.",
+      "includes": ["site plan", "setbacks", "coverage", "FAR/FSI", "height", "floor plans", "sections", "elevations", "area statement", "parking statement", "rainwater/fire notes if applicable"],
+      "requires": ["local bylaws", "licensed architect/engineer", "local authority verification"]
+    },
+    "workingDrawing": {
+      "purpose": "Execution coordination drawing package.",
+      "includes": ["dimensioned plans", "wall layout", "door/window schedule", "flooring plan", "ceiling plan", "electrical point plan", "plumbing plan", "toilet/kitchen details", "staircase details", "sections/elevations", "material notes"],
+      "requires": ["architect review", "structure coordination", "MEP coordination", "site measurement verification"]
+    },
+    "gfcDrawing": {
+      "purpose": "Good For Construction issue after coordination and approvals.",
+      "includes": ["final coordinated architecture drawings", "final structure drawings", "final MEP drawings", "revision number", "issue date", "professional sign/stamp where applicable"],
+      "requires": ["licensed professional approval", "client approval", "authority approval where applicable"]
+    },
+    "asBuiltDrawing": {
+      "purpose": "Final record drawing after site execution.",
+      "includes": ["actual executed dimensions", "changes from GFC", "service routes", "final openings", "final material notes"]
+    }
+  },
+  "architecturalWorkingDrawingSet": [
+    "site plan / plot layout",
+    "setting-out plan",
+    "centerline plan",
+    "dimensioned floor plan",
+    "wall masonry layout",
+    "door-window opening plan",
+    "door-window schedule",
+    "furniture layout where needed",
+    "flooring layout",
+    "reflected ceiling plan",
+    "electrical point coordination plan",
+    "plumbing fixture coordination plan",
+    "toilet detail drawings",
+    "kitchen detail drawings",
+    "staircase plan/section/detail",
+    "sections",
+    "elevations",
+    "terrace plan",
+    "rainwater drainage plan",
+    "waterproofing detail notes",
+    "material/specification notes",
+    "area statement",
+    "revision notes"
+  ],
+  "structuralDrawingSet": [
+    "foundation layout",
+    "footing schedule",
+    "column layout",
+    "column schedule",
+    "plinth beam layout",
+    "beam layout",
+    "slab layout",
+    "staircase structural detail",
+    "lintel/chajja/canopy detail",
+    "reinforcement details",
+    "BBS/bar bending schedule",
+    "structural notes",
+    "soil report reference",
+    "structural calculation reference"
+  ],
+  "mepDrawingSet": {
+    "electrical": [
+      "lighting layout",
+      "power/socket layout",
+      "switchboard layout",
+      "DB/single line diagram concept/final if engineer verified",
+      "AC/geyser/kitchen appliance points",
+      "earthing/lightning protection where applicable",
+      "ELV/CCTV/data layout if required",
+      "load schedule after engineer verification"
+    ],
+    "plumbing": [
+      "water supply layout",
+      "hot/cold water layout",
+      "soil/waste/vent layout",
+      "shaft details",
+      "fixture layout",
+      "terrace tank/pump layout",
+      "rainwater drainage",
+      "septic/STP/sewer connection concept",
+      "pipe sizing after MEP/plumbing engineer verification"
+    ],
+    "hvac": [
+      "AC indoor/outdoor location",
+      "drain route",
+      "duct layout where applicable",
+      "ventilation/exhaust layout",
+      "service access notes"
+    ],
+    "fireSafety": [
+      "fire escape/egress concept where applicable",
+      "fire equipment layout where applicable",
+      "civil defence/fire authority review where applicable"
+    ]
+  },
+  "interiorDrawingStages": {
+    "conceptInterior": {
+      "purpose": "Mood, layout and design direction.",
+      "includes": ["style", "color palette", "furniture layout", "mood board", "reference images", "budget direction"]
+    },
+    "interiorPresentation": {
+      "purpose": "Client approval design presentation.",
+      "includes": ["3D renders", "material palette", "furniture concept", "lighting mood", "key wall views"]
+    },
+    "interiorWorkingDrawing": {
+      "purpose": "Execution drawing package for site/carpenter/electrician/false ceiling team.",
+      "includes": ["furniture layout", "civil changes plan", "flooring plan", "false ceiling/RCP", "lighting layout", "switch/socket layout", "AC points", "wall elevations", "carpentry drawings", "modular kitchen drawings", "toilet vanity/details", "material schedule", "hardware schedule", "BOQ"]
+    },
+    "interiorGFC": {
+      "purpose": "Final coordinated interior execution issue.",
+      "includes": ["approved drawings", "site-verified dimensions", "revision number", "material code", "contractor issue", "designer/client sign-off"]
+    },
+    "interiorAsBuilt": {
+      "purpose": "Final executed interior record.",
+      "includes": ["actual furniture/carpentry dimensions", "service changes", "material substitutions", "final fixture locations"]
+    }
+  },
+  "interiorWorkingDrawingSet": [
+    "furniture layout plan",
+    "demolition/civil modification plan if required",
+    "new partition layout if required",
+    "flooring layout",
+    "false ceiling / reflected ceiling plan",
+    "lighting layout",
+    "switch/socket/electrical point layout",
+    "AC/exhaust/ventilation point layout",
+    "wall elevations",
+    "TV unit detail",
+    "wardrobe detail",
+    "bed/back panel detail",
+    "modular kitchen plan/elevations/sections",
+    "loft/storage detail",
+    "vanity/toilet interior detail",
+    "door/panel detail",
+    "material finish schedule",
+    "hardware schedule",
+    "fixture schedule",
+    "paint/polish/laminate schedule",
+    "BOQ and item specification",
+    "site execution notes"
+  ],
+  "exteriorWorkingDrawingSet": [
+    "front elevation drawing",
+    "side/rear elevations if required",
+    "facade material layout",
+    "cladding fixing concept/details",
+    "balcony railing detail",
+    "gate and compound wall detail",
+    "window/ventilator elevation coordination",
+    "chajja/canopy/pergola detail",
+    "facade lighting layout",
+    "landscape/driveway/front paving layout",
+    "rainwater/drip/waterproofing notes",
+    "structural support verification note",
+    "local authority/setback/height verification note"
+  ],
+  "agentBehavior": [
+    "If user asks 'kitne working drawing hote hain', explain package-wise drawings, not a fixed universal number.",
+    "Mention that drawing count varies by project type, floor count, area, services and authority requirements.",
+    "For small residential house, give typical drawing package count ranges only as planning estimate.",
+    "Always separate concept/presentation/approval/working/GFC/as-built.",
+    "For execution, mention professional review/certification boundary."
+  ],
+  "typicalCountRanges": {
+    "smallResidentialArchitecture": "10 to 25+ drawings depending scope",
+    "smallResidentialStructure": "8 to 20+ drawings depending floors and structural system",
+    "smallResidentialMEP": "8 to 25+ drawings depending electrical/plumbing/HVAC/fire scope",
+    "smallInteriorRoom": "5 to 12+ drawings per room depending detail level",
+    "fullHomeInterior": "25 to 80+ drawings depending rooms, carpentry and MEP detail",
+    "exteriorElevation": "5 to 15+ drawings depending facade, gate, materials and details"
+  }
+}

@@ -1,0 +1,103 @@
+{
+  "version": "1.0",
+  "unit": "feet",
+  "countryContext": "India",
+  "residential": {
+    "livingRoom": {
+      "minimum": { "width": 10, "depth": 12 },
+      "comfortable": { "width": 12, "depth": 16 },
+      "premium": { "width": 14, "depth": 18 },
+      "notes": [
+        "Living room should be close to main entrance.",
+        "For Indian homes, living room often connects to dining or lobby.",
+        "Avoid making living room a passage-only dead space."
+      ]
+    },
+    "dining": {
+      "minimum": { "width": 8, "depth": 8 },
+      "comfortable": { "width": 10, "depth": 10 },
+      "premium": { "width": 12, "depth": 12 },
+      "notes": [
+        "Dining should be near kitchen.",
+        "Dining can be combined with living in compact homes."
+      ]
+    },
+    "kitchen": {
+      "minimum": { "width": 7, "depth": 8 },
+      "comfortable": { "width": 8, "depth": 10 },
+      "premium": { "width": 10, "depth": 12 },
+      "notes": [
+        "Kitchen should have ventilation/window.",
+        "Utility or wash area is preferred near kitchen.",
+        "Avoid placing kitchen in the exact center of the house."
+      ]
+    },
+    "masterBedroom": {
+      "minimum": { "width": 10, "depth": 12 },
+      "comfortable": { "width": 12, "depth": 14 },
+      "premium": { "width": 14, "depth": 16 },
+      "notes": [
+        "Master bedroom should be more private than living room.",
+        "Attached toilet is preferred for master bedroom.",
+        "Wardrobe wall should be planned without blocking windows."
+      ]
+    },
+    "bedroom": {
+      "minimum": { "width": 10, "depth": 10 },
+      "comfortable": { "width": 11, "depth": 12 },
+      "premium": { "width": 12, "depth": 14 },
+      "notes": [
+        "Bedroom should not open directly into kitchen.",
+        "Provide at least one window for light and ventilation."
+      ]
+    },
+    "toilet": {
+      "minimum": { "width": 4, "depth": 7 },
+      "comfortable": { "width": 5, "depth": 8 },
+      "premium": { "width": 6, "depth": 9 },
+      "notes": [
+        "Toilet should align with plumbing shaft where possible.",
+        "Common toilet should be accessible from living/dining/lobby.",
+        "Attached toilet should be accessible only from bedroom."
+      ]
+    },
+    "staircase": {
+      "minimum": { "width": 6, "depth": 10 },
+      "comfortable": { "width": 7, "depth": 12 },
+      "premium": { "width": 8, "depth": 14 },
+      "notes": [
+        "Staircase should be easy to access from entrance/lobby.",
+        "For rental/future floor use, external or semi-external stair is preferred.",
+        "Avoid staircase blocking main natural light."
+      ]
+    },
+    "parking": {
+      "smallCar": { "width": 8, "depth": 14 },
+      "standardCar": { "width": 9, "depth": 16 },
+      "comfortableCar": { "width": 10, "depth": 18 },
+      "notes": [
+        "Parking is usually planned at front side if road is at front.",
+        "Parking should not block main entry completely.",
+        "For 30x50 plot, one car parking plus entry lobby is usually possible."
+      ]
+    },
+    "balcony": {
+      "minimum": { "width": 3, "depth": 6 },
+      "comfortable": { "width": 4, "depth": 8 },
+      "premium": { "width": 5, "depth": 10 },
+      "notes": [
+        "Balcony should face road, garden, or open side where possible.",
+        "Avoid balcony without useful access."
+      ]
+    },
+    "pooja": {
+      "minimum": { "width": 3, "depth": 4 },
+      "comfortable": { "width": 4, "depth": 5 },
+      "premium": { "width": 5, "depth": 6 },
+      "notes": [
+        "Pooja can be near living/dining but should not be inside toilet/kitchen wall conflict.",
+        "Northeast is commonly preferred when possible."
+      ]
+    }
+  }
+}

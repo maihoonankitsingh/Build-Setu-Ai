@@ -1,0 +1,71 @@
+{
+  "version": "1.0",
+  "goal": "Create practical Indian residential floor-plan logic before image generation.",
+  "generalRules": [
+    "Always identify plot width, plot depth, road side, number of floors, bedroom count, toilet count, kitchen, parking, staircase, and special requirements.",
+    "If dimensions are missing, create a reasonable assumption and mark it as assumption.",
+    "Do not create random decorative image prompts before creating structured floor-plan JSON.",
+    "Do not generate 3D interior render when user asked for floor plan.",
+    "For floor plans, top-view 2D architectural drawing is required.",
+    "Room count in final plan must match user requirement.",
+    "Every room should have a label.",
+    "Doors, windows, walls, room labels, dimensions, and circulation path should be explicitly requested.",
+    "Avoid impossible layouts where bedrooms/toilets have no access.",
+    "Avoid rooms overlapping or isolated without door connection.",
+    "Use compact circulation; avoid wasting too much area in passages.",
+    "Keep kitchen near dining where possible.",
+    "Keep common toilet accessible from living/dining/lobby.",
+    "Keep private bedrooms away from main entrance where possible.",
+    "Place staircase based on future expansion, rental access, and plot constraints.",
+    "For Indian family homes, include utility/wash where space allows.",
+    "For small plots, combine living and dining if required.",
+    "For premium plots, separate living, dining, family lounge, and pooja if space allows."
+  ],
+  "roadSideRules": {
+    "north": [
+      "Main entry can be from north/front.",
+      "Parking generally at north/front side.",
+      "Living room can be near north/front for guest access."
+    ],
+    "south": [
+      "Main entry can still be from road side, but thermal comfort and shading should be considered.",
+      "Keep openings practical; avoid overexposed large south openings without shading."
+    ],
+    "east": [
+      "Entry and morning-light spaces can be planned toward east.",
+      "Living/dining can benefit from east-side light."
+    ],
+    "west": [
+      "Use shading for west-facing openings.",
+      "Avoid excessive heat gain on west side bedrooms where possible."
+    ]
+  },
+  "layoutPatterns": {
+    "compact1BHK": [
+      "Living at entry.",
+      "Kitchen near living/dining.",
+      "One bedroom at rear/private side.",
+      "One common toilet near bedroom/living."
+    ],
+    "standard2BHK": [
+      "Parking and entry at front if required.",
+      "Living near entrance.",
+      "Kitchen near dining or rear/side.",
+      "Master bedroom at rear/private side with attached toilet.",
+      "Second bedroom near common toilet.",
+      "Common toilet accessible from lobby."
+    ],
+    "standard3BHK": [
+      "Living and dining should be properly separated or semi-open.",
+      "Master bedroom should have attached toilet.",
+      "Two additional bedrooms need either common toilet or one more attached toilet.",
+      "Kitchen with utility is preferred.",
+      "Stair/lobby should not cut through private bedroom zones."
+    ],
+    "duplex": [
+      "Ground floor should include living, kitchen, dining, one bedroom/guest room if possible, common toilet, stair.",
+      "Upper floor should include private bedrooms, family lounge, balcony where possible.",
+      "Stair position should support natural circulation."
+    ]
+  }
+}

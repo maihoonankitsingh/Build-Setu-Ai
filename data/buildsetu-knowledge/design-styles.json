@@ -1,0 +1,28 @@
+{
+  "version": "1.0",
+  "floorPlanStyles": {
+    "cad_clean": {
+      "description": "Clean black-and-white CAD style 2D floor plan.",
+      "visualPrompt": "top view architectural floor plan, clean black and white CAD drawing, accurate walls, doors, windows, room labels, dimension lines, minimal furniture symbols, high clarity"
+    },
+    "premium_blueprint": {
+      "description": "Premium blueprint presentation.",
+      "visualPrompt": "professional architectural blueprint, white linework on deep blueprint background, room labels, dimensions, doors, windows, clean technical drawing"
+    },
+    "builder_presentation": {
+      "description": "Client-friendly real-estate floor plan.",
+      "visualPrompt": "client presentation floor plan, top view, soft neutral colors, readable labels, furniture layout, doors, windows, dimensions, clean modern real estate plan"
+    },
+    "luxury_architect": {
+      "description": "High-end architect presentation board style.",
+      "visualPrompt": "luxury architectural presentation floor plan, precise top view, elegant linework, soft shadows, labeled rooms, dimensions, furniture symbols, premium layout sheet"
+    }
+  },
+  "interiorStyles": {
+    "modern": "modern Indian home interior, clean lines, neutral palette, practical furniture, warm lighting",
+    "luxury": "luxury contemporary interior, premium finishes, marble/wood accents, elegant lighting",
+    "minimal": "minimal interior, uncluttered layout, neutral colors, functional furniture",
+    "traditional_indian": "traditional Indian home design, warm colors, wood details, cultural decor, practical layout",
+    "scandinavian": "Scandinavian inspired interior, light wood, white walls, natural light, minimal decor"
+  }
+}

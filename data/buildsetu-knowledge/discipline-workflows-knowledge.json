@@ -1,0 +1,250 @@
+{
+  "version": "3.0",
+  "purpose": "Tell the agent what planning is required for each work type.",
+  "workflows": {
+    "nakshaFloorPlan": {
+      "requiredInputs": [
+        "plot size",
+        "road side",
+        "north/facing",
+        "floor count",
+        "rooms",
+        "parking",
+        "stair/lift",
+        "toilets",
+        "vastu preference"
+      ],
+      "planningTasks": [
+        "classify BHK/building type",
+        "room schedule",
+        "zoning",
+        "adjacency",
+        "circulation",
+        "dimensions",
+        "doors/windows",
+        "stair/parking",
+        "ventilation"
+      ],
+      "output": [
+        "structured floor plan JSON",
+        "2D top-view image prompt",
+        "validation warnings"
+      ]
+    },
+    "interiorDesign": {
+      "requiredInputs": [
+        "room type",
+        "room size",
+        "style",
+        "budget level",
+        "furniture needs",
+        "storage",
+        "lighting",
+        "existing photo optional"
+      ],
+      "planningTasks": [
+        "furniture layout",
+        "material palette",
+        "wall treatment",
+        "ceiling/lighting",
+        "storage",
+        "decor",
+        "camera angle"
+      ],
+      "output": [
+        "interior concept",
+        "room-wise material notes",
+        "render prompt"
+      ]
+    },
+    "exteriorElevation": {
+      "requiredInputs": [
+        "plot/front width",
+        "floor count",
+        "style",
+        "balcony/window positions",
+        "parking/gate",
+        "material preference"
+      ],
+      "planningTasks": [
+        "facade composition",
+        "openings",
+        "vertical/horizontal elements",
+        "gate/compound",
+        "lighting",
+        "materials"
+      ],
+      "output": [
+        "elevation concept",
+        "front-view render prompt",
+        "warnings about structural feasibility"
+      ]
+    },
+    "structuralPlanning": {
+      "requiredInputs": [
+        "building type",
+        "floor count",
+        "span/room layout",
+        "soil report if available",
+        "loads/equipment if industrial"
+      ],
+      "planningTasks": [
+        "structural system concept",
+        "column grid logic",
+        "span warnings",
+        "stair/lift core coordination",
+        "foundation/soil-test flag"
+      ],
+      "output": [
+        "concept structural notes only",
+        "engineer review checklist"
+      ],
+      "boundary": "No final beam/column/rebar/foundation design certification."
+    },
+    "electricalPlanning": {
+      "requiredInputs": [
+        "room layout",
+        "appliance list",
+        "AC/geyser/kitchen loads",
+        "backup power",
+        "lighting style",
+        "smart home/CCTV needs"
+      ],
+      "planningTasks": [
+        "DB zone",
+        "switchboard zones",
+        "lighting circuits concept",
+        "power points",
+        "AC/geyser points",
+        "earthing/backup flags",
+        "ELV routes"
+      ],
+      "output": [
+        "concept electrical plan notes",
+        "room-wise point checklist"
+      ],
+      "boundary": "No final load calculation/cable sizing certification."
+    },
+    "plumbingPlanning": {
+      "requiredInputs": [
+        "toilet/kitchen/utility positions",
+        "floors",
+        "water source",
+        "tank/pump needs",
+        "sewer/septic/STP"
+      ],
+      "planningTasks": [
+        "wet wall grouping",
+        "shaft placement",
+        "water supply route",
+        "soil/waste route",
+        "vent pipe",
+        "rainwater drainage",
+        "slope warnings"
+      ],
+      "output": [
+        "concept plumbing strategy",
+        "shaft/drainage checklist"
+      ],
+      "boundary": "No final pipe sizing/hydraulic certification."
+    },
+    "hvacVentilation": {
+      "requiredInputs": [
+        "rooms",
+        "openings",
+        "AC requirement",
+        "kitchen/toilet exhaust",
+        "commercial occupancy"
+      ],
+      "planningTasks": [
+        "AC indoor/outdoor location",
+        "drain route",
+        "fresh air/exhaust",
+        "duct/false ceiling conflict flags"
+      ],
+      "output": [
+        "HVAC concept notes",
+        "ventilation checklist"
+      ],
+      "boundary": "No final tonnage/duct sizing certification."
+    },
+    "vastuPlanning": {
+      "requiredInputs": [
+        "north direction",
+        "road side",
+        "plot dimensions",
+        "rooms",
+        "strict or flexible vastu"
+      ],
+      "planningTasks": [
+        "zone mapping",
+        "entry/kitchen/master/pooja/toilet/stair preference",
+        "conflict resolution"
+      ],
+      "output": [
+        "vastu notes",
+        "compromise flags"
+      ],
+      "boundary": "Do not break functionality to force vastu."
+    },
+    "boqEstimate": {
+      "requiredInputs": [
+        "drawing/scope",
+        "area",
+        "specification level",
+        "city/rate basis",
+        "material grade"
+      ],
+      "planningTasks": [
+        "scope list",
+        "quantity assumptions",
+        "rate assumptions",
+        "missing drawings",
+        "trade-wise grouping"
+      ],
+      "output": [
+        "concept BOQ/estimate notes",
+        "missing-data warnings"
+      ],
+      "boundary": "Not final tender quantity unless drawings are complete."
+    },
+    "bbs": {
+      "requiredInputs": [
+        "structural drawings",
+        "bar marks",
+        "member sizes",
+        "reinforcement details"
+      ],
+      "planningTasks": [
+        "check required drawings",
+        "identify missing rebar data",
+        "prepare BBS structure only if data available"
+      ],
+      "output": [
+        "BBS template/checklist"
+      ],
+      "boundary": "Do not invent reinforcement details."
+    },
+    "reportsAndClientPresentation": {
+      "requiredInputs": [
+        "project brief",
+        "selected concept",
+        "images/drawings",
+        "scope",
+        "budget level"
+      ],
+      "planningTasks": [
+        "summary",
+        "design rationale",
+        "assumptions",
+        "next steps",
+        "risk flags"
+      ],
+      "output": [
+        "project report",
+        "presentation content",
+        "PDF-ready structure"
+      ]
+    }
+  }
+}

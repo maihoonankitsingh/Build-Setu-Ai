@@ -1,0 +1,203 @@
+{
+  "version": "2.0",
+  "purpose": "Classify user requirement into correct building type before planning.",
+  "safetyNote": "This is concept/planning knowledge only. Final architecture, structure, MEP, fire, accessibility, and statutory approvals require licensed professionals and local code checks.",
+  "buildingTypes": {
+    "residential": {
+      "subTypes": [
+        "studio apartment",
+        "1BHK",
+        "2BHK",
+        "3BHK",
+        "4BHK",
+        "villa",
+        "bungalow",
+        "duplex",
+        "triplex",
+        "row house",
+        "farmhouse",
+        "rental house",
+        "hostel",
+        "PG accommodation",
+        "apartment building",
+        "group housing",
+        "senior living",
+        "serviced apartment"
+      ],
+      "planningFocus": [
+        "privacy zoning",
+        "living-dining-kitchen relationship",
+        "bedroom privacy",
+        "toilet plumbing grouping",
+        "parking",
+        "staircase",
+        "natural light",
+        "ventilation",
+        "future expansion",
+        "vastu preference where practical"
+      ]
+    },
+    "commercial": {
+      "subTypes": [
+        "office",
+        "co-working office",
+        "retail shop",
+        "showroom",
+        "mall unit",
+        "restaurant",
+        "cafe",
+        "salon",
+        "clinic reception",
+        "bank branch",
+        "training center",
+        "studio",
+        "warehouse office"
+      ],
+      "planningFocus": [
+        "front customer zone",
+        "staff zone",
+        "storage",
+        "service access",
+        "washrooms",
+        "fire exit logic",
+        "HVAC zoning",
+        "electrical load zones",
+        "branding/frontage",
+        "accessibility"
+      ]
+    },
+    "institutional": {
+      "subTypes": [
+        "school",
+        "college",
+        "coaching center",
+        "library",
+        "auditorium",
+        "community hall",
+        "training institute",
+        "religious/community facility"
+      ],
+      "planningFocus": [
+        "occupancy load awareness",
+        "large circulation",
+        "safe exits",
+        "toilet blocks",
+        "admin zones",
+        "classroom/daylight",
+        "acoustics",
+        "assembly space",
+        "barrier-free access"
+      ]
+    },
+    "healthcare": {
+      "subTypes": [
+        "clinic",
+        "dental clinic",
+        "diagnostic center",
+        "small hospital",
+        "pharmacy",
+        "physiotherapy center",
+        "wellness center"
+      ],
+      "planningFocus": [
+        "clean/dirty flow separation",
+        "waiting area",
+        "consultation rooms",
+        "procedure rooms",
+        "wash areas",
+        "medical storage",
+        "privacy",
+        "infection control awareness",
+        "MEP reliability"
+      ]
+    },
+    "hospitality": {
+      "subTypes": [
+        "hotel room",
+        "guest house",
+        "resort cottage",
+        "banquet hall",
+        "restaurant kitchen",
+        "cloud kitchen",
+        "reception lobby"
+      ],
+      "planningFocus": [
+        "guest experience",
+        "back-of-house flow",
+        "kitchen/service zoning",
+        "toilet access",
+        "laundry/storage",
+        "acoustics",
+        "HVAC",
+        "fire safety routes"
+      ]
+    },
+    "industrial": {
+      "subTypes": [
+        "factory shed",
+        "warehouse",
+        "workshop",
+        "cold storage",
+        "service center",
+        "manufacturing unit",
+        "logistics hub"
+      ],
+      "planningFocus": [
+        "large-span structure",
+        "loading/unloading",
+        "material movement",
+        "equipment zones",
+        "fire separation",
+        "ventilation",
+        "electrical panels",
+        "drainage",
+        "worker facilities"
+      ]
+    },
+    "mixedUse": {
+      "subTypes": [
+        "shop plus residence",
+        "office plus residence",
+        "retail ground with rental floors",
+        "clinic plus home",
+        "commercial ground plus apartments"
+      ],
+      "planningFocus": [
+        "separate public/private entries",
+        "separate stair/lift logic",
+        "service separation",
+        "parking split",
+        "noise control",
+        "fire and access separation"
+      ]
+    },
+    "landscapeAndSite": {
+      "subTypes": [
+        "front garden",
+        "terrace garden",
+        "farm layout",
+        "site planning",
+        "parking layout",
+        "resort site",
+        "compound wall and gate design"
+      ],
+      "planningFocus": [
+        "movement",
+        "entry hierarchy",
+        "drainage slope",
+        "shade",
+        "planting zones",
+        "outdoor services",
+        "lighting",
+        "water points"
+      ]
+    }
+  },
+  "classificationRules": [
+    "First classify project type before producing output.",
+    "If user asks ghar/plot/BHK/vastu/floor plan, classify as residential.",
+    "If user asks shop/showroom/office/cafe/restaurant, classify as commercial.",
+    "If user asks school/hospital/hotel/factory, classify into respective building group.",
+    "If mixed requirement exists, classify as mixedUse and separate public/private circulation."
+  ]
+}

@@ -1,0 +1,76 @@
+{
+  "version": "3.0",
+  "purpose": "Knowledge for service spaces and equipment rooms in residential/commercial buildings.",
+  "spaces": {
+    "residential": [
+      "meter/DB zone",
+      "inverter/UPS zone",
+      "pump area",
+      "underground tank",
+      "overhead tank",
+      "washing machine point",
+      "AC outdoor unit ledge",
+      "gas cylinder/PNG route",
+      "CCTV/router point"
+    ],
+    "commercial": [
+      "electrical panel room",
+      "server/network cabinet",
+      "pantry",
+      "janitor closet",
+      "store",
+      "HVAC outdoor/service area",
+      "fire extinguisher/hydrant zone if applicable",
+      "signage power"
+    ],
+    "apartmentOrMultiStorey": [
+      "lift machine/vendor zone",
+      "fire staircase",
+      "service shaft",
+      "plumbing shaft",
+      "electrical shaft",
+      "pump room",
+      "STP/septic",
+      "rainwater harvesting",
+      "garbage room",
+      "security cabin"
+    ],
+    "hospitalityRestaurant": [
+      "commercial kitchen",
+      "dry store",
+      "cold store",
+      "wash area",
+      "exhaust duct",
+      "grease trap",
+      "service entry",
+      "staff toilet",
+      "gas bank if applicable"
+    ],
+    "healthcare": [
+      "medical storage",
+      "sterilization",
+      "handwash points",
+      "biomedical waste zone",
+      "UPS backup",
+      "privacy/acoustic separation",
+      "clean/dirty utility"
+    ],
+    "industrial": [
+      "transformer/DG area",
+      "electrical panel room",
+      "compressor room",
+      "loading bay",
+      "worker toilet",
+      "locker room",
+      "safety equipment zone",
+      "fire water tank/pump if required"
+    ]
+  },
+  "coordinationRules": [
+    "Service rooms should be accessible for maintenance.",
+    "Wet service areas should not conflict with electrical panels.",
+    "AC outdoor units need heat rejection and service access.",
+    "Shafts must be coordinated with toilets/kitchens and structure.",
+    "Commercial/public projects need fire and accessibility review."
+  ]
+}

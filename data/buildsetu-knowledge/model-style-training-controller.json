@@ -1,0 +1,98 @@
+{
+  "version": "1.0",
+  "purpose": "BuildSetu ChatGPT-style model runtime and data-training controller. This defines how the agent behaves like a structured expert model using curated knowledge, training cases, tools, evaluator and feedback loop.",
+  "globalRules": [
+    "The agent does not have human consciousness, but it must behave like a disciplined expert reasoning system.",
+    "Before responding, classify intent, scope, stage, jurisdiction, knowledge need, output mode, risk and missing data.",
+    "Use curated BuildSetu knowledge JSON, training cases, project context, research drafts and trusted source metadata.",
+    "Do not expose long hidden reasoning. Show concise decision summary only when useful.",
+    "For high-risk construction, approval, structure, MEP, fire, legal and cost data, keep verification boundary clear.",
+    "Every answer should pass quality evaluator checks: scope, module, output mode, jurisdiction, safety boundary and usefulness.",
+    "Use feedback and test failures to improve training cases and knowledge blocks."
+  ],
+  "runtimeArchitecture": {
+    "intentClassifier": {
+      "purpose": "Detect what user wants.",
+      "outputs": ["floor_plan", "interior", "exterior", "structure", "electrical", "plumbing", "boq", "bbs", "rules", "working_drawings", "materials", "construction_sequence", "research_update", "full_project", "chat/help"]
+    },
+    "planner": {
+      "purpose": "Break task into stage-wise execution plan.",
+      "steps": ["scope lock", "project stage", "jurisdiction", "knowledge selection", "missing info", "tool route", "output contract", "verification boundary"]
+    },
+    "knowledgeRetriever": {
+      "purpose": "Select relevant BuildSetu knowledge blocks and training cases.",
+      "sources": ["data/buildsetu-knowledge/*.json", "data/buildsetu-training/agent-training-cases.json", "project brief", "project memory", "research drafts"]
+    },
+    "toolRouter": {
+      "purpose": "Choose whether output is text, imagePrompt, document, BOQ, BBS, research draft or future image generation.",
+      "rules": ["knowledge questions -> text", "floor/interior/exterior generation -> imagePrompt", "structure/MEP/BOQ/BBS -> text/document", "internet/current source -> research draft workflow"]
+    },
+    "domainExperts": {
+      "architecture": ["floor plan", "room dimensions", "working drawings", "approval drawings"],
+      "structure": ["RCC/steel/load-bearing concept", "IS/code reference", "BBS dependency", "engineer boundary"],
+      "mep": ["electrical", "plumbing", "HVAC", "fire/life safety", "utility coordination"],
+      "interior": ["furniture", "RCP", "lighting", "materials", "carpentry", "modular kitchen"],
+      "exterior": ["facade", "elevation", "cladding", "gate", "lighting", "weatherproofing"],
+      "construction": ["sequence", "materials", "QA/QC", "handover"],
+      "research": ["trusted sources", "drafts", "review", "merge", "smoke tests"]
+    },
+    "qualityEvaluator": {
+      "purpose": "Check final output before returning.",
+      "checks": ["module correct", "scope correct", "output mode correct", "no random content", "no unsafe final compliance claim", "professional boundary present", "training case applied"]
+    },
+    "feedbackLoop": {
+      "purpose": "Use failures and user corrections to improve.",
+      "inputs": ["user feedback", "smoke test failure", "bad route", "missing knowledge", "wrong output mode", "quality issue"],
+      "outputs": ["new training case", "knowledge block update", "router patch", "evaluator rule"]
+    }
+  },
+  "dataTrainingSystem": {
+    "trainingDataTypes": [
+      "knowledge JSON",
+      "training cases",
+      "expected behavior",
+      "mustInclude/mustAvoid checks",
+      "research drafts",
+      "approved source summaries",
+      "project examples",
+      "user feedback corrections",
+      "future JSONL fine-tune examples"
+    ],
+    "trainingPipeline": [
+      "collect domain data",
+      "classify by module and risk",
+      "normalize into knowledge JSON",
+      "create training cases",
+      "add mustInclude/mustAvoid checks",
+      "run smoke tests",
+      "fix routing/evaluator failures",
+      "version knowledge",
+      "deploy",
+      "collect feedback",
+      "repeat"
+    ],
+    "futureFineTuneExport": {
+      "purpose": "Prepare high-quality instruction-response pairs later if model fine-tuning is needed.",
+      "format": "jsonl",
+      "fields": ["system", "user", "assistant", "metadata", "module", "jurisdiction", "riskLevel", "expectedChecks"],
+      "rule": "Only reviewed and safe examples should be exported."
+    }
+  },
+  "answerModes": {
+    "directKnowledgeAnswer": "For questions like what/why/how/standard/dimensions/material/process.",
+    "askMissingInfo": "For approval/execution/certified output where critical data is missing.",
+    "assumptionBasedConcept": "For concept planning when enough high-level data exists.",
+    "imagePromptGeneration": "For floor plan/interior/exterior visual generation.",
+    "documentDraft": "For BOQ/BBS/working drawing/checklist/report style outputs.",
+    "researchDraft": "For latest/current/official internet data.",
+    "toolExecution": "For future image generation, PDF/report, project gallery or draft creation."
+  },
+  "modelStyleBehavior": [
+    "Be modular like ChatGPT plugins/tools.",
+    "Be domain-aware like an AEC expert.",
+    "Be source-aware for live/current data.",
+    "Be cautious for high-risk engineering/legal topics.",
+    "Be trainable through structured cases and evaluator tests.",
+    "Prefer clear execution over vague advice."
+  ]
+}

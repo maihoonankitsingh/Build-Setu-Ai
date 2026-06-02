@@ -1,0 +1,53 @@
+{
+  "version": "1.0",
+  "purpose": "Exterior elevation and facade design knowledge for BuildSetu agent.",
+  "globalRules": [
+    "Exterior/elevation output must stay scoped to facade/exterior unless user asks full project.",
+    "Always detect front width, floor count, style, balcony, window positions, parking/gate, climate, material preference and road side.",
+    "Do not convert exterior request into interior design or full floor plan.",
+    "Mention structural feasibility for cantilevers, balconies, heavy facade panels and large openings.",
+    "Final facade execution, structural support, waterproofing, fire, local bylaws and approval require professional verification."
+  ],
+  "designElements": {
+    "massing": ["horizontal composition", "vertical composition", "box forms", "setbacks", "double-height feature", "terrace pergola"],
+    "openings": ["window rhythm", "large glazing", "privacy screens", "ventilation openings", "sun shading"],
+    "balcony": ["glass railing", "MS railing", "solid parapet", "vertical fins", "planter ledge", "projection warning"],
+    "entry": ["main door highlight", "porch", "entry canopy", "steps/ramp", "feature wall"],
+    "parkingGate": ["sliding gate", "swing gate", "pedestrian gate", "compound wall", "security cabin if needed"],
+    "lighting": ["wall washers", "profile lights", "step lights", "gate lights", "balcony lights", "warm facade lighting"],
+    "landscape": ["planters", "front garden", "paving", "driveway", "vertical green wall"]
+  },
+  "styles": {
+    "modern": ["clean lines", "box facade", "neutral palette", "large windows", "minimal railing"],
+    "luxury": ["stone cladding", "wood/metal accents", "large glazing", "premium lighting", "strong entry feature"],
+    "minimal": ["simple rectangular forms", "limited materials", "flat roofline", "subtle lighting"],
+    "contemporaryIndian": ["warm wood/stone textures", "jaali/screens", "balcony planters", "practical shading"],
+    "traditionalIndian": ["arches", "jaali", "chajja", "warm stone", "decorative railings"],
+    "mediterranean": ["white walls", "arches", "clay tile roof", "soft colors"],
+    "industrial": ["exposed concrete", "metal frames", "dark tones", "large grid windows"]
+  },
+  "climateRules": {
+    "hotDry": ["use shading", "avoid excessive west glazing", "use light colors", "deep recesses/chajja"],
+    "hotHumid": ["ventilation", "rain protection", "anti-fungal exterior materials", "wide overhangs"],
+    "cold": ["reduce heat loss", "proper glazing strategy", "entry buffer"],
+    "heavyRain": ["slope/drainage", "waterproofing", "drip moulds", "covered balconies"],
+    "coastal": ["corrosion-resistant materials", "wind/rain protection", "salt-resistant finishes"]
+  },
+  "materialKnowledge": {
+    "premium": ["natural stone", "wood-finish HPL", "metal fins", "glass railing", "texture paint", "warm facade lights"],
+    "budget": ["weatherproof paint", "simple grooves", "MS railing", "tile/stone accent", "basic compound wall"],
+    "durable": ["exterior grade paint", "anti-corrosion metal", "UV-resistant panels", "waterproofing details"],
+    "cautions": [
+      "Heavy stone/cladding needs fixing details and structural support.",
+      "Large glazing needs heat gain, privacy and safety check.",
+      "Balcony/cantilever projection needs structural engineer review.",
+      "Local facade, setback, height and compound wall rules must be checked."
+    ]
+  },
+  "renderPromptRules": [
+    "Exterior render prompt must include front width, floor count, facade style, material palette, balcony/window/gate, lighting and camera view.",
+    "Use front elevation or 3/4 street view only when user asks render.",
+    "Avoid interior furniture focus unless requested.",
+    "Avoid impossible cantilevers, random windows and unsupported large projections."
+  ]
+}

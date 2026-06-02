@@ -1,0 +1,43 @@
+{
+  "version": "2.0",
+  "purpose": "Cross-discipline validation rules before output generation.",
+  "hardChecks": [
+    "Building type classified.",
+    "User intent classified.",
+    "Required rooms/spaces listed.",
+    "Room count matches user requirement or warning is added.",
+    "Entry and circulation exist.",
+    "Wet areas have plumbing logic.",
+    "For multi-storey projects, stair/lift/core strategy exists.",
+    "For commercial/public/high-occupancy projects, fire/accessibility flags exist.",
+    "For structure-related requests, engineer review warning exists.",
+    "For MEP-related requests, qualified MEP review warning exists.",
+    "For image generation, output type and negative prompt are clear."
+  ],
+  "floorPlanChecks": [
+    "Top-view 2D requested.",
+    "Readable labels requested.",
+    "Doors/windows/dimensions requested.",
+    "No 3D perspective requested unless user asked for render.",
+    "Parking/stair/toilets/bedrooms must match requirement."
+  ],
+  "mepChecks": [
+    "Toilet/kitchen wet-wall grouping considered.",
+    "Shaft strategy considered.",
+    "Electrical panel safe location considered.",
+    "AC/exhaust considered.",
+    "Fire flags considered where needed."
+  ],
+  "structureChecks": [
+    "Column/grid concept does not block key spaces.",
+    "Large spans/cantilevers flagged.",
+    "Renovation wall-removal warning included.",
+    "Foundation/soil/seismic not finalized by AI."
+  ],
+  "rejectionRules": [
+    "Reject final certified structural design request.",
+    "Reject final statutory/fire compliance certification.",
+    "Reject exact MEP load sizing as certified output.",
+    "Ask or assume missing plot dimensions depending on workflow mode."
+  ]
+}

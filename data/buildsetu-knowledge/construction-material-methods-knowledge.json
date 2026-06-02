@@ -1,0 +1,115 @@
+{
+  "version": "1.0",
+  "purpose": "Construction methods and material intelligence for BuildSetu agent across civil, structure, MEP, interior, exterior and finishing works.",
+  "globalRules": [
+    "Do not give final structural grade, reinforcement, MEP sizing or certified material specification without licensed professional verification.",
+    "For concept guidance, explain method, common materials, selection logic, quality checks and risks.",
+    "Material selection must consider budget, climate, durability, maintenance, availability, execution skill and local standards.",
+    "For waterproofing, structure, fire, electrical and plumbing, always include professional/site verification boundary.",
+    "Separate civil/structural materials, finishing materials, interior materials, exterior/facade materials and MEP materials.",
+    "For site execution, include QA/QC checks and common failure risks."
+  ],
+  "constructionSystems": {
+    "rccFrame": {
+      "useCases": ["residential", "apartment", "commercial", "multi-storey"],
+      "components": ["foundation", "columns", "beams", "slabs", "staircase", "shear/core walls where applicable"],
+      "materials": ["cement", "sand", "aggregate", "water", "admixture where required", "TMT steel", "shuttering/formwork", "binding wire"],
+      "method": ["setting out", "excavation", "PCC", "footing reinforcement/formwork/concrete", "columns", "plinth beam", "slab/beam shuttering", "reinforcement", "concreting", "curing", "de-shuttering"],
+      "qualityChecks": ["line/level", "cover blocks", "bar dia/spacing as drawing", "formwork tightness", "concrete slump/workability", "vibration", "curing", "cube tests where applicable"],
+      "warnings": ["no final sizes without structural design", "poor curing causes cracks/low strength", "honeycombing risk", "wrong cover causes corrosion"]
+    },
+    "loadBearingMasonry": {
+      "useCases": ["small low-rise buildings where locally permitted"],
+      "components": ["load-bearing walls", "foundation", "lintels", "slab/roof"],
+      "materials": ["brick/block", "mortar", "DPC", "lintel material", "roof slab/joist"],
+      "qualityChecks": ["wall thickness", "bonding", "plumb", "mortar quality", "opening/lintel support"],
+      "warnings": ["not suitable for all spans/floors", "seismic and local code review required"]
+    },
+    "steelStructure": {
+      "useCases": ["warehouses", "industrial sheds", "large spans", "fast construction"],
+      "components": ["columns", "rafters/beams", "purlins", "bracing", "base plates", "anchor bolts", "roof/wall sheeting"],
+      "materials": ["structural steel sections", "bolts", "welding", "primer/paint", "roof sheets", "insulation where required"],
+      "qualityChecks": ["fabrication accuracy", "bolt tightening", "weld quality", "plumb/alignment", "anti-corrosion coating"],
+      "warnings": ["fire protection/corrosion/wind design required"]
+    },
+    "masonryBlockwork": {
+      "materials": ["red brick", "fly ash brick", "AAC block", "concrete block", "mortar/adhesive"],
+      "selectionLogic": ["AAC is light and faster but needs proper fixing/plaster practice", "brick has local availability and robustness", "concrete block can suit certain partitions/load contexts"],
+      "qualityChecks": ["alignment", "joint thickness", "curing where applicable", "lintel/band", "chasing limits for MEP"]
+    },
+    "prefabModular": {
+      "useCases": ["fast projects", "temporary structures", "modular rooms", "industrial/commercial applications"],
+      "materials": ["light gauge steel", "sandwich panels", "precast components", "modular MEP kits"],
+      "qualityChecks": ["connection details", "transport/installation tolerance", "waterproofing joints", "fire/acoustic performance"]
+    }
+  },
+  "civilFinishingMaterials": {
+    "waterproofing": {
+      "areas": ["bathroom", "terrace", "balcony", "basement", "water tank", "podium", "external wall joints"],
+      "materials": ["cementitious waterproofing", "polymer modified coating", "PU coating", "APP/SBS membrane", "liquid membrane", "crystalline admixture/coating", "sealants"],
+      "methodLogic": ["surface preparation", "slope correction", "primer where required", "corner treatment", "pipe penetration detailing", "coating/membrane layers", "protection screed", "pond test/leak test"],
+      "risks": ["poor slope", "untreated corners", "pipe penetration leaks", "membrane puncture", "no pond test"]
+    },
+    "plaster": {
+      "materials": ["cement sand plaster", "gypsum plaster for suitable dry interiors", "ready-mix plaster"],
+      "checks": ["surface hacking/cleaning", "level dots", "curing for cement plaster", "crack control", "dryness before paint"]
+    },
+    "flooring": {
+      "materials": ["vitrified tile", "ceramic tile", "anti-skid tile", "marble", "granite", "wooden laminate", "vinyl", "epoxy for industrial"],
+      "selectionLogic": ["wet area needs anti-skid", "high traffic needs durable easy-maintenance material", "marble/granite need polishing and skilled laying", "industrial floors need load/chemical consideration"],
+      "checks": ["level", "slope in wet areas", "hollow sound", "joint alignment", "skirting", "grout"]
+    },
+    "paintAndWallFinish": {
+      "materials": ["interior emulsion", "exterior weatherproof paint", "putty", "primer", "texture paint", "wallpaper", "veneer/fluted/stone panels"],
+      "checks": ["surface dryness", "primer", "putty sanding", "moisture treatment", "exterior UV/rain resistance"]
+    },
+    "falseCeiling": {
+      "materials": ["gypsum board", "POP", "calcium silicate board", "metal frame", "wood/HPL accents", "acoustic panels"],
+      "checks": ["ceiling height", "hanger spacing", "service access", "light/AC coordination", "moisture-rated boards in wet areas where required"]
+    }
+  },
+  "interiorMaterials": {
+    "carpentryBoards": {
+      "materials": ["plywood", "BWP/BWR plywood", "MDF", "HDHMR", "particle board", "blockboard"],
+      "selectionLogic": ["wet/kitchen areas prefer BWP/BWR/HDHMR as suitable", "MDF suits dry decorative panels but not wet use", "plywood is common for durable furniture", "particle board is budget but moisture-sensitive"],
+      "checks": ["board grade", "edge banding", "hardware quality", "laminate/veneer finish", "moisture exposure"]
+    },
+    "finishes": ["laminate", "veneer", "PU polish", "membrane", "acrylic", "HPL", "glass", "metal trims"],
+    "hardware": ["hinges", "channels", "handles", "tandem boxes", "soft close fittings", "wardrobe sliding systems"],
+    "risks": ["poor edge banding", "wrong board in wet area", "weak hardware", "site measurement mismatch"]
+  },
+  "exteriorFacadeMaterials": {
+    "materials": ["exterior paint", "texture paint", "stone cladding", "tiles", "HPL exterior grade", "ACP where allowed", "metal fins", "glass railing", "MS/SS railing", "aluminium windows"],
+    "selectionLogic": ["coastal areas need corrosion-resistant materials", "hot climates need shading/light colors", "heavy rain areas need waterproofing/drip details", "heavy cladding needs fixing and structural verification"],
+    "checks": ["waterproofing", "drip mould", "anchoring/fixing", "maintenance access", "UV/rain resistance", "wind safety"]
+  },
+  "mepMaterials": {
+    "electrical": {
+      "materials": ["FR/FRLS wires", "PVC/concealed conduits", "modular switches", "MCB/RCCB/RCBO", "DB", "earthing conductor/electrode", "cable trays where applicable"],
+      "checks": ["wire size by load calculation", "circuit segregation", "earthing", "conduit fill", "DB accessibility", "testing/insulation resistance by electrician/engineer"]
+    },
+    "plumbing": {
+      "materials": ["CPVC/UPVC/PPR/PEX where locally used", "PVC/SWR pipes", "HDPE where applicable", "valves", "traps", "floor drains", "water tank", "pump"],
+      "checks": ["pipe material suitability", "pressure rating", "slope", "venting", "leak/pressure test", "access panels", "shaft maintenance"]
+    },
+    "sanitaryAndCP": {
+      "materials": ["WC", "basin", "sink", "shower mixer", "faucets", "health faucet", "floor drain", "gratings"],
+      "checks": ["rough-in dimensions", "trap seal", "water pressure", "service access", "anti-skid wet area"]
+    }
+  },
+  "climateMaterialLogic": {
+    "hotDry": ["shading", "light exterior colors", "thermal mass/insulation", "dust-resistant finishes"],
+    "hotHumid": ["ventilation", "anti-fungal paint", "moisture-resistant boards", "corrosion-resistant hardware"],
+    "heavyRain": ["robust waterproofing", "proper slopes", "drip details", "exterior-grade materials"],
+    "coastal": ["anti-corrosion metals", "marine/coastal-grade coatings where required", "avoid weak exposed hardware"],
+    "cold": ["insulation", "thermal breaks", "condensation control", "suitable glazing"],
+    "industrial": ["durable flooring", "fire safety", "chemical/load considerations", "easy maintenance"]
+  },
+  "agentBehavior": [
+    "If user asks construction method, explain method sequence, materials, checks and risks.",
+    "If user asks material selection, compare options by use, budget, durability, climate and maintenance.",
+    "If user asks execution, include QA/QC checks and professional supervision note.",
+    "If user asks final specification, state that final specs depend on drawings, local standards and professionals.",
+    "If user asks BOQ/cost, connect materials to quantities, specs and rate assumptions."
+  ]
+}

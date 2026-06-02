@@ -1,0 +1,90 @@
+{
+  "version": "1.0",
+  "purpose": "Interior design knowledge for BuildSetu agent. Used for room-wise planning, render prompts, material selection, furniture layout, lighting and storage.",
+  "globalRules": [
+    "Interior output must stay scoped to interior unless user asks full project.",
+    "Always detect room type, room size, style, furniture requirement, storage requirement, lighting mood, budget level and existing constraints.",
+    "Do not convert an interior request into a full house floor plan.",
+    "Mention electrical/AC/ventilation/storage as coordination notes only.",
+    "Final execution, electrical load, false ceiling suspension, waterproofing, civil changes and structural changes require professional/site verification."
+  ],
+  "roomTypes": {
+    "livingRoom": {
+      "mustPlan": ["sofa layout", "TV wall", "center table", "accent wall", "lighting", "curtains", "circulation", "optional partition"],
+      "avoid": ["blocked entry", "TV glare", "oversized sofa", "cluttered walls"],
+      "promptMustInclude": ["premium living room interior", "furniture layout", "TV unit", "lighting", "material palette", "realistic render"]
+    },
+    "bedroom": {
+      "mustPlan": ["bed position", "wardrobe", "side tables", "dresser/study if needed", "false ceiling", "warm lighting", "curtains", "clearance around bed"],
+      "avoid": ["bed blocking wardrobe", "door hitting furniture", "poor walking clearance", "overcrowded room"],
+      "promptMustInclude": ["bedroom interior", "bed", "wardrobe", "lighting", "false ceiling", "storage", "soft material palette"]
+    },
+    "kitchen": {
+      "mustPlan": ["counter layout", "hob/chimney", "sink", "fridge", "storage", "working triangle", "task lighting", "ventilation"],
+      "avoid": ["sink and hob conflict", "no exhaust", "blocked appliance shutters", "weak storage"],
+      "promptMustInclude": ["modular kitchen", "countertop", "overhead cabinets", "chimney", "task lighting", "backsplash"]
+    },
+    "dining": {
+      "mustPlan": ["table size", "chair clearance", "lighting pendant", "crockery unit", "connection to kitchen/living"],
+      "avoid": ["blocked passage", "oversized table"],
+      "promptMustInclude": ["dining area", "dining table", "pendant lighting", "crockery/storage unit"]
+    },
+    "bathroom": {
+      "mustPlan": ["dry/wet separation", "vanity", "WC", "shower", "niche/storage", "anti-skid flooring", "exhaust"],
+      "avoid": ["no slope/waterproofing note", "blocked door swing", "poor ventilation"],
+      "promptMustInclude": ["bathroom interior", "vanity", "shower area", "tiles", "mirror lighting", "premium fixtures"]
+    },
+    "office": {
+      "mustPlan": ["desk", "ergonomic chair", "storage", "task lighting", "background wall", "wire management"],
+      "avoid": ["glare behind monitor", "weak storage", "bad camera background"],
+      "promptMustInclude": ["home office interior", "desk", "storage", "task lighting", "clean professional background"]
+    },
+    "poojaRoom": {
+      "mustPlan": ["mandir unit", "back panel", "soft lighting", "storage drawer", "clean circulation"],
+      "avoid": ["toilet-adjacent conflict where possible", "dark cluttered design"],
+      "promptMustInclude": ["pooja room", "mandir unit", "warm lighting", "traditional-modern detailing"]
+    },
+    "kidsRoom": {
+      "mustPlan": ["bed", "study", "wardrobe", "play/storage", "safe edges", "bright but calm palette"],
+      "avoid": ["unsafe sharp furniture", "overstimulation", "blocked floor space"],
+      "promptMustInclude": ["kids room", "study table", "wardrobe", "playful storage", "soft lighting"]
+    }
+  },
+  "styles": {
+    "modern": ["clean lines", "neutral palette", "hidden storage", "cove lighting", "minimal clutter"],
+    "luxury": ["premium marble/veneer/metal accents", "layered lighting", "rich textures", "statement wall"],
+    "minimal": ["simple forms", "limited palette", "functional furniture", "open space"],
+    "scandinavian": ["light wood", "white/grey palette", "soft fabric", "natural light"],
+    "traditionalIndian": ["wood detailing", "jaali", "brass accents", "warm colors", "decorative panels"],
+    "contemporaryIndian": ["modern layout", "warm wood", "stone/texture wall", "practical storage"],
+    "industrial": ["exposed texture", "metal/wood", "track lights", "dark accents"],
+    "bohemian": ["layered textiles", "plants", "warm colors", "handcrafted decor"]
+  },
+  "lightingKnowledge": {
+    "types": ["ambient lighting", "task lighting", "accent lighting", "cove lighting", "profile lights", "spotlights", "pendant lights"],
+    "rules": [
+      "Use layered lighting, not single harsh light.",
+      "Bedroom should prefer warm and soft lighting.",
+      "Kitchen needs task lighting on counters.",
+      "Bathroom needs mirror/vanity lighting and exhaust.",
+      "Living room can use cove, spotlight and accent wall lighting."
+    ]
+  },
+  "materialKnowledge": {
+    "walls": ["paint", "texture paint", "wallpaper", "veneer panel", "fluted panel", "stone cladding", "PU/polish finish"],
+    "flooring": ["vitrified tile", "wooden laminate", "engineered wood", "marble", "granite", "anti-skid tile for wet areas"],
+    "ceiling": ["gypsum false ceiling", "POP", "wooden rafters", "cove profile", "acoustic panel where needed"],
+    "furniture": ["plywood laminate", "HDHMR", "MDF for dry areas", "veneer", "PU finish", "glass", "metal accents"],
+    "cautions": [
+      "Wet areas need suitable waterproof/anti-skid material.",
+      "Kitchen material must handle heat, moisture and cleaning.",
+      "False ceiling needs site height and service coordination."
+    ]
+  },
+  "renderPromptRules": [
+    "Interior render prompt must include room type, style, furniture, material palette, lighting, camera angle and quality level.",
+    "Mention realistic scale and practical circulation.",
+    "Avoid impossible furniture, blocked doors/windows, fantasy decor unless user asks.",
+    "Do not show exterior facade in interior output unless user asks."
+  ]
+}

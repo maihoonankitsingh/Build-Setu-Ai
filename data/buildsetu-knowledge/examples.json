@@ -1,0 +1,73 @@
+{
+  "version": "1.0",
+  "examples": [
+    {
+      "input": "30x50 north facing plot, 2BHK, car parking, staircase, modular kitchen, 2 toilets",
+      "expectedPlanning": {
+        "projectType": "residential_floor_plan",
+        "plot": {
+          "widthFt": 30,
+          "depthFt": 50,
+          "roadSide": "north"
+        },
+        "requirements": {
+          "bedrooms": 2,
+          "bathrooms": 2,
+          "parking": true,
+          "staircase": true,
+          "kitchen": "modular"
+        },
+        "layoutLogic": [
+          "Parking at north/front side.",
+          "Living room near main entrance.",
+          "Kitchen near dining/rear-side with ventilation.",
+          "Master bedroom at rear/private side with attached toilet.",
+          "Second bedroom near common toilet.",
+          "Staircase on side/front corner for future floor access."
+        ],
+        "imageOutputType": "top_view_2d_floor_plan"
+      }
+    },
+    {
+      "input": "20x40 east facing 1BHK rental house with stair and parking",
+      "expectedPlanning": {
+        "projectType": "compact_residential_floor_plan",
+        "plot": {
+          "widthFt": 20,
+          "depthFt": 40,
+          "roadSide": "east"
+        },
+        "layoutLogic": [
+          "Compact parking at east/front if feasible.",
+          "Living at front connected to kitchen.",
+          "One bedroom at rear/private side.",
+          "Common toilet near bedroom/lobby.",
+          "Staircase side-positioned for independent upper floor access."
+        ],
+        "imageOutputType": "top_view_2d_floor_plan"
+      }
+    },
+    {
+      "input": "40x60 west facing 3BHK premium home with pooja, utility, parking and garden",
+      "expectedPlanning": {
+        "projectType": "premium_residential_floor_plan",
+        "plot": {
+          "widthFt": 40,
+          "depthFt": 60,
+          "roadSide": "west"
+        },
+        "layoutLogic": [
+          "Parking and entry at west/front with shading.",
+          "Formal living near entrance.",
+          "Dining connected to kitchen.",
+          "Kitchen with utility.",
+          "Master bedroom in private zone with attached toilet.",
+          "Two bedrooms with attached/common toilet strategy.",
+          "Pooja near northeast if possible.",
+          "Garden/open space placed based on setbacks and light."
+        ],
+        "imageOutputType": "top_view_2d_floor_plan"
+      }
+    }
+  ]
+}

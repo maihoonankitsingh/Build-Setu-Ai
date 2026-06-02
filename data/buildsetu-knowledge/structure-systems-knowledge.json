@@ -1,0 +1,89 @@
+{
+  "version": "2.0",
+  "purpose": "Concept-level structural awareness for agent. Not for final structural design.",
+  "safetyNote": "Never provide final beam/column/rebar/foundation design as certified output. Mark all structure outputs as conceptual and require structural engineer verification.",
+  "systems": {
+    "rccFrame": {
+      "useCases": [
+        "residential",
+        "apartments",
+        "commercial low/mid rise",
+        "mixed use"
+      ],
+      "components": [
+        "footing",
+        "column",
+        "beam",
+        "slab",
+        "staircase",
+        "shear wall where needed"
+      ],
+      "planningRules": [
+        "Keep columns aligned in a logical grid.",
+        "Avoid random column positions blocking parking/living/bedroom usability.",
+        "Wet areas and shafts should not cut major structural members without engineering review.",
+        "Large spans need structural review before finalization."
+      ]
+    },
+    "loadBearing": {
+      "useCases": [
+        "small houses",
+        "low-rise traditional construction"
+      ],
+      "components": [
+        "load-bearing walls",
+        "lintels",
+        "slab/roof",
+        "foundation"
+      ],
+      "planningRules": [
+        "Avoid excessive wall removal in renovation without structural review.",
+        "Openings in load-bearing walls require lintel/structural checks."
+      ]
+    },
+    "steelStructure": {
+      "useCases": [
+        "industrial sheds",
+        "warehouses",
+        "large halls",
+        "temporary structures"
+      ],
+      "components": [
+        "columns",
+        "rafters",
+        "purlins",
+        "bracing",
+        "base plates",
+        "cladding"
+      ],
+      "planningRules": [
+        "Material flow, clear height, bay spacing, loading access, and crane/equipment needs affect structure.",
+        "Bracing and service routing should be coordinated."
+      ]
+    },
+    "compositeOrHybrid": {
+      "useCases": [
+        "commercial",
+        "large span",
+        "special projects"
+      ],
+      "planningRules": [
+        "Coordinate architectural grid, structure grid, shafts, HVAC, fire, and ceiling depth."
+      ]
+    }
+  },
+  "structuralCoordinationChecks": [
+    "Column grid should not conflict with doors, parking bays, stair flights, toilets, or major furniture.",
+    "Stair opening should be structurally feasible.",
+    "Double-height spaces and large cantilevers need explicit structural warning.",
+    "Renovation involving wall removal needs structural check.",
+    "Basement/retaining wall/waterproofing needs specialist design."
+  ],
+  "outputFieldsAgentShouldCreate": [
+    "conceptStructuralSystem",
+    "likelyColumnGridLogic",
+    "spanWarnings",
+    "loadPathWarnings",
+    "structuralEngineerRequiredItems"
+  ]
+}

@@ -1,0 +1,38 @@
+{
+  "version": "4.0",
+  "purpose": "How agent should talk about codes and regulations.",
+  "policy": [
+    "Do not quote exact legal/code clauses unless source is provided and verified.",
+    "Do not present code numbers as final compliance advice.",
+    "Use terms: concept-level, local authority check, licensed professional verification.",
+    "For country-specific work, mention likely reference family only and ask for local jurisdiction.",
+    "For current regulation questions, recommend checking latest official source or authority.",
+    "For public/commercial/institutional/healthcare/industrial buildings, include fire/accessibility/egress review flag."
+  ],
+  "sourceFamilies": {
+    "internationalModel": [
+      "ICC I-Codes / IBC / IRC where adopted"
+    ],
+    "europe": [
+      "Eurocodes for structural design",
+      "national annexes",
+      "national/local building rules"
+    ],
+    "india": [
+      "BIS/NBC context",
+      "local municipal bylaws",
+      "state development control rules"
+    ],
+    "fireSafety": [
+      "NFPA where applicable/adopted",
+      "local fire authority/civil defence"
+    ],
+    "localAuthorities": [
+      "municipality",
+      "planning authority",
+      "development authority",
+      "utility authority",
+      "civil defence/fire authority"
+    ]
+  }
+}

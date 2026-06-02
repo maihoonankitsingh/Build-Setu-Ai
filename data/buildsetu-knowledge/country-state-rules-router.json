@@ -1,0 +1,68 @@
+{
+  "version": "1.0",
+  "purpose": "Country/state/province/emirate/city based building rules router for BuildSetu agent. This is a rule-checklist and jurisdiction-routing layer, not a final legal compliance engine.",
+  "globalBoundary": [
+    "Do not claim final legal/code compliance.",
+    "Do not copy full copyrighted code text.",
+    "Use country/state/city/local authority as routing context.",
+    "For concept planning, give assumptions and checklist.",
+    "For approval or execution, require licensed architect/engineer/MEP/fire consultant/local authority verification.",
+    "If country/state/city is missing and user asks approval/rules/code/FAR/FSI/setback/height/parking/fire/compliance, ask for exact location first."
+  ],
+  "ruleCategories": {
+    "siteAndZoning": ["land use", "road width", "approach road", "zoning/use permission", "residential/commercial/mixed-use classification"],
+    "planningControls": ["setbacks", "FAR/FSI", "ground coverage", "height limit", "number of floors", "open space", "balcony/projection rules", "basement rules", "compound wall/gate rules"],
+    "approvalDrawings": ["site plan", "floor plans", "sections", "elevations", "area statement", "setback statement", "FAR/FSI statement", "parking statement", "rainwater/fire/accessibility notes where applicable"],
+    "lifeSafety": ["fire access", "egress/staircase", "exit width", "fire equipment", "fire authority/NOC/civil defence where applicable", "high-rise requirements where applicable"],
+    "accessibility": ["ramp", "accessible toilet", "door width", "corridor", "lift/access where applicable"],
+    "structure": ["soil report", "foundation", "seismic/wind/flood/hazard context", "structural design standard", "licensed structural engineer verification"],
+    "mep": ["electrical connection/load", "earthing", "water supply", "sewer/septic/STP", "rainwater drainage", "HVAC/ventilation", "utility authority coordination"],
+    "environmentAndSustainability": ["rainwater harvesting", "solar/energy rules where applicable", "green building/energy code where applicable", "tree/landscape requirements where applicable"],
+    "executionBoundary": ["working drawing", "GFC drawing", "site supervision", "inspection", "as-built drawing", "completion/occupancy certificate where applicable"]
+  },
+  "countryRuleFamilies": {
+    "India": {
+      "subdivisionLevel": "state + city/local municipal/development authority",
+      "ruleFamily": ["BIS/IS/NBC reference family", "state development control rules", "city municipal/development authority bylaws", "fire authority/NOC where applicable", "water/sewer/electric utility authority requirements"],
+      "mustAskIfMissing": ["state", "city/local authority", "plot size", "road width", "building use", "floor count"],
+      "stateRulePolicy": "India me state/city ke basis par FAR/FSI, setback, height, parking, fire, approval drawing aur completion rules change hote hain. Exact city/local authority mandatory hai."
+    },
+    "USA": {
+      "subdivisionLevel": "state + county/city/building department",
+      "ruleFamily": ["ICC I-Codes where adopted", "state/city adopted code edition", "local amendments", "zoning ordinance", "fire/accessibility/energy requirements"],
+      "mustAskIfMissing": ["state", "city/county", "occupancy/use", "new build or remodel", "floor count"],
+      "stateRulePolicy": "USA me adopted code edition aur local amendments state/county/city ke hisaab se change hote hain."
+    },
+    "UAE": {
+      "subdivisionLevel": "emirate + municipality/free-zone/master developer",
+      "ruleFamily": ["emirate municipality/building regulation", "civil defence/fire safety", "utility authority", "free-zone/master developer rules where applicable"],
+      "mustAskIfMissing": ["emirate", "municipality/free-zone/master developer", "building type", "plot/community rules"],
+      "stateRulePolicy": "UAE me Dubai/Abu Dhabi/Sharjah emirate aur authority ke hisaab se approval route change hota hai."
+    },
+    "UK": {
+      "subdivisionLevel": "nation + local planning authority/building control",
+      "ruleFamily": ["Building Regulations", "Approved Documents", "local planning authority", "building control", "British Standards/Eurocode context where applicable"],
+      "mustAskIfMissing": ["UK nation", "local planning authority", "project type", "new build/extension/renovation"],
+      "stateRulePolicy": "UK me planning permission aur building regulations separate checks hain."
+    },
+    "Canada": {
+      "subdivisionLevel": "province/territory + municipality",
+      "ruleFamily": ["National Building Code model context", "provincial/territorial building code", "municipal permit office", "fire/accessibility/energy rules"],
+      "mustAskIfMissing": ["province", "municipality", "building use", "new build/addition/renovation"],
+      "stateRulePolicy": "Canada me province aur municipality exact rule path decide karte hain."
+    },
+    "Australia": {
+      "subdivisionLevel": "state/territory + council",
+      "ruleFamily": ["NCC/BCA context", "Australian Standards", "state/territory planning", "local council", "hazard overlays such as bushfire/flood/cyclone where applicable"],
+      "mustAskIfMissing": ["state/territory", "council/suburb", "building class/use", "hazard overlays"],
+      "stateRulePolicy": "Australia me state/council planning aur site overlays important hote hain."
+    }
+  },
+  "agentBehavior": [
+    "If user asks rules, first identify country/state/city.",
+    "If exact city/local authority is missing, explain that exact rules cannot be finalized and ask for location.",
+    "For known location, give rule checklist categories and required drawings, not legal certification.",
+    "For image prompts, include concise authority/context warnings only.",
+    "For text answers, separate assumed location, rule categories, required drawings, missing information and professional verification boundary."
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "version": "1.0",
+  "templates": {
+    "floorPlan2D": {
+      "systemIntent": "Generate a 2D architectural floor plan image only.",
+      "promptTemplate": "Create a top-view 2D architectural floor plan for: {{projectSummary}}. Plot: {{plotSummary}}. Requirements: {{requirementsSummary}}. Layout logic: {{layoutLogic}}. Style: {{stylePrompt}}. Must include: thick exterior walls, interior partition walls, clear room labels, door swings, windows, dimension lines, north arrow, entry marker, parking if required, staircase if required, toilet fixtures, kitchen counter, minimal furniture symbols. Keep it accurate, clean, readable, and construction-plan inspired.",
+      "negativePrompt": "Do not create 3D render, do not create perspective view, do not create random furniture showroom, do not miss room labels, do not use unreadable text, do not create extra bedrooms, do not remove requested toilets, do not make distorted walls, do not create fantasy architecture."
+    },
+    "interiorRender": {
+      "systemIntent": "Generate photorealistic interior visualization.",
+      "promptTemplate": "Create a photorealistic interior render for: {{projectSummary}}. Room: {{roomType}}. Style: {{stylePrompt}}. Requirements: {{requirementsSummary}}. Use practical Indian home proportions, realistic furniture, lighting, material finishes, and clean composition.",
+      "negativePrompt": "Do not create impossible room geometry, do not over-clutter, do not use distorted furniture, do not create unrealistic luxury if not requested."
+    },
+    "exteriorRender": {
+      "systemIntent": "Generate residential exterior/facade visualization.",
+      "promptTemplate": "Create a realistic Indian residential exterior design for: {{projectSummary}}. Plot/building details: {{plotSummary}}. Style: {{stylePrompt}}. Include facade, windows, balcony/railing if required, gate/compound wall if required, realistic material palette, daylight view.",
+      "negativePrompt": "Do not create impossible structure, do not ignore number of floors, do not create commercial tower unless asked, do not use distorted windows or unreadable signage."
+    }
+  }
+}

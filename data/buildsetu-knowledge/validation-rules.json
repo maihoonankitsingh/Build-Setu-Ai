@@ -1,0 +1,42 @@
+{
+  "version": "1.0",
+  "floorPlanValidation": {
+    "requiredFields": [
+      "projectType",
+      "plot",
+      "requirements",
+      "layoutZones",
+      "rooms",
+      "circulation",
+      "assumptions",
+      "imagePrompt"
+    ],
+    "hardChecks": [
+      "Bedroom count must match requirement.",
+      "Toilet count must match requirement or explain compromise.",
+      "Kitchen must exist for residential plan.",
+      "Main entry must exist.",
+      "If parking is requested, parking zone must exist.",
+      "If staircase is requested, staircase zone must exist.",
+      "Every room must have name, approximate size, position, and access.",
+      "Image prompt must explicitly say top-view 2D floor plan for floor plan requests.",
+      "Negative prompt must reject 3D/perspective render for floor plan requests."
+    ],
+    "softChecks": [
+      "Kitchen should be near dining/living.",
+      "Common toilet should be accessible without entering bedroom.",
+      "Master bedroom should be private.",
+      "Windows should be placed on exterior walls where possible.",
+      "Circulation area should be minimized.",
+      "Vastu preferences should be applied when practical."
+    ],
+    "rejectionReasons": [
+      "Missing requested room.",
+      "Wrong output type.",
+      "No dimensions requested.",
+      "No labels requested.",
+      "Unusable circulation.",
+      "Contradictory requirements not flagged."
+    ]
+  }
+}

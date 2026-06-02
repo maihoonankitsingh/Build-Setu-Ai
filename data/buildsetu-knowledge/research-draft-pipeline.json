@@ -1,0 +1,75 @@
+{
+  "version": "1.0",
+  "purpose": "Research draft pipeline for BuildSetu agent to convert internet/source data into reviewed knowledge updates.",
+  "pipelineStages": {
+    "01ClassifyRequest": {
+      "outputs": ["data category", "jurisdiction", "risk level", "freshness need", "source type required"]
+    },
+    "02FindSources": {
+      "rules": ["search only targeted category", "prefer official/primary source", "collect multiple sources if high-risk", "reject irrelevant/untrusted source"]
+    },
+    "03ExtractMetadata": {
+      "requiredFields": ["sourceTitle", "sourceUrl", "sourceType", "publisher/authority", "country", "stateOrProvinceOrEmirate", "cityOrAuthority", "dateAccessed", "effectiveDate", "version", "riskLevel", "confidence"]
+    },
+    "04ExtractKnowledge": {
+      "allowedExtraction": ["summary", "checklist", "required documents", "process steps", "scope", "cautions", "professional verification boundary"],
+      "blockedExtraction": ["full copyrighted code text", "final certification", "guaranteed compliance", "final structural/MEP design"]
+    },
+    "05CreateDraft": {
+      "draftStatus": "pending_review",
+      "storage": "data/buildsetu-research/drafts",
+      "format": "json"
+    },
+    "06Review": {
+      "reviewTypes": ["human review", "licensed professional review for high-risk", "source conflict review", "legal/compliance caution review"],
+      "possibleStatus": ["approved", "needs_more_sources", "rejected", "expired"]
+    },
+    "07MergeKnowledge": {
+      "rule": "only approved drafts can update permanent knowledge JSON",
+      "requires": ["backup", "version bump", "source metadata retained", "smoke tests"]
+    },
+    "08TestAndDeploy": {
+      "tests": ["routing test", "knowledge block test", "safety boundary test", "source metadata test", "no final compliance claim test"]
+    }
+  },
+  "draftSchema": {
+    "id": "string",
+    "status": "pending_review/approved/rejected/expired",
+    "category": "authorityApprovalBylaws/codeStandardsReference/materialRatesCost/productMaterialSpecs/climateHazardSiteContext/constructionMethodsBestPractice/designReferenceTrend/regulatoryNewsUpdates",
+    "riskLevel": "low/medium/medium_high/high",
+    "requiresProfessionalReview": true,
+    "jurisdiction": {
+      "country": "string",
+      "stateOrProvinceOrEmirate": "string",
+      "cityOrAuthority": "string"
+    },
+    "source": {
+      "title": "string",
+      "url": "string",
+      "sourceType": "official_primary/manufacturer_primary/vendor_market/recognized_reference/design_reference/untrusted",
+      "publisher": "string",
+      "dateAccessed": "YYYY-MM-DD",
+      "effectiveDate": "YYYY-MM-DD or unknown",
+      "version": "string or unknown"
+    },
+    "extracted": {
+      "summary": "string",
+      "checklist": ["string"],
+      "requiredDocuments": ["string"],
+      "processSteps": ["string"],
+      "cautions": ["string"],
+      "blockedClaims": ["string"]
+    },
+    "confidence": "low/medium/high",
+    "mergeTarget": "data/buildsetu-knowledge/*.json",
+    "smokeTestsRequired": ["string"]
+  },
+  "agentBehavior": [
+    "When user asks to fetch latest/current/official data, classify category and source type first.",
+    "Do not directly modify permanent knowledge for high-risk data.",
+    "Create a research draft with metadata and review flag.",
+    "For high-risk categories, answer with source-based summary and state review required.",
+    "For low-risk design inspiration, allow reference use but not compliance claims.",
+    "After approved merge, run smoke tests before deployment."
+  ]
+}

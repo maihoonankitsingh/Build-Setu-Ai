@@ -1,0 +1,40 @@
+{
+  "version": "2.0",
+  "purpose": "Core architectural planning rules for BuildSetu agent.",
+  "sitePlanning": [
+    "Capture plot width, depth, road side, north direction, setbacks, access, slope, neighboring constraints, and future expansion.",
+    "Public entry, service entry, vehicle entry, and emergency access should be considered based on building type.",
+    "Openings should respond to daylight, privacy, climate, road frontage, and views."
+  ],
+  "zoning": [
+    "Separate public, semi-private, private, and service zones.",
+    "Avoid crossing private areas for common access.",
+    "Use compact corridors and avoid unnecessary dead passages.",
+    "Keep wet areas coordinated to reduce plumbing complexity."
+  ],
+  "circulation": [
+    "Main entry should be legible.",
+    "Staircase/lift should be reachable without disturbing private rooms when possible.",
+    "Commercial/institutional circulation should handle peak users.",
+    "Dead-end corridors should be avoided in high-occupancy planning unless code-compliant."
+  ],
+  "daylightVentilation": [
+    "Habitable rooms should get daylight and ventilation where possible.",
+    "Toilets, kitchens, and utility areas need ventilation/shaft/exhaust strategy.",
+    "Avoid rooms fully locked inside without shaft/window unless mechanical ventilation is planned."
+  ],
+  "accessibility": [
+    "For public/commercial/institutional buildings, consider ramp/lift, accessible toilet, door widths, and barrier-free circulation.",
+    "Do not claim final accessibility compliance without local code review."
+  ],
+  "fireLifeSafetyAwareness": [
+    "For public/commercial/multi-storey buildings, agent must mention fire exit, travel path, stair width, fire separation, refuge/fire systems as professional checks.",
+    "Do not produce final fire design calculations."
+  ],
+  "outputRules": [
+    "Before image prompt, produce structured planning logic.",
+    "For floor plan output, require top-view 2D plan with readable labels and dimensions.",
+    "For elevation, require facade direction, floor count, openings, materials, balconies, gate/compound if needed.",
+    "For interior, require room type, style, furniture needs, lighting, materials, storage, and camera angle."
+  ]
+}

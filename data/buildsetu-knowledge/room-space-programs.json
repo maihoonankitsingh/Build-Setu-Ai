@@ -1,0 +1,166 @@
+{
+  "version": "2.0",
+  "purpose": "Agent should know common rooms/spaces by building type.",
+  "residentialRooms": {
+    "entry": [
+      "porch",
+      "foyer",
+      "lobby",
+      "sit-out",
+      "verandah"
+    ],
+    "social": [
+      "living room",
+      "drawing room",
+      "family lounge",
+      "dining",
+      "home theater"
+    ],
+    "private": [
+      "master bedroom",
+      "bedroom",
+      "kids bedroom",
+      "guest bedroom",
+      "parents bedroom",
+      "study",
+      "home office"
+    ],
+    "service": [
+      "kitchen",
+      "dry kitchen",
+      "wet kitchen",
+      "utility",
+      "wash area",
+      "store",
+      "laundry"
+    ],
+    "sanitary": [
+      "common toilet",
+      "attached toilet",
+      "powder toilet",
+      "dress + toilet",
+      "bathroom"
+    ],
+    "special": [
+      "pooja room",
+      "balcony",
+      "terrace",
+      "courtyard",
+      "shaft",
+      "staircase",
+      "lift",
+      "parking",
+      "servant room"
+    ]
+  },
+  "commercialRooms": {
+    "customer": [
+      "reception",
+      "waiting",
+      "display",
+      "sales floor",
+      "billing counter",
+      "trial room"
+    ],
+    "staff": [
+      "workstations",
+      "manager cabin",
+      "meeting room",
+      "pantry",
+      "staff toilet",
+      "server/IT room"
+    ],
+    "service": [
+      "storage",
+      "back office",
+      "loading area",
+      "janitor closet",
+      "electrical room"
+    ],
+    "restaurant": [
+      "dining area",
+      "kitchen",
+      "preparation",
+      "wash",
+      "cold storage",
+      "dry storage",
+      "service counter"
+    ]
+  },
+  "healthcareRooms": {
+    "public": [
+      "reception",
+      "waiting",
+      "billing",
+      "pharmacy counter"
+    ],
+    "clinical": [
+      "consultation room",
+      "examination room",
+      "treatment room",
+      "procedure room",
+      "sample collection"
+    ],
+    "support": [
+      "sterilization",
+      "medical store",
+      "staff room",
+      "toilet",
+      "clean utility",
+      "dirty utility"
+    ]
+  },
+  "educationRooms": {
+    "learning": [
+      "classroom",
+      "lab",
+      "library",
+      "computer room",
+      "seminar room"
+    ],
+    "admin": [
+      "principal office",
+      "staff room",
+      "admin office",
+      "reception"
+    ],
+    "support": [
+      "toilet block",
+      "store",
+      "pantry",
+      "sports room",
+      "assembly hall"
+    ]
+  },
+  "industrialRooms": {
+    "production": [
+      "production bay",
+      "machine area",
+      "assembly line",
+      "workshop"
+    ],
+    "logistics": [
+      "loading bay",
+      "dispatch",
+      "raw material store",
+      "finished goods store"
+    ],
+    "support": [
+      "office",
+      "security cabin",
+      "worker toilet",
+      "locker room",
+      "electrical panel room",
+      "pump room"
+    ]
+  },
+  "roomRelationshipRules": [
+    "Entry should connect to public zone first, not directly into private bedroom zone.",
+    "Kitchen should connect to dining/service zone.",
+    "Toilets should group around wet walls or plumbing shafts where possible.",
+    "Bedrooms need privacy, window/ventilation, and practical furniture clearance.",
+    "Commercial plans need customer flow separated from staff/service flow where possible.",
+    "Healthcare plans need privacy and clean/dirty flow awareness.",
+    "Industrial plans need vehicle/material flow before aesthetics."
+  ]
+}

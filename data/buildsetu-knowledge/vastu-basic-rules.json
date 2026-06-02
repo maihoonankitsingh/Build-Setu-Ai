@@ -1,0 +1,94 @@
+{
+  "version": "1.0",
+  "disclaimer": "Use these as preference rules only. Practical planning, safety, structure, ventilation, local bylaws, and user requirements have higher priority.",
+  "priority": "Apply when possible without breaking usable layout logic.",
+  "rules": {
+    "entrance": {
+      "preferredZones": ["north", "east", "northeast"],
+      "avoidZones": [],
+      "notes": [
+        "Main entry should be clear, visible, and practical from road side.",
+        "Do not block entry with toilet, staircase clutter, or dead passage."
+      ]
+    },
+    "livingRoom": {
+      "preferredZones": ["north", "east", "northeast"],
+      "avoidZones": [],
+      "notes": [
+        "Living room should usually stay near main entry.",
+        "Guest access should not disturb private bedroom zone."
+      ]
+    },
+    "kitchen": {
+      "preferredZones": ["southeast", "northwest"],
+      "avoidZones": ["northeast", "center"],
+      "notes": [
+        "Southeast is commonly preferred for kitchen.",
+        "Northwest can be used as an alternate kitchen zone.",
+        "Kitchen should have ventilation and practical counter layout."
+      ]
+    },
+    "masterBedroom": {
+      "preferredZones": ["southwest", "south", "west"],
+      "avoidZones": ["northeast"],
+      "notes": [
+        "Master bedroom should be placed in a private zone where possible.",
+        "Attached toilet and wardrobe wall should be planned practically."
+      ]
+    },
+    "bedroom": {
+      "preferredZones": ["south", "west", "northwest"],
+      "avoidZones": [],
+      "notes": [
+        "Bedroom should have usable access, privacy, and exterior window where possible.",
+        "Avoid bedroom opening directly into kitchen."
+      ]
+    },
+    "toilet": {
+      "preferredZones": ["northwest", "west", "southeast"],
+      "avoidZones": ["northeast", "center"],
+      "notes": [
+        "Common toilet should be accessible from lobby, living, or dining without entering bedroom.",
+        "Attached toilet should be accessible from its bedroom only.",
+        "Prefer aligning toilets near plumbing shaft or wet wall."
+      ]
+    },
+    "pooja": {
+      "preferredZones": ["northeast", "east", "north"],
+      "avoidZones": ["toilet-adjacent-conflict"],
+      "notes": [
+        "Northeast is commonly preferred for pooja.",
+        "Avoid pooja sharing direct conflict with toilet wall when possible."
+      ]
+    },
+    "staircase": {
+      "preferredZones": ["south", "west", "southwest"],
+      "avoidZones": ["northeast", "center"],
+      "notes": [
+        "Staircase should support future floor access and practical circulation.",
+        "For rental or independent upper-floor use, external or semi-external stair is preferred."
+      ]
+    },
+    "parking": {
+      "preferredZones": ["road-side-front"],
+      "avoidZones": [],
+      "notes": [
+        "Parking is usually placed toward road side.",
+        "Parking should not fully block main pedestrian entry."
+      ]
+    },
+    "waterStorage": {
+      "preferredZones": ["northeast", "north", "east"],
+      "avoidZones": [],
+      "notes": [
+        "Use only as a soft preference. Structural and plumbing practicality must be checked."
+      ]
+    }
+  },
+  "conflictHandling": [
+    "Functionality, safety, daylight, ventilation, structure, and local rules have higher priority than vastu.",
+    "If plot size is small, mark vastu compromises clearly.",
+    "Do not force vastu if it causes unusable circulation, missing rooms, or wrong room count.",
+    "If user explicitly asks strict vastu, ask for plot facing, road side, dimensions, and north direction before final planning."
+  ]
+}

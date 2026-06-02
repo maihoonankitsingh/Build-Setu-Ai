@@ -1,0 +1,262 @@
+{
+  "version": "3.0",
+  "purpose": "Complete house/building construction workflow knowledge for agent task planning.",
+  "masterStages": [
+    {
+      "stage": "01 Client Requirement And Project Intake",
+      "tasks": [
+        "client brief",
+        "site location",
+        "plot dimensions",
+        "road side",
+        "north direction",
+        "budget",
+        "family size",
+        "building type",
+        "floor count",
+        "room requirements",
+        "style preference",
+        "vastu preference",
+        "timeline",
+        "future expansion",
+        "rental/commercial use",
+        "parking requirement"
+      ],
+      "agentOutput": [
+        "brief summary",
+        "missing inputs",
+        "assumptions",
+        "project classification"
+      ]
+    },
+    {
+      "stage": "02 Site Study And Feasibility",
+      "tasks": [
+        "site measurement",
+        "neighbor constraints",
+        "road width",
+        "setback assumptions",
+        "slope/drainage",
+        "sun/wind direction",
+        "access",
+        "utilities availability",
+        "soil-test recommendation",
+        "local bylaw check"
+      ],
+      "agentOutput": [
+        "site analysis",
+        "risk flags",
+        "survey checklist"
+      ]
+    },
+    {
+      "stage": "03 Concept Architecture Planning",
+      "tasks": [
+        "space program",
+        "zoning",
+        "bubble diagram",
+        "room adjacency",
+        "circulation",
+        "floor plan concept",
+        "parking/stair/lift/core planning",
+        "open spaces",
+        "light ventilation",
+        "vastu balancing"
+      ],
+      "agentOutput": [
+        "concept plan JSON",
+        "room schedule",
+        "layout logic",
+        "image prompt for floor plan"
+      ]
+    },
+    {
+      "stage": "04 Design Development",
+      "tasks": [
+        "floor plan refinement",
+        "elevation concept",
+        "sections concept",
+        "interior layout",
+        "material palette",
+        "door-window placement",
+        "furniture layout",
+        "false ceiling concept",
+        "lighting concept"
+      ],
+      "agentOutput": [
+        "refined plan notes",
+        "elevation prompt",
+        "interior prompt",
+        "coordination warnings"
+      ]
+    },
+    {
+      "stage": "05 Structural Coordination",
+      "tasks": [
+        "structural system selection concept",
+        "column grid logic",
+        "beam-slab coordination",
+        "stair opening",
+        "foundation/soil-test flag",
+        "large span warnings",
+        "cantilever warnings",
+        "renovation wall-removal warning"
+      ],
+      "agentOutput": [
+        "structure concept notes",
+        "engineer review list",
+        "conflict flags"
+      ]
+    },
+    {
+      "stage": "06 MEP Coordination",
+      "tasks": [
+        "plumbing shaft planning",
+        "toilet/kitchen wet-wall grouping",
+        "water tank/pump concept",
+        "electrical DB zone",
+        "lighting/power points concept",
+        "AC outdoor unit planning",
+        "ventilation/exhaust",
+        "fire safety flags",
+        "ELV/CCTV/data/home automation routes"
+      ],
+      "agentOutput": [
+        "MEP strategy",
+        "shaft/electrical/HVAC zones",
+        "coordination warnings"
+      ]
+    },
+    {
+      "stage": "07 Approval And Statutory Readiness",
+      "tasks": [
+        "local bylaw check",
+        "setback/FAR/height/coverage check",
+        "fire NOC need check",
+        "accessibility check",
+        "structural certificate requirement",
+        "MEP/fire consultant requirement"
+      ],
+      "agentOutput": [
+        "approval checklist",
+        "not-certified warning",
+        "professional documents list"
+      ]
+    },
+    {
+      "stage": "08 BOQ Estimate And Procurement",
+      "tasks": [
+        "scope definition",
+        "quantity takeoff assumptions",
+        "material specifications",
+        "rate analysis",
+        "BOQ",
+        "BBS requirement",
+        "vendor comparison",
+        "procurement schedule"
+      ],
+      "agentOutput": [
+        "BOQ scope",
+        "missing drawing warnings",
+        "material list"
+      ]
+    },
+    {
+      "stage": "09 Site Execution Civil Works",
+      "tasks": [
+        "site cleaning",
+        "layout marking",
+        "excavation",
+        "PCC",
+        "footing",
+        "plinth beam",
+        "backfilling",
+        "DPC/waterproofing",
+        "columns",
+        "beams",
+        "slab",
+        "staircase",
+        "masonry",
+        "lintel",
+        "chajja",
+        "plaster",
+        "screed",
+        "waterproofing"
+      ],
+      "agentOutput": [
+        "execution checklist",
+        "quality check points",
+        "sequence"
+      ]
+    },
+    {
+      "stage": "10 MEP Rough-In Execution",
+      "tasks": [
+        "electrical conduit",
+        "plumbing lines",
+        "drainage slope",
+        "AC copper/drain route",
+        "fire pipes if applicable",
+        "data/CCTV wiring",
+        "junction boxes",
+        "pressure testing",
+        "sleeves and core coordination"
+      ],
+      "agentOutput": [
+        "MEP rough-in checklist",
+        "before-plaster checks"
+      ]
+    },
+    {
+      "stage": "11 Finishing Works",
+      "tasks": [
+        "flooring",
+        "wall tiles",
+        "bathroom fittings",
+        "kitchen counter",
+        "doors/windows",
+        "false ceiling",
+        "painting",
+        "texture",
+        "modular furniture",
+        "lighting fixtures",
+        "switch plates",
+        "sanitary fixtures",
+        "railings",
+        "facade finish",
+        "landscape"
+      ],
+      "agentOutput": [
+        "finish schedule",
+        "room-wise checklist",
+        "material coordination"
+      ]
+    },
+    {
+      "stage": "12 Testing Handover Maintenance",
+      "tasks": [
+        "plumbing leakage test",
+        "electrical testing",
+        "earthing check",
+        "pump test",
+        "AC drain check",
+        "door/window operation",
+        "snag list",
+        "as-built drawings",
+        "warranty documents",
+        "maintenance guide"
+      ],
+      "agentOutput": [
+        "handover checklist",
+        "snag format",
+        "maintenance notes"
+      ]
+    }
+  ],
+  "agentBehavior": [
+    "When user asks any house-building task, map it to one or more stages.",
+    "Never treat image generation as the whole project.",
+    "Always separate design, structure, MEP, estimate, execution, and handover tasks.",
+    "For construction-sensitive output, add professional verification warning."
+  ]
+}

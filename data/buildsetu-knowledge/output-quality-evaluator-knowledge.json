@@ -1,0 +1,68 @@
+{
+  "version": "1.0",
+  "purpose": "BuildSetu final output quality evaluator and self-check framework.",
+  "globalRules": [
+    "Check output before final response or final imagePrompt.",
+    "Reject scope mismatch.",
+    "Reject module mismatch.",
+    "Reject old empty project brief conflicts.",
+    "Reject missing professional verification boundary for approval/execution/structure/MEP/fire/legal rules.",
+    "For image prompts, reject wrong visual type such as 3D exterior when floor plan was requested, interior render when floor plan was requested, or floor plan when exterior was requested.",
+    "For text modules, imagePrompt must be empty.",
+    "For image modules, imagePrompt must be clean, scoped and visual-specific.",
+    "If location-sensitive rules are requested, country/state/city/local authority must be considered.",
+    "If exact legal compliance is requested without enough location data, ask missing critical data instead of inventing rules."
+  ],
+  "moduleExpectations": {
+    "floor_plan_2d": {
+      "outputMode": "image",
+      "mustBe": ["top-view 2D architectural floor plan", "room labels", "dimensions", "doors/windows", "north/facing/context if available"],
+      "mustAvoid": ["3D exterior", "interior render", "facade elevation", "random perspective view"]
+    },
+    "interior_render": {
+      "outputMode": "image",
+      "mustBe": ["room interior", "furniture layout", "materials", "lighting", "camera angle", "style"],
+      "mustAvoid": ["full house floor plan", "exterior facade", "structural drawing"]
+    },
+    "exterior_elevation": {
+      "outputMode": "image",
+      "mustBe": ["facade/elevation", "floor count", "balcony/window/gate if requested", "materials", "lighting"],
+      "mustAvoid": ["bedroom interior", "full floor plan", "BOQ", "BBS"]
+    },
+    "structure_concept": {
+      "outputMode": "text",
+      "mustBe": ["structural concept", "code-reference family", "soil/span/foundation warning", "licensed structural engineer boundary"],
+      "mustAvoid": ["final beam size", "final column size", "final reinforcement", "certified calculation"]
+    },
+    "electrical_concept": {
+      "outputMode": "text",
+      "mustBe": ["DB location", "switch/socket zones", "lighting/fan/power points", "earthing", "electrical professional verification"],
+      "mustAvoid": ["certified load calculation", "final cable size", "final MCB rating"]
+    },
+    "plumbing_concept": {
+      "outputMode": "text",
+      "mustBe": ["wet-wall grouping", "shaft", "water supply", "soil/waste/vent", "tank/pump", "MEP/plumbing verification"],
+      "mustAvoid": ["final pipe sizing", "final hydraulic calculation", "final slope certification"]
+    },
+    "boq_document": {
+      "outputMode": "text",
+      "mustBe": ["assumptions", "trade-wise BOQ", "drawing dependency", "estimate boundary"],
+      "mustAvoid": ["final tender quantity without drawings", "certified cost"]
+    },
+    "bbs_document": {
+      "outputMode": "text",
+      "mustBe": ["structural drawings required", "member schedule", "bar dia/spacing/laps/hooks data requirement", "do not invent reinforcement"],
+      "mustAvoid": ["fake steel quantity", "invented reinforcement"]
+    }
+  },
+  "finalChecks": [
+    "scope_check",
+    "module_check",
+    "output_mode_check",
+    "jurisdiction_check",
+    "brief_conflict_check",
+    "certification_boundary_check",
+    "visual_type_check",
+    "missing_info_check"
+  ]
+}

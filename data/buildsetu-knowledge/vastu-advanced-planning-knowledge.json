@@ -1,0 +1,104 @@
+{
+  "version": "3.0",
+  "purpose": "Expanded vastu planning preferences for Indian building concept planning.",
+  "boundary": "Vastu is treated as user preference, not as a replacement for safety, function, structure, ventilation, or local code.",
+  "zones": {
+    "northeast": {
+      "preferred": [
+        "pooja",
+        "living",
+        "water feature",
+        "open/light zone"
+      ],
+      "avoid": [
+        "toilet",
+        "heavy stair",
+        "heavy storage",
+        "kitchen where possible"
+      ]
+    },
+    "southeast": {
+      "preferred": [
+        "kitchen",
+        "electrical/fire-related service concept"
+      ],
+      "avoid": [
+        "master bedroom where possible"
+      ]
+    },
+    "southwest": {
+      "preferred": [
+        "master bedroom",
+        "heavy storage"
+      ],
+      "avoid": [
+        "toilet/entry if avoidable",
+        "large opening if privacy issue"
+      ]
+    },
+    "northwest": {
+      "preferred": [
+        "guest bedroom",
+        "toilet",
+        "utility",
+        "secondary kitchen option"
+      ],
+      "avoid": []
+    },
+    "north": {
+      "preferred": [
+        "entry",
+        "living",
+        "office",
+        "openings"
+      ],
+      "avoid": []
+    },
+    "east": {
+      "preferred": [
+        "entry",
+        "living",
+        "study",
+        "balcony/opening"
+      ],
+      "avoid": []
+    },
+    "south": {
+      "preferred": [
+        "stair",
+        "bedroom",
+        "storage"
+      ],
+      "avoid": [
+        "large unshaded heat-gain openings if climate issue"
+      ]
+    },
+    "west": {
+      "preferred": [
+        "stair",
+        "toilet",
+        "bedroom with shading"
+      ],
+      "avoid": [
+        "large unshaded openings if heat issue"
+      ]
+    },
+    "center": {
+      "preferred": [
+        "open circulation",
+        "light court if design supports"
+      ],
+      "avoid": [
+        "toilet",
+        "heavy stair",
+        "cluttered service core"
+      ]
+    }
+  },
+  "conflictResolution": [
+    "First satisfy room count, access, daylight, ventilation, plumbing, structure, and safety.",
+    "Then apply vastu zones where practical.",
+    "If strict vastu conflicts with plot size/function, list compromise options.",
+    "Always need actual north direction, road side, and plot dimensions for serious vastu planning."
+  ]
+}

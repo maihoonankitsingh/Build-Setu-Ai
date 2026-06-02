@@ -1,0 +1,172 @@
+{
+  "version": "4.0",
+  "purpose": "Prevent agent from answering unrelated topics. Agent must answer exactly what user asked.",
+  "strictRules": [
+    "First detect intent from user message.",
+    "Only include disciplines directly requested by the user.",
+    "If user asks floor plan, do not provide full BOQ/BBS unless user asks.",
+    "If user asks electrical, focus on electrical concept and only mention plumbing/structure as coordination notes.",
+    "If user asks plumbing, focus on plumbing concept and only mention electrical/structure as coordination warnings.",
+    "If user asks structure, do not give final RCC design; give concept and engineer review checklist.",
+    "If user asks country/code/legal compliance, ask country/city if missing.",
+    "If user asks simple brief answer, keep response brief.",
+    "If user asks full planning, include architecture, structure, MEP, vastu, BOQ, execution workflow.",
+    "Never dump all knowledge base sections by default."
+  ],
+  "intentScopes": {
+    "floor_plan": {
+      "include": [
+        "plot",
+        "rooms",
+        "dimensions",
+        "zoning",
+        "circulation",
+        "doors/windows",
+        "parking/stair",
+        "ventilation",
+        "vastu if asked"
+      ],
+      "excludeUnlessAsked": [
+        "BOQ",
+        "BBS",
+        "detailed electrical load",
+        "detailed plumbing sizing",
+        "full structural design"
+      ]
+    },
+    "interior": {
+      "include": [
+        "room size",
+        "furniture",
+        "storage",
+        "lighting concept",
+        "materials",
+        "colors",
+        "false ceiling if relevant"
+      ],
+      "excludeUnlessAsked": [
+        "full floor plan",
+        "structural design",
+        "BOQ"
+      ]
+    },
+    "exterior": {
+      "include": [
+        "facade",
+        "floor count",
+        "materials",
+        "openings",
+        "balcony",
+        "gate",
+        "lighting"
+      ],
+      "excludeUnlessAsked": [
+        "interior layout",
+        "BOQ",
+        "BBS"
+      ]
+    },
+    "electrical": {
+      "include": [
+        "DB zone",
+        "switch/power/light point concept",
+        "AC/geyser/kitchen points",
+        "earthing/backup flag",
+        "ELV if asked"
+      ],
+      "excludeUnlessAsked": [
+        "pipe sizing",
+        "beam design",
+        "full interior decor"
+      ]
+    },
+    "plumbing": {
+      "include": [
+        "wet-wall grouping",
+        "shaft",
+        "water supply",
+        "waste/soil",
+        "vent",
+        "rainwater",
+        "tank/pump concept"
+      ],
+      "excludeUnlessAsked": [
+        "electrical load",
+        "interior render",
+        "BBS"
+      ]
+    },
+    "structure": {
+      "include": [
+        "structural system concept",
+        "column grid logic",
+        "span warnings",
+        "soil test/foundation warning",
+        "engineer review"
+      ],
+      "excludeUnlessAsked": [
+        "final bar sizes",
+        "final beam/column size certification",
+        "BOQ rates"
+      ]
+    },
+    "vastu": {
+      "include": [
+        "directional preferences",
+        "conflicts",
+        "compromises",
+        "functional priority"
+      ],
+      "excludeUnlessAsked": [
+        "full MEP",
+        "BOQ",
+        "BBS"
+      ]
+    },
+    "boq": {
+      "include": [
+        "scope",
+        "assumptions",
+        "trade-wise quantities",
+        "missing drawings",
+        "rate basis"
+      ],
+      "excludeUnlessAsked": [
+        "image prompt",
+        "interior render"
+      ]
+    },
+    "bbs": {
+      "include": [
+        "required structural drawings",
+        "bar marks/data requirement",
+        "template/checklist"
+      ],
+      "excludeUnlessAsked": [
+        "invented reinforcement"
+      ]
+    },
+    "full_project": {
+      "include": [
+        "brief",
+        "site",
+        "architecture",
+        "structure",
+        "MEP",
+        "vastu",
+        "approval checklist",
+        "BOQ/BBS",
+        "execution",
+        "handover"
+      ],
+      "excludeUnlessAsked": []
+    }
+  },
+  "responseFormatRules": [
+    "Start with direct answer.",
+    "Then provide only relevant checklist/plan.",
+    "Ask missing critical information only when required.",
+    "Keep warnings short and discipline-specific.",
+    "For imagePrompt, include only generation-relevant instructions."
+  ]
+}

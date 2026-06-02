@@ -1,0 +1,117 @@
+{
+  "version": "2.0",
+  "purpose": "Concept-level MEP awareness for architecture planning.",
+  "safetyNote": "MEP routing/load sizing/fire system design must be verified by qualified professionals. Agent should coordinate and flag requirements, not certify design.",
+  "systems": {
+    "plumbing": {
+      "includes": [
+        "water supply",
+        "hot water",
+        "soil/waste",
+        "vent pipe",
+        "shaft",
+        "septic/STP connection",
+        "rainwater drainage"
+      ],
+      "rules": [
+        "Group toilets/kitchen/utility near wet walls/shafts where possible.",
+        "Avoid routing plumbing through major living spaces where avoidable.",
+        "Provide shaft access for maintenance in multi-storey buildings.",
+        "Rainwater drainage must consider roof/terrace slopes and downpipes."
+      ]
+    },
+    "electrical": {
+      "includes": [
+        "meter",
+        "main distribution board",
+        "sub DB",
+        "lighting",
+        "power points",
+        "AC points",
+        "earthing",
+        "backup power"
+      ],
+      "rules": [
+        "Electrical room/panel should be accessible and protected from wet areas.",
+        "Kitchen, HVAC, lift, pumps, and commercial equipment need dedicated load planning.",
+        "Avoid placing DB in toilet/wet areas.",
+        "Public/commercial projects need emergency lighting/signage planning."
+      ]
+    },
+    "hvac": {
+      "includes": [
+        "split AC",
+        "ducted AC",
+        "fresh air",
+        "exhaust",
+        "kitchen ventilation",
+        "toilet exhaust"
+      ],
+      "rules": [
+        "AC outdoor unit placement must be planned.",
+        "Toilets/kitchens/closed rooms need exhaust strategy.",
+        "Commercial spaces need HVAC zoning and ceiling/service depth coordination.",
+        "Avoid ducts crossing beams without coordination."
+      ]
+    },
+    "fireSafety": {
+      "includes": [
+        "extinguisher",
+        "hydrant",
+        "sprinkler",
+        "fire alarm",
+        "smoke detector",
+        "exit signage",
+        "fire staircase"
+      ],
+      "rules": [
+        "For high-occupancy/commercial/institutional/multi-storey projects, flag fire consultant/code compliance requirement.",
+        "Keep clear exit paths and avoid blocking exits with furniture/storage."
+      ]
+    },
+    "elvLowVoltage": {
+      "includes": [
+        "CCTV",
+        "Wi-Fi",
+        "data",
+        "intercom",
+        "access control",
+        "doorbell",
+        "home automation"
+      ],
+      "rules": [
+        "Plan low-voltage routes early to avoid exposed wiring.",
+        "Server/network cabinet should have ventilation and power backup if needed."
+      ]
+    },
+    "gasAndKitchenServices": {
+      "includes": [
+        "gas line",
+        "chimney",
+        "exhaust",
+        "grease trap for commercial kitchen"
+      ],
+      "rules": [
+        "Restaurant/cloud kitchen needs stronger exhaust, wash, storage, and fire safety planning.",
+        "Domestic kitchen needs chimney/exhaust and practical appliance positions."
+      ]
+    }
+  },
+  "mepCoordinationChecks": [
+    "Wet areas stacked or grouped where possible.",
+    "Shafts shown for multi-storey toilet/kitchen clusters.",
+    "Electrical panel not in wet zone.",
+    "AC outdoor units have serviceable location.",
+    "Toilet/kitchen exhaust path exists.",
+    "Commercial kitchen has wash, storage, exhaust, and service flow.",
+    "Fire/life-safety flags included for public/high-occupancy buildings."
+  ],
+  "outputFieldsAgentShouldCreate": [
+    "mepStrategy",
+    "plumbingShafts",
+    "electricalPanelZones",
+    "hvacVentilationStrategy",
+    "fireSafetyFlags",
+    "serviceCoordinationWarnings"
+  ]
+}

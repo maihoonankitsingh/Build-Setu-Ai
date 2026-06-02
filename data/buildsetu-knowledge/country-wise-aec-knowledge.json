@@ -1,0 +1,495 @@
+{
+  "version": "4.0",
+  "purpose": "Country/region-aware AEC planning knowledge for BuildSetu. Use as routing and caution layer, not as final legal/code certification.",
+  "globalRule": [
+    "Always detect project country, state/province/emirate, city/local authority if available.",
+    "If country/location is missing and the question is code-sensitive, ask for country/city first.",
+    "For concept-only tasks, proceed with clearly marked assumptions.",
+    "Never claim final code compliance without local authority, licensed architect/engineer, and latest applicable standards.",
+    "Country knowledge must influence terminology, units, climate/service concerns, common regulatory references, and required professional checks.",
+    "Answer only the user's requested scope. Do not dump unrelated architecture/MEP/structure details unless user asks for full planning."
+  ],
+  "unitsByRegion": {
+    "metricDefault": [
+      "EU",
+      "UK",
+      "UAE",
+      "Saudi Arabia",
+      "Singapore",
+      "Australia",
+      "Canada",
+      "India",
+      "Nepal",
+      "Bangladesh",
+      "Qatar",
+      "Oman",
+      "Kuwait",
+      "Bahrain",
+      "South Africa"
+    ],
+    "imperialCommon": [
+      "USA"
+    ],
+    "indiaPractical": [
+      "feet for client discussion",
+      "mm/m for drawings and engineering coordination"
+    ]
+  },
+  "countryProfiles": {
+    "India": {
+      "aliases": [
+        "india",
+        "bharat",
+        "indian"
+      ],
+      "units": [
+        "feet for client planning",
+        "mm/m for drawings"
+      ],
+      "commonReferences": [
+        "NBC/BIS",
+        "local municipal bylaws",
+        "state development control rules",
+        "fire NOC where applicable",
+        "RERA/approval context where applicable"
+      ],
+      "planningNotes": [
+        "Vastu often treated as client preference.",
+        "Plot-facing and road-side are important for residential planning.",
+        "Local setbacks, FAR/FSI, height, coverage, parking and fire rules vary by city/state.",
+        "Residential clients often expect BHK, parking, staircase, pooja, utility, balcony, and future expansion logic."
+      ],
+      "askWhenMissing": [
+        "city/location",
+        "plot size",
+        "road side",
+        "north direction/facing",
+        "floor count",
+        "residential/commercial use"
+      ]
+    },
+    "USA": {
+      "aliases": [
+        "usa",
+        "united states",
+        "america",
+        "u.s.",
+        "us"
+      ],
+      "units": [
+        "feet/inches"
+      ],
+      "commonReferences": [
+        "ICC I-Codes",
+        "IBC/IRC depending project",
+        "local city/county/state amendments",
+        "NFPA/fire references",
+        "ADA/accessibility where applicable"
+      ],
+      "planningNotes": [
+        "Code adoption is jurisdiction-dependent.",
+        "Residential vs commercial classification changes code path.",
+        "Energy, egress, accessibility, seismic/wind/flood zones can be location-specific."
+      ],
+      "askWhenMissing": [
+        "state",
+        "city/county",
+        "residential or commercial",
+        "occupancy/use",
+        "new build or renovation"
+      ]
+    },
+    "UK": {
+      "aliases": [
+        "uk",
+        "united kingdom",
+        "england",
+        "scotland",
+        "wales",
+        "northern ireland"
+      ],
+      "units": [
+        "metric"
+      ],
+      "commonReferences": [
+        "UK Building Regulations",
+        "Approved Documents",
+        "local planning authority",
+        "British Standards/Eurocode context"
+      ],
+      "planningNotes": [
+        "Planning permission and building regulations are separate concerns.",
+        "Part B fire, Part M access, Part L energy, drainage and structure checks are common coordination flags."
+      ],
+      "askWhenMissing": [
+        "nation within UK",
+        "local authority",
+        "use class",
+        "new build/extension/loft/renovation"
+      ]
+    },
+    "EuropeanUnion": {
+      "aliases": [
+        "eu",
+        "europe",
+        "germany",
+        "france",
+        "italy",
+        "spain",
+        "netherlands",
+        "belgium",
+        "poland",
+        "sweden",
+        "austria",
+        "ireland"
+      ],
+      "units": [
+        "metric"
+      ],
+      "commonReferences": [
+        "Eurocodes for structural design",
+        "national annexes",
+        "country/local building regulations",
+        "fire/accessibility/energy rules by country"
+      ],
+      "planningNotes": [
+        "Eurocodes are structural design standards, but local building approval rules remain national/local.",
+        "National Annex and local authority requirements must be checked."
+      ],
+      "askWhenMissing": [
+        "country",
+        "city/local authority",
+        "building use",
+        "new build/renovation"
+      ]
+    },
+    "UAE": {
+      "aliases": [
+        "uae",
+        "dubai",
+        "abu dhabi",
+        "sharjah",
+        "emirates"
+      ],
+      "units": [
+        "metric"
+      ],
+      "commonReferences": [
+        "emirate municipality/building regulations",
+        "civil defence/fire safety",
+        "green building rules where applicable",
+        "authority approvals"
+      ],
+      "planningNotes": [
+        "Emirate and authority matter heavily.",
+        "Fire/life-safety, MEP, parking, accessibility and facade approvals can be strict."
+      ],
+      "askWhenMissing": [
+        "emirate",
+        "authority/free-zone if any",
+        "building type",
+        "plot/community rules"
+      ]
+    },
+    "SaudiArabia": {
+      "aliases": [
+        "saudi",
+        "ksa",
+        "saudi arabia",
+        "riyadh",
+        "jeddah"
+      ],
+      "units": [
+        "metric"
+      ],
+      "commonReferences": [
+        "Saudi Building Code",
+        "municipality requirements",
+        "civil defence/fire safety",
+        "MEP approvals"
+      ],
+      "planningNotes": [
+        "Climate, heat gain, shading, HVAC, and prayer/family privacy patterns may affect planning.",
+        "Local municipality and civil defence checks are required for code-sensitive projects."
+      ],
+      "askWhenMissing": [
+        "city",
+        "building type",
+        "plot size",
+        "authority requirement"
+      ]
+    },
+    "Singapore": {
+      "aliases": [
+        "singapore",
+        "sg"
+      ],
+      "units": [
+        "metric"
+      ],
+      "commonReferences": [
+        "BCA/building control",
+        "SCDF fire safety",
+        "URA/planning where applicable",
+        "PUB/drainage where applicable"
+      ],
+      "planningNotes": [
+        "Authority approvals and fire safety are major coordination points.",
+        "Space efficiency, services, and accessibility are important."
+      ],
+      "askWhenMissing": [
+        "project type",
+        "new build/interior fit-out",
+        "authority context",
+        "floor area"
+      ]
+    },
+    "Australia": {
+      "aliases": [
+        "australia",
+        "au",
+        "nsw",
+        "victoria",
+        "queensland",
+        "melbourne",
+        "sydney"
+      ],
+      "units": [
+        "metric"
+      ],
+      "commonReferences": [
+        "NCC/BCA",
+        "Australian Standards",
+        "state/local council planning",
+        "bushfire/flood/wind where applicable"
+      ],
+      "planningNotes": [
+        "State/local council and site hazard overlays matter.",
+        "Residential, commercial, accessibility, bushfire and energy rules can be location-specific."
+      ],
+      "askWhenMissing": [
+        "state",
+        "council/suburb",
+        "building class/use",
+        "new build/renovation"
+      ]
+    },
+    "Canada": {
+      "aliases": [
+        "canada",
+        "ontario",
+        "toronto",
+        "vancouver",
+        "british columbia",
+        "alberta"
+      ],
+      "units": [
+        "metric with imperial commonly used by clients"
+      ],
+      "commonReferences": [
+        "National Building Code of Canada model context",
+        "provincial building codes",
+        "municipal permits",
+        "fire/accessibility/energy rules"
+      ],
+      "planningNotes": [
+        "Province and municipality determine enforceable requirements.",
+        "Snow load, frost depth, energy and fire separation can be location-sensitive."
+      ],
+      "askWhenMissing": [
+        "province",
+        "city/municipality",
+        "building use",
+        "new build/addition/renovation"
+      ]
+    },
+    "Qatar": {
+      "aliases": [
+        "qatar",
+        "doha"
+      ],
+      "units": [
+        "metric"
+      ],
+      "commonReferences": [
+        "municipality approvals",
+        "civil defence",
+        "Kahramaa/utilities coordination",
+        "local authority requirements"
+      ],
+      "planningNotes": [
+        "Heat, HVAC, parking, fire and authority approvals are key."
+      ],
+      "askWhenMissing": [
+        "city/authority",
+        "building type",
+        "plot/community rules"
+      ]
+    },
+    "Oman": {
+      "aliases": [
+        "oman",
+        "muscat"
+      ],
+      "units": [
+        "metric"
+      ],
+      "commonReferences": [
+        "municipality requirements",
+        "civil defence",
+        "utility authority requirements"
+      ],
+      "planningNotes": [
+        "Climate, shading, ventilation, parking and local approval rules matter."
+      ],
+      "askWhenMissing": [
+        "city/municipality",
+        "building type",
+        "plot size"
+      ]
+    },
+    "Kuwait": {
+      "aliases": [
+        "kuwait"
+      ],
+      "units": [
+        "metric"
+      ],
+      "commonReferences": [
+        "municipality requirements",
+        "fire department/civil defence",
+        "MEP utility approvals"
+      ],
+      "planningNotes": [
+        "Heat, HVAC, family privacy, parking and authority approvals matter."
+      ],
+      "askWhenMissing": [
+        "area/authority",
+        "building type",
+        "plot size"
+      ]
+    },
+    "Bahrain": {
+      "aliases": [
+        "bahrain",
+        "manama"
+      ],
+      "units": [
+        "metric"
+      ],
+      "commonReferences": [
+        "municipality",
+        "civil defence",
+        "utility approvals"
+      ],
+      "planningNotes": [
+        "Authority approval, HVAC, fire and parking coordination matter."
+      ],
+      "askWhenMissing": [
+        "municipality/area",
+        "building type",
+        "plot size"
+      ]
+    },
+    "Nepal": {
+      "aliases": [
+        "nepal",
+        "kathmandu"
+      ],
+      "units": [
+        "feet and metric mixed"
+      ],
+      "commonReferences": [
+        "local municipality",
+        "National Building Code context",
+        "seismic safety checks"
+      ],
+      "planningNotes": [
+        "Seismic/earthquake-resistant structural design check is important.",
+        "Local municipality and engineer review required."
+      ],
+      "askWhenMissing": [
+        "city/municipality",
+        "plot size",
+        "road side",
+        "floor count"
+      ]
+    },
+    "Bangladesh": {
+      "aliases": [
+        "bangladesh",
+        "dhaka",
+        "chittagong"
+      ],
+      "units": [
+        "feet and metric mixed"
+      ],
+      "commonReferences": [
+        "BNBC/local authority",
+        "fire service/civil defence where applicable",
+        "utility approvals"
+      ],
+      "planningNotes": [
+        "Flood/drainage, fire safety, structure and authority approval checks are important."
+      ],
+      "askWhenMissing": [
+        "city",
+        "plot size",
+        "building type",
+        "floor count"
+      ]
+    },
+    "SouthAfrica": {
+      "aliases": [
+        "south africa",
+        "johannesburg",
+        "cape town",
+        "durban"
+      ],
+      "units": [
+        "metric"
+      ],
+      "commonReferences": [
+        "National Building Regulations/SANS context",
+        "local municipality approval",
+        "fire/accessibility where applicable"
+      ],
+      "planningNotes": [
+        "Municipal approval, energy/water, fire and structure checks are important."
+      ],
+      "askWhenMissing": [
+        "city/municipality",
+        "building use",
+        "new build/renovation"
+      ]
+    },
+    "DefaultWorldwide": {
+      "aliases": [
+        "default",
+        "worldwide",
+        "unknown"
+      ],
+      "units": [
+        "ask country first"
+      ],
+      "commonReferences": [
+        "local building code",
+        "local planning authority",
+        "licensed architect/engineer",
+        "fire authority",
+        "utility authorities"
+      ],
+      "planningNotes": [
+        "Country/city missing: give concept answer only.",
+        "Ask location before code-sensitive dimensions, fire, structure, MEP, approval or accessibility claims.",
+        "Use global best-practice planning language, not legal compliance language."
+      ],
+      "askWhenMissing": [
+        "country",
+        "city/local authority",
+        "building type",
+        "project stage"
+      ]
+    }
+  }
+}

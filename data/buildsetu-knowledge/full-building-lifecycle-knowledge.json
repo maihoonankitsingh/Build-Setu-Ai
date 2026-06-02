@@ -1,0 +1,102 @@
+{
+  "version": "1.0",
+  "purpose": "Complete building lifecycle knowledge for BuildSetu agent: architecture, structure, MEP, construction, interiors, exterior, approvals, BOQ, quality, handover and maintenance.",
+  "globalRules": [
+    "Understand building creation as a lifecycle, not only a floor plan.",
+    "Separate design stage, approval stage, working drawing/GFC stage, execution stage, handover stage and maintenance stage.",
+    "Never claim final approval, structural safety, MEP compliance, fire compliance, cost certainty or execution validity without licensed professional/local authority verification.",
+    "For concept answers, provide practical sequence and assumptions.",
+    "For execution answers, mention required drawings, site verification, professional sign-off and QA/QC checks.",
+    "For each project, connect architecture, structure, MEP, interiors, exterior, BOQ and construction sequence."
+  ],
+  "lifecycleStages": {
+    "01ClientBrief": {
+      "purpose": "Define requirement before design.",
+      "inputs": ["building type", "plot/location", "budget", "family/user needs", "room count", "style", "timeline", "authority constraints"],
+      "outputs": ["project brief", "scope definition", "initial assumptions", "missing information list"]
+    },
+    "02SiteStudy": {
+      "purpose": "Understand site before planning.",
+      "inputs": ["site dimensions", "road width", "north/facing", "levels", "surroundings", "services", "access", "climate", "hazards"],
+      "outputs": ["site analysis", "setback/authority check list", "entry/parking/service strategy"]
+    },
+    "03SoilAndSurvey": {
+      "purpose": "Foundation and structural assumptions depend on site data.",
+      "inputs": ["soil test", "topographic survey", "existing utilities", "water table", "seismic/wind/flood context"],
+      "outputs": ["foundation design basis", "structural engineer inputs"],
+      "boundary": "Final foundation and structural design require geotechnical/structural engineer verification."
+    },
+    "04ConceptArchitecture": {
+      "purpose": "Create initial layout/design.",
+      "outputs": ["zoning", "floor plan options", "room sizes", "circulation", "parking", "stair/lift logic", "ventilation", "vastu if asked"]
+    },
+    "05StructureConcept": {
+      "purpose": "Coordinate structural system with architecture.",
+      "outputs": ["RCC/steel/load-bearing concept", "column grid logic", "span warnings", "foundation review flags", "stair/lift core coordination"],
+      "boundary": "No final beam/column/slab/footing/rebar sizes without licensed structural engineer."
+    },
+    "06MEPConcept": {
+      "purpose": "Coordinate building services early.",
+      "subsystems": ["electrical", "plumbing", "HVAC", "fire/life safety", "ELV/data/CCTV", "solar/rainwater where applicable"],
+      "outputs": ["DB/service zones", "shaft planning", "wet wall grouping", "AC outdoor/indoor strategy", "fire/access concept", "utility coordination"]
+    },
+    "07ApprovalSanction": {
+      "purpose": "Local authority submission where applicable.",
+      "outputs": ["site plan", "floor plans", "sections", "elevations", "area statement", "FAR/FSI", "setbacks", "coverage", "height", "parking", "fire/accessibility notes"],
+      "boundary": "Approval package requires local bylaws and licensed architect/authority verification."
+    },
+    "08WorkingDrawingsGFC": {
+      "purpose": "Prepare execution-ready coordinated drawings.",
+      "outputs": ["architecture working drawings", "structure drawings", "MEP drawings", "interior drawings", "exterior/facade details", "revision control", "GFC issue"],
+      "boundary": "GFC requires coordination and professional sign-off."
+    },
+    "09BOQEstimateProcurement": {
+      "purpose": "Quantities, cost and procurement planning.",
+      "outputs": ["trade-wise BOQ", "material specs", "rate assumptions", "labour scope", "procurement schedule", "cost risk notes"],
+      "boundary": "Final BOQ depends on complete coordinated drawings and specifications."
+    },
+    "10ConstructionExecution": {
+      "purpose": "Site construction sequence.",
+      "sequence": ["site setup", "setting out", "excavation", "PCC", "foundation", "plinth", "backfilling", "RCC frame", "slab", "masonry/blockwork", "MEP rough-in", "plaster", "waterproofing", "flooring", "doors/windows", "false ceiling", "painting", "fixtures", "final finishing"],
+      "checks": ["line/level/plumb", "material quality", "concrete quality", "curing", "waterproofing test", "MEP pressure/continuity tests", "site safety"]
+    },
+    "11InteriorFitout": {
+      "purpose": "Interior execution after civil/services coordination.",
+      "outputs": ["furniture/carpentry", "modular kitchen", "false ceiling", "lighting", "wall finishes", "flooring", "curtains", "fixtures", "loose furniture"],
+      "checks": ["site measurements", "service coordination", "material finish approval", "hardware quality", "clearance and usability"]
+    },
+    "12ExteriorFacade": {
+      "purpose": "Facade, elevation, gate, compound and landscape execution.",
+      "outputs": ["facade cladding/paint", "window/railing", "gate/compound wall", "facade lighting", "driveway/landscape"],
+      "checks": ["waterproofing", "structural support", "weather resistance", "maintenance access"]
+    },
+    "13TestingCommissioning": {
+      "purpose": "Verify building systems before handover.",
+      "checks": ["electrical testing", "earthing", "plumbing leak/pressure test", "drainage flow", "pump/tank check", "AC/exhaust", "fire systems where applicable", "snag list"]
+    },
+    "14HandoverAsBuiltMaintenance": {
+      "purpose": "Close project and prepare record.",
+      "outputs": ["as-built drawings", "warranty documents", "material list", "equipment manuals", "maintenance schedule", "completion/occupancy where applicable"]
+    }
+  },
+  "disciplinePackages": {
+    "architecture": ["concept plan", "approval drawings", "working drawings", "GFC", "as-built"],
+    "structure": ["soil report reference", "foundation", "columns", "beams", "slabs", "staircase", "reinforcement", "BBS", "structural notes"],
+    "mepElectrical": ["lighting", "power", "switchboards", "DB", "earthing", "backup", "ELV/data/CCTV", "testing"],
+    "mepPlumbing": ["water supply", "hot/cold water", "soil/waste/vent", "rainwater", "tank/pump", "sewer/septic/STP", "testing"],
+    "hvac": ["AC placement", "outdoor unit", "drain", "ducting where applicable", "ventilation/exhaust"],
+    "fireLifeSafety": ["egress", "staircase", "exit width", "fire equipment", "fire NOC/civil defence where applicable"],
+    "interior": ["furniture layout", "RCP/false ceiling", "lighting", "wall elevations", "carpentry", "modular kitchen", "material schedule", "BOQ"],
+    "exterior": ["elevation", "facade material", "cladding", "railing", "gate", "compound wall", "lighting", "landscape"],
+    "projectManagement": ["schedule", "procurement", "contractor coordination", "quality checklist", "snag list", "handover"]
+  },
+  "agentBehavior": [
+    "If user asks complete building process, answer lifecycle stage-wise.",
+    "If user asks any one discipline, keep scope focused but mention dependencies.",
+    "If user asks execution, mention required drawings and QA/QC checklist.",
+    "If user asks design generation, use lifecycle context silently and keep prompt scoped.",
+    "If user asks approval or rules, combine lifecycle with country/state rules router.",
+    "If user asks cost, combine lifecycle with BOQ/estimate assumptions.",
+    "If user asks final validity, state licensed professional/local authority requirement."
+  ]
+}

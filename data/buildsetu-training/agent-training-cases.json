@@ -1,0 +1,2203 @@
+[
+  {
+    "id": "feedback_e4b409f0995876e2248e",
+    "source": "agent_feedback_v1",
+    "feedbackId": "e4b409f0995876e2248e",
+    "projectId": "global",
+    "userId": "smoke-user",
+    "scope": "global",
+    "domain": "floor_plan",
+    "type": "training_example",
+    "title": "Approved exact dimension floor plan answer smoke",
+    "input": "30x50 east facing ground floor 2BHK plan batao\n\nFeedback instruction:\nApproved pattern: exact plot lock, zoning, vastu-aware but not overclaim, professional verification note.",
+    "idealOutput": "For a 30x50 east-facing ground-floor 2BHK concept, lock the plot as exactly 30 ft frontage x 50 ft depth. Keep entry/parking on the east/front side, living and drawing near entry, kitchen toward southeast if site constraints allow, bedrooms in the quieter private zone, toilets grouped for plumbing, and staircase placed so future floor access does not cut through bedrooms. Mark this as concept-level and verify structure, setbacks and local byelaws before execution.",
+    "rejectedOutput": "",
+    "feedbackText": "Approved pattern: exact plot lock, zoning, vastu-aware but not overclaim, professional verification note.",
+    "rating": 5,
+    "tags": [
+      "feedback_v1",
+      "training_example",
+      "floor_plan",
+      "smoke",
+      "approved_pattern",
+      "training_dataset"
+    ],
+    "extracted": {
+      "rules": [
+        "Approved pattern: exact plot lock, zoning, vastu-aware but not overclaim, professional verification note",
+        "For a 30x50 east-facing ground-floor 2BHK concept, lock the plot as exactly 30 ft frontage x 50 ft depth",
+        "Keep entry/parking on the east/front side, living and drawing near entry, kitchen toward southeast if site constraints allow, bedrooms in the quieter private zone, toilets grouped for plumbing, and staircase placed so future floor access does not cut through bedrooms"
+      ],
+      "preferences": [],
+      "avoid": [],
+      "approvedPatterns": [
+        "Approved pattern: exact plot lock, zoning, vastu-aware but not overclaim, professional verification note"
+      ],
+      "safetyNotes": [
+        "Mark this as concept-level and verify structure, setbacks and local byelaws before execution"
+      ],
+      "trainingSignals": [
+        "Rule: Approved pattern: exact plot lock, zoning, vastu-aware but not overclaim, professional verification note",
+        "Rule: For a 30x50 east-facing ground-floor 2BHK concept, lock the plot as exactly 30 ft frontage x 50 ft depth",
+        "Rule: Keep entry/parking on the east/front side, living and drawing near entry, kitchen toward southeast if site constraints allow, bedrooms in the quieter private zone, toilets grouped for plumbing, and staircase placed so future floor access does not cut through bedrooms",
+        "Approved pattern: Approved pattern: exact plot lock, zoning, vastu-aware but not overclaim, professional verification note",
+        "Safety: Mark this as concept-level and verify structure, setbacks and local byelaws before execution"
+      ]
+    },
+    "createdAt": "2026-06-02T14:29:47.828Z",
+    "updatedAt": "2026-06-02T14:29:47.828Z"
+  },
+  {
+    "id": "floor_plan_uae_villa_30x50_2bhk",
+    "intent": "floor_plan",
+    "country": "UAE",
+    "keywords": [
+      "dubai",
+      "uae",
+      "30x50",
+      "2bhk",
+      "villa",
+      "parking",
+      "staircase",
+      "2 toilet",
+      "naksha"
+    ],
+    "userInput": "Dubai UAE me 30x50 2BHK villa ka naksha chahiye, sirf floor plan, parking, staircase, 2 toilet aur dimensions ke saath",
+    "expectedBehavior": [
+      "Use current request temporary brief as source of truth.",
+      "Classify as UAE villa floor plan.",
+      "Keep scope locked to floor plan only.",
+      "Generate top-view 2D architectural floor-plan prompt.",
+      "Include plot dimensions, 2BHK, 2 toilets, parking, staircase, room labels, doors/windows, north/facing note.",
+      "Mention UAE municipality/civil defence/authority context only as concept reference.",
+      "Do not include BOQ/BBS/electrical/plumbing details unless requested.",
+      "Do not claim approval-ready drawing."
+    ],
+    "mustInclude": [
+      "CURRENT REQUEST TEMPORARY BRIEF — SOURCE OF TRUTH",
+      "Country: UAE",
+      "City/Authority context: Dubai",
+      "Building type: villa",
+      "Plot size: 30 x 50",
+      "BHK: 2BHK",
+      "Toilets/Bathrooms: 2",
+      "top-view 2D architectural floor plan",
+      "licensed architect/structural engineer/MEP engineer/fire consultant/local authority"
+    ],
+    "mustAvoid": [
+      "3D building",
+      "exterior elevation",
+      "interior render",
+      "BOQ",
+      "BBS",
+      "final structural design"
+    ]
+  },
+  {
+    "id": "floor_plan_india_30x50_2bhk_vastu",
+    "intent": "floor_plan",
+    "country": "India",
+    "keywords": [
+      "india",
+      "30x50",
+      "north facing",
+      "2bhk",
+      "vastu",
+      "parking",
+      "staircase",
+      "naksha"
+    ],
+    "userInput": "India me 30x50 north facing 2BHK ghar ka naksha banao parking staircase 2 toilet vastu ke saath",
+    "expectedBehavior": [
+      "Classify as Indian residential 2BHK floor plan.",
+      "Use feet for client planning.",
+      "Apply vastu as preference, not as forced rule.",
+      "Keep kitchen southeast/east if practical, pooja northeast if requested/space allows, master bedroom private zone.",
+      "Output top-view 2D floor plan prompt only."
+    ],
+    "mustInclude": [
+      "Country: India",
+      "30 x 50",
+      "north facing",
+      "2BHK",
+      "2 toilet",
+      "vastu preference",
+      "top-view 2D architectural floor plan"
+    ],
+    "mustAvoid": [
+      "final municipal approval",
+      "certified structural drawing",
+      "random room count"
+    ]
+  },
+  {
+    "id": "interior_bedroom_modern",
+    "intent": "interior",
+    "country": "worldwide",
+    "keywords": [
+      "interior",
+      "bedroom",
+      "modern",
+      "wardrobe",
+      "false ceiling",
+      "lighting"
+    ],
+    "userInput": "12x14 bedroom ka modern interior design banao wardrobe, false ceiling aur warm lighting ke saath",
+    "expectedBehavior": [
+      "Scope lock to bedroom interior only.",
+      "Include furniture layout, wardrobe, bed clearance, lighting, ceiling, color/material palette.",
+      "Do not convert to full house floor plan.",
+      "Do not include BOQ unless asked."
+    ],
+    "mustInclude": [
+      "room size",
+      "furniture layout",
+      "wardrobe",
+      "false ceiling",
+      "warm lighting",
+      "interior render"
+    ],
+    "mustAvoid": [
+      "floor plan",
+      "exterior elevation",
+      "structural design"
+    ]
+  },
+  {
+    "id": "exterior_india_modern_elevation",
+    "intent": "exterior",
+    "country": "India",
+    "keywords": [
+      "front elevation",
+      "exterior",
+      "facade",
+      "modern",
+      "30 feet front",
+      "2 floor"
+    ],
+    "userInput": "India me 30 feet front ka modern 2 floor house elevation design banao balcony aur gate ke saath",
+    "expectedBehavior": [
+      "Scope lock to exterior/elevation.",
+      "Include facade composition, balcony, windows, gate, materials, lighting.",
+      "Mention structural feasibility for cantilevers/balconies.",
+      "Do not produce interior layout unless asked."
+    ],
+    "mustInclude": [
+      "front elevation",
+      "30 feet front",
+      "2 floor",
+      "balcony",
+      "gate",
+      "material palette"
+    ],
+    "mustAvoid": [
+      "BOQ",
+      "BBS",
+      "interior render"
+    ]
+  },
+  {
+    "id": "electrical_residential_points",
+    "intent": "electrical",
+    "country": "India",
+    "keywords": [
+      "electrical",
+      "switch",
+      "socket",
+      "db",
+      "lighting",
+      "fan",
+      "ac point"
+    ],
+    "userInput": "2BHK ghar ke liye electrical point planning banao switch socket lighting fan AC geyser DB ke saath",
+    "expectedBehavior": [
+      "Scope lock to electrical concept only.",
+      "Include room-wise switch, socket, fan, light, AC/geyser/fridge/washing machine points.",
+      "Include DB zone, earthing/backup flag.",
+      "Do not provide final load calculation, cable size, MCB rating as certified output."
+    ],
+    "mustInclude": [
+      "DB location",
+      "switchboard zones",
+      "lighting points",
+      "fan points",
+      "AC/geyser points",
+      "earthing",
+      "electrical engineer verification"
+    ],
+    "mustAvoid": [
+      "final cable sizing",
+      "certified load calculation",
+      "plumbing pipe sizing"
+    ]
+  },
+  {
+    "id": "plumbing_residential_2bath",
+    "intent": "plumbing",
+    "country": "worldwide",
+    "keywords": [
+      "plumbing",
+      "2 toilet",
+      "kitchen",
+      "shaft",
+      "water line",
+      "drainage",
+      "tank"
+    ],
+    "userInput": "2 toilet aur kitchen ke liye plumbing plan banao shaft, water line, drainage aur tank pump logic ke saath",
+    "expectedBehavior": [
+      "Scope lock to plumbing concept.",
+      "Include wet-wall grouping, shaft, water supply, soil/waste, vent, rainwater, tank/pump concept.",
+      "Do not provide final pipe sizing/hydraulic certification."
+    ],
+    "mustInclude": [
+      "wet-wall grouping",
+      "shaft",
+      "water supply",
+      "soil/waste",
+      "vent pipe",
+      "tank/pump",
+      "professional verification"
+    ],
+    "mustAvoid": [
+      "final pipe sizing",
+      "electrical load calculation",
+      "interior decor"
+    ]
+  },
+  {
+    "id": "structure_concept_rcc",
+    "intent": "structure",
+    "country": "India",
+    "keywords": [
+      "structure",
+      "rcc",
+      "column",
+      "beam",
+      "slab",
+      "footing",
+      "30x50"
+    ],
+    "userInput": "30x50 2 floor RCC ghar ke liye structure concept banao column beam slab footing ke saath",
+    "expectedBehavior": [
+      "Scope lock to structural coordination only.",
+      "Give structural system concept and column-grid logic.",
+      "Flag soil test, span, staircase opening, foundation review.",
+      "Do not invent final beam/column/rebar sizes."
+    ],
+    "mustInclude": [
+      "RCC frame concept",
+      "column grid logic",
+      "span warning",
+      "soil test",
+      "structural engineer verification"
+    ],
+    "mustAvoid": [
+      "final rebar",
+      "final beam size",
+      "certified calculation"
+    ]
+  },
+  {
+    "id": "boq_concept_residential",
+    "intent": "boq",
+    "country": "India",
+    "keywords": [
+      "boq",
+      "estimate",
+      "material quantity",
+      "cost"
+    ],
+    "userInput": "30x50 2BHK ghar ka BOQ estimate draft banao material quantity aur labour ke saath",
+    "expectedBehavior": [
+      "Scope lock to BOQ/estimate draft.",
+      "List assumptions, drawing dependency, trade-wise scope.",
+      "Do not present final tender quantity without complete drawings."
+    ],
+    "mustInclude": [
+      "BOQ draft",
+      "assumptions",
+      "civil works",
+      "finishing",
+      "MEP",
+      "missing drawing warning"
+    ],
+    "mustAvoid": [
+      "final tender quantity",
+      "certified cost"
+    ]
+  },
+  {
+    "id": "bbs_requires_structural_drawing",
+    "intent": "bbs",
+    "country": "worldwide",
+    "keywords": [
+      "bbs",
+      "bar bending",
+      "steel quantity",
+      "rebar"
+    ],
+    "userInput": "BBS bana do 2 floor ghar ka",
+    "expectedBehavior": [
+      "Do not invent BBS without structural drawings.",
+      "Ask for structural drawings/member schedule/rebar details.",
+      "Provide BBS template/checklist only."
+    ],
+    "mustInclude": [
+      "structural drawings required",
+      "member sizes",
+      "bar dia",
+      "spacing",
+      "cut length",
+      "do not invent reinforcement"
+    ],
+    "mustAvoid": [
+      "fake steel quantity",
+      "invented reinforcement"
+    ]
+  },
+  {
+    "id": "full_project_workflow",
+    "intent": "full_project",
+    "country": "India",
+    "keywords": [
+      "ghar banane ke sabhi task",
+      "complete planning",
+      "architecture",
+      "structure",
+      "mep",
+      "boq",
+      "execution"
+    ],
+    "userInput": "Ghar banane ke sabhi task ka complete planning banao architecture structure MEP BOQ execution handover tak",
+    "expectedBehavior": [
+      "Provide end-to-end staged workflow.",
+      "Separate architecture, structure, MEP, BOQ/BBS, execution, finishing, testing, handover.",
+      "Keep certification boundary clear."
+    ],
+    "mustInclude": [
+      "client brief",
+      "site study",
+      "architecture",
+      "structure",
+      "MEP",
+      "BOQ/BBS",
+      "execution",
+      "handover",
+      "certified professional verification"
+    ],
+    "mustAvoid": [
+      "single random image prompt",
+      "final approval claim"
+    ]
+  },
+  {
+    "id": "floor_plan_india_chhattisgarh_raipur_30x50",
+    "intent": "floor_plan",
+    "country": "India",
+    "stateOrJurisdiction": "Chhattisgarh / Raipur",
+    "keywords": [
+      "india",
+      "chhattisgarh",
+      "raipur",
+      "30x50",
+      "2bhk",
+      "naksha",
+      "parking",
+      "staircase"
+    ],
+    "userInput": "Raipur Chhattisgarh India me 30x50 2BHK ghar ka naksha banao parking staircase 2 toilet dimensions ke saath",
+    "expectedBehavior": [
+      "Detect India plus Chhattisgarh/Raipur jurisdiction.",
+      "Use client planning in feet and mention local municipal/development authority check.",
+      "Keep output scoped to floor plan.",
+      "Do not claim approval compliance."
+    ],
+    "mustInclude": [
+      "Country: India",
+      "State/Province/Emirate/City Jurisdiction",
+      "Chhattisgarh",
+      "Raipur",
+      "30 x 50",
+      "2BHK",
+      "local municipal/development authority",
+      "licensed architect/structural engineer"
+    ],
+    "mustAvoid": [
+      "final approval claim",
+      "certified municipal compliance"
+    ]
+  },
+  {
+    "id": "floor_plan_usa_california_los_angeles",
+    "intent": "floor_plan",
+    "country": "USA",
+    "stateOrJurisdiction": "California / Los Angeles",
+    "keywords": [
+      "usa",
+      "california",
+      "los angeles",
+      "floor plan",
+      "2 bedroom",
+      "garage"
+    ],
+    "userInput": "Los Angeles California USA me 2 bedroom house floor plan chahiye garage ke saath",
+    "expectedBehavior": [
+      "Detect USA plus California/Los Angeles jurisdiction.",
+      "Use feet/inches.",
+      "Mention state/city amendments, seismic/wildfire/energy/accessibility context only as check flags.",
+      "Do not claim code approval."
+    ],
+    "mustInclude": [
+      "USA",
+      "California",
+      "Los Angeles",
+      "feet/inches",
+      "local adopted code",
+      "licensed professional"
+    ],
+    "mustAvoid": [
+      "final code compliant",
+      "permit approved"
+    ]
+  },
+  {
+    "id": "floor_plan_uae_dubai_villa",
+    "intent": "floor_plan",
+    "country": "UAE",
+    "stateOrJurisdiction": "Dubai Emirate",
+    "keywords": [
+      "dubai",
+      "uae",
+      "villa",
+      "floor plan",
+      "30x50"
+    ],
+    "userInput": "Dubai UAE me 30x50 villa ka floor plan banao",
+    "expectedBehavior": [
+      "Detect UAE plus Dubai emirate.",
+      "Mention Dubai Municipality/free-zone/master developer/Civil Defence context as verification flags.",
+      "Keep concept scope clear."
+    ],
+    "mustInclude": [
+      "UAE",
+      "Dubai",
+      "emirate",
+      "municipality",
+      "Civil Defence"
+    ],
+    "mustAvoid": [
+      "approved Dubai drawing",
+      "final civil defence compliance"
+    ]
+  },
+  {
+    "id": "india_is_code_reference_structure",
+    "intent": "structure",
+    "country": "India",
+    "stateOrJurisdiction": "state/city required",
+    "keywords": [
+      "india",
+      "is code",
+      "ies code",
+      "structure",
+      "rcc",
+      "beam",
+      "column",
+      "slab"
+    ],
+    "userInput": "India me RCC structure ke liye kaunse IS code dhyan me rakhne honge",
+    "expectedBehavior": [
+      "Treat IES code as likely IS code if context is construction.",
+      "Give reference-family only.",
+      "Mention BIS/IS/NBC/local authority.",
+      "Do not give final structural design."
+    ],
+    "mustInclude": [
+      "BIS Indian Standards",
+      "IS codes",
+      "IS 456",
+      "IS 875",
+      "IS 1893",
+      "IS 13920",
+      "licensed structural engineer"
+    ],
+    "mustAvoid": [
+      "final calculation",
+      "approved design",
+      "full copyrighted code text"
+    ]
+  },
+  {
+    "id": "usa_state_code_reference_california",
+    "intent": "structure",
+    "country": "USA",
+    "stateOrJurisdiction": "California",
+    "keywords": [
+      "usa",
+      "california",
+      "code",
+      "ibc",
+      "irc",
+      "seismic",
+      "structure"
+    ],
+    "userInput": "California USA me house structure ke liye code reference kya hoga",
+    "expectedBehavior": [
+      "Detect USA plus California.",
+      "Mention I-Codes/local adoption/amendments and seismic context.",
+      "Do not claim final code compliance."
+    ],
+    "mustInclude": [
+      "ICC I-Codes",
+      "IBC/IRC",
+      "California",
+      "local amendments",
+      "seismic",
+      "licensed professional"
+    ],
+    "mustAvoid": [
+      "permit approved",
+      "final compliant"
+    ]
+  },
+  {
+    "id": "uae_dubai_code_reference_villa",
+    "intent": "floor_plan",
+    "country": "UAE",
+    "stateOrJurisdiction": "Dubai",
+    "keywords": [
+      "dubai",
+      "uae",
+      "code",
+      "municipality",
+      "civil defence",
+      "villa"
+    ],
+    "userInput": "Dubai UAE me villa design ke liye code aur approval me kya dhyan rakhna hoga",
+    "expectedBehavior": [
+      "Detect UAE plus Dubai emirate.",
+      "Mention municipality/free-zone/master developer/Civil Defence/utility authority check.",
+      "Keep output concept-level."
+    ],
+    "mustInclude": [
+      "UAE",
+      "Dubai",
+      "municipality",
+      "Civil Defence",
+      "authority",
+      "licensed professional"
+    ],
+    "mustAvoid": [
+      "approved Dubai drawing",
+      "final Civil Defence compliance"
+    ]
+  },
+  {
+    "id": "interior_bedroom_12x14_modern_warm",
+    "intent": "interior",
+    "country": "worldwide",
+    "keywords": [
+      "interior",
+      "bedroom",
+      "12x14",
+      "modern",
+      "wardrobe",
+      "false ceiling",
+      "warm lighting"
+    ],
+    "userInput": "12x14 bedroom ka modern interior design banao wardrobe false ceiling aur warm lighting ke saath",
+    "expectedBehavior": [
+      "Scope lock to bedroom interior only.",
+      "Include bed, wardrobe, side tables, lighting, false ceiling, curtains, wall panel and storage.",
+      "Mention furniture clearances and practical circulation.",
+      "Do not create full floor plan or exterior."
+    ],
+    "mustInclude": [
+      "bedroom interior",
+      "12x14",
+      "wardrobe",
+      "false ceiling",
+      "warm lighting",
+      "material palette",
+      "camera angle"
+    ],
+    "mustAvoid": [
+      "floor plan",
+      "exterior elevation",
+      "structural design"
+    ]
+  },
+  {
+    "id": "interior_living_tv_wall_luxury",
+    "intent": "interior",
+    "country": "India",
+    "keywords": [
+      "living room",
+      "interior",
+      "tv wall",
+      "luxury",
+      "sofa",
+      "false ceiling"
+    ],
+    "userInput": "India me living room ka luxury interior banao TV wall sofa false ceiling aur profile lighting ke saath",
+    "expectedBehavior": [
+      "Scope lock to living room interior.",
+      "Include sofa layout, TV wall, accent wall, ceiling, lighting, material palette and circulation.",
+      "Do not include exterior facade."
+    ],
+    "mustInclude": [
+      "living room interior",
+      "TV wall",
+      "sofa",
+      "false ceiling",
+      "profile lighting",
+      "luxury"
+    ],
+    "mustAvoid": [
+      "exterior facade",
+      "full house naksha"
+    ]
+  },
+  {
+    "id": "interior_modular_kitchen_parallel",
+    "intent": "interior",
+    "country": "India",
+    "keywords": [
+      "modular kitchen",
+      "interior",
+      "parallel kitchen",
+      "chimney",
+      "storage"
+    ],
+    "userInput": "8x10 modular kitchen interior banao parallel counter chimney storage aur task lighting ke saath",
+    "expectedBehavior": [
+      "Scope lock to kitchen interior.",
+      "Include counter layout, chimney, sink, storage, fridge location, backsplash and task lighting.",
+      "Mention ventilation and practical working triangle."
+    ],
+    "mustInclude": [
+      "modular kitchen",
+      "parallel counter",
+      "chimney",
+      "storage",
+      "task lighting",
+      "backsplash"
+    ],
+    "mustAvoid": [
+      "bedroom design",
+      "exterior elevation"
+    ]
+  },
+  {
+    "id": "exterior_india_30ft_modern_2floor",
+    "intent": "exterior",
+    "country": "India",
+    "keywords": [
+      "front elevation",
+      "exterior",
+      "30 feet",
+      "2 floor",
+      "modern",
+      "balcony",
+      "gate"
+    ],
+    "userInput": "India me 30 feet front ka modern 2 floor house elevation design banao balcony gate aur warm facade lighting ke saath",
+    "expectedBehavior": [
+      "Scope lock to exterior/front elevation.",
+      "Include facade composition, 2 floors, balcony, gate, windows, materials and lighting.",
+      "Mention structural feasibility for balcony/cantilever."
+    ],
+    "mustInclude": [
+      "front elevation",
+      "30 feet front",
+      "2 floor",
+      "balcony",
+      "gate",
+      "facade lighting",
+      "material palette"
+    ],
+    "mustAvoid": [
+      "interior furniture",
+      "BOQ",
+      "BBS"
+    ]
+  },
+  {
+    "id": "exterior_dubai_villa_luxury",
+    "intent": "exterior",
+    "country": "UAE",
+    "keywords": [
+      "dubai",
+      "uae",
+      "villa",
+      "exterior",
+      "luxury",
+      "facade",
+      "3 floor"
+    ],
+    "userInput": "Dubai UAE me 3 floor luxury villa exterior facade design banao glass balcony stone cladding aur warm lighting ke saath",
+    "expectedBehavior": [
+      "Detect UAE/Dubai.",
+      "Scope lock to exterior facade.",
+      "Include municipality/civil defence/authority verification boundary.",
+      "Include stone/glass/light facade details and structural feasibility warning."
+    ],
+    "mustInclude": [
+      "UAE",
+      "Dubai",
+      "villa exterior",
+      "glass balcony",
+      "stone cladding",
+      "warm lighting",
+      "Civil Defence",
+      "licensed professional"
+    ],
+    "mustAvoid": [
+      "full floor plan",
+      "interior render"
+    ]
+  },
+  {
+    "id": "exterior_small_budget_indian_house",
+    "intent": "exterior",
+    "country": "India",
+    "keywords": [
+      "low budget",
+      "front design",
+      "small house",
+      "exterior",
+      "simple"
+    ],
+    "userInput": "India me low budget small house ka simple front exterior design banao paint texture gate aur window grill ke saath",
+    "expectedBehavior": [
+      "Scope lock to simple budget exterior.",
+      "Use budget materials: paint, grooves, simple railing/grill, basic gate.",
+      "Avoid premium unrealistic materials unless asked."
+    ],
+    "mustInclude": [
+      "low budget",
+      "simple front exterior",
+      "paint texture",
+      "gate",
+      "window grill"
+    ],
+    "mustAvoid": [
+      "expensive stone cladding",
+      "luxury glass facade"
+    ]
+  },
+  {
+    "id": "floor_plan_working_drawing_package_residential",
+    "intent": "floor_plan",
+    "country": "India",
+    "keywords": [
+      "floor plan",
+      "working drawing",
+      "working plan",
+      "approval drawing",
+      "gfc",
+      "residential"
+    ],
+    "userInput": "30x50 residential ghar ke floor plan ke kitne working drawings hote hain aur kaun kaun se drawing banenge",
+    "expectedBehavior": [
+      "Explain concept, presentation, approval, working, GFC and as-built stages.",
+      "List architectural working drawing package.",
+      "Mention structure and MEP coordination.",
+      "Give drawing-count range, not fixed universal number.",
+      "Mention licensed professional/local authority boundary."
+    ],
+    "mustInclude": [
+      "concept plan",
+      "approval/sanction drawing",
+      "working drawing",
+      "GFC",
+      "as-built",
+      "site plan",
+      "setting-out",
+      "door-window schedule",
+      "sections",
+      "elevations"
+    ],
+    "mustAvoid": [
+      "fixed guaranteed count",
+      "approval-ready claim"
+    ]
+  },
+  {
+    "id": "interior_working_drawing_package_full_home",
+    "intent": "interior",
+    "country": "India",
+    "keywords": [
+      "interior",
+      "working drawing",
+      "furniture layout",
+      "false ceiling",
+      "wall elevation",
+      "carpentry",
+      "modular kitchen"
+    ],
+    "userInput": "Full home interior design me kitne plan aur working drawings hote hain, furniture false ceiling electrical wall elevation carpentry sab batao",
+    "expectedBehavior": [
+      "Scope lock to interior working drawing package.",
+      "List furniture layout, flooring, false ceiling/RCP, lighting/electrical, wall elevations, carpentry, kitchen, material schedule and BOQ.",
+      "Give typical range 25 to 80+ depending scope.",
+      "Mention site measurement and professional verification."
+    ],
+    "mustInclude": [
+      "furniture layout",
+      "false ceiling",
+      "RCP",
+      "lighting layout",
+      "switch/socket",
+      "wall elevations",
+      "carpentry drawings",
+      "modular kitchen",
+      "material schedule",
+      "BOQ"
+    ],
+    "mustAvoid": [
+      "floor plan approval claim",
+      "structural certification"
+    ]
+  },
+  {
+    "id": "exterior_working_drawing_package",
+    "intent": "exterior",
+    "country": "India",
+    "keywords": [
+      "exterior",
+      "elevation",
+      "working drawing",
+      "facade",
+      "cladding",
+      "gate",
+      "compound wall"
+    ],
+    "userInput": "Exterior elevation ke working drawings me kya kya hota hai facade cladding gate compound wall lighting sab batao",
+    "expectedBehavior": [
+      "Scope lock to exterior/elevation working drawing package.",
+      "List facade material layout, cladding details, balcony railing, gate/compound wall, lighting and waterproofing/drainage notes.",
+      "Mention structural support and local authority verification."
+    ],
+    "mustInclude": [
+      "front elevation",
+      "facade material layout",
+      "cladding",
+      "balcony railing",
+      "gate",
+      "compound wall",
+      "facade lighting",
+      "structural support verification"
+    ],
+    "mustAvoid": [
+      "interior furniture package",
+      "final approval claim"
+    ]
+  },
+  {
+    "id": "india_chhattisgarh_raipur_rules_router",
+    "intent": "floor_plan",
+    "country": "India",
+    "stateOrJurisdiction": "Chhattisgarh / Raipur",
+    "keywords": [
+      "raipur",
+      "chhattisgarh",
+      "rules",
+      "far",
+      "fsi",
+      "setback",
+      "approval",
+      "municipal"
+    ],
+    "userInput": "Raipur Chhattisgarh India me 30x50 residential ghar ke approval rules FAR FSI setback parking kya check karna hoga",
+    "expectedBehavior": [
+      "Detect India/Chhattisgarh/Raipur.",
+      "Give rule checklist categories, not final legal compliance.",
+      "Ask exact local authority/road width/zoning if missing.",
+      "Mention licensed architect/local authority verification."
+    ],
+    "mustInclude": [
+      "Country/State Rules Router",
+      "Chhattisgarh",
+      "Raipur",
+      "FAR/FSI",
+      "setbacks",
+      "parking",
+      "local municipal/development authority",
+      "licensed architect"
+    ],
+    "mustAvoid": [
+      "final approved",
+      "exact guaranteed FAR",
+      "legal compliance certificate"
+    ]
+  },
+  {
+    "id": "uae_dubai_rules_router_villa",
+    "intent": "exterior",
+    "country": "UAE",
+    "stateOrJurisdiction": "Dubai",
+    "keywords": [
+      "dubai",
+      "uae",
+      "rules",
+      "approval",
+      "municipality",
+      "civil defence",
+      "villa"
+    ],
+    "userInput": "Dubai UAE me villa design ke approval rules municipality civil defence parking setback kya check hoga",
+    "expectedBehavior": [
+      "Detect UAE/Dubai.",
+      "Route to emirate municipality/free-zone/master developer/Civil Defence checklist.",
+      "Do not claim final approval."
+    ],
+    "mustInclude": [
+      "UAE",
+      "Dubai",
+      "municipality",
+      "Civil Defence",
+      "authority",
+      "setback",
+      "parking",
+      "licensed professional"
+    ],
+    "mustAvoid": [
+      "approved Dubai drawing",
+      "final Civil Defence compliance"
+    ]
+  },
+  {
+    "id": "reasoning_controller_rules_query_india",
+    "intent": "rules",
+    "country": "India",
+    "stateOrJurisdiction": "Chhattisgarh / Raipur",
+    "keywords": [
+      "reasoning",
+      "rules",
+      "approval",
+      "far",
+      "fsi",
+      "setback",
+      "raipur",
+      "chhattisgarh"
+    ],
+    "userInput": "Raipur Chhattisgarh me 30x50 ghar ke approval rules FAR FSI setback check karo",
+    "expectedBehavior": [
+      "Classify as approval/rules/checklist stage.",
+      "Detect India, Chhattisgarh, Raipur.",
+      "Use country/state rules router.",
+      "Do not demand full floor-plan brief.",
+      "Give concise assumptions and verification boundary."
+    ],
+    "mustInclude": [
+      "BuildSetu Reasoning Controller",
+      "Intent classified",
+      "Project stage",
+      "Jurisdiction detected",
+      "Verification boundary",
+      "Country/State Rules Router"
+    ],
+    "mustAvoid": [
+      "final legal compliance",
+      "approved drawing claim"
+    ]
+  },
+  {
+    "id": "reasoning_controller_interior_design",
+    "intent": "interior",
+    "country": "worldwide",
+    "keywords": [
+      "interior",
+      "bedroom",
+      "false ceiling",
+      "wardrobe",
+      "lighting",
+      "reasoning"
+    ],
+    "userInput": "12x14 bedroom ka modern interior design banao wardrobe false ceiling aur warm lighting ke saath",
+    "expectedBehavior": [
+      "Classify as interior.",
+      "Stage concept/presentation design.",
+      "Use interior design knowledge.",
+      "Output image prompt and structured planning."
+    ],
+    "mustInclude": [
+      "BuildSetu Reasoning Controller",
+      "Intent classified as: interior",
+      "Concept/presentation design",
+      "Interior Design Knowledge"
+    ],
+    "mustAvoid": [
+      "full house floor plan",
+      "structure dump"
+    ]
+  },
+  {
+    "id": "reasoning_controller_structure_code",
+    "intent": "structure",
+    "country": "India",
+    "keywords": [
+      "structure",
+      "rcc",
+      "is code",
+      "column",
+      "beam",
+      "reasoning"
+    ],
+    "userInput": "India me 30x50 2 floor RCC structure concept IS code ke saath batao",
+    "expectedBehavior": [
+      "Classify as structure.",
+      "Use code-reference mode.",
+      "Output text/document, no image prompt.",
+      "Do not invent final member/rebar sizes."
+    ],
+    "mustInclude": [
+      "BuildSetu Reasoning Controller",
+      "Intent classified as: structure",
+      "Verification boundary",
+      "IS 456",
+      "IS 875"
+    ],
+    "mustAvoid": [
+      "final calculation",
+      "certified structure"
+    ]
+  },
+  {
+    "id": "quality_floor_plan_visual_guard",
+    "intent": "floor_plan",
+    "country": "UAE",
+    "keywords": [
+      "floor plan",
+      "naksha",
+      "2d",
+      "top view",
+      "quality"
+    ],
+    "userInput": "Dubai UAE me 30x50 2BHK villa ka sirf 2D floor plan chahiye",
+    "expectedBehavior": [
+      "Ensure output is floor_plan_2d.",
+      "Image prompt must be top-view 2D architectural floor plan only.",
+      "Avoid 3D exterior/interior/facade."
+    ],
+    "mustInclude": [
+      "BuildSetu Output Quality Evaluator",
+      "Visual guard",
+      "top-view 2D architectural plan",
+      "avoid 3D exterior"
+    ],
+    "mustAvoid": [
+      "interior render",
+      "facade elevation"
+    ]
+  },
+  {
+    "id": "quality_structure_no_fake_rebar",
+    "intent": "structure",
+    "country": "India",
+    "keywords": [
+      "structure",
+      "rcc",
+      "rebar",
+      "quality",
+      "is code"
+    ],
+    "userInput": "India me 30x50 2 floor RCC structure concept do IS code ke saath",
+    "expectedBehavior": [
+      "Output text only.",
+      "Do not invent final reinforcement/member sizes.",
+      "Include licensed structural engineer boundary."
+    ],
+    "mustInclude": [
+      "BuildSetu Output Quality Evaluator",
+      "Expected output type: text/document/checklist",
+      "certification",
+      "IS 456",
+      "licensed structural engineer"
+    ],
+    "mustAvoid": [
+      "final beam size",
+      "fake steel quantity"
+    ]
+  },
+  {
+    "id": "quality_interior_scope_guard",
+    "intent": "interior",
+    "country": "worldwide",
+    "keywords": [
+      "interior",
+      "bedroom",
+      "quality",
+      "scope"
+    ],
+    "userInput": "12x14 bedroom ka interior design banao, sirf bedroom interior",
+    "expectedBehavior": [
+      "Keep scope interior only.",
+      "Avoid full house floor plan/exterior.",
+      "Image prompt should contain room interior design details."
+    ],
+    "mustInclude": [
+      "BuildSetu Output Quality Evaluator",
+      "interior must show room interior design",
+      "Scope must match"
+    ],
+    "mustAvoid": [
+      "full house floor plan",
+      "exterior facade"
+    ]
+  },
+  {
+    "id": "dimension_residential_room_size_30x50",
+    "intent": "floor_plan",
+    "country": "India",
+    "keywords": [
+      "30x50",
+      "room size",
+      "dimension",
+      "2bhk",
+      "living",
+      "bedroom",
+      "kitchen",
+      "toilet"
+    ],
+    "userInput": "30x50 2BHK ghar me living bedroom kitchen toilet ke standard room sizes kya hone chahiye",
+    "expectedBehavior": [
+      "Give typical room-size ranges.",
+      "Explain compact/standard sizes.",
+      "Mention plot-specific and local verification.",
+      "Include adjacency and ventilation notes."
+    ],
+    "mustInclude": [
+      "Building Type / Room Dimension Intelligence",
+      "living",
+      "bedroom",
+      "kitchen",
+      "toilet",
+      "planning ranges",
+      "verify with local bylaws"
+    ],
+    "mustAvoid": [
+      "final approved dimensions",
+      "one fixed universal size"
+    ]
+  },
+  {
+    "id": "adjacency_residential_floor_plan_logic",
+    "intent": "floor_plan",
+    "country": "India",
+    "keywords": [
+      "floor plan",
+      "adjacency",
+      "circulation",
+      "parking",
+      "staircase",
+      "kitchen",
+      "toilet"
+    ],
+    "userInput": "Ghar ke floor plan me parking staircase kitchen toilet bedroom ka placement logic batao",
+    "expectedBehavior": [
+      "Explain adjacency and circulation rules.",
+      "Mention wet-area grouping and staircase placement.",
+      "Mention privacy, ventilation and structure/MEP coordination."
+    ],
+    "mustInclude": [
+      "Adjacency rules",
+      "Circulation rules",
+      "parking",
+      "staircase",
+      "wet areas",
+      "ventilation",
+      "Structure/MEP coordination"
+    ],
+    "mustAvoid": [
+      "random placement",
+      "final authority claim"
+    ]
+  },
+  {
+    "id": "building_type_office_room_program",
+    "intent": "floor_plan",
+    "country": "worldwide",
+    "keywords": [
+      "office",
+      "building type",
+      "room program",
+      "reception",
+      "workstations",
+      "meeting"
+    ],
+    "userInput": "Office planning ke liye kaun kaun se rooms spaces chahiye aur layout logic kya hota hai",
+    "expectedBehavior": [
+      "Detect office building type.",
+      "List reception, workstations, cabins, meeting, pantry, toilets, server/storage.",
+      "Mention workflow, acoustics, lighting, HVAC and electrical/data points."
+    ],
+    "mustInclude": [
+      "Detected/assumed building type: office",
+      "reception",
+      "workstations",
+      "meeting",
+      "pantry",
+      "toilets",
+      "workflow"
+    ],
+    "mustAvoid": [
+      "2BHK bedroom plan",
+      "residential-only response"
+    ]
+  },
+  {
+    "id": "full_building_lifecycle_house_end_to_end",
+    "intent": "full_project",
+    "country": "worldwide",
+    "keywords": [
+      "building banane",
+      "ghar banane",
+      "complete process",
+      "architecture",
+      "structure",
+      "mep",
+      "interior",
+      "exterior",
+      "handover"
+    ],
+    "userInput": "Ghar banane me start se end tak architecture structure MEP interior exterior BOQ construction handover sab kya kya hota hai",
+    "expectedBehavior": [
+      "Answer full building lifecycle stage-wise.",
+      "Include architecture, structure, MEP, approval, working drawings, BOQ, construction, interior, exterior, testing and handover.",
+      "Mention professional verification boundary."
+    ],
+    "mustInclude": [
+      "Full Building Lifecycle Knowledge",
+      "client brief",
+      "site study",
+      "soil",
+      "architecture",
+      "structure",
+      "MEP",
+      "BOQ",
+      "construction execution",
+      "interior",
+      "exterior",
+      "handover"
+    ],
+    "mustAvoid": [
+      "only floor plan",
+      "final approval claim"
+    ]
+  },
+  {
+    "id": "construction_sequence_rcc_residential",
+    "intent": "aec_knowledge",
+    "country": "India",
+    "keywords": [
+      "construction sequence",
+      "RCC",
+      "foundation",
+      "plinth",
+      "masonry",
+      "MEP rough-in",
+      "finishing"
+    ],
+    "userInput": "RCC residential building ka construction sequence batao foundation se finishing tak",
+    "expectedBehavior": [
+      "Explain construction execution sequence.",
+      "Include site setup, excavation, PCC, foundation, plinth, RCC frame, masonry, MEP rough-in, plaster, waterproofing, flooring, doors/windows, painting, fixtures.",
+      "Mention QA/QC and professional supervision."
+    ],
+    "mustInclude": [
+      "construction execution",
+      "setting out",
+      "excavation",
+      "PCC",
+      "foundation",
+      "plinth",
+      "RCC frame",
+      "masonry",
+      "MEP rough-in",
+      "waterproofing",
+      "finishing"
+    ],
+    "mustAvoid": [
+      "final structural design",
+      "no supervision needed"
+    ]
+  },
+  {
+    "id": "discipline_integration_arch_structure_mep",
+    "intent": "full_project",
+    "country": "worldwide",
+    "keywords": [
+      "architecture",
+      "structure",
+      "MEP",
+      "coordination",
+      "interior",
+      "exterior"
+    ],
+    "userInput": "Architecture structure MEP interior exterior ek building project me kaise coordinate hote hain",
+    "expectedBehavior": [
+      "Explain discipline coordination.",
+      "Show how architecture affects structure/MEP/interior/exterior/cost.",
+      "Mention drawings and change management."
+    ],
+    "mustInclude": [
+      "Coordination rule",
+      "architecture",
+      "structure",
+      "MEP",
+      "interior",
+      "exterior",
+      "BOQ",
+      "Design changes affect cost"
+    ],
+    "mustAvoid": [
+      "single discipline only",
+      "random unrelated answer"
+    ]
+  },
+  {
+    "id": "construction_method_rcc_materials_sequence",
+    "intent": "aec_knowledge",
+    "country": "worldwide",
+    "keywords": [
+      "RCC",
+      "construction method",
+      "foundation",
+      "slab",
+      "cement",
+      "sand",
+      "aggregate",
+      "TMT",
+      "curing"
+    ],
+    "userInput": "RCC residential building me foundation se slab tak construction method aur materials batao",
+    "expectedBehavior": [
+      "Explain RCC sequence and materials.",
+      "Include quality checks and curing.",
+      "Do not give final structural member/rebar sizes."
+    ],
+    "mustInclude": [
+      "RCC frame method",
+      "cement",
+      "sand",
+      "aggregate",
+      "TMT steel",
+      "shuttering",
+      "concreting",
+      "curing",
+      "structural design"
+    ],
+    "mustAvoid": [
+      "final beam size",
+      "final reinforcement"
+    ]
+  },
+  {
+    "id": "waterproofing_material_process_bathroom_terrace",
+    "intent": "aec_knowledge",
+    "country": "worldwide",
+    "keywords": [
+      "waterproofing",
+      "bathroom",
+      "terrace",
+      "material",
+      "pond test",
+      "slope"
+    ],
+    "userInput": "Bathroom aur terrace waterproofing ke liye kaunsa material aur process use hota hai",
+    "expectedBehavior": [
+      "Explain waterproofing material options and process.",
+      "Include slope, pipe penetration, corner treatment and pond/leak test.",
+      "Mention professional/site verification."
+    ],
+    "mustInclude": [
+      "Waterproofing",
+      "surface preparation",
+      "slope",
+      "pipe penetration",
+      "coating",
+      "membrane",
+      "pond",
+      "leak test"
+    ],
+    "mustAvoid": [
+      "guaranteed no leakage",
+      "skip test"
+    ]
+  },
+  {
+    "id": "interior_material_selection_boards_finishes",
+    "intent": "interior",
+    "country": "worldwide",
+    "keywords": [
+      "plywood",
+      "MDF",
+      "HDHMR",
+      "laminate",
+      "veneer",
+      "gypsum",
+      "false ceiling"
+    ],
+    "userInput": "Interior me plywood MDF HDHMR laminate veneer gypsum false ceiling material selection batao",
+    "expectedBehavior": [
+      "Compare boards and finishes by use, moisture, budget and durability.",
+      "Mention wet/kitchen areas need suitable boards.",
+      "Mention false ceiling coordination."
+    ],
+    "mustInclude": [
+      "plywood",
+      "MDF",
+      "HDHMR",
+      "laminate",
+      "veneer",
+      "gypsum",
+      "false ceiling",
+      "moisture"
+    ],
+    "mustAvoid": [
+      "one material for all areas",
+      "ignore wet areas"
+    ]
+  },
+  {
+    "id": "mep_materials_electrical_plumbing_basic",
+    "intent": "mep",
+    "country": "worldwide",
+    "keywords": [
+      "electrical material",
+      "plumbing material",
+      "wire",
+      "conduit",
+      "DB",
+      "CPVC",
+      "UPVC",
+      "SWR"
+    ],
+    "userInput": "Electrical aur plumbing me basic materials kya kya lagte hain wire conduit DB CPVC UPVC SWR sab batao",
+    "expectedBehavior": [
+      "List electrical and plumbing materials.",
+      "Mention load sizing and pressure/slope testing boundary.",
+      "Avoid final specifications."
+    ],
+    "mustInclude": [
+      "FR/FRLS wires",
+      "conduits",
+      "DB",
+      "MCB",
+      "earthing",
+      "CPVC",
+      "UPVC",
+      "SWR",
+      "pressure test"
+    ],
+    "mustAvoid": [
+      "final wire size",
+      "final pipe size"
+    ]
+  },
+  {
+    "id": "climate_based_material_selection",
+    "intent": "aec_knowledge",
+    "country": "worldwide",
+    "keywords": [
+      "climate",
+      "coastal",
+      "heavy rain",
+      "hot humid",
+      "material selection",
+      "corrosion"
+    ],
+    "userInput": "Heavy rain coastal aur hot humid climate me building material selection kaise karna chahiye",
+    "expectedBehavior": [
+      "Explain climate-based material logic.",
+      "Mention waterproofing, corrosion resistance, ventilation, anti-fungal and maintenance.",
+      "Mention local professional verification."
+    ],
+    "mustInclude": [
+      "heavy-rain",
+      "waterproofing",
+      "coastal",
+      "corrosion-resistant",
+      "hot-humid",
+      "ventilation",
+      "anti-fungal"
+    ],
+    "mustAvoid": [
+      "same material everywhere",
+      "ignore climate"
+    ]
+  },
+  {
+    "id": "internet_router_latest_approval_rules",
+    "intent": "rules",
+    "country": "India",
+    "keywords": [
+      "latest",
+      "approval rules",
+      "municipality",
+      "FAR",
+      "FSI",
+      "setback",
+      "official source"
+    ],
+    "userInput": "Raipur Chhattisgarh ke latest approval rules FAR FSI setback official source se check karna hai",
+    "expectedBehavior": [
+      "Detect authorityApprovalBylaws category.",
+      "Require official municipal/development authority source.",
+      "Mark high risk and review required.",
+      "Do not claim final legal compliance."
+    ],
+    "mustInclude": [
+      "Internet Knowledge Update Router",
+      "authorityApprovalBylaws",
+      "official government",
+      "municipal",
+      "risk",
+      "review",
+      "final legal compliance"
+    ],
+    "mustAvoid": [
+      "random blog",
+      "guaranteed FAR"
+    ]
+  },
+  {
+    "id": "internet_router_material_rate_current",
+    "intent": "boq",
+    "country": "India",
+    "keywords": [
+      "current",
+      "material rate",
+      "cement price",
+      "steel rate",
+      "market rate",
+      "BOQ"
+    ],
+    "userInput": "Aaj ka cement steel material rate internet se leke BOQ estimate update karna hai",
+    "expectedBehavior": [
+      "Detect materialRatesCost category.",
+      "Use date/source based rate range.",
+      "Do not auto-finalize cost.",
+      "Require review before permanent update."
+    ],
+    "mustInclude": [
+      "Internet Knowledge Update Router",
+      "materialRatesCost",
+      "source",
+      "date accessed",
+      "rate range",
+      "review"
+    ],
+    "mustAvoid": [
+      "fixed guaranteed cost",
+      "final tender quantity"
+    ]
+  },
+  {
+    "id": "internet_router_product_datasheet_waterproofing",
+    "intent": "aec_knowledge",
+    "country": "worldwide",
+    "keywords": [
+      "waterproofing",
+      "datasheet",
+      "manufacturer",
+      "product spec"
+    ],
+    "userInput": "Waterproofing product datasheet internet se leke material spec samjho",
+    "expectedBehavior": [
+      "Detect productMaterialSpecs category.",
+      "Use manufacturer datasheet.",
+      "Extract use area, spec summary and cautions.",
+      "Do not claim guaranteed waterproofing."
+    ],
+    "mustInclude": [
+      "Internet Knowledge Update Router",
+      "productMaterialSpecs",
+      "manufacturer datasheet",
+      "spec summary",
+      "cautions"
+    ],
+    "mustAvoid": [
+      "guaranteed performance",
+      "final system design"
+    ]
+  },
+  {
+    "id": "trusted_source_registry_approval_rules",
+    "intent": "rules",
+    "country": "India",
+    "keywords": [
+      "trusted source",
+      "official source",
+      "approval rules",
+      "municipal",
+      "FAR",
+      "FSI",
+      "setback"
+    ],
+    "userInput": "Approval rules ke liye agent ka trusted source registry kaise decide karega official source kaunsa hoga",
+    "expectedBehavior": [
+      "Explain official government/municipal/development authority priority.",
+      "Reject random blogs/social/forum.",
+      "Mark approval rules high risk and review required."
+    ],
+    "mustInclude": [
+      "Trusted Source Registry",
+      "official government",
+      "municipal",
+      "development authority",
+      "Rejected",
+      "High-risk",
+      "pending-review"
+    ],
+    "mustAvoid": [
+      "random blog reliable",
+      "direct final compliance"
+    ]
+  },
+  {
+    "id": "research_draft_pipeline_material_rates",
+    "intent": "boq",
+    "country": "India",
+    "keywords": [
+      "research draft",
+      "material rate",
+      "source metadata",
+      "review",
+      "merge knowledge"
+    ],
+    "userInput": "Current cement steel rate internet se milne ke baad agent permanent knowledge me kaise update karega",
+    "expectedBehavior": [
+      "Create research draft first.",
+      "Store source metadata, date accessed, confidence and risk.",
+      "Require review before permanent merge.",
+      "Run smoke tests."
+    ],
+    "mustInclude": [
+      "Research Draft Pipeline",
+      "source title",
+      "URL",
+      "date accessed",
+      "risk level",
+      "confidence",
+      "approved drafts",
+      "smoke tests"
+    ],
+    "mustAvoid": [
+      "silent self-update",
+      "guaranteed cost"
+    ]
+  },
+  {
+    "id": "research_pipeline_product_datasheet_review",
+    "intent": "aec_knowledge",
+    "country": "worldwide",
+    "keywords": [
+      "manufacturer datasheet",
+      "product specs",
+      "review",
+      "knowledge update"
+    ],
+    "userInput": "Waterproofing manufacturer datasheet se knowledge update karna ho to process kya hoga",
+    "expectedBehavior": [
+      "Use manufacturer datasheet as trusted source.",
+      "Extract spec summary, use area and cautions.",
+      "Create draft and require review before merge."
+    ],
+    "mustInclude": [
+      "manufacturer datasheet",
+      "spec summary",
+      "cautions",
+      "Research draft",
+      "review",
+      "Permanent knowledge merge"
+    ],
+    "mustAvoid": [
+      "guaranteed waterproofing",
+      "final system design"
+    ]
+  },
+  {
+    "id": "model_style_runtime_architecture",
+    "intent": "aec_knowledge",
+    "country": "worldwide",
+    "keywords": [
+      "chatgpt model",
+      "model style",
+      "agent architecture",
+      "model runtime",
+      "agent brain"
+    ],
+    "userInput": "BuildSetu agent ko ChatGPT model style me kaise build karna hai agent architecture batao",
+    "expectedBehavior": [
+      "Explain model-style runtime architecture.",
+      "Include intent classifier, planner, knowledge retriever, tool router, domain modules, quality evaluator and feedback loop.",
+      "Clarify it is structured expert workflow, not human consciousness."
+    ],
+    "mustInclude": [
+      "ChatGPT-style Model Runtime",
+      "intent classifier",
+      "planner",
+      "knowledge retriever",
+      "tool router",
+      "quality evaluator",
+      "feedback loop"
+    ],
+    "mustAvoid": [
+      "human consciousness claim",
+      "random chatbot"
+    ]
+  },
+  {
+    "id": "model_style_data_training_pipeline",
+    "intent": "aec_knowledge",
+    "country": "worldwide",
+    "keywords": [
+      "data se train",
+      "training data",
+      "fine tune",
+      "RAG",
+      "knowledge base",
+      "JSONL"
+    ],
+    "userInput": "Agent ko data se train kaise karna hai RAG fine tune training cases knowledge base ke saath",
+    "expectedBehavior": [
+      "Explain data training system.",
+      "Mention knowledge JSON, training cases, evaluator checks, smoke tests and future JSONL fine-tune export.",
+      "Warn not to train on unreviewed unsafe data."
+    ],
+    "mustInclude": [
+      "Data training sources",
+      "knowledge JSON",
+      "training cases",
+      "RAG-style",
+      "smoke tests",
+      "JSONL",
+      "fine-tune"
+    ],
+    "mustAvoid": [
+      "unsafe unreviewed data",
+      "direct silent self update"
+    ]
+  },
+  {
+    "id": "model_style_planner_executor_verifier",
+    "intent": "aec_knowledge",
+    "country": "worldwide",
+    "keywords": [
+      "planner",
+      "executor",
+      "verifier",
+      "orchestrator",
+      "tool router"
+    ],
+    "userInput": "Agent me planner executor verifier aur tool router ka architecture banao",
+    "expectedBehavior": [
+      "Explain Planner/Executor/Verifier pattern.",
+      "Mention scope lock, domain module, tool route and final verification.",
+      "Keep AEC certification boundary."
+    ],
+    "mustInclude": [
+      "Planner/Executor/Verifier",
+      "Planner decides",
+      "Executor produces",
+      "Verifier checks",
+      "tool router",
+      "scope"
+    ],
+    "mustAvoid": [
+      "no verification",
+      "single prompt only"
+    ]
+  },
+  {
+    "id": "model_style_feedback_evaluation_loop",
+    "intent": "aec_knowledge",
+    "country": "worldwide",
+    "keywords": [
+      "feedback loop",
+      "quality evaluator",
+      "smoke test",
+      "evaluation",
+      "self check"
+    ],
+    "userInput": "Agent ko feedback loop smoke test quality evaluator se kaise improve karna hai",
+    "expectedBehavior": [
+      "Explain feedback loop.",
+      "Failed output becomes training case/evaluator rule/router fix.",
+      "Mention smoke tests before deployment."
+    ],
+    "mustInclude": [
+      "Feedback loop",
+      "quality evaluator",
+      "smoke tests",
+      "training case",
+      "evaluator rule",
+      "deploy"
+    ],
+    "mustAvoid": [
+      "manual guess only",
+      "no testing"
+    ]
+  },
+  {
+    "id": "research_draft_api_create_authority_rules",
+    "intent": "research_update",
+    "country": "India",
+    "keywords": [
+      "research draft api",
+      "create draft",
+      "approval rules",
+      "pending_review",
+      "source metadata"
+    ],
+    "userInput": "Raipur approval rules ke source se research draft create karo pending review ke saath",
+    "expectedBehavior": [
+      "Use research draft API concept.",
+      "Create pending_review draft.",
+      "Store source metadata, jurisdiction, category, risk, confidence and extracted checklist.",
+      "Do not merge directly into permanent knowledge."
+    ],
+    "mustInclude": [
+      "research draft",
+      "pending_review",
+      "source metadata",
+      "jurisdiction",
+      "risk",
+      "confidence",
+      "extracted checklist"
+    ],
+    "mustAvoid": [
+      "direct permanent merge",
+      "final compliance"
+    ]
+  },
+  {
+    "id": "research_draft_api_list_pending_reviews",
+    "intent": "research_update",
+    "country": "worldwide",
+    "keywords": [
+      "research drafts",
+      "list drafts",
+      "pending review",
+      "review queue"
+    ],
+    "userInput": "Pending research drafts list kaise dekhenge review queue ke liye",
+    "expectedBehavior": [
+      "Explain list route.",
+      "Show pending review queue concept.",
+      "Mention status/category/risk/source metadata."
+    ],
+    "mustInclude": [
+      "research drafts",
+      "list",
+      "pending review",
+      "status",
+      "category",
+      "risk",
+      "source"
+    ],
+    "mustAvoid": [
+      "blind approval"
+    ]
+  },
+  {
+    "id": "research_draft_review_approve_api",
+    "intent": "research_update",
+    "country": "worldwide",
+    "keywords": [
+      "research draft",
+      "approve",
+      "review api",
+      "approved folder",
+      "merge ready"
+    ],
+    "userInput": "Pending research draft ko approve kaise karenge aur approved folder me kaise move hoga",
+    "expectedBehavior": [
+      "Explain review API approve flow.",
+      "Move pending_review draft to approved folder.",
+      "Save reviewer notes and mergeReady flag.",
+      "Do not merge permanent knowledge automatically."
+    ],
+    "mustInclude": [
+      "review API",
+      "approve",
+      "approved folder",
+      "reviewer",
+      "mergeReady",
+      "permanent knowledge"
+    ],
+    "mustAvoid": [
+      "silent merge",
+      "unreviewed update"
+    ]
+  },
+  {
+    "id": "research_draft_review_reject_api",
+    "intent": "research_update",
+    "country": "worldwide",
+    "keywords": [
+      "research draft",
+      "reject",
+      "review api",
+      "rejected folder",
+      "review notes"
+    ],
+    "userInput": "Agar source low confidence ho to research draft reject kaise hoga",
+    "expectedBehavior": [
+      "Explain reject flow.",
+      "Move draft to rejected folder.",
+      "Store review notes and reason.",
+      "Prevent merge."
+    ],
+    "mustInclude": [
+      "reject",
+      "rejected folder",
+      "review notes",
+      "low confidence",
+      "prevent merge"
+    ],
+    "mustAvoid": [
+      "merge rejected source"
+    ]
+  },
+  {
+    "id": "research_draft_merge_api_safe_append",
+    "intent": "research_update",
+    "country": "worldwide",
+    "keywords": [
+      "research draft",
+      "merge api",
+      "approved draft",
+      "safe append",
+      "researchUpdates",
+      "backup"
+    ],
+    "userInput": "Approved research draft ko knowledge JSON me safe append merge kaise karenge",
+    "expectedBehavior": [
+      "Explain merge API safe append flow.",
+      "Require approved + mergeReady draft.",
+      "Create backup before modifying target knowledge JSON.",
+      "Append to researchUpdates and keep source metadata.",
+      "Create merge log and require smoke tests."
+    ],
+    "mustInclude": [
+      "merge API",
+      "approved",
+      "mergeReady",
+      "backup",
+      "researchUpdates",
+      "source metadata",
+      "merge log",
+      "smoke tests"
+    ],
+    "mustAvoid": [
+      "overwrite entire knowledge",
+      "merge unapproved draft"
+    ]
+  },
+  {
+    "id": "research_draft_merge_block_unapproved",
+    "intent": "research_update",
+    "country": "worldwide",
+    "keywords": [
+      "unapproved draft",
+      "merge block",
+      "pending review",
+      "not merge ready"
+    ],
+    "userInput": "Pending review draft ko direct knowledge me merge karna safe hai kya",
+    "expectedBehavior": [
+      "Block merge for unapproved draft.",
+      "Require review and mergeReady true.",
+      "Explain high-risk safety reason."
+    ],
+    "mustInclude": [
+      "Only approved drafts",
+      "mergeReady",
+      "pending_review",
+      "blocked",
+      "review"
+    ],
+    "mustAvoid": [
+      "direct merge pending review"
+    ]
+  },
+  {
+    "id": "research_pipeline_security_merge_target_validation",
+    "intent": "research_update",
+    "country": "worldwide",
+    "keywords": [
+      "merge target",
+      "invalid target",
+      "security",
+      "path traversal",
+      "approved draft"
+    ],
+    "userInput": "Research draft merge me invalid target ya path traversal kaise block hoga",
+    "expectedBehavior": [
+      "Validate merge target under data/buildsetu-knowledge.",
+      "Reject path traversal and wildcard target.",
+      "Only approved mergeReady drafts can merge."
+    ],
+    "mustInclude": [
+      "merge target",
+      "data/buildsetu-knowledge",
+      "reject",
+      "path traversal",
+      "mergeReady",
+      "approved"
+    ],
+    "mustAvoid": [
+      "allow ../",
+      "merge anywhere"
+    ]
+  },
+  {
+    "id": "research_pipeline_build_warning_optimization",
+    "intent": "research_update",
+    "country": "worldwide",
+    "keywords": [
+      "turbopack",
+      "build warning",
+      "dynamic file pattern",
+      "research draft route"
+    ],
+    "userInput": "Research draft routes me broad dynamic file pattern warning ko kaise optimize karna hai",
+    "expectedBehavior": [
+      "Use limited folders, safe file names, max scan limit and turbopackIgnore where needed.",
+      "Keep runtime dynamic but reduce over-bundling risk."
+    ],
+    "mustInclude": [
+      "limited folders",
+      "safe file names",
+      "max scan",
+      "turbopackIgnore",
+      "over-bundling"
+    ],
+    "mustAvoid": [
+      "scan whole project",
+      "unsafe dynamic path"
+    ]
+  },
+  {
+    "id": "agent_research_draft_connector_authority_rules",
+    "intent": "research_update",
+    "country": "India",
+    "keywords": [
+      "agent research draft",
+      "official source",
+      "approval rules",
+      "pending_review",
+      "draftId"
+    ],
+    "userInput": "Raipur approval rules official source se agent research draft banao pending review ke saath",
+    "expectedBehavior": [
+      "Agent detects research_update.",
+      "Creates pending_review research draft.",
+      "Saves draftId, category, jurisdiction, risk, confidence and source metadata.",
+      "Does not merge automatically."
+    ],
+    "mustInclude": [
+      "agent research draft",
+      "pending_review",
+      "draftId",
+      "authorityApprovalBylaws",
+      "source metadata",
+      "not final compliance"
+    ],
+    "mustAvoid": [
+      "automatic merge",
+      "final approval claim"
+    ]
+  },
+  {
+    "id": "agent_research_draft_connector_material_rate",
+    "intent": "research_update",
+    "country": "India",
+    "keywords": [
+      "agent research draft",
+      "material rate",
+      "cement",
+      "steel",
+      "BOQ",
+      "pending_review"
+    ],
+    "userInput": "Current cement steel rate source se BOQ ke liye agent research draft create karo",
+    "expectedBehavior": [
+      "Detect materialRatesCost.",
+      "Create pending_review draft.",
+      "Use source/date/rate-range caution.",
+      "Do not claim guaranteed cost."
+    ],
+    "mustInclude": [
+      "materialRatesCost",
+      "pending_review",
+      "rate",
+      "source",
+      "confidence",
+      "guaranteed cost"
+    ],
+    "mustAvoid": [
+      "fixed guaranteed cost",
+      "final tender quantity"
+    ]
+  },
+  {
+    "id": "agent_run_auto_research_draft_authority_rules",
+    "intent": "research_update",
+    "country": "India",
+    "keywords": [
+      "api agent run",
+      "research draft",
+      "approval rules",
+      "official source",
+      "pending_review"
+    ],
+    "userInput": "Normal /api/agent/run se Raipur approval rules official source ka research draft banao",
+    "expectedBehavior": [
+      "Normal agent run should attach researchDraft object.",
+      "Create pending_review draft.",
+      "Use authorityApprovalBylaws category.",
+      "Do not merge automatically."
+    ],
+    "mustInclude": [
+      "researchDraft",
+      "pending_review",
+      "authorityApprovalBylaws",
+      "draftId",
+      "not final compliance"
+    ],
+    "mustAvoid": [
+      "automatic merge",
+      "final approval claim"
+    ]
+  },
+  {
+    "id": "agent_run_no_research_draft_for_normal_query",
+    "intent": "aec_knowledge",
+    "country": "worldwide",
+    "keywords": [
+      "api agent run",
+      "normal query",
+      "no research draft"
+    ],
+    "userInput": "Normal AEC knowledge question me research draft create nahi hona chahiye",
+    "expectedBehavior": [
+      "Normal query should keep researchDraft.created false.",
+      "Agent should answer normally.",
+      "No draft file should be created unless draft trigger is present."
+    ],
+    "mustInclude": [
+      "created: false",
+      "normal agent response"
+    ],
+    "mustAvoid": [
+      "unrequested draft",
+      "silent research update"
+    ]
+  }
+]

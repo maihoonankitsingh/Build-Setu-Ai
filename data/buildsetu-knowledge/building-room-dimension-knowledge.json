@@ -1,0 +1,149 @@
+{
+  "version": "1.0",
+  "purpose": "Building typology, room program, standard dimensions, adjacency and circulation knowledge for BuildSetu agent.",
+  "globalRules": [
+    "Detect building type before planning.",
+    "Detect plot size, road side, facing, floor count, occupancy, budget and jurisdiction when available.",
+    "Do not use one universal room size for every project; adapt to plot size, building type, budget and local practice.",
+    "For concept planning, use practical typical dimension ranges.",
+    "For approval/execution, verify dimensions with local bylaws, client requirements and licensed professionals.",
+    "Always check circulation, ventilation, light, wet-area grouping, structure grid and service shaft coordination."
+  ],
+  "buildingTypes": {
+    "smallResidentialHouse": {
+      "aliases": ["ghar", "house", "small house", "home", "residential house"],
+      "typicalSpaces": ["parking", "living", "dining", "kitchen", "bedroom", "toilet", "staircase", "utility", "pooja", "balcony/terrace"],
+      "planningPriority": ["entry clarity", "parking fit", "natural light", "cross ventilation", "wet wall grouping", "staircase efficiency", "privacy"]
+    },
+    "villa": {
+      "aliases": ["villa", "bungalow", "duplex villa", "luxury villa"],
+      "typicalSpaces": ["foyer", "formal living", "family lounge", "dining", "kitchen", "dirty kitchen if required", "guest bedroom", "master suite", "walk-in wardrobe", "balcony", "terrace", "parking", "garden", "maid room where applicable"],
+      "planningPriority": ["luxury entry", "privacy zoning", "double height if requested", "landscape relation", "premium facade", "service circulation"]
+    },
+    "apartmentFlat": {
+      "aliases": ["flat", "apartment", "unit", "2bhk flat", "3bhk flat"],
+      "typicalSpaces": ["living/dining", "kitchen", "bedrooms", "toilets", "balcony", "utility", "common lobby", "shaft"],
+      "planningPriority": ["compact efficiency", "shaft alignment", "balcony light", "privacy", "furniture fit"]
+    },
+    "commercialShop": {
+      "aliases": ["shop", "showroom", "retail", "commercial shop"],
+      "typicalSpaces": ["display area", "cash counter", "storage", "trial room where applicable", "toilet where required", "signage zone", "service entry where possible"],
+      "planningPriority": ["front visibility", "customer circulation", "display wall", "storage", "fire/egress check", "accessibility where applicable"]
+    },
+    "office": {
+      "aliases": ["office", "workspace", "corporate office", "co-working"],
+      "typicalSpaces": ["reception", "workstations", "cabins", "meeting room", "conference", "pantry", "toilets", "server/IT", "storage", "waiting"],
+      "planningPriority": ["workflow", "acoustics", "lighting", "HVAC", "data/electrical points", "egress", "accessibility"]
+    },
+    "school": {
+      "aliases": ["school", "classroom", "coaching center", "institute"],
+      "typicalSpaces": ["classrooms", "admin", "principal room", "staff room", "toilets", "corridor", "staircase", "play area", "library/lab where required"],
+      "planningPriority": ["student circulation", "safety", "ventilation", "toilet ratio", "fire egress", "accessibility"]
+    },
+    "clinicHospital": {
+      "aliases": ["clinic", "hospital", "nursing home", "medical center"],
+      "typicalSpaces": ["reception", "waiting", "consultation", "examination", "procedure room", "pharmacy", "toilets", "utility", "sterile/dirty flow where applicable"],
+      "planningPriority": ["clean/dirty separation", "patient circulation", "accessibility", "ventilation", "MEP/services", "fire/life safety"]
+    },
+    "hotelGuestHouse": {
+      "aliases": ["hotel", "guest house", "resort", "lodge"],
+      "typicalSpaces": ["lobby", "reception", "guest rooms", "toilets", "service room", "linen", "kitchen/restaurant where applicable", "parking", "stair/lift"],
+      "planningPriority": ["guest flow", "service flow", "room repetition", "fire egress", "privacy", "MEP shafts"]
+    },
+    "warehouseIndustrial": {
+      "aliases": ["warehouse", "godown", "factory", "industrial shed"],
+      "typicalSpaces": ["loading/unloading", "storage bay", "office", "toilets", "utility", "security", "parking", "service yard"],
+      "planningPriority": ["truck movement", "clear height", "span", "fire safety", "ventilation", "drainage", "floor loading"]
+    }
+  },
+  "roomDimensionRangesFeet": {
+    "livingRoom": {
+      "compact": "10x12 to 12x14",
+      "standard": "12x15 to 14x18",
+      "large": "16x20+",
+      "notes": ["sofa viewing distance", "TV wall clearance", "main circulation should not cut seating"]
+    },
+    "dining": {
+      "compact": "8x8 to 9x10",
+      "standard": "10x10 to 12x12",
+      "large": "12x14+",
+      "notes": ["chair pull-out clearance", "near kitchen preferred"]
+    },
+    "kitchen": {
+      "compact": "7x8 to 8x10",
+      "standard": "8x10 to 10x12",
+      "large": "10x14+",
+      "notes": ["work triangle", "hob/sink/fridge coordination", "ventilation/chimney", "utility access"]
+    },
+    "bedroom": {
+      "compact": "10x10 to 10x12",
+      "standard": "11x12 to 12x14",
+      "large": "14x16+",
+      "notes": ["bed clearance", "wardrobe shutter clearance", "window light and privacy"]
+    },
+    "masterBedroom": {
+      "compact": "11x13 to 12x14",
+      "standard": "12x15 to 14x16",
+      "large": "16x18+",
+      "notes": ["attached toilet", "wardrobe/dresser", "privacy from living"]
+    },
+    "toilet": {
+      "compact": "4x7 to 5x7",
+      "standard": "5x8 to 6x8",
+      "large": "7x10+",
+      "notes": ["wet/dry separation", "door swing", "ventilation", "shaft/wet wall"]
+    },
+    "pooja": {
+      "compact": "3x4 to 4x5",
+      "standard": "5x5 to 6x6",
+      "large": "6x8+",
+      "notes": ["quiet zone", "avoid direct toilet adjacency where possible", "ventilation/light"]
+    },
+    "staircase": {
+      "compact": "6x10 to 7x11 depending layout",
+      "standard": "8x12 to 10x14",
+      "large": "as per design",
+      "notes": ["comfortable riser/tread", "headroom", "landing", "future floor access"]
+    },
+    "parking": {
+      "carCompact": "8x14 to 9x16",
+      "carStandard": "9x16 to 10x18",
+      "twoWheeler": "3x6 approx",
+      "notes": ["gate swing/sliding", "turning", "column obstruction", "entry from road"]
+    },
+    "corridorPassage": {
+      "compact": "3 ft clear minimum planning target",
+      "standard": "3.5 to 4.5 ft",
+      "large": "5 ft+",
+      "notes": ["avoid wasted passage", "check accessibility if applicable"]
+    },
+    "balcony": {
+      "compact": "3 to 4 ft depth",
+      "standard": "4 to 6 ft depth",
+      "large": "6 ft+",
+      "notes": ["privacy", "drainage", "railing safety", "structural projection"]
+    }
+  },
+  "adjacencyRules": {
+    "publicToPrivate": ["entry -> foyer/living -> dining -> bedrooms", "guest toilet near living if possible", "bedrooms should not open directly to main door where avoidable"],
+    "serviceCore": ["kitchen near dining", "toilets stacked/grouped where possible", "shaft near toilets/kitchen", "staircase near entry or side depending plot"],
+    "privacy": ["master bedroom away from entry", "pooja in quiet clean zone", "toilet doors not directly visible from dining/living where avoidable"],
+    "ventilation": ["rooms need external wall/window where possible", "toilets need shaft/window/exhaust", "kitchen needs ventilation/chimney"],
+    "structureCoordination": ["avoid random wall offsets", "align columns/walls floor-to-floor", "stair/lift core can help structural stability", "large spans need structure review"],
+    "MEPCoordination": ["wet areas should align vertically", "DB accessible and dry", "AC outdoor units serviceable", "plumbing shafts not blocked"]
+  },
+  "plotPlanningHeuristics": {
+    "smallPlot": ["prioritize parking + staircase + compact rooms", "reduce passage waste", "stack wet areas", "use open living/dining", "avoid too many rooms"],
+    "mediumPlot": ["clear zoning possible", "better bedroom sizes", "utility/pooja/storage possible", "front parking and rear ventilation preferred where feasible"],
+    "largePlot": ["separate public/private/service zones", "landscape, courtyard, double height, guest suite, service entry possible"],
+    "narrowPlot": ["linear planning", "lightwell/courtyard/shaft important", "staircase placement critical", "avoid dark central rooms"],
+    "cornerPlot": ["two-side ventilation possible", "entry/parking can be optimized", "privacy and setback rules need check"]
+  },
+  "agentBehavior": [
+    "If user gives plot size and BHK, infer likely room program.",
+    "If user asks only dimensions, give typical ranges and explain project-specific verification.",
+    "If user asks planning, include adjacency and circulation logic.",
+    "If user asks image prompt, embed dimension and adjacency constraints in prompt.",
+    "If user asks approval/execution, mention local rules and licensed verification boundary."
+  ]
+}

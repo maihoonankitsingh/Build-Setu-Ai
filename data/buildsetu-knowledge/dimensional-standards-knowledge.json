@@ -1,0 +1,388 @@
+{
+  "version": "3.0",
+  "purpose": "Concept-level dimensional knowledge for architecture planning. These are practical planning ranges, not final statutory/code-certified dimensions.",
+  "unitPolicy": {
+    "primaryDisplay": "feet",
+    "secondaryDisplay": "mm",
+    "conversion": {
+      "1 ft": "304.8 mm",
+      "1 inch": "25.4 mm",
+      "1 meter": "3.28084 ft"
+    },
+    "rule": "When user gives feet, keep feet. When technical detail is needed, include mm equivalent."
+  },
+  "safetyBoundary": [
+    "Do not claim these are final legal/code dimensions.",
+    "Always say final dimensions must be checked against local bylaws, NBC/BIS, fire rules, accessibility rules, and professional drawings.",
+    "Use these as concept-planning defaults for AI planning and image/drawing prompt generation."
+  ],
+  "residentialRoomDimensionsFt": {
+    "foyer": {
+      "compact": "4 x 5",
+      "comfortable": "5 x 7",
+      "premium": "6 x 8",
+      "notes": [
+        "Entry buffer before living is preferred when space allows."
+      ]
+    },
+    "livingRoom": {
+      "compact": "10 x 12",
+      "comfortable": "12 x 16",
+      "premium": "14 x 18 or larger",
+      "notes": [
+        "Keep near main entrance.",
+        "Avoid using living room as only long passage."
+      ]
+    },
+    "drawingRoom": {
+      "compact": "10 x 12",
+      "comfortable": "12 x 15",
+      "premium": "14 x 18",
+      "notes": [
+        "Useful when guest zone is separate from family lounge."
+      ]
+    },
+    "dining": {
+      "compact": "8 x 8",
+      "comfortable": "10 x 10",
+      "premium": "12 x 12",
+      "notes": [
+        "Should connect to kitchen.",
+        "Can combine with living in small homes."
+      ]
+    },
+    "kitchen": {
+      "compact": "7 x 8",
+      "comfortable": "8 x 10",
+      "premium": "10 x 12",
+      "notes": [
+        "Ventilation/exhaust required.",
+        "Utility/wash nearby preferred."
+      ]
+    },
+    "utility": {
+      "compact": "3 x 6",
+      "comfortable": "4 x 8",
+      "premium": "5 x 10",
+      "notes": [
+        "Place near kitchen/washing zone."
+      ]
+    },
+    "masterBedroom": {
+      "compact": "10 x 12",
+      "comfortable": "12 x 14",
+      "premium": "14 x 16",
+      "notes": [
+        "Private zone preferred.",
+        "Attached toilet and wardrobe wall should fit."
+      ]
+    },
+    "bedroom": {
+      "compact": "10 x 10",
+      "comfortable": "11 x 12",
+      "premium": "12 x 14",
+      "notes": [
+        "Window/ventilation should be planned.",
+        "Avoid direct kitchen opening."
+      ]
+    },
+    "kidsBedroom": {
+      "compact": "9 x 10",
+      "comfortable": "10 x 12",
+      "premium": "12 x 13",
+      "notes": [
+        "Study/storage clearance should be considered."
+      ]
+    },
+    "guestBedroom": {
+      "compact": "10 x 10",
+      "comfortable": "10 x 12",
+      "premium": "12 x 14",
+      "notes": [
+        "Can be near common toilet."
+      ]
+    },
+    "studyHomeOffice": {
+      "compact": "6 x 8",
+      "comfortable": "8 x 10",
+      "premium": "10 x 12",
+      "notes": [
+        "Good daylight and quiet zone preferred."
+      ]
+    },
+    "poojaRoom": {
+      "compact": "3 x 4",
+      "comfortable": "4 x 5",
+      "premium": "5 x 6",
+      "notes": [
+        "Northeast/east/north preferred when practical."
+      ]
+    },
+    "commonToilet": {
+      "compact": "4 x 7",
+      "comfortable": "5 x 8",
+      "premium": "6 x 8",
+      "notes": [
+        "Accessible from lobby/living/dining, not through bedroom."
+      ]
+    },
+    "attachedToilet": {
+      "compact": "4 x 7",
+      "comfortable": "5 x 8",
+      "premium": "6 x 9",
+      "notes": [
+        "Align with shaft/wet wall where possible."
+      ]
+    },
+    "powderToilet": {
+      "compact": "3 x 5",
+      "comfortable": "4 x 5",
+      "premium": "4 x 6",
+      "notes": [
+        "Useful near living/dining for guests."
+      ]
+    },
+    "dressArea": {
+      "compact": "4 x 5",
+      "comfortable": "5 x 6",
+      "premium": "6 x 8",
+      "notes": [
+        "Can connect bedroom to attached toilet."
+      ]
+    },
+    "balcony": {
+      "compact": "3 x 6",
+      "comfortable": "4 x 8",
+      "premium": "5 x 10",
+      "notes": [
+        "Road/open-side balcony gives better value."
+      ]
+    },
+    "staircase": {
+      "compact": "6 x 10",
+      "comfortable": "7 x 12",
+      "premium": "8 x 14",
+      "notes": [
+        "Exact stair depends on riser/tread/floor height.",
+        "Independent stair useful for rental/future floors."
+      ]
+    },
+    "lift": {
+      "compact": "5 x 5 shaft concept",
+      "comfortable": "6 x 6 shaft concept",
+      "premium": "as per lift vendor",
+      "notes": [
+        "Lift dimensions must be finalized with lift vendor and code/accessibility requirement."
+      ]
+    },
+    "carParking": {
+      "compact": "8 x 14",
+      "standard": "9 x 16",
+      "comfortable": "10 x 18",
+      "notes": [
+        "Front/road-side placement common.",
+        "Entry gate turning should be checked."
+      ]
+    },
+    "twoWheelerParking": {
+      "compact": "3 x 6 per two-wheeler concept",
+      "comfortable": "4 x 7",
+      "notes": [
+        "Can fit in front/side setback depending on local rules."
+      ]
+    },
+    "corridorPassage": {
+      "compact": "3 ft clear",
+      "comfortable": "3.5 to 4 ft clear",
+      "publicBuilding": "5 ft or more concept depending on occupancy",
+      "notes": [
+        "Public/commercial corridor must be checked against fire/accessibility codes."
+      ]
+    },
+    "ceilingHeight": {
+      "residentialConcept": "9 to 10 ft common planning range",
+      "premium": "10 to 12 ft depending design",
+      "commercial": "10 to 14 ft depending HVAC/ceiling/services",
+      "notes": [
+        "Final clear height depends on local code, HVAC, beams, false ceiling, and building type."
+      ]
+    }
+  },
+  "doorsWindowsClearances": {
+    "mainDoor": {
+      "residentialConcept": "3.5 to 4 ft wide",
+      "premium": "4 ft or double shutter as design",
+      "notes": [
+        "Main entry should feel clear and visible."
+      ]
+    },
+    "bedroomDoor": {
+      "concept": "2.5 to 3 ft wide",
+      "notes": [
+        "Furniture movement should be considered."
+      ]
+    },
+    "toiletDoor": {
+      "concept": "2 to 2.5 ft wide",
+      "notes": [
+        "Accessible toilets require separate checks."
+      ]
+    },
+    "commercialEntryDoor": {
+      "concept": "4 ft or more depending occupancy/frontage",
+      "notes": [
+        "Fire/accessibility/egress rules must be checked."
+      ]
+    },
+    "windows": {
+      "bedroomConcept": "4 x 4 ft or as facade/light permits",
+      "kitchenConcept": "3 x 4 ft plus exhaust/chimney",
+      "toiletVentilator": "small ventilator/exhaust/shaft opening",
+      "notes": [
+        "Window size depends on light, ventilation, elevation, privacy, and code."
+      ]
+    },
+    "furnitureClearances": {
+      "bedSideClearance": "2 to 3 ft preferred",
+      "wardrobeFrontClearance": "3 ft preferred",
+      "diningChairClearance": "3 ft around table preferred",
+      "kitchenCounterDepth": "2 ft common concept",
+      "kitchenPassage": "3.5 to 4 ft preferred for working aisle",
+      "carDoorClearance": "2.5 to 3 ft side clearance preferred if space allows"
+    }
+  },
+  "stairRampConcepts": {
+    "residentialStair": {
+      "widthConcept": "3 to 3.5 ft minimum practical; 4 ft comfortable",
+      "treadConcept": "10 to 11 inch common concept",
+      "riserConcept": "6 to 7 inch common concept",
+      "landingConcept": "at least stair width concept",
+      "warning": "Final stair dimensions must follow applicable code and building type."
+    },
+    "publicStair": {
+      "widthConcept": "larger than residential; depends on occupancy/fire egress",
+      "warning": "Public/commercial stair sizing must be code/fire-consultant checked."
+    },
+    "ramp": {
+      "preferredGentleSlope": "1:12 concept for accessibility planning",
+      "notes": [
+        "Ramp needs landing, handrail, slip-resistant surface, and local accessibility compliance check."
+      ]
+    }
+  },
+  "commercialSpaceDimensionsFt": {
+    "retailShop": {
+      "compact": "10 x 15",
+      "comfortable": "12 x 20",
+      "showroom": "frontage and depth based on display",
+      "notes": [
+        "Front display/customer movement and storage needed."
+      ]
+    },
+    "officeCabin": {
+      "compact": "8 x 10",
+      "comfortable": "10 x 12",
+      "premium": "12 x 14"
+    },
+    "workstation": {
+      "conceptPerSeat": "25 to 50 sq ft depending layout",
+      "notes": [
+        "Circulation, meeting, pantry, storage, and services extra."
+      ]
+    },
+    "meetingRoom": {
+      "fourPerson": "8 x 10",
+      "sixPerson": "10 x 12",
+      "tenPerson": "12 x 16"
+    },
+    "receptionWaiting": {
+      "compact": "8 x 10",
+      "comfortable": "10 x 15",
+      "premium": "12 x 20"
+    },
+    "restaurantDining": {
+      "conceptPerSeat": "12 to 18 sq ft including circulation concept",
+      "notes": [
+        "Kitchen, wash, store, toilet, service aisle extra."
+      ]
+    },
+    "commercialKitchen": {
+      "compact": "10 x 12",
+      "comfortable": "12 x 18",
+      "cloudKitchen": "depends on equipment line",
+      "notes": [
+        "Exhaust, fire, grease, drainage, washable surfaces required."
+      ]
+    }
+  },
+  "healthcareEducationIndustrialDimensionsFt": {
+    "clinicConsultationRoom": {
+      "compact": "8 x 10",
+      "comfortable": "10 x 12",
+      "premium": "12 x 14",
+      "notes": [
+        "Privacy, handwash, patient chair, examination couch clearance."
+      ]
+    },
+    "dentalRoom": {
+      "compact": "10 x 12",
+      "comfortable": "12 x 14",
+      "notes": [
+        "Chair clearance, compressor/services, sterilization support."
+      ]
+    },
+    "classroom": {
+      "concept": "area depends on student count and education norms",
+      "notes": [
+        "Daylight, ventilation, board visibility, exits, toilets, fire safety."
+      ]
+    },
+    "warehouseBay": {
+      "concept": "module based on rack size, vehicle movement, loading bay, clear height",
+      "notes": [
+        "Structure and fire design must be specialized."
+      ]
+    },
+    "workshop": {
+      "concept": "equipment footprint plus safe working clearance",
+      "notes": [
+        "Power, ventilation, fire, material movement needed."
+      ]
+    }
+  },
+  "mepDimensionalAwareness": {
+    "plumbingShaft": {
+      "compactResidential": "2 x 3 ft concept",
+      "comfortable": "3 x 4 ft concept",
+      "multiStorey": "size based on fixtures and maintenance access",
+      "notes": [
+        "Final shaft size by plumbing design."
+      ]
+    },
+    "electricalPanelZone": {
+      "residentialDB": "small accessible wall zone away from wet areas",
+      "commercialPanelRoom": "dedicated accessible service space depending load",
+      "notes": [
+        "Final sizing by electrical load calculation."
+      ]
+    },
+    "acOutdoorUnit": {
+      "splitAC": "serviceable balcony/ledge/shaft/open area",
+      "notes": [
+        "Drain, access, noise, and heat rejection must be considered."
+      ]
+    },
+    "toiletExhaust": {
+      "concept": "external wall, duct, or shaft route required",
+      "notes": [
+        "Closed toilet without exhaust/shaft is bad planning."
+      ]
+    },
+    "waterTankPump": {
+      "concept": "terrace/underground/pump room space depends on occupancy",
+      "notes": [
+        "Final capacity and structural support require professional design."
+      ]
+    }
+  }
+}

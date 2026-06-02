@@ -1,0 +1,67 @@
+{
+  "version": "2.0",
+  "examples": [
+    {
+      "input": "30x50 north facing 2BHK with parking, stair, 2 toilets",
+      "classification": "residential.standard2BHK",
+      "requiredLogic": [
+        "parking front/road side",
+        "living near entry",
+        "kitchen near dining with utility if possible",
+        "master bedroom private with attached toilet",
+        "common toilet accessible from lobby",
+        "stair side/front for future floor"
+      ],
+      "outputMode": "top_view_2d_floor_plan"
+    },
+    {
+      "input": "20x60 ground floor shop and first floor residence",
+      "classification": "mixedUse.shopPlusResidence",
+      "requiredLogic": [
+        "separate shop entry and residential entry",
+        "shop front customer zone",
+        "rear/service/store if possible",
+        "independent stair for residence",
+        "toilet/service separation"
+      ],
+      "outputMode": "mixed_use_floor_plan"
+    },
+    {
+      "input": "small clinic layout with reception, waiting, 2 consultation rooms and pharmacy",
+      "classification": "healthcare.clinic",
+      "requiredLogic": [
+        "public waiting and reception front",
+        "consultation rooms with privacy",
+        "pharmacy accessible but controlled",
+        "toilet accessible",
+        "clean circulation and MEP reliability flags"
+      ],
+      "outputMode": "clinical_floor_plan"
+    },
+    {
+      "input": "restaurant 1000 sqft with kitchen and dining",
+      "classification": "commercial.restaurant",
+      "requiredLogic": [
+        "front dining/customer zone",
+        "service counter",
+        "kitchen behind/service side",
+        "wash and storage",
+        "exhaust/fire/kitchen MEP warning",
+        "customer toilet if required"
+      ],
+      "outputMode": "restaurant_layout"
+    },
+    {
+      "input": "warehouse shed with office and loading area",
+      "classification": "industrial.warehouse",
+      "requiredLogic": [
+        "loading/unloading clear access",
+        "large unobstructed storage zone",
+        "office/security location",
+        "electrical/fire/ventilation flags",
+        "steel or RCC concept system warning"
+      ],
+      "outputMode": "industrial_layout"
+    }
+  ]
+}

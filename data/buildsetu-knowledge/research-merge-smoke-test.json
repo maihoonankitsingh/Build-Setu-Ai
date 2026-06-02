@@ -1,0 +1,71 @@
+{
+  "version": "1.0",
+  "purpose": "Smoke test target for research draft merge API.",
+  "researchUpdates": [
+    {
+      "id": "draft_20260601_074843_productmaterialspecs_6c7cb911",
+      "category": "productMaterialSpecs",
+      "riskLevel": "medium",
+      "confidence": "medium",
+      "jurisdiction": {
+        "country": "India",
+        "stateOrProvinceOrEmirate": "Chhattisgarh",
+        "cityOrAuthority": "Raipur"
+      },
+      "source": {
+        "title": "Sample merge API waterproofing datasheet placeholder",
+        "url": "https://example.com/sample-merge-waterproofing-datasheet",
+        "sourceType": "manufacturer_primary",
+        "publisher": "Sample Manufacturer",
+        "dateAccessed": "2026-06-01",
+        "effectiveDate": "unknown",
+        "version": "unknown"
+      },
+      "extracted": {
+        "summary": "Sample approved draft to test safe append merge into knowledge JSON.",
+        "checklist": [
+          "verify manufacturer source",
+          "check method",
+          "check cautions"
+        ],
+        "requiredDocuments": [
+          "manufacturer datasheet"
+        ],
+        "processSteps": [
+          "create draft",
+          "approve",
+          "merge",
+          "run smoke tests"
+        ],
+        "cautions": [
+          "site verification required"
+        ],
+        "blockedClaims": [
+          "guaranteed waterproofing",
+          "final system design"
+        ]
+      },
+      "review": {
+        "action": "approve",
+        "reviewer": "merge-smoke-reviewer",
+        "reviewNotes": "Approved for safe append merge smoke test.",
+        "reviewedAt": "2026-06-01T07:48:43.700Z",
+        "professionalReviewRequired": true,
+        "mergeReady": true
+      },
+      "merge": {
+        "mergedAt": "2026-06-01T07:48:43.719Z",
+        "mergedBy": "merge-smoke-merger",
+        "mergeNotes": "Safe append merge smoke test.",
+        "mergeMode": "safe_append_researchUpdates"
+      }
+    }
+  ],
+  "researchUpdateVersion": "research-20260601_074843",
+  "lastResearchMerge": {
+    "draftId": "draft_20260601_074843_productmaterialspecs_6c7cb911",
+    "mergedAt": "2026-06-01T07:48:43.719Z",
+    "mergedBy": "merge-smoke-merger",
+    "backup": "_safe_backups/research_draft_merges/20260601_074843_research-merge-smoke-test.json.bak.json"
+  }
+}

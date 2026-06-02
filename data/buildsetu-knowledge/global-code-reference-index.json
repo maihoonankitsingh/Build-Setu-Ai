@@ -1,0 +1,780 @@
+{
+  "version": "1.0",
+  "purpose": "Global building-code reference index for BuildSetu agent. This is a routing/reference layer, not the full legal code text.",
+  "safetyBoundary": [
+    "Agent must not claim final code compliance.",
+    "Agent must not copy full copyrighted code text.",
+    "Agent can mention likely code families and required authority/professional checks.",
+    "Final design, structure, MEP, fire, accessibility, FAR/FSI, setbacks, height, parking and approval must be checked by licensed professionals and local authorities.",
+    "Country, state/province/emirate, city/local authority, occupancy/use, height, plot zoning and project stage are required for code-sensitive answers."
+  ],
+  "codeQuestionBehavior": [
+    "If user asks for exact clause/current legal compliance and location is missing, ask country + state/province/emirate + city/local authority.",
+    "If user asks for concept planning, proceed with assumptions and cite that local code verification is required.",
+    "If user asks for IS/IBC/Eurocode/NBC/NFPA/NEC/BS code, identify the likely code family but do not certify compliance.",
+    "For structure: provide concept and reference family only; no final calculations.",
+    "For electrical/plumbing/fire/MEP: provide concept and reference family only; no final sizing/certification."
+  ],
+  "countries": {
+    "India": {
+      "subdivisionName": "state/union territory + city/local authority",
+      "defaultUnits": "feet for client discussion; mm/m for drawings and engineering",
+      "nationalReferenceFamily": [
+        "BIS Indian Standards / IS codes",
+        "National Building Code of India / NBC context",
+        "Local municipal/development authority bylaws",
+        "State development control rules",
+        "Fire authority / NOC where applicable",
+        "CPWD/PWD/specification references where relevant"
+      ],
+      "commonTechnicalReferencesToVerify": {
+        "structure": [
+          "IS 456 reinforced concrete concept reference",
+          "IS 875 loading concept reference",
+          "IS 1893 seismic design concept reference",
+          "IS 13920 ductile detailing concept reference",
+          "IS 800 steel design concept reference",
+          "IS 1905 masonry concept reference",
+          "IS 1786 reinforcement steel concept reference"
+        ],
+        "electrical": [
+          "IS 732 electrical wiring installation concept reference",
+          "National Electrical Code of India / SP 30 concept reference",
+          "local electricity board/distribution company requirements"
+        ],
+        "fireLifeSafety": [
+          "NBC fire and life safety context",
+          "local fire department/NOC requirements"
+        ],
+        "plumbingPublicHealth": [
+          "NBC plumbing/building services context",
+          "local water/sewer authority requirements",
+          "CPHEEO/local public health engineering references where applicable"
+        ],
+        "accessibility": [
+          "NBC accessibility/barrier-free context",
+          "local authority requirements"
+        ],
+        "energySustainability": [
+          "ECBC where applicable",
+          "state/local energy rules where applicable"
+        ]
+      },
+      "subdivisions": {
+        "Andhra Pradesh": {
+          "authorityPattern": "city municipal corporation / development authority / gram panchayat / local body as applicable",
+          "codePolicy": "Use Indian national reference family plus state/city/local bylaws. Verify latest local FAR/FSI, setback, height, parking, fire and approval rules."
+        },
+        "Arunachal Pradesh": {
+          "authorityPattern": "city municipal corporation / development authority / gram panchayat / local body as applicable",
+          "codePolicy": "Use Indian national reference family plus state/city/local bylaws. Verify latest local FAR/FSI, setback, height, parking, fire and approval rules."
+        },
+        "Assam": {
+          "authorityPattern": "city municipal corporation / development authority / gram panchayat / local body as applicable",
+          "codePolicy": "Use Indian national reference family plus state/city/local bylaws. Verify latest local FAR/FSI, setback, height, parking, fire and approval rules."
+        },
+        "Bihar": {
+          "authorityPattern": "city municipal corporation / development authority / gram panchayat / local body as applicable",
+          "codePolicy": "Use Indian national reference family plus state/city/local bylaws. Verify latest local FAR/FSI, setback, height, parking, fire and approval rules."
+        },
+        "Chhattisgarh": {
+          "authorityPattern": "city municipal corporation / development authority / gram panchayat / local body as applicable",
+          "codePolicy": "Use Indian national reference family plus state/city/local bylaws. Verify latest local FAR/FSI, setback, height, parking, fire and approval rules."
+        },
+        "Goa": {
+          "authorityPattern": "city municipal corporation / development authority / gram panchayat / local body as applicable",
+          "codePolicy": "Use Indian national reference family plus state/city/local bylaws. Verify latest local FAR/FSI, setback, height, parking, fire and approval rules."
+        },
+        "Gujarat": {
+          "authorityPattern": "city municipal corporation / development authority / gram panchayat / local body as applicable",
+          "codePolicy": "Use Indian national reference family plus state/city/local bylaws. Verify latest local FAR/FSI, setback, height, parking, fire and approval rules."
+        },
+        "Haryana": {
+          "authorityPattern": "city municipal corporation / development authority / gram panchayat / local body as applicable",
+          "codePolicy": "Use Indian national reference family plus state/city/local bylaws. Verify latest local FAR/FSI, setback, height, parking, fire and approval rules."
+        },
+        "Himachal Pradesh": {
+          "authorityPattern": "city municipal corporation / development authority / gram panchayat / local body as applicable",
+          "codePolicy": "Use Indian national reference family plus state/city/local bylaws. Verify latest local FAR/FSI, setback, height, parking, fire and approval rules."
+        },
+        "Jharkhand": {
+          "authorityPattern": "city municipal corporation / development authority / gram panchayat / local body as applicable",
+          "codePolicy": "Use Indian national reference family plus state/city/local bylaws. Verify latest local FAR/FSI, setback, height, parking, fire and approval rules."
+        },
+        "Karnataka": {
+          "authorityPattern": "city municipal corporation / development authority / gram panchayat / local body as applicable",
+          "codePolicy": "Use Indian national reference family plus state/city/local bylaws. Verify latest local FAR/FSI, setback, height, parking, fire and approval rules."
+        },
+        "Kerala": {
+          "authorityPattern": "city municipal corporation / development authority / gram panchayat / local body as applicable",
+          "codePolicy": "Use Indian national reference family plus state/city/local bylaws. Verify latest local FAR/FSI, setback, height, parking, fire and approval rules."
+        },
+        "Madhya Pradesh": {
+          "authorityPattern": "city municipal corporation / development authority / gram panchayat / local body as applicable",
+          "codePolicy": "Use Indian national reference family plus state/city/local bylaws. Verify latest local FAR/FSI, setback, height, parking, fire and approval rules."
+        },
+        "Maharashtra": {
+          "authorityPattern": "city municipal corporation / development authority / gram panchayat / local body as applicable",
+          "codePolicy": "Use Indian national reference family plus state/city/local bylaws. Verify latest local FAR/FSI, setback, height, parking, fire and approval rules."
+        },
+        "Manipur": {
+          "authorityPattern": "city municipal corporation / development authority / gram panchayat / local body as applicable",
+          "codePolicy": "Use Indian national reference family plus state/city/local bylaws. Verify latest local FAR/FSI, setback, height, parking, fire and approval rules."
+        },
+        "Meghalaya": {
+          "authorityPattern": "city municipal corporation / development authority / gram panchayat / local body as applicable",
+          "codePolicy": "Use Indian national reference family plus state/city/local bylaws. Verify latest local FAR/FSI, setback, height, parking, fire and approval rules."
+        },
+        "Mizoram": {
+          "authorityPattern": "city municipal corporation / development authority / gram panchayat / local body as applicable",
+          "codePolicy": "Use Indian national reference family plus state/city/local bylaws. Verify latest local FAR/FSI, setback, height, parking, fire and approval rules."
+        },
+        "Nagaland": {
+          "authorityPattern": "city municipal corporation / development authority / gram panchayat / local body as applicable",
+          "codePolicy": "Use Indian national reference family plus state/city/local bylaws. Verify latest local FAR/FSI, setback, height, parking, fire and approval rules."
+        },
+        "Odisha": {
+          "authorityPattern": "city municipal corporation / development authority / gram panchayat / local body as applicable",
+          "codePolicy": "Use Indian national reference family plus state/city/local bylaws. Verify latest local FAR/FSI, setback, height, parking, fire and approval rules."
+        },
+        "Punjab": {
+          "authorityPattern": "city municipal corporation / development authority / gram panchayat / local body as applicable",
+          "codePolicy": "Use Indian national reference family plus state/city/local bylaws. Verify latest local FAR/FSI, setback, height, parking, fire and approval rules."
+        },
+        "Rajasthan": {
+          "authorityPattern": "city municipal corporation / development authority / gram panchayat / local body as applicable",
+          "codePolicy": "Use Indian national reference family plus state/city/local bylaws. Verify latest local FAR/FSI, setback, height, parking, fire and approval rules."
+        },
+        "Sikkim": {
+          "authorityPattern": "city municipal corporation / development authority / gram panchayat / local body as applicable",
+          "codePolicy": "Use Indian national reference family plus state/city/local bylaws. Verify latest local FAR/FSI, setback, height, parking, fire and approval rules."
+        },
+        "Tamil Nadu": {
+          "authorityPattern": "city municipal corporation / development authority / gram panchayat / local body as applicable",
+          "codePolicy": "Use Indian national reference family plus state/city/local bylaws. Verify latest local FAR/FSI, setback, height, parking, fire and approval rules."
+        },
+        "Telangana": {
+          "authorityPattern": "city municipal corporation / development authority / gram panchayat / local body as applicable",
+          "codePolicy": "Use Indian national reference family plus state/city/local bylaws. Verify latest local FAR/FSI, setback, height, parking, fire and approval rules."
+        },
+        "Tripura": {
+          "authorityPattern": "city municipal corporation / development authority / gram panchayat / local body as applicable",
+          "codePolicy": "Use Indian national reference family plus state/city/local bylaws. Verify latest local FAR/FSI, setback, height, parking, fire and approval rules."
+        },
+        "Uttar Pradesh": {
+          "authorityPattern": "city municipal corporation / development authority / gram panchayat / local body as applicable",
+          "codePolicy": "Use Indian national reference family plus state/city/local bylaws. Verify latest local FAR/FSI, setback, height, parking, fire and approval rules."
+        },
+        "Uttarakhand": {
+          "authorityPattern": "city municipal corporation / development authority / gram panchayat / local body as applicable",
+          "codePolicy": "Use Indian national reference family plus state/city/local bylaws. Verify latest local FAR/FSI, setback, height, parking, fire and approval rules."
+        },
+        "West Bengal": {
+          "authorityPattern": "city municipal corporation / development authority / gram panchayat / local body as applicable",
+          "codePolicy": "Use Indian national reference family plus state/city/local bylaws. Verify latest local FAR/FSI, setback, height, parking, fire and approval rules."
+        },
+        "Andaman and Nicobar Islands": {
+          "authorityPattern": "city municipal corporation / development authority / gram panchayat / local body as applicable",
+          "codePolicy": "Use Indian national reference family plus state/city/local bylaws. Verify latest local FAR/FSI, setback, height, parking, fire and approval rules."
+        },
+        "Chandigarh": {
+          "authorityPattern": "city municipal corporation / development authority / gram panchayat / local body as applicable",
+          "codePolicy": "Use Indian national reference family plus state/city/local bylaws. Verify latest local FAR/FSI, setback, height, parking, fire and approval rules."
+        },
+        "Dadra and Nagar Haveli and Daman and Diu": {
+          "authorityPattern": "city municipal corporation / development authority / gram panchayat / local body as applicable",
+          "codePolicy": "Use Indian national reference family plus state/city/local bylaws. Verify latest local FAR/FSI, setback, height, parking, fire and approval rules."
+        },
+        "Delhi": {
+          "authorityPattern": "city municipal corporation / development authority / gram panchayat / local body as applicable",
+          "codePolicy": "Use Indian national reference family plus state/city/local bylaws. Verify latest local FAR/FSI, setback, height, parking, fire and approval rules."
+        },
+        "Jammu and Kashmir": {
+          "authorityPattern": "city municipal corporation / development authority / gram panchayat / local body as applicable",
+          "codePolicy": "Use Indian national reference family plus state/city/local bylaws. Verify latest local FAR/FSI, setback, height, parking, fire and approval rules."
+        },
+        "Ladakh": {
+          "authorityPattern": "city municipal corporation / development authority / gram panchayat / local body as applicable",
+          "codePolicy": "Use Indian national reference family plus state/city/local bylaws. Verify latest local FAR/FSI, setback, height, parking, fire and approval rules."
+        },
+        "Lakshadweep": {
+          "authorityPattern": "city municipal corporation / development authority / gram panchayat / local body as applicable",
+          "codePolicy": "Use Indian national reference family plus state/city/local bylaws. Verify latest local FAR/FSI, setback, height, parking, fire and approval rules."
+        },
+        "Puducherry": {
+          "authorityPattern": "city municipal corporation / development authority / gram panchayat / local body as applicable",
+          "codePolicy": "Use Indian national reference family plus state/city/local bylaws. Verify latest local FAR/FSI, setback, height, parking, fire and approval rules."
+        }
+      }
+    },
+    "USA": {
+      "subdivisionName": "state + county/city",
+      "defaultUnits": "feet/inches",
+      "nationalReferenceFamily": [
+        "ICC I-Codes where adopted",
+        "IBC for commercial/multi-family/most non-residential context",
+        "IRC for one/two-family residential context where adopted",
+        "IEBC for existing buildings where adopted",
+        "IPC/IMC/IFC/IECC where adopted",
+        "NFPA 70 / NEC for electrical where adopted",
+        "NFPA fire/life-safety references where adopted",
+        "ASCE 7 loads, ACI/AISC/wood/masonry standards as applicable",
+        "state/city amendments and local permit authority"
+      ],
+      "subdivisions": {
+        "Alabama": {
+          "abbreviation": "AL",
+          "authorityPattern": "state code adoption + county/city building department + local amendments",
+          "codePolicy": "Check adopted code edition, state amendments, local amendments, zoning, fire, energy, accessibility and hazard overlays."
+        },
+        "Alaska": {
+          "abbreviation": "AK",
+          "authorityPattern": "state code adoption + county/city building department + local amendments",
+          "codePolicy": "Check adopted code edition, state amendments, local amendments, zoning, fire, energy, accessibility and hazard overlays."
+        },
+        "Arizona": {
+          "abbreviation": "AZ",
+          "authorityPattern": "state code adoption + county/city building department + local amendments",
+          "codePolicy": "Check adopted code edition, state amendments, local amendments, zoning, fire, energy, accessibility and hazard overlays."
+        },
+        "Arkansas": {
+          "abbreviation": "AR",
+          "authorityPattern": "state code adoption + county/city building department + local amendments",
+          "codePolicy": "Check adopted code edition, state amendments, local amendments, zoning, fire, energy, accessibility and hazard overlays."
+        },
+        "California": {
+          "abbreviation": "CA",
+          "authorityPattern": "state code adoption + county/city building department + local amendments",
+          "codePolicy": "Check adopted code edition, state amendments, local amendments, zoning, fire, energy, accessibility and hazard overlays."
+        },
+        "Colorado": {
+          "abbreviation": "CO",
+          "authorityPattern": "state code adoption + county/city building department + local amendments",
+          "codePolicy": "Check adopted code edition, state amendments, local amendments, zoning, fire, energy, accessibility and hazard overlays."
+        },
+        "Connecticut": {
+          "abbreviation": "CT",
+          "authorityPattern": "state code adoption + county/city building department + local amendments",
+          "codePolicy": "Check adopted code edition, state amendments, local amendments, zoning, fire, energy, accessibility and hazard overlays."
+        },
+        "Delaware": {
+          "abbreviation": "DE",
+          "authorityPattern": "state code adoption + county/city building department + local amendments",
+          "codePolicy": "Check adopted code edition, state amendments, local amendments, zoning, fire, energy, accessibility and hazard overlays."
+        },
+        "Florida": {
+          "abbreviation": "FL",
+          "authorityPattern": "state code adoption + county/city building department + local amendments",
+          "codePolicy": "Check adopted code edition, state amendments, local amendments, zoning, fire, energy, accessibility and hazard overlays."
+        },
+        "Georgia": {
+          "abbreviation": "GA",
+          "authorityPattern": "state code adoption + county/city building department + local amendments",
+          "codePolicy": "Check adopted code edition, state amendments, local amendments, zoning, fire, energy, accessibility and hazard overlays."
+        },
+        "Hawaii": {
+          "abbreviation": "HI",
+          "authorityPattern": "state code adoption + county/city building department + local amendments",
+          "codePolicy": "Check adopted code edition, state amendments, local amendments, zoning, fire, energy, accessibility and hazard overlays."
+        },
+        "Idaho": {
+          "abbreviation": "ID",
+          "authorityPattern": "state code adoption + county/city building department + local amendments",
+          "codePolicy": "Check adopted code edition, state amendments, local amendments, zoning, fire, energy, accessibility and hazard overlays."
+        },
+        "Illinois": {
+          "abbreviation": "IL",
+          "authorityPattern": "state code adoption + county/city building department + local amendments",
+          "codePolicy": "Check adopted code edition, state amendments, local amendments, zoning, fire, energy, accessibility and hazard overlays."
+        },
+        "Indiana": {
+          "abbreviation": "IN",
+          "authorityPattern": "state code adoption + county/city building department + local amendments",
+          "codePolicy": "Check adopted code edition, state amendments, local amendments, zoning, fire, energy, accessibility and hazard overlays."
+        },
+        "Iowa": {
+          "abbreviation": "IA",
+          "authorityPattern": "state code adoption + county/city building department + local amendments",
+          "codePolicy": "Check adopted code edition, state amendments, local amendments, zoning, fire, energy, accessibility and hazard overlays."
+        },
+        "Kansas": {
+          "abbreviation": "KS",
+          "authorityPattern": "state code adoption + county/city building department + local amendments",
+          "codePolicy": "Check adopted code edition, state amendments, local amendments, zoning, fire, energy, accessibility and hazard overlays."
+        },
+        "Kentucky": {
+          "abbreviation": "KY",
+          "authorityPattern": "state code adoption + county/city building department + local amendments",
+          "codePolicy": "Check adopted code edition, state amendments, local amendments, zoning, fire, energy, accessibility and hazard overlays."
+        },
+        "Louisiana": {
+          "abbreviation": "LA",
+          "authorityPattern": "state code adoption + county/city building department + local amendments",
+          "codePolicy": "Check adopted code edition, state amendments, local amendments, zoning, fire, energy, accessibility and hazard overlays."
+        },
+        "Maine": {
+          "abbreviation": "ME",
+          "authorityPattern": "state code adoption + county/city building department + local amendments",
+          "codePolicy": "Check adopted code edition, state amendments, local amendments, zoning, fire, energy, accessibility and hazard overlays."
+        },
+        "Maryland": {
+          "abbreviation": "MD",
+          "authorityPattern": "state code adoption + county/city building department + local amendments",
+          "codePolicy": "Check adopted code edition, state amendments, local amendments, zoning, fire, energy, accessibility and hazard overlays."
+        },
+        "Massachusetts": {
+          "abbreviation": "MA",
+          "authorityPattern": "state code adoption + county/city building department + local amendments",
+          "codePolicy": "Check adopted code edition, state amendments, local amendments, zoning, fire, energy, accessibility and hazard overlays."
+        },
+        "Michigan": {
+          "abbreviation": "MI",
+          "authorityPattern": "state code adoption + county/city building department + local amendments",
+          "codePolicy": "Check adopted code edition, state amendments, local amendments, zoning, fire, energy, accessibility and hazard overlays."
+        },
+        "Minnesota": {
+          "abbreviation": "MN",
+          "authorityPattern": "state code adoption + county/city building department + local amendments",
+          "codePolicy": "Check adopted code edition, state amendments, local amendments, zoning, fire, energy, accessibility and hazard overlays."
+        },
+        "Mississippi": {
+          "abbreviation": "MS",
+          "authorityPattern": "state code adoption + county/city building department + local amendments",
+          "codePolicy": "Check adopted code edition, state amendments, local amendments, zoning, fire, energy, accessibility and hazard overlays."
+        },
+        "Missouri": {
+          "abbreviation": "MO",
+          "authorityPattern": "state code adoption + county/city building department + local amendments",
+          "codePolicy": "Check adopted code edition, state amendments, local amendments, zoning, fire, energy, accessibility and hazard overlays."
+        },
+        "Montana": {
+          "abbreviation": "MT",
+          "authorityPattern": "state code adoption + county/city building department + local amendments",
+          "codePolicy": "Check adopted code edition, state amendments, local amendments, zoning, fire, energy, accessibility and hazard overlays."
+        },
+        "Nebraska": {
+          "abbreviation": "NE",
+          "authorityPattern": "state code adoption + county/city building department + local amendments",
+          "codePolicy": "Check adopted code edition, state amendments, local amendments, zoning, fire, energy, accessibility and hazard overlays."
+        },
+        "Nevada": {
+          "abbreviation": "NV",
+          "authorityPattern": "state code adoption + county/city building department + local amendments",
+          "codePolicy": "Check adopted code edition, state amendments, local amendments, zoning, fire, energy, accessibility and hazard overlays."
+        },
+        "New Hampshire": {
+          "abbreviation": "NH",
+          "authorityPattern": "state code adoption + county/city building department + local amendments",
+          "codePolicy": "Check adopted code edition, state amendments, local amendments, zoning, fire, energy, accessibility and hazard overlays."
+        },
+        "New Jersey": {
+          "abbreviation": "NJ",
+          "authorityPattern": "state code adoption + county/city building department + local amendments",
+          "codePolicy": "Check adopted code edition, state amendments, local amendments, zoning, fire, energy, accessibility and hazard overlays."
+        },
+        "New Mexico": {
+          "abbreviation": "NM",
+          "authorityPattern": "state code adoption + county/city building department + local amendments",
+          "codePolicy": "Check adopted code edition, state amendments, local amendments, zoning, fire, energy, accessibility and hazard overlays."
+        },
+        "New York": {
+          "abbreviation": "NY",
+          "authorityPattern": "state code adoption + county/city building department + local amendments",
+          "codePolicy": "Check adopted code edition, state amendments, local amendments, zoning, fire, energy, accessibility and hazard overlays."
+        },
+        "North Carolina": {
+          "abbreviation": "NC",
+          "authorityPattern": "state code adoption + county/city building department + local amendments",
+          "codePolicy": "Check adopted code edition, state amendments, local amendments, zoning, fire, energy, accessibility and hazard overlays."
+        },
+        "North Dakota": {
+          "abbreviation": "ND",
+          "authorityPattern": "state code adoption + county/city building department + local amendments",
+          "codePolicy": "Check adopted code edition, state amendments, local amendments, zoning, fire, energy, accessibility and hazard overlays."
+        },
+        "Ohio": {
+          "abbreviation": "OH",
+          "authorityPattern": "state code adoption + county/city building department + local amendments",
+          "codePolicy": "Check adopted code edition, state amendments, local amendments, zoning, fire, energy, accessibility and hazard overlays."
+        },
+        "Oklahoma": {
+          "abbreviation": "OK",
+          "authorityPattern": "state code adoption + county/city building department + local amendments",
+          "codePolicy": "Check adopted code edition, state amendments, local amendments, zoning, fire, energy, accessibility and hazard overlays."
+        },
+        "Oregon": {
+          "abbreviation": "OR",
+          "authorityPattern": "state code adoption + county/city building department + local amendments",
+          "codePolicy": "Check adopted code edition, state amendments, local amendments, zoning, fire, energy, accessibility and hazard overlays."
+        },
+        "Pennsylvania": {
+          "abbreviation": "PA",
+          "authorityPattern": "state code adoption + county/city building department + local amendments",
+          "codePolicy": "Check adopted code edition, state amendments, local amendments, zoning, fire, energy, accessibility and hazard overlays."
+        },
+        "Rhode Island": {
+          "abbreviation": "RI",
+          "authorityPattern": "state code adoption + county/city building department + local amendments",
+          "codePolicy": "Check adopted code edition, state amendments, local amendments, zoning, fire, energy, accessibility and hazard overlays."
+        },
+        "South Carolina": {
+          "abbreviation": "SC",
+          "authorityPattern": "state code adoption + county/city building department + local amendments",
+          "codePolicy": "Check adopted code edition, state amendments, local amendments, zoning, fire, energy, accessibility and hazard overlays."
+        },
+        "South Dakota": {
+          "abbreviation": "SD",
+          "authorityPattern": "state code adoption + county/city building department + local amendments",
+          "codePolicy": "Check adopted code edition, state amendments, local amendments, zoning, fire, energy, accessibility and hazard overlays."
+        },
+        "Tennessee": {
+          "abbreviation": "TN",
+          "authorityPattern": "state code adoption + county/city building department + local amendments",
+          "codePolicy": "Check adopted code edition, state amendments, local amendments, zoning, fire, energy, accessibility and hazard overlays."
+        },
+        "Texas": {
+          "abbreviation": "TX",
+          "authorityPattern": "state code adoption + county/city building department + local amendments",
+          "codePolicy": "Check adopted code edition, state amendments, local amendments, zoning, fire, energy, accessibility and hazard overlays."
+        },
+        "Utah": {
+          "abbreviation": "UT",
+          "authorityPattern": "state code adoption + county/city building department + local amendments",
+          "codePolicy": "Check adopted code edition, state amendments, local amendments, zoning, fire, energy, accessibility and hazard overlays."
+        },
+        "Vermont": {
+          "abbreviation": "VT",
+          "authorityPattern": "state code adoption + county/city building department + local amendments",
+          "codePolicy": "Check adopted code edition, state amendments, local amendments, zoning, fire, energy, accessibility and hazard overlays."
+        },
+        "Virginia": {
+          "abbreviation": "VA",
+          "authorityPattern": "state code adoption + county/city building department + local amendments",
+          "codePolicy": "Check adopted code edition, state amendments, local amendments, zoning, fire, energy, accessibility and hazard overlays."
+        },
+        "Washington": {
+          "abbreviation": "WA",
+          "authorityPattern": "state code adoption + county/city building department + local amendments",
+          "codePolicy": "Check adopted code edition, state amendments, local amendments, zoning, fire, energy, accessibility and hazard overlays."
+        },
+        "West Virginia": {
+          "abbreviation": "WV",
+          "authorityPattern": "state code adoption + county/city building department + local amendments",
+          "codePolicy": "Check adopted code edition, state amendments, local amendments, zoning, fire, energy, accessibility and hazard overlays."
+        },
+        "Wisconsin": {
+          "abbreviation": "WI",
+          "authorityPattern": "state code adoption + county/city building department + local amendments",
+          "codePolicy": "Check adopted code edition, state amendments, local amendments, zoning, fire, energy, accessibility and hazard overlays."
+        },
+        "Wyoming": {
+          "abbreviation": "WY",
+          "authorityPattern": "state code adoption + county/city building department + local amendments",
+          "codePolicy": "Check adopted code edition, state amendments, local amendments, zoning, fire, energy, accessibility and hazard overlays."
+        },
+        "District of Columbia": {
+          "abbreviation": "DC",
+          "authorityPattern": "state code adoption + county/city building department + local amendments",
+          "codePolicy": "Check adopted code edition, state amendments, local amendments, zoning, fire, energy, accessibility and hazard overlays."
+        }
+      }
+    },
+    "UAE": {
+      "subdivisionName": "emirate + municipality/free-zone/master developer",
+      "defaultUnits": "metric",
+      "nationalReferenceFamily": [
+        "emirate municipality/building regulation context",
+        "civil defence/fire safety approval context",
+        "utility authority requirements",
+        "free-zone/master developer rules where applicable"
+      ],
+      "subdivisions": {
+        "Abu Dhabi": {
+          "authorityPattern": "Abu Dhabi municipality/authority + civil defence + utility authority + master developer/free-zone where applicable",
+          "codePolicy": "Check emirate-specific authority, civil defence, utility, parking, accessibility, facade and MEP approval requirements."
+        },
+        "Dubai": {
+          "authorityPattern": "Dubai municipality/authority + civil defence + utility authority + master developer/free-zone where applicable",
+          "codePolicy": "Check emirate-specific authority, civil defence, utility, parking, accessibility, facade and MEP approval requirements."
+        },
+        "Sharjah": {
+          "authorityPattern": "Sharjah municipality/authority + civil defence + utility authority + master developer/free-zone where applicable",
+          "codePolicy": "Check emirate-specific authority, civil defence, utility, parking, accessibility, facade and MEP approval requirements."
+        },
+        "Ajman": {
+          "authorityPattern": "Ajman municipality/authority + civil defence + utility authority + master developer/free-zone where applicable",
+          "codePolicy": "Check emirate-specific authority, civil defence, utility, parking, accessibility, facade and MEP approval requirements."
+        },
+        "Umm Al Quwain": {
+          "authorityPattern": "Umm Al Quwain municipality/authority + civil defence + utility authority + master developer/free-zone where applicable",
+          "codePolicy": "Check emirate-specific authority, civil defence, utility, parking, accessibility, facade and MEP approval requirements."
+        },
+        "Ras Al Khaimah": {
+          "authorityPattern": "Ras Al Khaimah municipality/authority + civil defence + utility authority + master developer/free-zone where applicable",
+          "codePolicy": "Check emirate-specific authority, civil defence, utility, parking, accessibility, facade and MEP approval requirements."
+        },
+        "Fujairah": {
+          "authorityPattern": "Fujairah municipality/authority + civil defence + utility authority + master developer/free-zone where applicable",
+          "codePolicy": "Check emirate-specific authority, civil defence, utility, parking, accessibility, facade and MEP approval requirements."
+        }
+      }
+    },
+    "UK": {
+      "subdivisionName": "nation + local planning authority/building control",
+      "defaultUnits": "metric",
+      "nationalReferenceFamily": [
+        "UK Building Regulations",
+        "Approved Documents",
+        "British Standards / BS EN",
+        "Eurocodes where applicable",
+        "local planning authority",
+        "building control"
+      ],
+      "subdivisions": {
+        "England": {
+          "codePolicy": "Approved Documents and local authority/building control context."
+        },
+        "Scotland": {
+          "codePolicy": "Scottish building standards and local authority context."
+        },
+        "Wales": {
+          "codePolicy": "Welsh building regulations/local authority context."
+        },
+        "Northern Ireland": {
+          "codePolicy": "Northern Ireland building regulations/local authority context."
+        }
+      }
+    },
+    "EuropeanUnion": {
+      "subdivisionName": "country + national annex + local authority",
+      "defaultUnits": "metric",
+      "nationalReferenceFamily": [
+        "Eurocodes EN 1990-1999 for structural/geotechnical design context",
+        "national annexes",
+        "national building regulations",
+        "local fire/accessibility/energy/planning rules"
+      ],
+      "countriesToRoute": [
+        "Germany",
+        "France",
+        "Italy",
+        "Spain",
+        "Netherlands",
+        "Belgium",
+        "Austria",
+        "Poland",
+        "Sweden",
+        "Denmark",
+        "Finland",
+        "Ireland",
+        "Portugal",
+        "Greece",
+        "Czech Republic",
+        "Romania",
+        "Hungary",
+        "Croatia",
+        "Slovakia",
+        "Slovenia",
+        "Bulgaria",
+        "Lithuania",
+        "Latvia",
+        "Estonia",
+        "Luxembourg",
+        "Malta",
+        "Cyprus"
+      ]
+    },
+    "Canada": {
+      "subdivisionName": "province/territory + municipality",
+      "defaultUnits": "metric, imperial may appear in client discussion",
+      "nationalReferenceFamily": [
+        "National Building Code of Canada model context",
+        "provincial/territorial building code",
+        "municipal permit office",
+        "fire/accessibility/energy rules as applicable"
+      ],
+      "subdivisions": {
+        "Alberta": {
+          "authorityPattern": "province/territory building code + municipality/permit office",
+          "codePolicy": "Check provincial adoption, municipal permits, snow/frost/seismic/wind/fire/energy context."
+        },
+        "British Columbia": {
+          "authorityPattern": "province/territory building code + municipality/permit office",
+          "codePolicy": "Check provincial adoption, municipal permits, snow/frost/seismic/wind/fire/energy context."
+        },
+        "Manitoba": {
+          "authorityPattern": "province/territory building code + municipality/permit office",
+          "codePolicy": "Check provincial adoption, municipal permits, snow/frost/seismic/wind/fire/energy context."
+        },
+        "New Brunswick": {
+          "authorityPattern": "province/territory building code + municipality/permit office",
+          "codePolicy": "Check provincial adoption, municipal permits, snow/frost/seismic/wind/fire/energy context."
+        },
+        "Newfoundland and Labrador": {
+          "authorityPattern": "province/territory building code + municipality/permit office",
+          "codePolicy": "Check provincial adoption, municipal permits, snow/frost/seismic/wind/fire/energy context."
+        },
+        "Nova Scotia": {
+          "authorityPattern": "province/territory building code + municipality/permit office",
+          "codePolicy": "Check provincial adoption, municipal permits, snow/frost/seismic/wind/fire/energy context."
+        },
+        "Ontario": {
+          "authorityPattern": "province/territory building code + municipality/permit office",
+          "codePolicy": "Check provincial adoption, municipal permits, snow/frost/seismic/wind/fire/energy context."
+        },
+        "Prince Edward Island": {
+          "authorityPattern": "province/territory building code + municipality/permit office",
+          "codePolicy": "Check provincial adoption, municipal permits, snow/frost/seismic/wind/fire/energy context."
+        },
+        "Quebec": {
+          "authorityPattern": "province/territory building code + municipality/permit office",
+          "codePolicy": "Check provincial adoption, municipal permits, snow/frost/seismic/wind/fire/energy context."
+        },
+        "Saskatchewan": {
+          "authorityPattern": "province/territory building code + municipality/permit office",
+          "codePolicy": "Check provincial adoption, municipal permits, snow/frost/seismic/wind/fire/energy context."
+        },
+        "Northwest Territories": {
+          "authorityPattern": "province/territory building code + municipality/permit office",
+          "codePolicy": "Check provincial adoption, municipal permits, snow/frost/seismic/wind/fire/energy context."
+        },
+        "Nunavut": {
+          "authorityPattern": "province/territory building code + municipality/permit office",
+          "codePolicy": "Check provincial adoption, municipal permits, snow/frost/seismic/wind/fire/energy context."
+        },
+        "Yukon": {
+          "authorityPattern": "province/territory building code + municipality/permit office",
+          "codePolicy": "Check provincial adoption, municipal permits, snow/frost/seismic/wind/fire/energy context."
+        }
+      }
+    },
+    "Australia": {
+      "subdivisionName": "state/territory + council",
+      "defaultUnits": "metric",
+      "nationalReferenceFamily": [
+        "NCC / Building Code of Australia context",
+        "Australian Standards",
+        "state/territory planning rules",
+        "local council requirements",
+        "bushfire/flood/cyclone overlays where applicable"
+      ],
+      "subdivisions": {
+        "New South Wales": {
+          "authorityPattern": "state/territory planning + local council + NCC context",
+          "codePolicy": "Check council rules, state planning, hazard overlays, energy, accessibility, fire and structural requirements."
+        },
+        "Victoria": {
+          "authorityPattern": "state/territory planning + local council + NCC context",
+          "codePolicy": "Check council rules, state planning, hazard overlays, energy, accessibility, fire and structural requirements."
+        },
+        "Queensland": {
+          "authorityPattern": "state/territory planning + local council + NCC context",
+          "codePolicy": "Check council rules, state planning, hazard overlays, energy, accessibility, fire and structural requirements."
+        },
+        "Western Australia": {
+          "authorityPattern": "state/territory planning + local council + NCC context",
+          "codePolicy": "Check council rules, state planning, hazard overlays, energy, accessibility, fire and structural requirements."
+        },
+        "South Australia": {
+          "authorityPattern": "state/territory planning + local council + NCC context",
+          "codePolicy": "Check council rules, state planning, hazard overlays, energy, accessibility, fire and structural requirements."
+        },
+        "Tasmania": {
+          "authorityPattern": "state/territory planning + local council + NCC context",
+          "codePolicy": "Check council rules, state planning, hazard overlays, energy, accessibility, fire and structural requirements."
+        },
+        "Australian Capital Territory": {
+          "authorityPattern": "state/territory planning + local council + NCC context",
+          "codePolicy": "Check council rules, state planning, hazard overlays, energy, accessibility, fire and structural requirements."
+        },
+        "Northern Territory": {
+          "authorityPattern": "state/territory planning + local council + NCC context",
+          "codePolicy": "Check council rules, state planning, hazard overlays, energy, accessibility, fire and structural requirements."
+        }
+      }
+    },
+    "SaudiArabia": {
+      "subdivisionName": "city/region + municipality",
+      "defaultUnits": "metric",
+      "nationalReferenceFamily": [
+        "Saudi Building Code context",
+        "municipality requirements",
+        "civil defence/fire safety",
+        "utility approvals"
+      ]
+    },
+    "Singapore": {
+      "subdivisionName": "authority context",
+      "defaultUnits": "metric",
+      "nationalReferenceFamily": [
+        "BCA/building control context",
+        "SCDF fire safety context",
+        "URA planning context where applicable",
+        "PUB/drainage context where applicable"
+      ]
+    },
+    "Qatar": {
+      "subdivisionName": "municipality/authority",
+      "defaultUnits": "metric",
+      "nationalReferenceFamily": [
+        "municipality approvals",
+        "civil defence/fire safety",
+        "utility authority requirements"
+      ]
+    },
+    "Oman": {
+      "subdivisionName": "municipality/authority",
+      "defaultUnits": "metric",
+      "nationalReferenceFamily": [
+        "municipality requirements",
+        "civil defence/fire safety",
+        "utility authority requirements"
+      ]
+    },
+    "Kuwait": {
+      "subdivisionName": "municipality/authority",
+      "defaultUnits": "metric",
+      "nationalReferenceFamily": [
+        "municipality requirements",
+        "fire department/civil defence",
+        "utility authority requirements"
+      ]
+    },
+    "Bahrain": {
+      "subdivisionName": "municipality/authority",
+      "defaultUnits": "metric",
+      "nationalReferenceFamily": [
+        "municipality requirements",
+        "civil defence/fire safety",
+        "utility approvals"
+      ]
+    },
+    "Nepal": {
+      "subdivisionName": "city/municipality",
+      "defaultUnits": "feet and metric mixed",
+      "nationalReferenceFamily": [
+        "local municipality requirements",
+        "National Building Code context",
+        "seismic safety review"
+      ]
+    },
+    "Bangladesh": {
+      "subdivisionName": "city/local authority",
+      "defaultUnits": "feet and metric mixed",
+      "nationalReferenceFamily": [
+        "BNBC/local authority context",
+        "fire service/civil defence",
+        "utility approvals"
+      ]
+    },
+    "SouthAfrica": {
+      "subdivisionName": "municipality",
+      "defaultUnits": "metric",
+      "nationalReferenceFamily": [
+        "National Building Regulations / SANS context",
+        "local municipality approval",
+        "fire/accessibility where applicable"
+      ]
+    }
+  }
+}

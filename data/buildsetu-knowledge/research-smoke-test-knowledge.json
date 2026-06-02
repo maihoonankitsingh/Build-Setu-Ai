@@ -1,0 +1,71 @@
+{
+  "version": "1.0",
+  "purpose": "Research merged knowledge container.",
+  "researchUpdates": [
+    {
+      "id": "draft_20260601_094750_authorityapprovalbylaws_94d7696c",
+      "category": "authorityApprovalBylaws",
+      "riskLevel": "high",
+      "confidence": "medium",
+      "jurisdiction": {
+        "country": "India",
+        "stateOrProvinceOrEmirate": "Chhattisgarh",
+        "cityOrAuthority": "Raipur test authority"
+      },
+      "source": {
+        "title": "Smoke test Raipur authority source",
+        "url": "https://example.gov/raipur-smoke-test-rules",
+        "sourceType": "authority circular",
+        "publisher": "BuildSetu Smoke Test",
+        "dateAccessed": "2026-06-01",
+        "effectiveDate": "unknown",
+        "version": "test"
+      },
+      "extracted": {
+        "summary": "Smoke test draft for Knowledge Inbox create approve merge workflow.",
+        "checklist": [
+          "Verify source title",
+          "Verify jurisdiction",
+          "Verify review approval",
+          "Verify merge output"
+        ],
+        "requiredDocuments": [
+          "Site document placeholder",
+          "Authority form placeholder"
+        ],
+        "processSteps": [
+          "Create draft",
+          "Approve draft",
+          "Merge draft"
+        ],
+        "cautions": [
+          "Smoke test only; not real bylaw data."
+        ],
+        "blockedClaims": [
+          "Do not treat this smoke test as official authority rule."
+        ]
+      },
+      "review": {
+        "action": "approve",
+        "reviewer": "BuildSetu Admin Smoke Test",
+        "reviewNotes": "Approved for workflow smoke test only.",
+        "reviewedAt": "2026-06-01T09:47:50.544Z",
+        "professionalReviewRequired": true,
+        "mergeReady": true
+      },
+      "merge": {
+        "mergedAt": "2026-06-01T09:47:50.590Z",
+        "mergedBy": "BuildSetu Admin Smoke Test",
+        "mergeNotes": "Merged for workflow smoke test only.",
+        "mergeMode": "safe_append_researchUpdates"
+      }
+    }
+  ],
+  "researchUpdateVersion": "research-20260601_094750",
+  "lastResearchMerge": {
+    "draftId": "draft_20260601_094750_authorityapprovalbylaws_94d7696c",
+    "mergedAt": "2026-06-01T09:47:50.590Z",
+    "mergedBy": "BuildSetu Admin Smoke Test",
+    "backup": "_safe_backups/research_draft_merges/20260601_094750_research-smoke-test-knowledge.json.bak.json"
+  }
+}

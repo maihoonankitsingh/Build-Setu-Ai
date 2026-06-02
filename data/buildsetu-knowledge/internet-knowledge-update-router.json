@@ -1,0 +1,120 @@
+{
+  "version": "1.0",
+  "purpose": "Controls what data BuildSetu agent should fetch from the internet, how to classify it, which sources are trusted, and when knowledge can be used or updated.",
+  "globalRules": [
+    "Do not browse randomly.",
+    "First classify the user request into a data category.",
+    "Use only trusted source types for high-risk construction, legal, code, approval, structure, MEP and fire data.",
+    "Never claim final compliance from internet data alone.",
+    "High-risk data must become a review draft before it updates permanent knowledge.",
+    "Do not copy full copyrighted codes or standards. Store only references, checklist, summary, version and source metadata.",
+    "Always store source URL, source type, country, state/province/emirate, city/local authority, date accessed, effective date if available, risk level and confidence.",
+    "If sources conflict, mark conflict and ask for professional/local authority verification.",
+    "If source is not official enough, use it only as low-confidence context or reject it."
+  ],
+  "dataCategories": {
+    "authorityApprovalBylaws": {
+      "triggers": ["approval rules", "sanction", "permit", "FAR", "FSI", "setback", "coverage", "height", "parking", "municipality", "development authority", "civil defence", "fire NOC", "occupancy certificate"],
+      "trustedSources": ["official government website", "municipal authority", "development authority", "civil defence/fire authority", "utility authority", "official gazette/notification"],
+      "rejectSources": ["random blog", "forum", "social media", "unverified PDF", "SEO article"],
+      "riskLevel": "high",
+      "autoUpdate": false,
+      "requiresHumanReview": true,
+      "allowedOutput": ["rule checklist", "approval process summary", "required drawing list", "missing information list", "source-cited reference"],
+      "notAllowedOutput": ["final legal compliance", "guaranteed FAR/FSI", "approved drawing claim"]
+    },
+    "codeStandardsReference": {
+      "triggers": ["building code", "NBC", "IS code", "Eurocode", "IBC", "IRC", "NFPA", "NEC", "NCC", "BCA", "structural code", "electrical code", "plumbing code"],
+      "trustedSources": ["official standards body", "government code portal", "official adopted code page", "recognized regulator"],
+      "riskLevel": "high",
+      "autoUpdate": false,
+      "requiresHumanReview": true,
+      "allowedOutput": ["code family reference", "version/date reference", "scope summary", "professional verification boundary"],
+      "notAllowedOutput": ["full copied code text", "final design calculation", "certified compliance"]
+    },
+    "materialRatesCost": {
+      "triggers": ["material rate", "construction cost", "cement price", "steel rate", "labour rate", "BOQ rate", "estimate current rate"],
+      "trustedSources": ["official schedule of rates", "vendor quote", "marketplace listing", "supplier catalog", "contractor input marked as unverified"],
+      "riskLevel": "medium_high",
+      "autoUpdate": false,
+      "requiresHumanReview": true,
+      "allowedOutput": ["rate range", "source/date based estimate", "assumption note", "location note"],
+      "notAllowedOutput": ["fixed guaranteed cost", "final tender quantity without drawings"]
+    },
+    "productMaterialSpecs": {
+      "triggers": ["product datasheet", "waterproofing material", "paint spec", "pipe spec", "wire spec", "board spec", "tile spec", "manufacturer"],
+      "trustedSources": ["manufacturer datasheet", "technical brochure", "official product page", "certification document"],
+      "riskLevel": "medium",
+      "autoUpdate": false,
+      "requiresHumanReview": true,
+      "allowedOutput": ["spec summary", "use area", "installation caution", "compatibility warning"],
+      "notAllowedOutput": ["guaranteed performance without site conditions", "final system design"]
+    },
+    "climateHazardSiteContext": {
+      "triggers": ["climate", "flood", "seismic", "earthquake zone", "cyclone", "wind speed", "coastal", "rainfall", "snow load", "soil hazard"],
+      "trustedSources": ["government meteorological department", "geological survey", "disaster management authority", "official hazard map", "local authority"],
+      "riskLevel": "medium_high",
+      "autoUpdate": false,
+      "requiresHumanReview": true,
+      "allowedOutput": ["hazard checklist", "design/material caution", "professional verification boundary"],
+      "notAllowedOutput": ["final structural hazard design", "guaranteed safety"]
+    },
+    "constructionMethodsBestPractice": {
+      "triggers": ["method statement", "construction process", "QA/QC", "waterproofing process", "curing", "plaster method", "tile laying", "false ceiling method"],
+      "trustedSources": ["manufacturer guide", "technical manual", "recognized engineering guide", "official training/manual document"],
+      "riskLevel": "medium",
+      "autoUpdate": false,
+      "requiresHumanReview": true,
+      "allowedOutput": ["method summary", "quality checklist", "risk checklist"],
+      "notAllowedOutput": ["site certification", "safety guarantee"]
+    },
+    "designReferenceTrend": {
+      "triggers": ["latest interior design", "facade trend", "modern style", "reference image", "catalog style", "design inspiration"],
+      "trustedSources": ["manufacturer catalog", "architect portfolio", "design publication", "official product catalog"],
+      "riskLevel": "low_medium",
+      "autoUpdate": true,
+      "requiresHumanReview": false,
+      "allowedOutput": ["style reference", "material palette inspiration", "render prompt inspiration"],
+      "notAllowedOutput": ["copy exact copyrighted design", "claim technical compliance"]
+    },
+    "regulatoryNewsUpdates": {
+      "triggers": ["latest rule", "new notification", "2026 update", "recent change", "government update", "new bylaw"],
+      "trustedSources": ["official notification", "gazette", "authority news", "government circular"],
+      "riskLevel": "high",
+      "autoUpdate": false,
+      "requiresHumanReview": true,
+      "allowedOutput": ["update alert", "summary", "effective date", "source reference"],
+      "notAllowedOutput": ["final compliance decision without review"]
+    }
+  },
+  "decisionWorkflow": [
+    "Classify user request into one or more data categories.",
+    "Detect country, state/province/emirate, city/local authority.",
+    "Decide freshness requirement: stable, yearly, monthly, weekly, real-time.",
+    "Choose trusted source type based on category.",
+    "Reject or downgrade untrusted sources.",
+    "Extract only structured facts: title, authority, location, version/date, checklist, requirements, cautions.",
+    "Assign risk level and confidence.",
+    "For high-risk data, create update draft and require review.",
+    "For low-risk design inspiration, allow direct use as reference but not as compliance.",
+    "Run smoke tests before merging permanent knowledge."
+  ],
+  "knowledgeUpdateSchema": {
+    "category": "string",
+    "country": "string",
+    "stateOrProvinceOrEmirate": "string",
+    "cityOrAuthority": "string",
+    "sourceTitle": "string",
+    "sourceUrl": "string",
+    "sourceType": "official/manufacturer/vendor/reference/news/other",
+    "dateAccessed": "YYYY-MM-DD",
+    "effectiveDate": "YYYY-MM-DD or unknown",
+    "summary": "short summary",
+    "extractedChecklist": ["items"],
+    "riskLevel": "low/medium/medium_high/high",
+    "confidence": "low/medium/high",
+    "requiresReview": true,
+    "allowedUse": ["answer", "draftKnowledgeUpdate", "referenceOnly"],
+    "blockedClaims": ["final approval", "certified design", "guaranteed compliance"]
+  }
+}

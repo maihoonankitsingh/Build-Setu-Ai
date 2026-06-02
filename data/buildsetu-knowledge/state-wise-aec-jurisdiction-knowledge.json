@@ -1,0 +1,135 @@
+{
+  "version": "1.0",
+  "purpose": "State/province/emirate/city-level jurisdiction awareness for BuildSetu AEC agent.",
+  "globalRule": [
+    "Country is not enough for code-sensitive planning.",
+    "Detect state/province/emirate/city/local authority when present.",
+    "For concept design, proceed with assumptions.",
+    "For approval, structure, MEP, fire, accessibility, setbacks, FAR/FSI, height, parking and legal compliance, ask for exact state/city/local authority if missing.",
+    "Never claim final local compliance without licensed professional and local authority verification."
+  ],
+  "jurisdictionLevels": {
+    "India": ["country", "state", "city/municipal corporation/development authority", "local bylaws"],
+    "USA": ["country", "state", "county", "city", "local adopted code/amendments"],
+    "UAE": ["country", "emirate", "municipality/free-zone/master developer", "civil defence"],
+    "UK": ["country", "nation", "local planning authority", "building control"],
+    "Canada": ["country", "province/territory", "municipality", "local permit office"],
+    "Australia": ["country", "state/territory", "council/local government", "planning scheme"],
+    "SaudiArabia": ["country", "region/city", "municipality", "civil defence"],
+    "Singapore": ["country", "authority context", "BCA/SCDF/URA/PUB as applicable"]
+  },
+  "indiaStatesAndAuthorities": {
+    "Uttar Pradesh": {
+      "aliases": ["up", "uttar pradesh", "lucknow", "noida", "ghaziabad", "kanpur", "varanasi", "prayagraj"],
+      "authorityNotes": ["Development authority/municipal bylaws vary by city.", "Setback/FAR/height/parking must be checked locally."]
+    },
+    "Delhi": {
+      "aliases": ["delhi", "new delhi", "ncr"],
+      "authorityNotes": ["Delhi/NCR authority context can vary by exact location.", "Fire, parking, height and use rules are local-authority dependent."]
+    },
+    "Maharashtra": {
+      "aliases": ["maharashtra", "mumbai", "pune", "nagpur", "thane", "nashik"],
+      "authorityNotes": ["Municipal/development control rules vary by city.", "Coastal/flood/high-rise/fire rules may apply based on location."]
+    },
+    "Chhattisgarh": {
+      "aliases": ["chhattisgarh", "raipur", "bhilai", "bilaspur"],
+      "authorityNotes": ["Local municipal/development authority rules must be checked.", "Client planning can use feet; drawings should use mm/m as needed."]
+    },
+    "Madhya Pradesh": {
+      "aliases": ["madhya pradesh", "mp", "bhopal", "indore", "jabalpur", "gwalior"],
+      "authorityNotes": ["Local municipal/development authority rules vary by city."]
+    },
+    "Karnataka": {
+      "aliases": ["karnataka", "bengaluru", "bangalore", "mysore", "mangaluru"],
+      "authorityNotes": ["City authority and layout approval context matter.", "High-rise/fire/parking checks may apply."]
+    },
+    "Tamil Nadu": {
+      "aliases": ["tamil nadu", "chennai", "coimbatore", "madurai"],
+      "authorityNotes": ["State/city planning permissions and local body rules must be checked."]
+    },
+    "Telangana": {
+      "aliases": ["telangana", "hyderabad"],
+      "authorityNotes": ["City/local authority and layout context matter."]
+    },
+    "Gujarat": {
+      "aliases": ["gujarat", "ahmedabad", "surat", "vadodara", "rajkot"],
+      "authorityNotes": ["City development authority and GDCR/local rules should be checked."]
+    },
+    "Rajasthan": {
+      "aliases": ["rajasthan", "jaipur", "jodhpur", "udaipur", "kota"],
+      "authorityNotes": ["Local urban development/municipality rules vary by city."]
+    },
+    "West Bengal": {
+      "aliases": ["west bengal", "kolkata", "howrah"],
+      "authorityNotes": ["Municipal building rules and fire requirements vary by use/height."]
+    },
+    "Kerala": {
+      "aliases": ["kerala", "kochi", "ernakulam", "trivandrum", "thiruvananthapuram", "kozhikode"],
+      "authorityNotes": ["Local panchayat/municipal/corporation rules and climate/rain drainage matter."]
+    }
+  },
+  "usaStates": {
+    "California": {
+      "aliases": ["california", "ca", "los angeles", "san francisco", "san diego", "sacramento"],
+      "authorityNotes": ["State/city amendments, seismic, wildfire, energy and accessibility rules may matter."]
+    },
+    "Texas": {
+      "aliases": ["texas", "tx", "houston", "dallas", "austin", "san antonio"],
+      "authorityNotes": ["City/county adopted code and amendments matter."]
+    },
+    "Florida": {
+      "aliases": ["florida", "fl", "miami", "orlando", "tampa"],
+      "authorityNotes": ["Wind, flood, hurricane and local permit rules may matter."]
+    },
+    "New York": {
+      "aliases": ["new york", "ny", "nyc", "brooklyn", "manhattan"],
+      "authorityNotes": ["City-specific rules can be strict; fire/egress/accessibility checks matter."]
+    }
+  },
+  "uaeEmirates": {
+    "Dubai": {
+      "aliases": ["dubai"],
+      "authorityNotes": ["Dubai Municipality/free-zone/master developer and Dubai Civil Defence context may apply."]
+    },
+    "Abu Dhabi": {
+      "aliases": ["abu dhabi"],
+      "authorityNotes": ["Municipality/authority and civil defence requirements must be checked."]
+    },
+    "Sharjah": {
+      "aliases": ["sharjah"],
+      "authorityNotes": ["Municipality and civil defence requirements must be checked."]
+    },
+    "Ajman": {
+      "aliases": ["ajman"],
+      "authorityNotes": ["Municipality and civil defence requirements must be checked."]
+    }
+  },
+  "canadaProvinces": {
+    "Ontario": {
+      "aliases": ["ontario", "toronto", "ottawa"],
+      "authorityNotes": ["Provincial code and municipal permit office matter."]
+    },
+    "British Columbia": {
+      "aliases": ["british columbia", "bc", "vancouver", "victoria"],
+      "authorityNotes": ["Province, city, seismic, energy and local permit context may matter."]
+    },
+    "Alberta": {
+      "aliases": ["alberta", "calgary", "edmonton"],
+      "authorityNotes": ["Province and municipality requirements must be checked."]
+    }
+  },
+  "australiaStates": {
+    "New South Wales": {
+      "aliases": ["new south wales", "nsw", "sydney"],
+      "authorityNotes": ["State planning/council rules and NCC context matter."]
+    },
+    "Victoria": {
+      "aliases": ["victoria", "vic", "melbourne"],
+      "authorityNotes": ["State planning/council rules and NCC context matter."]
+    },
+    "Queensland": {
+      "aliases": ["queensland", "qld", "brisbane", "gold coast"],
+      "authorityNotes": ["Cyclone/flood/climate zones may matter by location."]
+    }
+  }
+}

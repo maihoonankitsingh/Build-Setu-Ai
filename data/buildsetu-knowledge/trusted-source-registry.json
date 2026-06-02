@@ -1,0 +1,116 @@
+{
+  "version": "1.0",
+  "purpose": "Trusted source registry for BuildSetu internet research and knowledge update workflow.",
+  "globalRules": [
+    "Prefer primary official sources over secondary summaries.",
+    "For compliance, approval, code, fire, structure, MEP and legal rules, do not rely on blogs, social media, forums or SEO articles.",
+    "Store source metadata with every research draft.",
+    "High-risk source data requires human/professional review before permanent knowledge update.",
+    "If source freshness, authority or location scope is unclear, downgrade confidence.",
+    "If two official sources conflict, mark conflict and do not merge without review."
+  ],
+  "sourceTrustLevels": {
+    "official_primary": {
+      "trust": "highest",
+      "examples": ["government portal", "municipal authority", "development authority", "civil defence/fire authority", "official gazette", "standards body", "utility authority"],
+      "allowedFor": ["approval rules", "bylaws", "code reference", "fire/life safety", "utility requirements", "official notices"],
+      "reviewRequired": true
+    },
+    "manufacturer_primary": {
+      "trust": "high",
+      "examples": ["manufacturer datasheet", "technical brochure", "official product page", "installation manual", "test certificate"],
+      "allowedFor": ["product specs", "material installation method", "compatibility", "technical cautions"],
+      "reviewRequired": true
+    },
+    "vendor_market": {
+      "trust": "medium",
+      "examples": ["supplier quote", "marketplace listing", "dealer catalogue", "rate list"],
+      "allowedFor": ["price range", "availability", "brand comparison"],
+      "reviewRequired": true
+    },
+    "recognized_reference": {
+      "trust": "medium_high",
+      "examples": ["recognized engineering guide", "university/public technical guide", "professional association article"],
+      "allowedFor": ["best practice explanation", "method overview", "non-final educational reference"],
+      "reviewRequired": true
+    },
+    "design_reference": {
+      "trust": "medium",
+      "examples": ["architect portfolio", "design publication", "manufacturer catalogue", "case study"],
+      "allowedFor": ["style inspiration", "material palette inspiration", "render prompt inspiration"],
+      "reviewRequired": false
+    },
+    "untrusted": {
+      "trust": "low",
+      "examples": ["random blog", "forum", "social media", "SEO listicle", "unverified PDF", "copied notes"],
+      "allowedFor": ["none for compliance", "only low-confidence inspiration if clearly marked"],
+      "reviewRequired": true
+    }
+  },
+  "jurisdictionSourcePriority": {
+    "India": [
+      "central/state government portals",
+      "state urban development department",
+      "city municipal corporation",
+      "development authority",
+      "fire department/NOC authority",
+      "BIS/NBC/IS reference where legally accessible",
+      "electricity/water/sewer utility authority"
+    ],
+    "UAE": [
+      "emirate municipality",
+      "Dubai/Abu Dhabi/Sharjah authority as applicable",
+      "Civil Defence",
+      "free-zone/master developer",
+      "utility authority",
+      "official circular/permit portal"
+    ],
+    "USA": [
+      "state building code portal",
+      "city/county building department",
+      "zoning ordinance portal",
+      "ICC/adopted code reference where applicable",
+      "fire marshal/authority",
+      "utility authority"
+    ],
+    "UK": [
+      "local planning authority",
+      "building control",
+      "official Building Regulations/Approved Documents portal",
+      "fire authority where applicable",
+      "utility authority"
+    ],
+    "Canada": [
+      "provincial/territorial building code portal",
+      "municipal permit office",
+      "fire authority",
+      "utility authority"
+    ],
+    "Australia": [
+      "NCC/BCA official context",
+      "state/territory planning authority",
+      "local council",
+      "bushfire/flood/cyclone overlay authority",
+      "utility authority"
+    ],
+    "Default": [
+      "national government",
+      "state/province/emirate authority",
+      "city/local authority",
+      "fire/life safety authority",
+      "utility authority",
+      "official standards/code publisher"
+    ]
+  },
+  "blockedClaims": [
+    "final approved",
+    "legally compliant",
+    "certified safe",
+    "guaranteed FAR/FSI",
+    "final structural design",
+    "final MEP sizing",
+    "guaranteed cost",
+    "guaranteed waterproofing",
+    "authority approval confirmed"
+  ]
+}

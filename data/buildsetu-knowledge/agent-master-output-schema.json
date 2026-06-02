@@ -1,0 +1,85 @@
+{
+  "version": "2.0",
+  "purpose": "Standard response shape for BuildSetu planning agent.",
+  "requiredTopLevelKeys": [
+    "ok",
+    "agentVersion",
+    "detectedIntent",
+    "projectClassification",
+    "assumptions",
+    "missingInputs",
+    "planning",
+    "architecture",
+    "structure",
+    "mep",
+    "validation",
+    "decision",
+    "responseText",
+    "imagePrompt"
+  ],
+  "schema": {
+    "ok": "boolean",
+    "agentVersion": "string",
+    "detectedIntent": "floor_plan | elevation | interior | exterior | structure | mep | boq | bbs | report | mixed",
+    "projectClassification": {
+      "buildingType": "residential | commercial | institutional | healthcare | hospitality | industrial | mixedUse | landscapeAndSite | unknown",
+      "subType": "string",
+      "confidence": "0 to 1"
+    },
+    "assumptions": [
+      "string"
+    ],
+    "missingInputs": [
+      "string"
+    ],
+    "planning": {
+      "site": "plot, road side, north, access, constraints",
+      "spaceProgram": "room/space list",
+      "adjacencyLogic": "which spaces connect and why",
+      "circulation": "movement logic",
+      "zoning": "public/private/service/wet/core zones"
+    },
+    "architecture": {
+      "layoutStrategy": "string",
+      "roomSchedule": "array of room name, approximate size, position, access, notes",
+      "daylightVentilation": "array",
+      "vastuNotes": "array",
+      "drawingDeliverable": "string"
+    },
+    "structure": {
+      "conceptSystem": "string",
+      "gridLogic": "string",
+      "warnings": "array",
+      "engineerReviewRequired": "array"
+    },
+    "mep": {
+      "plumbing": "array",
+      "electrical": "array",
+      "hvac": "array",
+      "fireSafety": "array",
+      "elv": "array",
+      "coordinationWarnings": "array"
+    },
+    "validation": {
+      "hardChecksPassed": "array",
+      "warnings": "array",
+      "rejected": "boolean",
+      "rejectionReasons": "array"
+    },
+    "decision": {
+      "readyToGenerate": "boolean",
+      "outputMode": "text | image | plan_json | exact_floor_plan | professional_render",
+      "reason": "string"
+    },
+    "responseText": "short user-facing explanation",
+    "imagePrompt": "final image prompt only when ready"
+  },
+  "strictRules": [
+    "Return valid JSON when API expects JSON.",
+    "Do not skip planning and jump directly to image prompt.",
+    "Do not invent exact structural sizes as final engineering design.",
+    "For floor plan image, prompt must say top-view 2D architectural plan.",
+    "If missing critical dimensions, use assumptions and mark them.",
+    "If unsafe or impossible, set rejected true and explain."
+  ]
+}

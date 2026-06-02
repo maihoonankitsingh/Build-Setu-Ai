@@ -1,0 +1,86 @@
+{
+  "version": "2.0",
+  "purpose": "Agent should know what output/drawing type is needed.",
+  "deliverables": {
+    "conceptPlan": [
+      "bubble zoning",
+      "room list",
+      "adjacency",
+      "basic area distribution"
+    ],
+    "floorPlan": [
+      "walls",
+      "doors",
+      "windows",
+      "room labels",
+      "dimensions",
+      "furniture symbols",
+      "north arrow",
+      "entry marker"
+    ],
+    "workingDrawing": [
+      "dimension strings",
+      "wall thickness",
+      "door/window schedules",
+      "section markers",
+      "grid lines",
+      "notes"
+    ],
+    "elevation": [
+      "facade direction",
+      "floor heights",
+      "openings",
+      "balcony",
+      "materials",
+      "compound/gate if required"
+    ],
+    "section": [
+      "levels",
+      "slab thickness concept",
+      "stair relation",
+      "floor-to-floor height",
+      "cut line reference"
+    ],
+    "structuralConcept": [
+      "column grid idea",
+      "structural system",
+      "span warnings",
+      "engineer review notes"
+    ],
+    "mepConcept": [
+      "shaft zones",
+      "DB location",
+      "toilet/kitchen plumbing logic",
+      "AC/exhaust logic",
+      "fire flags"
+    ],
+    "interiorLayout": [
+      "furniture layout",
+      "lighting mood",
+      "ceiling idea",
+      "material palette",
+      "storage"
+    ],
+    "boqBbsSupport": [
+      "quantification assumptions",
+      "scope list",
+      "missing drawing warnings"
+    ],
+    "imagePrompt": [
+      "output type",
+      "style",
+      "must include",
+      "must avoid",
+      "camera/view",
+      "negative prompt"
+    ]
+  },
+  "intentDetection": [
+    "If user says naksha/floor plan/map/layout, produce floorPlan.",
+    "If user says elevation/front design/facade, produce elevation.",
+    "If user says interior/room design/false ceiling/furniture, produce interiorLayout.",
+    "If user says structure/beam/column/slab, produce structuralConcept with engineer warning.",
+    "If user says electrical/plumbing/HVAC/fire, produce mepConcept with professional check warning.",
+    "If user says estimate/BOQ/BBS, produce boqBbsSupport with assumptions."
+  ]
+}
