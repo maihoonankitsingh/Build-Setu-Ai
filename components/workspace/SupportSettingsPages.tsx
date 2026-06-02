@@ -28,7 +28,7 @@ const defaultSettings = {
   contingency: "5",
   gst: "18",
   rateSource: "BuildSetu Internal Starter Rate Library",
-  approvalGate: "Engineer Review Required",
+  approvalGate: "AI Final Draft - Engineer Review Required",
 };
 
 function PageHeader({ title, desc }: { title: string; desc: string }) {

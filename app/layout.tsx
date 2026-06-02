@@ -51,6 +51,7 @@ function BuildSetuThemeInitScript() {
 
 
 export const metadata: Metadata = {
+  icons: { icon: "/favicon.ico", shortcut: "/favicon.ico", apple: "/favicon.ico" },
   title: "BuildSetu AI - Plans, Interiors, BOQ, BBS and Client Documents",
   description:
     "BuildSetu AI is an AI workspace for floor plans, interior renders, exterior elevations, BOQ, BBS, client agreements, PDFs and contractor documentation. Powered by Sikhadenge.",
@@ -64,7 +65,16 @@ export default function RootLayout({
   return (
     <html suppressHydrationWarning lang="en">
       <body className={`${plusJakarta.variable}`}>
-        <BuildSetuThemeInitScript />{children}</body>
+        <BuildSetuThemeInitScript />{children}
+              <script src="/buildsetu-live-credits.js?v=20260527_124558" defer />
+              <script src="/buildsetu-right-llm-chat.js?v=20260528_224520" defer />
+              <script src="/buildsetu-recent-projects-final.js?v=20260527_171307" defer />
+              <script src="/buildsetu-login-transparent-logo.js?v=20260528_124413" defer />
+              <script src="/buildsetu-chat-logo-force.js?v=20260528_213942" defer />
+              <script src="/buildsetu-chat-scrollbar-hide.js?v=20260528_214753" defer />
+              <script src="/buildsetu-chat-gpt-connector.js?v=20260529_133757" defer />
+              <script src="/buildsetu-hide-newproject-right-widget.js" defer></script>
+            </body>
     </html>
   );
 }

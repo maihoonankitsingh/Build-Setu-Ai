@@ -1,440 +1,484 @@
-import { NextResponse } from "next/server";
-import OpenAI from "openai";
-import { copyFile, mkdir } from "fs/promises";
+import { NextRequest, NextResponse } from "next/server";
 import path from "path";
-import { prisma } from "@/lib/db";
+import { mkdir, readFile, writeFile } from "fs/promises";
+import { addBuildSetuUsageEvent } from "@/lib/agent-usage/usage-cost-store";
+import { checkBuildSetuUsageLimit } from "@/lib/agent-usage/usage-limit-store";
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
+export const maxDuration = 120;
 
-// BUILDSETU_IMAGE_CREDIT_DEDUCTION_V1
-const DEMO_EMAIL = "demo@buildsetu.ai";
-const IMAGE_CREDIT_COST = 2500;
+// BUILDSETU_OPENAI_IMAGE_ONLY_V1
+// This route generates images only through OpenAI GPT Image API.
+// No local SVG/mock fallback is allowed here.
 
-class NotEnoughCreditsError extends Error {
-  currentCredits: number;
-  requiredCredits: number;
-
-  constructor(currentCredits: number, requiredCredits: number) {
-    super("Not enough credits. Please buy more credits to continue.");
-    this.currentCredits = currentCredits;
-    this.requiredCredits = requiredCredits;
-  }
+function cleanText(value: unknown) {
+  return String(value || "").replace(/\s+/g, " ").trim();
 }
 
-async function getDemoCreditBalance() {
-  const user = await prisma.user.upsert({
-    where: { email: DEMO_EMAIL },
-    update: {},
-    create: {
-      email: DEMO_EMAIL,
-      name: "BuildSetu Demo User",
-      credits: 120,
-    },
-    select: {
-      id: true,
-      credits: true,
-    },
-  });
+function extractPrompt(body: any) {
+  const direct =
+    body?.imagePrompt ||
+    body?.prompt ||
+    body?.finalPrompt ||
+    body?.text ||
+    body?.message ||
+    body?.input;
 
-  return user;
-}
+  if (direct) return cleanText(direct);
 
-async function deductDemoCredits({
-  credits,
-  note,
-  projectId,
-}: {
-  credits: number;
-  note: string;
-  projectId: string | null;
-}) {
-  return prisma.$transaction(async (tx) => {
-    const user = await tx.user.upsert({
-      where: { email: DEMO_EMAIL },
-      update: {},
-      create: {
-        email: DEMO_EMAIL,
-        name: "BuildSetu Demo User",
-        credits: 120,
-      },
-      select: {
-        id: true,
-        credits: true,
-      },
-    });
-
-    if (user.credits < credits) {
-      throw new NotEnoughCreditsError(user.credits, credits);
-    }
-
-    const updated = await tx.user.update({
-      where: { id: user.id },
-      data: {
-        credits: {
-          decrement: credits,
-        },
-      },
-      select: {
-        id: true,
-        credits: true,
-      },
-    });
-
-    await tx.creditTransaction.create({
-      data: {
-        userId: user.id,
-        projectId,
-        actionType: "USE",
-        creditsUsed: -credits,
-        note,
-      },
-    });
-
-    return updated;
-  });
-}
-
-
-function safeString(value: unknown) {
-  if (typeof value !== "string") return undefined;
-  const trimmed = value.trim();
-  return trimmed.length ? trimmed : undefined;
-}
-
-function enhanceArchitecturePrompt(prompt: string, renderType: string, roomType?: string) {
-  return [
-    "Create a premium realistic architecture/interior design image.",
-    `Render type: ${renderType}.`,
-    roomType ? `Area: ${roomType}.` : "",
-    `Design brief: ${prompt}`,
-    "Style: modern Indian premium, clean luxury, realistic materials, professional lighting, high-detail 3D render.",
-    "Avoid text, watermark, labels, distorted geometry, extra doors, impossible stairs, unsafe structural elements.",
-    "Output should be presentation-ready for an interior designer or architect client.",
-  ]
-    .filter(Boolean)
-    .join("\n");
-}
-
-function getFallbackSource(renderType: string) {
-  const lower = renderType.toLowerCase();
-
-  if (lower.includes("exterior") || lower.includes("elevation")) {
-    return "exterior-elevation.png";
+  if (Array.isArray(body?.prompts) && body.prompts[0]) {
+    const first = body.prompts[0];
+    return cleanText(first?.prompt || first?.imagePrompt || first?.text || first);
   }
 
-  if (lower.includes("site")) {
-    return "site-photo-redesign.png";
+  if (Array.isArray(body?.items) && body.items[0]) {
+    const first = body.items[0];
+    return cleanText(first?.prompt || first?.imagePrompt || first?.text || first);
   }
 
-  if (lower.includes("enhancer")) {
-    return "render-enhancer.png";
+  if (Array.isArray(body?.images) && body.images[0]) {
+    const first = body.images[0];
+    return cleanText(first?.prompt || first?.imagePrompt || first?.text || first);
   }
 
-  return "interior-render.png";
+  return "";
 }
 
-async function saveRenderRecord({
-  projectId,
-  prompt,
-  finalPrompt,
-  renderType,
-  roomType,
-  imageUrl,
-  fallback,
-  errorMessage,
-}: {
+function sanitizeProjectId(value: unknown) {
+  const raw = String(value || "").trim();
+  if (!raw) return "";
+
+  try {
+    const decoded = decodeURIComponent(raw);
+    const fromParam = decoded.match(/[?&]projectId=([a-zA-Z0-9_-]{10,})/);
+    if (fromParam?.[1]) return fromParam[1];
+
+    const any = decoded.match(/([a-zA-Z0-9_-]{10,})/);
+    if (any?.[1]) return any[1];
+  } catch {}
+
+  const fallback = raw.match(/([a-zA-Z0-9_-]{10,})/);
+  return fallback?.[1] || raw;
+}
+
+function safeFilePart(value: unknown) {
+  return String(value || "image")
+    .toLowerCase()
+    .replace(/[^a-z0-9_-]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 80) || "image";
+}
+
+async function saveBase64Image(args: {
+  b64: string;
   projectId: string;
-  prompt: string;
-  finalPrompt: string;
-  renderType: string;
-  roomType?: string;
-  imageUrl: string;
-  fallback: boolean;
-  errorMessage?: string;
+  toolSlug: string;
 }) {
-  const render = await prisma.render.create({
-    data: {
-      projectId,
-      prompt: finalPrompt,
-      renderType,
-      roomType,
-      imageUrl,
-      status: fallback ? "REVIEW_REQUIRED" : "COMPLETED",
-    },
-  });
+  const projectId = safeFilePart(args.projectId || "project");
+  const toolSlug = safeFilePart(args.toolSlug || "tool");
+  const dir = path.join(process.cwd(), "data", "generated", "ai-images", projectId);
 
-  await prisma.toolRun.create({
-    data: {
-      projectId,
-      toolType:
-        renderType.toLowerCase().includes("exterior")
-          ? "EXTERIOR_ELEVATION"
-          : "INTERIOR_RENDER",
-      inputJson: JSON.stringify({ projectId, prompt, finalPrompt, renderType, roomType }),
-      outputJson: JSON.stringify({
-        renderId: render.id,
-        imageUrl,
-        fallback,
-        errorMessage: errorMessage || null,
-      }),
-      creditsUsed: IMAGE_CREDIT_COST,
-      status: fallback ? "REVIEW_REQUIRED" : "COMPLETED",
-    },
-  });
+  await mkdir(dir, { recursive: true });
 
-  return render;
-}
+  const fileName = `${Date.now()}-${toolSlug}-openai.png`;
+  const abs = path.join(dir, fileName);
 
-async function createFallbackRender({
-  projectId,
-  prompt,
-  finalPrompt,
-  renderType,
-  roomType,
-  errorMessage,
-}: {
-  projectId: string;
-  prompt: string;
-  finalPrompt: string;
-  renderType: string;
-  roomType?: string;
-  errorMessage?: string;
-}) {
-  const outputDir = path.join(process.cwd(), "public", "generated", "renders");
-  await mkdir(outputDir, { recursive: true });
+  await writeFile(abs, Buffer.from(args.b64, "base64"));
 
-  const tempId = `demo-${Date.now()}`;
-  const fileName = `${tempId}.png`;
-  const imageUrl = `/generated/renders/${fileName}`;
-
-  const fallbackFile = getFallbackSource(renderType);
-  const sourcePath = path.join(process.cwd(), "public", "tool-images", fallbackFile);
-  const outputPath = path.join(outputDir, fileName);
-
-  await copyFile(sourcePath, outputPath);
-
-  const render = await saveRenderRecord({
-    projectId,
-    prompt,
-    finalPrompt,
-    renderType,
-    roomType,
-    imageUrl,
-    fallback: true,
-    errorMessage,
-  });
+  const relative = `generated/ai-images/${projectId}/${fileName}`;
+  const imageUrl = `/api/ai/generated-image?file=${encodeURIComponent(relative)}`;
 
   return {
-    ok: true,
-    fallback: true,
-    warning:
-      "Demo fallback image saved. Real AI image generation will work after OpenAI billing is active.",
-    render,
+    abs,
+    relative,
     imageUrl,
-    providerError: errorMessage || null,
   };
 }
 
-export async function POST(request: Request) {
-  let projectId = "";
-  let prompt = "";
-  let finalPrompt = "";
-  let renderType = "Interior Render";
-  let roomType: string | undefined;
 
+// BUILDSETU_OPENAI_ASSET_REGISTER_V1
+const PROJECT_ASSETS_FILE = path.join(process.cwd(), "data", "generated", "project-assets.json");
+const PROJECT_MEMORY_FILE = path.join(process.cwd(), "data", "generated", "project-memory-events.json");
+
+async function readJsonArray(filePath: string) {
   try {
-    const body = await request.json().catch(() => null);
+    const raw = await readFile(filePath, "utf-8");
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
 
-    if (!body || typeof body !== "object") {
+async function writeJsonArray(filePath: string, items: any[]) {
+  await mkdir(path.dirname(filePath), { recursive: true });
+  await writeFile(filePath, JSON.stringify(items, null, 2), "utf-8");
+}
+
+function assetTypeForTool(toolSlug: string) {
+  const slug = cleanText(toolSlug).toLowerCase();
+
+  if (slug.includes("floor-plan") || slug.includes("sketch-to-plan")) return "floor_plan_2d";
+  if (slug.includes("exterior") || slug.includes("elevation") || slug.includes("site-photo")) return "exterior_elevation";
+  if (slug.includes("interior")) return "interior_render";
+  if (slug.includes("mood")) return "mood_board";
+  if (slug.includes("ceiling")) return "false_ceiling";
+  if (slug.includes("material")) return "material_palette";
+
+  return "generated_image";
+}
+
+async function registerOpenAiGeneratedAsset(args: {
+  projectId: string;
+  toolSlug: string;
+  toolName: string;
+  imageUrl: string;
+  file: string;
+  prompt: string;
+  model: string;
+  size: string;
+  quality: string;
+}) {
+  const now = new Date().toISOString();
+  const assetType = assetTypeForTool(args.toolSlug);
+  const id = `asset_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+
+  const asset = {
+    id,
+    projectId: args.projectId,
+    title:
+      assetType === "floor_plan_2d"
+        ? "OpenAI Floor Plan"
+        : `OpenAI ${args.toolName || args.toolSlug || "Generated Image"}`,
+    label:
+      assetType === "floor_plan_2d"
+        ? "Floor Plan AI"
+        : args.toolName || args.toolSlug || "Generated Image",
+    assetType,
+    type: assetType,
+    category: assetType,
+    toolSlug: args.toolSlug,
+    toolName: args.toolName,
+    imageUrl: args.imageUrl,
+    publicUrl: args.imageUrl,
+    url: args.imageUrl,
+    src: args.imageUrl,
+    file: args.file,
+    provider: "openai",
+    source: "openai_image_api",
+    generationMode: "openai_chatgpt_image_api",
+    model: args.model,
+    size: args.size,
+    quality: args.quality,
+    prompt: args.prompt,
+    status: "generated",
+    stageId: assetType === "floor_plan_2d" ? "floor_plan" : args.toolSlug,
+    stageStatus: "draft_ready",
+    sourceOfTruthCandidate: assetType === "floor_plan_2d",
+    locked: false,
+    createdAt: now,
+    updatedAt: now,
+  };
+
+  const assets = await readJsonArray(PROJECT_ASSETS_FILE);
+  assets.unshift(asset);
+  await writeJsonArray(PROJECT_ASSETS_FILE, assets);
+
+  const memory = await readJsonArray(PROJECT_MEMORY_FILE);
+  memory.unshift({
+    id: `memory_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
+    projectId: args.projectId,
+    type: "generated_asset",
+    eventType: "generated_asset",
+    toolSlug: args.toolSlug,
+    toolName: args.toolName,
+    title: asset.title,
+    summary:
+      assetType === "floor_plan_2d"
+        ? "OpenAI GPT Image API se floor plan generate hua. Ye floor plan lock/source-of-truth candidate hai."
+        : "OpenAI GPT Image API se image output generate hua.",
+    imageUrl: args.imageUrl,
+    publicUrl: args.imageUrl,
+    assetId: id,
+    assetType,
+    provider: "openai",
+    source: "openai_image_api",
+    createdAt: now,
+  });
+  await writeJsonArray(PROJECT_MEMORY_FILE, memory);
+
+  return asset;
+}
+
+
+export async function POST(req: NextRequest) {
+  try {
+    const apiKey = process.env.OPENAI_API_KEY;
+
+    if (!apiKey) {
       return NextResponse.json(
-        { ok: false, error: "Invalid JSON body" },
-        { status: 400 },
+        {
+          ok: false,
+          provider: "openai",
+          code: "OPENAI_API_KEY_MISSING",
+          error: "OPENAI_API_KEY missing on server.",
+        },
+        { status: 500 }
       );
     }
 
-    projectId = safeString(body.projectId) || "";
-    prompt = safeString(body.prompt) || "";
-    renderType = safeString(body.renderType) || "Interior Render";
-    roomType = safeString(body.roomType);
+    const body = await req.json().catch(() => ({}));
 
-    if (!projectId) {
-      return NextResponse.json(
-        { ok: false, error: "projectId is required" },
-        { status: 400 },
-      );
-    }
+    const prompt = extractPrompt(body);
+    const projectId = sanitizeProjectId(
+      body?.projectId ||
+      body?.selectedProjectId ||
+      body?.contextSummary?.projectId ||
+      ""
+    );
+    const userId = cleanText(body?.userId || body?.user?.id || body?.session?.userId || "anonymous") || "anonymous";
+    const planTier = cleanText(body?.planTier || body?.tier || body?.package || "free") || "free";
+    const toolSlug = cleanText(body?.toolSlug || body?.slug || body?.tool || "buildsetu-image");
 
     if (!prompt) {
       return NextResponse.json(
-        { ok: false, error: "prompt is required" },
-        { status: 400 },
+        {
+          ok: false,
+          provider: "openai",
+          code: "IMAGE_PROMPT_MISSING",
+          error: "Image prompt missing.",
+        },
+        { status: 400 }
       );
     }
 
-    const project = await prisma.project.findUnique({
-      where: { id: projectId },
-      select: { id: true },
+    const imageUsageLimit = checkBuildSetuUsageLimit({
+      projectId: projectId || "global",
+      userId,
+      planTier,
+      next: {
+        kind: "image",
+        imageGenerations: 1,
+      },
     });
 
-    if (!project) {
-      return NextResponse.json(
-        { ok: false, error: "Project not found" },
-        { status: 404 },
-      );
-    }
-
-    const balance = await getDemoCreditBalance();
-
-    if (balance.credits < IMAGE_CREDIT_COST) {
+    if (!imageUsageLimit.allowed) {
       return NextResponse.json(
         {
           ok: false,
-          code: "NOT_ENOUGH_CREDITS",
-          error: "Not enough credits. Please buy more credits to continue.",
-          credits: balance.credits,
-          requiredCredits: IMAGE_CREDIT_COST,
-          buyCreditsUrl: "/credits",
+          provider: "openai",
+          code: imageUsageLimit.code,
+          error: imageUsageLimit.message,
+          planTier: imageUsageLimit.planTier,
+          limit: imageUsageLimit.limit,
+          current: imageUsageLimit.current,
+          after: imageUsageLimit.after,
+          exceeded: imageUsageLimit.exceeded,
+          upgradeRequired: true,
         },
-        { status: 402 },
+        { status: 402 }
       );
     }
 
-    finalPrompt = enhanceArchitecturePrompt(prompt, renderType, roomType);
+    const model = process.env.OPENAI_IMAGE_MODEL || "gpt-image-1";
+    const size = process.env.OPENAI_IMAGE_SIZE || "1536x1024";
+    const quality = process.env.OPENAI_IMAGE_QUALITY || "medium";
+    const startedAt = Date.now();
 
-    if (!process.env.OPENAI_API_KEY) {
-      if (process.env.OPENAI_IMAGE_FALLBACK === "1") {
-        const fallback = await createFallbackRender({
-          projectId,
-          prompt,
-          finalPrompt,
-          renderType,
-          roomType,
-          errorMessage: "OPENAI_API_KEY is missing",
-        });
+    const openaiPayload: Record<string, any> = {
+      model,
+      prompt,
+      n: 1,
+      size,
+      quality,
+    };
 
-        const charge = await deductDemoCredits({
-          credits: IMAGE_CREDIT_COST,
-          note: `${renderType} image generation`,
-          projectId,
-        });
+    // GPT image models return b64_json by default.
+    // Keep this route OpenAI-only: no mock/local SVG fallback.
+    const openaiRes = await fetch("https://api.openai.com/v1/images/generations", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(openaiPayload),
+    });
 
-        return NextResponse.json({
-          ...fallback,
-          credits: charge.credits,
-          creditsUsed: IMAGE_CREDIT_COST,
-        });
-      }
+    const openaiJson: any = await openaiRes.json().catch(() => ({}));
 
-      return NextResponse.json(
-        { ok: false, error: "OPENAI_API_KEY is missing" },
-        { status: 500 },
-      );
-    }
-
-    try {
-      const imageResponse = await openai.images.generate({
-        model: "gpt-image-1",
-        prompt: finalPrompt,
-        size: "1024x1024",
+    if (!openaiRes.ok) {
+      addBuildSetuUsageEvent({
+        projectId: projectId || "global",
+        userId,
+        route: "/api/ai/generate-image",
+        source: "openai-image-generation",
+        kind: "image",
+        provider: "openai",
+        model,
+        status: "failed",
+        imageCount: 0,
+        latencyMs: Date.now() - startedAt,
+        metadata: {
+          httpStatus: openaiRes.status,
+          code: openaiJson?.error?.code || "OPENAI_IMAGE_API_FAILED",
+          type: openaiJson?.error?.type || "",
+          error:
+            openaiJson?.error?.message ||
+            openaiJson?.message ||
+            "OpenAI image generation failed.",
+          size,
+          quality,
+          toolSlug,
+          promptLength: prompt.length,
+        },
       });
 
-      const b64 = imageResponse.data?.[0]?.b64_json;
-
-      if (!b64) {
-        throw new Error("Image generation failed: no image returned");
-      }
-
-      const outputDir = path.join(process.cwd(), "public", "generated", "renders");
-      await mkdir(outputDir, { recursive: true });
-
-      const tempId = `ai-${Date.now()}`;
-      const fileName = `${tempId}.png`;
-      const filePath = path.join(outputDir, fileName);
-      const imageUrl = `/generated/renders/${fileName}`;
-
-      const { writeFile } = await import("fs/promises");
-      await writeFile(filePath, Buffer.from(b64, "base64"));
-
-      const render = await saveRenderRecord({
-        projectId,
-        prompt,
-        finalPrompt,
-        renderType,
-        roomType,
-        imageUrl,
-        fallback: false,
-      });
-
-      const charge = await deductDemoCredits({
-        credits: IMAGE_CREDIT_COST,
-        note: `${renderType} image generation`,
-        projectId,
-      });
-
-      return NextResponse.json({
-        ok: true,
-        fallback: false,
-        render,
-        imageUrl,
-        credits: charge.credits,
-        creditsUsed: IMAGE_CREDIT_COST,
-      });
-    } catch (providerError) {
-      const errorMessage =
-        providerError instanceof Error
-          ? providerError.message
-          : "Image provider failed";
-
-      if (process.env.OPENAI_IMAGE_FALLBACK === "1") {
-        const fallback = await createFallbackRender({
-          projectId,
-          prompt,
-          finalPrompt,
-          renderType,
-          roomType,
-          errorMessage,
-        });
-
-        const charge = await deductDemoCredits({
-          credits: IMAGE_CREDIT_COST,
-          note: `${renderType} image generation`,
-          projectId,
-        });
-
-        return NextResponse.json({
-          ...fallback,
-          credits: charge.credits,
-          creditsUsed: IMAGE_CREDIT_COST,
-        });
-      }
-
-      throw providerError;
-    }
-  } catch (error) {
-    if (error instanceof NotEnoughCreditsError) {
       return NextResponse.json(
         {
           ok: false,
-          code: "NOT_ENOUGH_CREDITS",
-          error: error.message,
-          credits: error.currentCredits,
-          requiredCredits: error.requiredCredits,
-          buyCreditsUrl: "/credits",
+          provider: "openai",
+          code: "OPENAI_IMAGE_API_FAILED",
+          status: openaiRes.status,
+          error:
+            openaiJson?.error?.message ||
+            openaiJson?.message ||
+            "OpenAI image generation failed.",
+          details: openaiJson?.error || openaiJson,
         },
-        { status: 402 },
+        { status: 500 }
       );
     }
 
-    console.error("IMAGE_GENERATION_ERROR", error);
+    const first = openaiJson?.data?.[0] || {};
+    const b64 = first?.b64_json;
 
-    const message =
-      error instanceof Error ? error.message : "Failed to generate image";
+    if (!b64) {
+      addBuildSetuUsageEvent({
+        projectId: projectId || "global",
+        userId,
+        route: "/api/ai/generate-image",
+        source: "openai-image-generation",
+        kind: "image",
+        provider: "openai",
+        model,
+        status: "failed",
+        imageCount: 0,
+        latencyMs: Date.now() - startedAt,
+        metadata: {
+          code: "OPENAI_IMAGE_B64_MISSING",
+          error: "OpenAI response did not include b64_json.",
+          size,
+          quality,
+          toolSlug,
+          promptLength: prompt.length,
+        },
+      });
 
+      return NextResponse.json(
+        {
+          ok: false,
+          provider: "openai",
+          code: "OPENAI_IMAGE_B64_MISSING",
+          error: "OpenAI response did not include b64_json.",
+          details: openaiJson,
+        },
+        { status: 500 }
+      );
+    }
+
+    const saved = await saveBase64Image({
+      b64,
+      projectId,
+      toolSlug,
+    });
+
+    const imageItem = {
+      url: saved.imageUrl,
+      imageUrl: saved.imageUrl,
+      publicUrl: saved.imageUrl,
+      src: saved.imageUrl,
+      file: saved.relative,
+      provider: "openai",
+      model,
+      size,
+      quality,
+      revisedPrompt: first?.revised_prompt || "",
+      prompt,
+      projectId,
+      toolSlug,
+    };
+
+    const registeredAsset = await registerOpenAiGeneratedAsset({
+      projectId,
+      toolSlug,
+      toolName: cleanText(body?.toolName || body?.name || toolSlug),
+      imageUrl: saved.imageUrl,
+      file: saved.relative,
+      prompt,
+      model,
+      size,
+      quality,
+    });
+
+    addBuildSetuUsageEvent({
+      projectId: projectId || "global",
+      userId,
+      route: "/api/ai/generate-image",
+      source: "openai-image-generation",
+      kind: "image",
+      provider: "openai",
+      model,
+      status: "success",
+      imageCount: 1,
+      latencyMs: Date.now() - startedAt,
+      metadata: {
+        size,
+        quality,
+        toolSlug,
+        promptLength: prompt.length,
+        imageUrl: saved.imageUrl,
+        file: saved.relative,
+        assetId: registeredAsset.id,
+        revisedPrompt: first?.revised_prompt || "",
+      },
+    });
+
+    return NextResponse.json({
+      ok: true,
+      success: true,
+      provider: "openai",
+      source: "openai_image_api",
+      model,
+      size,
+      quality,
+      projectId,
+      toolSlug,
+      prompt,
+      imageUrl: saved.imageUrl,
+      url: saved.imageUrl,
+      publicUrl: saved.imageUrl,
+      file: saved.relative,
+      asset: registeredAsset,
+      assetId: registeredAsset.id,
+      assetType: registeredAsset.assetType,
+      images: [imageItem],
+      outputs: [imageItem],
+      generated: 1,
+      total: 1,
+      failed: [],
+      generationMode: "openai_chatgpt_image_api",
+      message: "Image generated with OpenAI GPT Image API.",
+    });
+  } catch (error: any) {
     return NextResponse.json(
-      { ok: false, error: message },
-      { status: 500 },
+      {
+        ok: false,
+        provider: "openai",
+        code: "OPENAI_IMAGE_ROUTE_ERROR",
+        error: error?.message || "OpenAI image route failed.",
+      },
+      { status: 500 }
     );
   }
 }

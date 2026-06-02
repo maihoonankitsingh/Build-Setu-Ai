@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import fs from "fs/promises";
 import path from "path";
+import { attachUniversalQualityBrainToPrompt } from "@/lib/agent-knowledge/universal-quality-brain";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -142,6 +143,29 @@ function makeDraft(input: {
   };
 }
 
+
+// BUILDSETU_QUALITY_BRAIN_INTERIOR_DESIGN_V5B
+function attachInteriorQualityBrainV5B(body: any, input: any) {
+  return attachUniversalQualityBrainToPrompt({
+    basePrompt: [
+      input?.requirement || "",
+      `Project: ${input?.projectName || body?.projectTitle || body?.projectName || "Selected Project"}`,
+      `City: ${input?.city || ""}`,
+      `Plot: ${input?.plotSize || ""}`,
+      `Facing: ${input?.facing || ""}`,
+      `Floors: ${input?.floors || ""}`,
+      `Bedrooms: ${input?.bedrooms || ""}`,
+      `Bathrooms: ${input?.bathrooms || ""}`,
+      `Parking: ${input?.parking || ""}`,
+      `Budget: ${input?.budget || ""}`,
+    ].filter(Boolean).join("\n"),
+    projectId: body?.projectId || body?.projectContext?.projectId || "global",
+    domain: "interior",
+    projectTitle: input?.projectName || body?.projectTitle || body?.projectName || "",
+    projectContext: body?.projectContext || body,
+  });
+}
+
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json().catch(() => ({}));
@@ -160,12 +184,28 @@ export async function POST(req: NextRequest) {
       requirement: safe(body.requirement, "Modern residential house planning with good light and ventilation."),
     };
 
+    const qualityBrainPromptV5B = attachInteriorQualityBrainV5B(body, input);
+    const draftBaseV5B = makeDraft({
+      ...input,
+      requirement: qualityBrainPromptV5B,
+    });
+
     const record: DesignRecord = {
       id: id(),
       createdAt: new Date().toISOString(),
       ...input,
       status: "ENGINEER_REVIEW_REQUIRED",
-      draft: makeDraft(input),
+      draft: {
+        ...draftBaseV5B,
+        reviewChecklist: [
+          ...draftBaseV5B.reviewChecklist,
+          "Universal Quality Brain V5B checked: project context, saved knowledge, usability, circulation, materials, lighting and practical execution notes.",
+        ],
+        clientNotes: [
+          ...draftBaseV5B.clientNotes,
+          "Interior/design draft used BuildSetu quality rules internally; final execution requires professional review.",
+        ],
+      },
     };
 
     const items = await readAll();

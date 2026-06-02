@@ -1,0 +1,34 @@
+import { NextResponse } from "next/server";
+import { getProjectModelRenderQueue } from "@/lib/project-model-store";
+
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
+
+export async function GET(req: Request) {
+  try {
+    const url = new URL(req.url);
+
+    const projectId = String(url.searchParams.get("projectId") || "");
+    const conceptId = String(url.searchParams.get("conceptId") || "");
+
+    if (!projectId) {
+      return NextResponse.json({ ok: false, error: "projectId required" }, { status: 400 });
+    }
+
+    const result = await getProjectModelRenderQueue({
+      projectId,
+      toolSlug: "exterior-elevation",
+      conceptId: conceptId || undefined,
+    });
+
+    return NextResponse.json({
+      ok: true,
+      ...result,
+    });
+  } catch (error: any) {
+    return NextResponse.json(
+      { ok: false, error: error?.message || "Exterior render queue lookup failed" },
+      { status: 500 }
+    );
+  }
+}

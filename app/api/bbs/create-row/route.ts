@@ -41,7 +41,7 @@ export async function POST(request: Request) {
     const shapeCode = safeString((body as any).shapeCode) || "Straight";
     const cuttingLength = safeNumber((body as any).cuttingLength);
     const drawingRef = safeString((body as any).drawingRef) || "Manual Entry";
-    const status = safeString((body as any).status) || "Engineer Review Required";
+    const status = safeString((body as any).status) || "AI Final Draft - Engineer Review Required";
 
     if (!projectId) {
       return NextResponse.json({ ok: false, error: "projectId is required" }, { status: 400 });

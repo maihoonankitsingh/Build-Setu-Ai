@@ -40,7 +40,7 @@ export default function BoqManualForm({ form, editingItemId, saving, onChange, o
         </select>
 
         <select value={form.status} onChange={(event) => update("status", event.target.value)} className="h-11 rounded-2xl border border-[#e6e0f5] px-3 text-sm font-bold outline-none focus:border-[#6d35ff]">
-          {["Draft", "Review Required", "Approved", "Locked"].map((status) => <option key={status} value={status}>{status}</option>)}
+          {["AI Final Draft", "AI Final Draft - Review Required", "Engineer Verified", "Changes Required", "Locked"].map((status) => <option key={status} value={status}>{status}</option>)}
         </select>
 
         <input value={form.quantity} type="number" onChange={(event) => update("quantity", event.target.value)} placeholder="Quantity" className="h-11 rounded-2xl border border-[#e6e0f5] px-3 text-sm font-bold outline-none focus:border-[#6d35ff]" />

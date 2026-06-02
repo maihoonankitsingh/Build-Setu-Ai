@@ -1,6 +1,7 @@
 import { Prisma } from "@prisma/client";
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
+import { getProjectPlanLock } from "@/lib/planning/project-plan-lock";
 
 type BbsRow = {
   memberType: string;
@@ -109,8 +110,105 @@ function inferSteelFactor(project: any, title: string) {
   return round2(factor);
 }
 
-function buildRows(project: any) {
-  const area = inferProjectAreas(project);
+// BUILDSETU_LOCKED_PLAN_BBS_V3
+function lockedBbsNum(value: any, fallback = 0) {
+  const n = Number(String(value ?? "").replace(/[^0-9.-]/g, ""));
+  return Number.isFinite(n) ? n : fallback;
+}
+
+function lockedBbsRound2(value: number) {
+  return Math.round(value * 100) / 100;
+}
+
+function lockedBbsText(value: any) {
+  return String(value || "").replace(/\s+/g, " ").trim();
+}
+
+function lockedBbsParseFloors(lock: any, project: any) {
+  const text = lockedBbsText([
+    lock?.basePlan?.floors,
+    lock?.baseAsset?.prompt,
+    lock?.baseAsset?.summary,
+    project?.title,
+    project?.projectType,
+    project?.description,
+  ].filter(Boolean).join(" "));
+
+  const gPlus = text.match(/\bG\s*\+\s*([0-9]+)\b/i);
+  if (gPlus) return Math.max(1, Number(gPlus[1]) + 1);
+
+  const floorsLabel = text.match(/Floors:\s*([A-Za-z0-9+\s-]+)/i);
+  if (floorsLabel) {
+    const g = floorsLabel[1].match(/G\s*\+\s*([0-9]+)/i);
+    if (g) return Math.max(1, Number(g[1]) + 1);
+
+    const n = floorsLabel[1].match(/([0-9]+)/);
+    if (n) return Math.max(1, Number(n[1]));
+  }
+
+  return 1;
+}
+
+function lockedBbsRoomArea(room: any) {
+  const w = lockedBbsNum(room?.w, 0);
+  const h = lockedBbsNum(room?.h, 0);
+  if (w <= 0 || h <= 0) return 0;
+  return w * h;
+}
+
+function buildLockedPlanBbsArea(lock: any, project: any) {
+  if (!lock?.basePlan) return null;
+
+  const plan = lock.basePlan || {};
+  const rooms = Array.isArray(plan.rooms) ? plan.rooms : [];
+
+  const width = lockedBbsNum(plan.widthFt || plan.plotWidthFt, 0);
+  const length = lockedBbsNum(plan.depthFt || plan.plotDepthFt, 0);
+
+  if (!width || !length) return null;
+
+  const plotArea = lockedBbsRound2(width * length);
+  const floors = lockedBbsParseFloors(lock, project);
+
+  const nonParkingRooms = rooms.filter((room: any) => {
+    const text = lockedBbsText(`${room?.kind || ""} ${room?.name || ""}`).toLowerCase();
+    return !/parking|porch|open/.test(text);
+  });
+
+  const groundBuiltAreaRaw = nonParkingRooms.reduce(
+    (sum: number, room: any) => sum + lockedBbsRoomArea(room),
+    0,
+  );
+
+  const groundBuiltArea = groundBuiltAreaRaw > 0
+    ? Math.min(plotArea * 0.8, Math.max(plotArea * 0.55, groundBuiltAreaRaw))
+    : plotArea * 0.72;
+
+  const coverage = lockedBbsRound2(groundBuiltArea / plotArea);
+  const builtUpArea = lockedBbsRound2(groundBuiltArea * floors);
+
+  return {
+    title: lockedBbsText(plan.projectTitle || project?.title || "Locked Project Plan"),
+    width,
+    length,
+    plotArea,
+    builtUpArea,
+    floors,
+    coverage,
+    source: "locked_plan_bbs_v1",
+    lockedPlanId: lock.id,
+    baseAssetId: lock?.baseAsset?.id || "",
+    baseImageUrl: lock?.baseImageUrl || lock?.baseAsset?.imageUrl || "",
+    roomCount: rooms.length,
+    bedrooms: plan.bedrooms || rooms.filter((r: any) => /bed/i.test(`${r?.kind} ${r?.name}`)).length,
+    bathrooms: plan.bathrooms || rooms.filter((r: any) => /toilet|bath/i.test(`${r?.kind} ${r?.name}`)).length,
+  };
+}
+
+
+
+function buildRows(project: any, lockedAreaOverride?: any) {
+  const area = lockedAreaOverride || inferProjectAreas(project);
   const steelFactor = inferSteelFactor(project, area.title);
   const targetSteelWeight = round2(area.builtUpArea * steelFactor);
   const floorFactor = Math.max(1, area.floors);
@@ -152,7 +250,7 @@ function buildRows(project: any) {
       unitWeight: uw,
       totalWeight,
       drawingRef,
-      status: "Engineer Review Required",
+      status: "AI Final Draft - Engineer Review Required",
     };
   });
 
@@ -252,7 +350,9 @@ export async function POST(request: Request) {
       return NextResponse.json({ ok: false, error: "Project not found" }, { status: 404 });
     }
 
-    const generated = buildRows(project);
+    const projectPlanLock = await getProjectPlanLock(projectId).catch(() => null);
+    const lockedAreaOverride = buildLockedPlanBbsArea(projectPlanLock, project);
+    const generated = buildRows(project, lockedAreaOverride);
 
     await prisma.bBSItem.deleteMany({
       where: {
@@ -293,6 +393,15 @@ export async function POST(request: Request) {
       diameterSummary: summarizeByDiameter(items),
       memberSummary: summarizeByMemberType(items),
       estimateInputs: {
+        source: generated.area.source || "dynamic_project_fields",
+        lockedPlanId: generated.area.lockedPlanId || null,
+        baseAssetId: generated.area.baseAssetId || null,
+        baseImageUrl: generated.area.baseImageUrl || null,
+        widthFt: generated.area.width || null,
+        depthFt: generated.area.length || null,
+        roomCount: generated.area.roomCount || null,
+        bedrooms: generated.area.bedrooms || null,
+        bathrooms: generated.area.bathrooms || null,
         plotArea: generated.area.plotArea,
         builtUpArea: generated.area.builtUpArea,
         floors: generated.area.floors,

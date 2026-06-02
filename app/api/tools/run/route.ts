@@ -3,6 +3,7 @@ import fs from "fs/promises";
 import path from "path";
 import { AUTH_COOKIE, getUserFromSession, getUsers, saveUsers } from "@/lib/auth-store";
 import { appendHistory } from "@/lib/billing-store";
+import { buildToolSectionItems } from "@/lib/buildsetu-tool-engine";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -122,7 +123,7 @@ type ToolRun = {
   userId?: string;
   email?: string;
   prompt: string;
-  status: "AI_DRAFT" | "REVIEW_REQUIRED";
+  status: "AI_FINAL_DRAFT" | "AI_FINAL_DRAFT_REVIEW_REQUIRED" | "REVIEW_REQUIRED";
   sections: Array<{
     title: string;
     items: string[];
@@ -290,43 +291,7 @@ const toolProfiles: Record<string, { title: string; category: string; sections: 
 };
 
 function buildItems(section: string, title: string, prompt: string) {
-  const base = safe(prompt, "No prompt provided.");
-
-  const commonReview = [
-    `${title} output AI draft hai. Final use se pehle professional review required hai.`,
-    `Input basis: ${base}`,
-  ];
-
-  if (section.toLowerCase().includes("prompt")) {
-    return [
-      `Create a professional ${title.toLowerCase()} output based on: ${base}`,
-      "Use realistic materials, practical proportions, Indian residential context and client-ready presentation language.",
-      "Avoid unsafe structural elements, impossible geometry, text artifacts, watermarks and unclear instructions.",
-    ];
-  }
-
-  if (section.toLowerCase().includes("checklist") || section.toLowerCase().includes("review")) {
-    return [
-      "Client requirement and site dimensions verify karein.",
-      "Architect/engineer review status mark karein.",
-      "Final execution se pehle dimensions, byelaws, structure and budget validate karein.",
-      ...commonReview.slice(0, 1),
-    ];
-  }
-
-  if (section.toLowerCase().includes("warning") || section.toLowerCase().includes("caution")) {
-    return [
-      "Construction ya execution decision AI draft ke basis par directly na lein.",
-      "Structural, MEP, legal and safety items qualified professional se approve karayein.",
-      "Large spans, cantilever, column shifting, wall removal and reinforcement details engineer approval ke bina unsafe ho sakte hain.",
-    ];
-  }
-
-  return [
-    `${section} for ${title}: ${base}`,
-    "Output ko client discussion, planning and internal workflow ke draft ke roop me use karein.",
-    "Final version professional review ke baad lock karein.",
-  ];
+  return buildToolSectionItems({ section, title, prompt });
 }
 
 export async function POST(request: NextRequest) {

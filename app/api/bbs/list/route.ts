@@ -87,7 +87,7 @@ export async function GET(request: Request) {
     const duplicateBarMarks = findDuplicateBarMarks(items);
 
     const validationAlerts = [
-      "Final BBS requires approved structural drawings and engineer sign-off.",
+      "AI generates complete BBS draft with assumptions. Engineer verification and sign-off are required before construction execution.",
       "Verify cutting length, bend deduction, lap length and development length before site use.",
       ...duplicateBarMarks.map((mark) => `Duplicate bar mark detected: ${mark}`),
     ];

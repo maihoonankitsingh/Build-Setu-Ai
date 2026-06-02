@@ -62,3 +62,30 @@ data/buildsetu-billing-orders.json
 data/buildsetu-credit-history.json
 data/runtime/book-demo-leads.json
 data/generated/user-profile-photos.json
+
+# ===== BuildSetu runtime / backup ignore rules =====
+# Local safety backups created by terminal patch phases
+_safe_backups/
+
+# Runtime logs, metering, and generated usage summaries
+data/agent-usage/
+
+# Runtime uploads and smoke-test uploaded files
+data/agent-knowledge/uploads/
+data/agent-knowledge-uploads/
+
+# Generated AI/image/model output artifacts
+data/generated/ai-images/
+data/generated/model-renders/
+data/generated/models/
+public/generated/
+
+# Temporary handoff/smoke artifacts
+buildsetu_ai_logo.zip
+*.bak
+*.bak_*
+*.tmp
+*.log
+
+# Local snapshots/reports should stay outside repo, but guard anyway
+buildsetu-final-snapshots/

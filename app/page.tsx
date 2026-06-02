@@ -57,6 +57,7 @@ import {
   HelpCircle,
   RefreshCcw,
   LayoutGrid,
+  BookOpenCheck,
 } from "lucide-react";
 
 type BuildSetuThemeMode = "light" | "dark" | "system";
@@ -116,6 +117,7 @@ type ViewKey =
   | "projects"
   | "studio"
   | "renders"
+  | "knowledgeInbox"
   | "boq"
   | "bbs"
   | "exports"
@@ -125,49 +127,66 @@ type ViewKey =
 
 const BUILDSETU_ACTIVE_VIEW_STORAGE_KEY = "buildsetu_active_view";
 
-const BUILDSETU_VIEW_KEYS = [
+const BUILDSETU_VIEW_KEYS: ViewKey[] = [
   "dashboard",
-  "all-tools",
+  "tools",
   "projects",
-  "new-project",
-  "render-studio",
+  "studio",
+  "renders",
+  "knowledgeInbox",
   "boq",
   "bbs",
   "exports",
-  "client-agreement",
-  "credits",
+  "agreements",
+  "reviews",
   "api",
+  "projectWorkspace",
   "support",
   "settings",
-] as ViewKey[];
+];
 
 function isBuildSetuViewKey(value: unknown): value is ViewKey {
   return typeof value === "string" && BUILDSETU_VIEW_KEYS.includes(value as ViewKey);
 }
 
 function getInitialBuildSetuViewKey(): ViewKey {
+  const normalizeView = (value: string | null): ViewKey | null => {
+    if (!value) return null;
+
+    const raw = value.trim();
+
+    const aliases: Record<string, string> = {
+      "all-tools": "tools",
+      "new-project": "studio",
+      "newProject": "studio",
+      "render-studio": "studio",
+      "renderStudio": "studio",
+      "knowledge-inbox": "knowledgeInbox",
+      "knowledgeInbox": "knowledgeInbox",
+      "client-agreement": "agreements",
+      "clientAgreement": "agreements",
+    };
+
+    const view = aliases[raw] || raw;
+
+    return isBuildSetuViewKey(view) ? (view as ViewKey) : null;
+  };
+
   if (typeof window === "undefined") return "dashboard";
 
   try {
     const params = new URLSearchParams(window.location.search);
-    const urlView = params.get("view");
+    const fromUrl = normalizeView(params.get("view"));
+    if (fromUrl) return fromUrl;
+  } catch {}
 
-    if (isBuildSetuViewKey(urlView)) {
-      return urlView;
-    }
-
-    const savedView = window.localStorage.getItem(BUILDSETU_ACTIVE_VIEW_STORAGE_KEY);
-
-    if (isBuildSetuViewKey(savedView)) {
-      return savedView;
-    }
-  } catch {
-    return "dashboard";
-  }
+  try {
+    const fromStorage = normalizeView(window.localStorage.getItem(BUILDSETU_ACTIVE_VIEW_STORAGE_KEY));
+    if (fromStorage) return fromStorage;
+  } catch {}
 
   return "dashboard";
 }
-
 
 
 function persistBuildSetuViewKey(view: ViewKey) {
@@ -184,6 +203,16 @@ const Bbs3DViewer = dynamic(() => import("@/components/bbs/Bbs3DViewer"), {
   loading: () => (
     <div className="grid h-[360px] place-items-center rounded-[22px] border border-[#eee8fb] bg-[#fbfaff] text-xs font-bold text-[#817397]">
       Loading 3D reinforcement viewer...
+    </div>
+  ),
+});
+
+
+const ResearchDraftInternalView = dynamic(() => import("@/components/buildsetu/research/ResearchDraftInternalView"), {
+  ssr: false,
+  loading: () => (
+    <div className="grid h-[420px] place-items-center rounded-[28px] border border-[#eee7f7] bg-white text-sm font-semibold text-[#817397]">
+      Loading Knowledge Inbox...
     </div>
   ),
 });
@@ -224,16 +253,16 @@ const navItems: Array<{ id: ViewKey | "credits"; label: string; icon: BuildSetuI
   { id: "projects", label: "Projects", icon: FolderKanban },
   { id: "studio", label: "New Project", icon: Plus },
   { id: "renders", label: "Render Studio", icon: ImageIcon },
+  { id: "knowledgeInbox", label: "Knowledge Inbox", icon: BookOpenCheck },
   { id: "boq", label: "BOQ / Estimate", icon: Calculator },
   { id: "bbs", label: "BBS", icon: ClipboardList },
   { id: "exports", label: "Exports", icon: FileText },
   { id: "agreements", label: "Client Agreement", icon: ScrollText },
   { id: "credits", label: "Credits", icon: CreditCard, href: "/credits" },
-];
-
-const bottomNav: Array<{ id: ViewKey; label: string; icon: BuildSetuIcon }> = [
   { id: "settings", label: "Settings", icon: Settings },
 ];
+
+const bottomNav: Array<{ id: ViewKey; label: string; icon: BuildSetuIcon }> = [];
 
 const categories: Array<{ label: ToolCategory; icon: BuildSetuIcon }> = [
   { label: "All Tools", icon: Boxes },
@@ -501,7 +530,7 @@ const projects = [
     title: "30x40 North Facing House",
     type: "Residential G+1",
     city: "Raipur",
-    status: "AI Draft",
+    status: "AI Final Draft",
     progress: 68,
     outputs: ["Elevation", "Interior", "PDF"],
   },
@@ -537,7 +566,7 @@ function statusClass(status: string, theme: ResolvedTheme) {
       "PHASE 4": "bg-[#f97316] text-white",
       REVIEW: "bg-black text-white",
       PRO: "bg-black text-white",
-      "AI Draft": "bg-[#eef4ff] text-[#2563eb]",
+      "AI Final Draft": "bg-[#eef4ff] text-[#2563eb]",
       "Verification Required": "bg-[#fff7ed] text-[#f97316]",
       "Client Ready": "bg-[#ecfdf3] text-[#039855]",
     };
@@ -552,7 +581,7 @@ function statusClass(status: string, theme: ResolvedTheme) {
     "PHASE 4": "border border-[#facc15] bg-[#101020] text-[#fde047]",
     REVIEW: "border border-[#22c55e] bg-[#052e16] text-white",
     PRO: "border border-white/20 bg-black text-white",
-    "AI Draft": "border border-[#7c3aed]/40 bg-[#2d1757] text-[#d8b4fe]",
+    "AI Final Draft": "border border-[#7c3aed]/40 bg-[#2d1757] text-[#d8b4fe]",
     "Verification Required": "border border-[#facc15]/40 bg-[#3b2507] text-[#fde68a]",
     "Client Ready": "border border-[#22c55e]/40 bg-[#052e16] text-[#bbf7d0]",
   };
@@ -710,16 +739,15 @@ function Sidebar({
           : "border-[#eee7f7] bg-white text-[#21133f]",
       )}
     >
-      <div className="mb-2.5 flex items-center gap-2.5">
-        <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-[#7c3aed] via-[#9333ea] to-[#4f46e5] text-white shadow-lg shadow-purple-900/20">
-          <Hammer className="h-4.5 w-4.5" />
-        </div>
-        <div className={cn("text-[17px] font-bold leading-none tracking-[-0.035em] whitespace-nowrap", false ? "text-white" : "text-[#21133f]")}>
-          BuildSetu <span className="text-[#b794ff]">AI</span>
-        </div>
+      <div className="mb-2 flex h-[38px] shrink-0 items-center overflow-hidden">
+        <img
+          src="/brand/buildsetu-login-clean-logo.png"
+          alt="BuildSetu AI"
+          className="buildsetu-sidebar-real-logo h-[30px] w-auto max-w-[185px] object-contain"
+        />
       </div>
 
-      <nav className="space-y-0.5 buildsetu-sidebar-force-size buildsetu-sidebar-nav-primary">
+      <nav className="min-h-0 flex-1 space-y-0.5 overflow-y-auto pr-1 buildsetu-sidebar-force-size buildsetu-sidebar-nav-primary">
         {navItems.map((item, index) => {
           const Icon = item.icon;
           const selected = active === item.id;
@@ -727,7 +755,7 @@ function Sidebar({
 
           return (
             <div key={item.id}>
-              {withDivider && <div className={cn("my-1.5 h-px", false ? "bg-white/10" : "bg-[#eee7f7]")} />}
+              {withDivider && <div className={cn("my-0.5 h-px shrink-0", false ? "bg-white/10" : "bg-[#eee7f7]")} />}
               <button
                 onClick={() => {
                   if (item.href) {
@@ -743,7 +771,7 @@ function Sidebar({
                   setActive(item.id as ViewKey);
                 }}
                 className={cn(
-                  "flex w-full items-center gap-2.5 rounded-xl px-2.5 py-[5px] text-left text-[14px] font-medium transition",
+                  "flex w-full items-center gap-2.5 rounded-xl px-2.5 py-0 text-left text-[13.5px] font-medium transition",
                   selected
                     ? false
                       ? "bg-[#2b1755] text-white shadow-lg shadow-purple-950/20"
@@ -754,16 +782,16 @@ function Sidebar({
                 )}
               >
                 <Icon className="h-[16px] w-[16px] shrink-0" />
-                <span className="text-[14px] leading-none tracking-[-0.01em]">{item.label}</span>
+                <span className="text-[13.5px] leading-none tracking-[-0.01em]">{item.label}</span>
               </button>
             </div>
           );
         })}
       </nav>
 
-      <div className={cn("my-1.5 h-px", false ? "bg-white/10" : "bg-[#eee7f7]")} />
+      <div className={cn("my-0.5 h-px shrink-0", false ? "bg-white/10" : "bg-[#eee7f7]")} />
 
-      <div className="space-y-0.5 buildsetu-sidebar-force-size buildsetu-sidebar-nav-secondary">
+      <div className="hidden shrink-0 space-y-0.5 buildsetu-sidebar-force-size buildsetu-sidebar-nav-secondary">
         {bottomNav.map((item) => {
           const Icon = item.icon;
           return (
@@ -772,44 +800,44 @@ function Sidebar({
                 onClick={() => setActive(item.id)}
               key={item.id}
               className={cn(
-                "flex w-full items-center gap-2.5 rounded-xl px-2.5 py-[5px] text-left text-[14px] font-medium transition",
+                "flex w-full items-center gap-2.5 rounded-xl px-2.5 py-0 text-left text-[13.5px] font-medium transition",
                 false
                   ? "text-slate-400 hover:bg-white/[0.06] hover:text-white"
                   : "text-[#5d5077] hover:bg-[#f7f0ff] hover:text-[#6f1cc4]",
               )}
             >
               <Icon className="h-[16px] w-[16px] shrink-0" />
-              <span className="text-[14px] leading-none tracking-[-0.01em]">{item.label}</span>
+              <span className="text-[13.5px] leading-none tracking-[-0.01em]">{item.label}</span>
             </button>
           );
         })}
       </div>
 
-      <div className="mt-4">
-        <div className="rounded-2xl bg-gradient-to-br from-[#6d5dfc] via-[#8b5cf6] to-[#c084fc] p-2.5 text-white shadow-lg shadow-purple-900/15 buildsetu-credit-card-polished">
-          <div className="mb-2 flex items-center gap-2">
-            <div className="flex h-6.5 w-6.5 items-center justify-center rounded-lg bg-white/18">
-              <CreditCard className="h-3.5 w-3.5" />
+      <div className="mt-2 shrink-0">
+        <div className="rounded-2xl bg-gradient-to-br from-[#6d5dfc] via-[#8b5cf6] to-[#c084fc] p-2 text-white shadow-lg shadow-purple-900/15 buildsetu-credit-card-polished">
+          <div className="mb-1 flex items-center gap-2">
+            <div className="flex h-6 w-6 items-center justify-center rounded-lg bg-white/18">
+              <CreditCard className="h-3 w-3" />
             </div>
-            <div className="text-[11.5px] font-semibold leading-none">Credits</div>
+            <div className="text-[11px] font-semibold leading-none">Credits</div>
           </div>
 
-          <div className="text-[19px] font-bold leading-none tracking-[-0.03em]">{creditLabel}</div>
-          <div className="mt-1 text-[14px] font-medium text-white/78 buildsetu-sidebar-credit-card">Available Credits</div>
+          <div className="text-[18px] font-bold leading-none tracking-[-0.03em]">{creditLabel}</div>
+          <div className="mt-0.5 text-[11px] font-medium text-white/78 buildsetu-sidebar-credit-card">Available Credits</div>
 
-          <div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-white/25">
+          <div className="mt-1 h-[3px] overflow-hidden rounded-full bg-white/25">
             <div className="h-full w-[72%] rounded-full bg-white/65" />
           </div>
 
-          <div className="mt-2 text-[14px] font-medium text-white/82">Plan: Pro</div>
+          <div className="mt-1 text-[11px] font-medium text-white/82">Plan: Pro</div>
 
           <button
             onClick={() => {
               window.location.href = "/pricing";
             }}
-            className="mt-1.5 w-full rounded-xl border border-white/55 bg-white/10 px-3 py-1.5 text-[11px] font-semibold text-white transition hover:bg-white/18"
+            className="mt-1.5 w-full rounded-xl border border-white/55 bg-white/10 px-3 py-1 text-[11px] font-semibold text-white transition hover:bg-white/18"
           >
-            Upgrade Plan
+            Upgrade
           </button>
         </div>
       </div>
@@ -831,12 +859,13 @@ function Header({
 }) {
   return (
     <header
+      data-bsu-real-header-fixed-v55="1"
       className={cn(
         "sticky top-0 z-20 border-b backdrop-blur-xl",
         false ? "border-white/10 bg-[#070611]/85" : "border-[#eee7f7] bg-white/92",
       )}
     >
-      <div className="flex h-[58px] items-center gap-3 px-4 lg:ml-[244px] lg:px-6">
+      <div className="flex h-[58px] items-center gap-3 px-4 lg:ml-[244px] lg:px-6" data-bsu-real-header-row-v55="1">
         <button
           aria-label="Toggle sidebar"
           className={cn(
@@ -977,7 +1006,18 @@ function ToolCard({ tool, theme }: { tool: Tool; theme: ResolvedTheme }) {
           <div className="mt-4 flex items-center gap-2">
             <button
               onClick={() => {
-                window.location.href = `/tools/${toolSlug(tool.title)}`;
+                const activeProjectId =
+                    typeof window !== "undefined"
+                      ? String(
+                          new URL(window.location.href).searchParams.get("projectId") ||
+                            window.localStorage.getItem("buildsetu.activeProjectId") ||
+                            window.localStorage.getItem("buildsetu.selectedProjectId") ||
+                            window.localStorage.getItem("activeProjectId") ||
+                            ""
+                        )
+                      : "";
+
+                  window.location.href = `/tools/${encodeURIComponent(toolSlug(tool.title))}${activeProjectId ? `?projectId=${encodeURIComponent(activeProjectId)}` : ""}`;
               }}
               className="inline-flex flex-1 min-w-0 items-center justify-center gap-2 rounded-lg bg-[#6f1cc4] px-3 py-2 text-xs font-semibold leading-none text-white hover:bg-[#55129a]"
             >
@@ -987,7 +1027,7 @@ function ToolCard({ tool, theme }: { tool: Tool; theme: ResolvedTheme }) {
               <Upload className="h-4 w-4" />
             </button>
           </div>
-          <div className="mt-3 flex items-center gap-1.5 text-[11px] text-[#817397]">
+          <div className="mt-2 flex items-center gap-1.5 text-[11px] text-[#817397]">
             <span className="h-2 w-2 rounded-full bg-[#22c55e]" />
             {tool.cost}
           </div>
@@ -1339,7 +1379,7 @@ function DashboardProjectCard({
   return (
     <article className="overflow-hidden rounded-2xl border border-[#eee7f7] bg-white">
       <div
-        className="h-[88px] bg-cover bg-center"
+        className="h-[74px] bg-cover bg-center"
         style={{ backgroundImage: `url(${project.imageUrl})` }}
       />
       <div className="p-2.5">
@@ -1417,7 +1457,7 @@ function MonthlyActivity() {
         <span className="rounded-lg border border-[#eee7f7] bg-white px-2 py-1 text-[10px] text-[#5d5077]">This Month</span>
       </div>
 
-      <div className="mt-3 h-[98px]">
+      <div className="mt-2 h-[98px]">
         <svg viewBox="0 0 320 110" className="h-full w-full overflow-visible">
           {[20, 45, 70, 95].map((y) => (
             <line key={y} x1="0" x2="320" y1={y} y2={y} stroke="#eee7f7" strokeDasharray="4 4" />
@@ -1458,7 +1498,7 @@ function CreditUsage({
         <span className="rounded-full bg-[#f6efff] px-2.5 py-1 text-[10px] font-semibold text-[#7c3aed]">{creditPercent}% Used</span>
       </div>
 
-      <div className="mt-3 flex items-center gap-4">
+      <div className="mt-2 flex items-center gap-4">
         <div
           className="flex h-[108px] w-[108px] shrink-0 items-center justify-center rounded-full"
           style={{ background: `conic-gradient(#6d5dfc 0 ${creditPercent}%, #eee7f7 ${creditPercent}% 100%)` }}
@@ -1489,9 +1529,9 @@ function CreditUsage({
         onClick={() => {
           window.location.href = "/credits";
         }}
-        className="mt-3 w-full rounded-xl border border-[#8b5cf6] px-3 py-1.5 text-xs font-semibold text-[#6f1cc4] transition hover:bg-[#f7f0ff]"
+        className="mt-2 w-full rounded-xl border border-[#8b5cf6] px-3 py-1.5 text-xs font-semibold text-[#6f1cc4] transition hover:bg-[#f7f0ff]"
       >
-        Buy More Credits
+        Upgrade
       </button>
     </section>
   );
@@ -1595,7 +1635,7 @@ function DashboardAiAssistant({ setActive }: { setActive: (id: ViewKey) => void 
         <span className="text-xl leading-none text-[#817397]">−</span>
       </div>
 
-      <div className="mt-3 max-h-[210px] space-y-2 overflow-y-auto pr-1">
+      <div className="mt-2 max-h-[210px] space-y-2 overflow-y-auto pr-1">
         {messages.map((message, index) => (
           <div
             key={`${message.role}-${index}`}
@@ -1617,7 +1657,7 @@ function DashboardAiAssistant({ setActive }: { setActive: (id: ViewKey) => void 
         )}
       </div>
 
-      <div className="mt-3 grid gap-2">
+      <div className="mt-2 grid gap-2">
         {actions.map((item) => {
           const Icon = item.icon;
           return (
@@ -1627,7 +1667,7 @@ function DashboardAiAssistant({ setActive }: { setActive: (id: ViewKey) => void 
               className="flex w-full items-center gap-2.5 rounded-xl border border-[#eee7f7] bg-[#fbf8ff] px-3 py-2.5 text-left transition hover:border-[#c4b5fd] hover:bg-[#f7f0ff]"
             >
               <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-[#f0dcff] text-[#6f1cc4]">
-                <Icon className="h-3.5 w-3.5" />
+                <Icon className="h-3 w-3" />
               </span>
               <span className="min-w-0">
                 <span className="block text-[12px] font-semibold text-[#21133f]">{item.title}</span>
@@ -1639,7 +1679,7 @@ function DashboardAiAssistant({ setActive }: { setActive: (id: ViewKey) => void 
       </div>
 
       <form
-        className="mt-3"
+        className="mt-2"
         onSubmit={(event) => {
           event.preventDefault();
           sendMessage();
@@ -1657,7 +1697,7 @@ function DashboardAiAssistant({ setActive }: { setActive: (id: ViewKey) => void 
             disabled={sending || !input.trim()}
             className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-gradient-to-r from-[#6d5dfc] to-[#9333ea] text-white disabled:opacity-50"
           >
-            <Send className="h-3.5 w-3.5" />
+            <Send className="h-3 w-3" />
           </button>
         </div>
         <p className="mt-2 text-center text-[10px] leading-snug text-[#817397]">
@@ -1680,7 +1720,7 @@ function AiHumanExpertise({ theme }: { theme: ResolvedTheme }) {
     >
       <div className="absolute right-0 top-0 h-full w-1/2 bg-gradient-to-l from-[#7c3aed]/25 to-transparent" />
       <div className="relative">
-        <h2 className={cn("text-2xl font-semibold tracking-[-0.04em]", false ? "text-white" : "text-[#21133f]")}>
+        <h2 className={cn("text-xl font-semibold tracking-[-0.04em]", false ? "text-white" : "text-[#21133f]")}>
           AI + Human Expertise
         </h2>
         <p className={cn("mt-1 text-sm", false ? "text-[#c4b5fd]" : "text-[#6f1cc4]")}>
@@ -2045,7 +2085,7 @@ function ProjectsPage({ theme, setActive, setSelectedProject }: { theme: Resolve
             onClick={loadProjects}
             className="inline-flex h-9 items-center gap-2 rounded-xl border border-[#ded5ec] bg-white px-3 text-xs font-semibold text-[#5d5077] hover:bg-[#f7f0ff]"
           >
-            <Search className="h-3.5 w-3.5" />
+            <Search className="h-3 w-3" />
             Refresh
           </button>
           <button
@@ -2135,7 +2175,7 @@ function ProjectsPage({ theme, setActive, setSelectedProject }: { theme: Resolve
           <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-[#f0dcff] text-[#6f1cc4]">
             <FolderKanban className="h-5 w-5" />
           </div>
-          <h3 className="mt-3 text-base font-semibold text-[#21133f]">No projects found</h3>
+          <h3 className="mt-2 text-base font-semibold text-[#21133f]">No projects found</h3>
           <p className="mt-1 text-xs text-[#817397]">
             Search/filter change karo ya New Project section se first project create karo.
           </p>
@@ -2229,7 +2269,7 @@ function ProjectsPage({ theme, setActive, setSelectedProject }: { theme: Resolve
                       </div>
                     </div>
 
-                    <div className="mt-3 grid grid-cols-4 gap-2">
+                    <div className="mt-2 grid grid-cols-4 gap-2">
                       {[
                         ["Renders", count.renders || 0],
                         ["BOQ", count.boqItems || 0],
@@ -2243,7 +2283,7 @@ function ProjectsPage({ theme, setActive, setSelectedProject }: { theme: Resolve
                       ))}
                     </div>
 
-                    <div className="mt-3 flex flex-wrap items-center justify-between gap-2">
+                    <div className="mt-2 flex flex-wrap items-center justify-between gap-2">
                       <span className="max-w-full truncate text-[10.5px] text-[#9a88b3]">ID: {item.id}</span>
                       <button
                         type="button"
@@ -2422,6 +2462,8 @@ function NewProjectPage({
   const [width, setWidth] = useState("30");
   const [depth, setDepth] = useState("40");
   const [facing, setFacing] = useState("North");
+  const [plotType, setPlotType] = useState("Regular Plot");
+  const [sideRoadFacing, setSideRoadFacing] = useState("East");
   const [floors, setFloors] = useState("G+1");
   const [bedrooms, setBedrooms] = useState("2");
   const [bathrooms, setBathrooms] = useState("1");
@@ -2502,12 +2544,48 @@ function NewProjectPage({
         throw new Error("Project created but project id missing");
       }
 
+      await syncProjectBriefToBrain(createdProject.id);
+
       try {
         window.localStorage.setItem("buildsetu_active_project", JSON.stringify(createdProject));
       } catch {}
 
       setSelectedProject?.(createdProject);
-      setActive("projectWorkspace");
+      // BUILDSETU_AFTER_CREATE_OPEN_TOOLS_PROJECT_ID_SYNC
+
+      try {
+
+        const rawActiveProject = window.localStorage.getItem("buildsetu_active_project");
+
+        const parsedActiveProject = rawActiveProject ? JSON.parse(rawActiveProject) : null;
+
+        const nextProjectId = String(parsedActiveProject?.id || "");
+
+      
+
+        if (nextProjectId) {
+
+          window.localStorage.setItem("buildsetu.activeProjectId", nextProjectId);
+
+          window.localStorage.setItem("buildsetu.selectedProjectId", nextProjectId);
+
+          window.localStorage.setItem("activeProjectId", nextProjectId);
+
+      
+
+          const url = new URL(window.location.href);
+
+          url.searchParams.set("view", "tools");
+
+          url.searchParams.set("projectId", nextProjectId);
+
+          window.history.replaceState(null, "", `${url.pathname}${url.search}${url.hash}`);
+
+        }
+
+      } catch {}
+
+      setActive("tools");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Project create failed");
     } finally {
@@ -2515,35 +2593,471 @@ function NewProjectPage({
     }
   }
 
-  const allSpaces = ["Living Room", "Kitchen", "Dining Room", "Parking", "Puja Room", "Staircase", "Store Room", "Wash Area", "Balcony"];
+  // BSU_AI_CLIENT_INTAKE_V2_PATCH_START
+  const allSpaces = ["Living Room", "Kitchen", "Dining Room", "Parking", "Puja Room", "Staircase", "Bedroom", "Bathroom", "Store Room", "Wash Area", "Balcony", "Family Lounge", "Office", "Shop Area", "Utility"];
   const floorsList = ["G", "G+1", "G+2", "G+3"];
   const facingList = ["North", "South", "East", "West"];
-  const styleList = ["Modern", "Minimal", "Contemporary", "Traditional", "Luxury"];
+  const styleList = ["Modern", "Minimal", "Contemporary", "Traditional", "Luxury", "Indian Family"];
+
+  const [aiClientBrief, setAiClientBrief] = useState("");
+  const [aiRequiredOutputs, setAiRequiredOutputs] = useState(["Floor Plan", "Exterior Elevation"]);
+  const [aiAssetFiles, setAiAssetFiles] = useState<File[]>([]);
+  const [aiAssetMeta, setAiAssetMeta] = useState<Array<{ name: string; size: number; type: string }>>([]);
+  const [aiIntake, setAiIntake] = useState<any>(null);
+  const [aiAnswers, setAiAnswers] = useState("");
+  const [aiChatInput, setAiChatInput] = useState("");
+  const [aiAnalyzing, setAiAnalyzing] = useState(false);
+  const [aiIntakeError, setAiIntakeError] = useState("");
+
+  const aiOutputList = [
+    "Floor Plan",
+    "Interior Render",
+    "Exterior Elevation",
+    "BOQ Estimate",
+    "BBS",
+    "Client PDF",
+    "Working Drawing",
+    "Contractor Package"
+  ];
+
+  function toggleAiOutput(item: string) {
+    setAiRequiredOutputs((current) =>
+      current.includes(item) ? current.filter((value) => value !== item) : [...current, item]
+    );
+  }
+
+  function handleAiAssetSelect(files: FileList | null) {
+    if (!files) return;
+
+    const selectedFiles = Array.from(files);
+
+    setAiAssetFiles((current) => {
+      const map = new Map<string, File>();
+      [...current, ...selectedFiles].forEach((file) => {
+        map.set(`${file.name}-${file.size}`, file);
+      });
+      return Array.from(map.values());
+    });
+
+    setAiAssetMeta((current) => {
+      const map = new Map<string, { name: string; size: number; type: string }>();
+      [...current, ...selectedFiles.map((file) => ({
+        name: file.name,
+        size: file.size,
+        type: file.type || "file"
+      }))].forEach((file) => {
+        map.set(`${file.name}-${file.size}`, file);
+      });
+      return Array.from(map.values());
+    });
+  }
+
+  async function analyzeAiClientBrief() {
+    setAiIntakeError("");
+    setAiAnalyzing(true);
+
+    try {
+      const response = await fetch("/api/ai/project-intake", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          rawBrief: aiClientBrief || requirement,
+          projectType,
+          style,
+          spaces,
+          requiredOutputs: aiRequiredOutputs,
+          plotType,
+          sideRoadFacing: plotType === "Corner Plot" ? sideRoadFacing : "",
+          cornerPlot: plotType === "Corner Plot",
+          assets: aiAssetMeta
+        })
+      });
+
+      const data = await response.json();
+
+      if (!response.ok || data?.ok === false) {
+        throw new Error(data?.error || "Brief analysis failed");
+      }
+
+      setAiIntake(data.intake);
+    } catch (err) {
+      setAiIntakeError(err instanceof Error ? err.message : "Brief analysis failed");
+    } finally {
+      setAiAnalyzing(false);
+    }
+  }
+
+  async function uploadAiProjectAssets(projectId: string) {
+    if (!aiAssetFiles.length) return;
+
+    const formData = new FormData();
+    formData.append("projectId", projectId);
+
+    aiAssetFiles.forEach((file) => {
+      formData.append("files", file);
+    });
+
+    await fetch("/api/project-assets/upload", {
+      method: "POST",
+      body: formData
+    });
+  }
+
+
+  // BUILDSETU_PROJECT_BRAIN_SYNC_V1
+  async function syncProjectBriefToBrain(projectId: string, finalIntake?: any) {
+    if (!projectId) return;
+
+    try {
+      const title =
+        String(finalIntake?.projectTitle || projectName || "").trim() ||
+        `${width || "30"}x${depth || "40"} ${facing || ""} Facing House`.trim() ||
+        "New BuildSetu Project";
+
+      const rawBriefText = String(aiClientBrief || requirement || "").trim();
+
+      const briefPayload = {
+        title,
+        rawBrief: rawBriefText,
+        structuredBrief: finalIntake || null,
+        confirmedFacts: finalIntake?.confirmedFacts || finalIntake?.detectedFacts || null,
+        missingQuestions: Array.isArray(finalIntake?.missingQuestions) ? finalIntake.missingQuestions : [],
+        requiredOutputs: Array.isArray(aiRequiredOutputs) ? aiRequiredOutputs : [],
+
+        site: {
+          location,
+          city: location,
+          plotWidthFt: width,
+          plotDepthFt: depth,
+          plotSize: `${width || "-"} x ${depth || "-"} ft`,
+          facing,
+          plotType,
+          sideRoadFacing: plotType === "Corner Plot" ? sideRoadFacing : "",
+          cornerPlot: plotType === "Corner Plot",
+        },
+
+        building: {
+          projectType,
+          houseType,
+          floors,
+          bedrooms,
+          bathrooms,
+          spaces,
+          rooms: spaces,
+        },
+
+        preferences: {
+          budgetRange: budget,
+          style,
+          exteriorStyle: style,
+          interiorStyle: style,
+        },
+
+        uploads: aiAssetMeta,
+        answers: aiAnswers,
+        source: "new_project_create_flow",
+        status: finalIntake?.missingQuestions?.length ? "Needs More Info" : "Brief Draft Ready",
+        updatedAt: new Date().toISOString(),
+      };
+
+      const briefRes = await fetch("/api/project-brief/upsert", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        cache: "no-store",
+        credentials: "same-origin",
+        body: JSON.stringify({
+          projectId,
+          brief: briefPayload,
+        }),
+      });
+
+      if (!briefRes.ok) {
+        const err = await briefRes.json().catch(() => null);
+        console.warn("Project brain sync failed", err);
+      }
+    } catch (err) {
+      console.warn("Project brain sync skipped", err);
+    }
+  }
+
+  async function saveAiInitialProjectChat(projectId: string, finalIntake: any) {
+    try {
+      const summary = finalIntake?.briefSummary || requirement;
+      const questions = Array.isArray(finalIntake?.missingQuestions) ? finalIntake.missingQuestions : [];
+
+      await fetch("/api/project-chat/history", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          projectId,
+          messages: [
+            {
+              role: "user",
+              type: "CLIENT_BRIEF",
+              content: aiClientBrief || requirement,
+              createdAt: new Date().toISOString()
+            },
+            {
+              role: "assistant",
+              type: "AI_PROJECT_INTAKE",
+              content:
+                `BuildSetu AI ne client brief analyze kar diya.\n\n${summary}\n\n` +
+                (questions.length
+                  ? `Missing questions:\n${questions.map((q: string, index: number) => `${index + 1}. ${q}`).join("\n")}`
+                  : "Starting project brief complete hai."),
+              structuredBrief: finalIntake,
+              createdAt: new Date().toISOString()
+            }
+          ]
+        })
+      });
+    } catch {
+      // chat save fail hone par project creation block nahi hoga
+    }
+  }
+
+  async function createAiProjectAndOpenChat() {
+    setError("");
+    setAiIntakeError("");
+    setSaving(true);
+
+    try {
+      let finalIntake = aiIntake;
+
+      if (!finalIntake) {
+        const response = await fetch("/api/ai/project-intake", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            rawBrief: aiClientBrief || requirement,
+            projectType,
+            style,
+            spaces,
+            requiredOutputs: aiRequiredOutputs,
+            assets: aiAssetMeta
+          })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok || data?.ok === false) {
+          throw new Error(data?.error || "Brief analysis failed");
+        }
+
+        finalIntake = data.intake;
+        setAiIntake(finalIntake);
+      }
+
+      const title = finalIntake?.projectTitle || projectName || "New BuildSetu Project";
+
+      const response = await fetch("/api/projects/create", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          title,
+          projectName: title,
+          name: title,
+          projectType,
+          houseType,
+          location,
+          plotSize: `${width || "-"} x ${depth || "-"} ft`,
+          width,
+          depth,
+          floors,
+          facing,
+          plotType,
+          sideRoadFacing: plotType === "Corner Plot" ? sideRoadFacing : "",
+          cornerPlot: plotType === "Corner Plot",
+          bedrooms,
+          bathrooms,
+          budget,
+          spaces,
+          rooms: spaces,
+          style,
+          prompt: aiClientBrief || requirement,
+          rawBrief: aiClientBrief || requirement,
+          requirement: aiClientBrief || requirement,
+          requiredOutputs: aiRequiredOutputs,
+          clientAnswers: aiAnswers,
+          structuredBrief: finalIntake,
+          uploadedAssets: aiAssetMeta
+        })
+      });
+
+      const data = await response.json();
+
+      if (!response.ok || data?.ok === false) {
+        throw new Error(data?.error || data?.message || "Project create failed");
+      }
+
+      const createdProject = data.project || data.item || data.data || {
+        id: data.projectId || data.id,
+        title,
+        projectType,
+        location
+      };
+
+      if (!createdProject?.id) {
+        throw new Error("Project created but project id missing");
+      }
+
+      try {
+        await uploadAiProjectAssets(createdProject.id);
+      } catch {}
+
+      await saveAiInitialProjectChat(createdProject.id, finalIntake);
+      await syncProjectBriefToBrain(createdProject.id, finalIntake);
+
+      try {
+        window.localStorage.setItem("buildsetu_active_project", JSON.stringify(createdProject));
+      } catch {}
+
+      setSelectedProject?.(createdProject);
+      // BUILDSETU_AFTER_CREATE_OPEN_TOOLS_PROJECT_ID_SYNC
+
+      try {
+
+        const rawActiveProject = window.localStorage.getItem("buildsetu_active_project");
+
+        const parsedActiveProject = rawActiveProject ? JSON.parse(rawActiveProject) : null;
+
+        const nextProjectId = String(parsedActiveProject?.id || "");
+
+      
+
+        if (nextProjectId) {
+
+          window.localStorage.setItem("buildsetu.activeProjectId", nextProjectId);
+
+          window.localStorage.setItem("buildsetu.selectedProjectId", nextProjectId);
+
+          window.localStorage.setItem("activeProjectId", nextProjectId);
+
+      
+
+          const url = new URL(window.location.href);
+
+          url.searchParams.set("view", "tools");
+
+          url.searchParams.set("projectId", nextProjectId);
+
+          window.history.replaceState(null, "", `${url.pathname}${url.search}${url.hash}`);
+
+        }
+
+      } catch {}
+
+      setActive("tools");
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Project create failed";
+      setError(message);
+      setAiIntakeError(message);
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  const aiCompletenessPoints = [
+    Boolean(projectName),
+    Boolean(location),
+    Boolean(width && depth),
+    Boolean(facing),
+    Boolean(floors),
+    spaces.length > 0,
+    aiRequiredOutputs.length > 0,
+    aiClientBrief.trim().length > 80,
+    Boolean(aiIntake)
+  ];
+
+  const aiBriefScore = Math.round(
+    (aiCompletenessPoints.filter(Boolean).length / aiCompletenessPoints.length) * 100
+  );
+
+  const aiAssistantQuestions =
+    aiIntake?.missingQuestions?.length
+      ? aiIntake.missingQuestions
+      : [
+          "Client ka complete requirement yaha type/paste karo.",
+          "Agar sketch, rough plan, site photo ya reference hai to upload karo.",
+          "Required outputs select karo: plan, interior, elevation, BOQ, BBS, PDF.",
+          "Analyze Brief par click karke AI se missing questions nikalwao."
+        ];
+  // BSU_AI_CLIENT_INTAKE_V2_PATCH_END
+
+
+
+  
+  function submitAiChatPanelMessage() {
+    const answer = aiChatInput.trim();
+
+    if (!answer) return;
+
+    setAiAnswers((previous) => (previous ? `${previous}\n${answer}` : answer));
+    setAiChatInput("");
+
+    if (!aiIntake && aiClientBrief.trim().length >= 20) {
+      void analyzeAiClientBrief();
+    }
+  }
+
 
   return (
-    <div className="bsu-intake-page">
-      <div className="bsu-intake-hero">
+    <div className="bsu-intake-page bsu-ai-intake-page">
+      <div className="bsu-intake-hero bsu-ai-brief-hero">
         <div>
-          <p className="bsu-intake-kicker">New Project</p>
-          <h1>Create New Project</h1>
+          <p className="bsu-intake-kicker">New Project Intake</p>
+          <h1>Client Brief se AI Project Workspace</h1>
           <p>
-            Basic project details save karo. Project create hone ke baad Design Brief, Plan,
-            Interior, Exterior, BOQ, BBS aur Docs project chat me run honge.
+            Client ke saath jaise professional briefing hoti hai, waise hi yaha complete requirement, sketch, reference image aur required outputs do. BuildSetu AI brief analyze karega, missing questions poochega aur project-wise chat workspace open karega.
           </p>
         </div>
-        <div className="bsu-intake-credit">Project Intake</div>
+
+        <div className="bsu-ai-score-card">
+          <span>Brief Score</span>
+          <strong>{aiBriefScore}%</strong>
+          <div>
+            <i style={{ width: `${aiBriefScore}%` }} />
+          </div>
+        </div>
       </div>
 
-      <div className="bsu-intake-grid">
-        <section className="bsu-intake-card">
+      <div className="bsu-ai-intake-grid">
+        <section className="bsu-intake-card bsu-ai-main-card bsu-left-form-wide-v31">
           <div className="bsu-intake-card-head">
             <div>
-              <h2>Project Details</h2>
-              <p>Permanent project information yahan save hoga.</p>
+              <h2>Client Brief</h2>
+              <p>Hindi, English ya Hinglish me client ka pura requirement likho.</p>
+            </div>
+            <button type="button" className="bsu-ai-mini-button" onClick={() => setAiClientBrief(requirement)}>
+              Sync from form
+            </button>
+          </div>
+
+          <label className="bsu-ai-brief-box">
+            <span>Project Requirement / Client Conversation</span>
+            <textarea
+              value={aiClientBrief}
+              onChange={(event) => setAiClientBrief(event.target.value)}
+              placeholder="Example: 30x40 north-facing plot hai. Raipur me G+1 house banana hai. Ground floor me parking, living, kitchen, puja room aur 1 bedroom chahiye. First floor me 2 bedrooms, balcony aur family lounge chahiye. Budget 40 lakh hai. Modern elevation aur floor plan chahiye."
+            />
+          </label>
+
+          <div className="bsu-ai-section-title">
+            <div>
+              <h3>Project Basics</h3>
+              <p>AI ko structured context dene ke liye core details fill karo.</p>
             </div>
           </div>
 
-          <div className="bsu-intake-form">
+          <div className="bsu-intake-form bsu-ai-compact-form">
             <label className="bsu-intake-field wide">
               <span>Project Name</span>
               <input className="bsu-intake-input" value={projectName} onChange={(event) => setProjectName(event.target.value)} />
@@ -2557,6 +3071,8 @@ function NewProjectPage({
                 <option>Villa</option>
                 <option>Apartment</option>
                 <option>Office</option>
+                <option>Shop / Showroom</option>
+                <option>Cafe / Restaurant</option>
               </select>
             </label>
 
@@ -2566,65 +3082,57 @@ function NewProjectPage({
                 <option>Independent House</option>
                 <option>Duplex</option>
                 <option>Villa</option>
-                <option>Farm House</option>
-                <option>Rental Unit</option>
+                <option>Flat Interior</option>
+                <option>Commercial Space</option>
               </select>
             </label>
 
             <label className="bsu-intake-field">
               <span>Location</span>
-              <input className="bsu-intake-input" value={location} onChange={(event) => setLocation(event.target.value)} />
+              <input className="bsu-intake-input" value={location} onChange={(event) => setLocation(event.target.value)} placeholder="Raipur" />
             </label>
 
             <div className="bsu-intake-field">
               <span>Plot Size</span>
-              <div className="bsu-size-row">
-                <input className="bsu-intake-input" value={width} onChange={(event) => setWidth(event.target.value)} placeholder="Width" />
+              <div className="bsu-plot-row">
+                <input className="bsu-intake-input" value={width} onChange={(event) => setWidth(event.target.value)} placeholder="30" />
                 <b>×</b>
-                <input className="bsu-intake-input" value={depth} onChange={(event) => setDepth(event.target.value)} placeholder="Depth" />
-              </div>
-            </div>
-
-            <div className="bsu-intake-field wide">
-              <span>Floors</span>
-              <div className="bsu-chip-row">
-                {floorsList.map((item) => (
-                  <button key={item} type="button" onClick={() => setFloors(item)} className={floors === item ? "bsu-intake-chip selected" : "bsu-intake-chip"}>
-                    {item}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <div className="bsu-intake-field wide">
-              <span>Facing</span>
-              <div className="bsu-chip-row">
-                {facingList.map((item) => (
-                  <button key={item} type="button" onClick={() => setFacing(item)} className={facing === item ? "bsu-intake-chip selected" : "bsu-intake-chip"}>
-                    {item}
-                  </button>
-                ))}
+                <input className="bsu-intake-input" value={depth} onChange={(event) => setDepth(event.target.value)} placeholder="40" />
               </div>
             </div>
 
             <label className="bsu-intake-field">
               <span>Bedrooms</span>
               <select className="bsu-intake-input" value={bedrooms} onChange={(event) => setBedrooms(event.target.value)}>
-                <option>1</option><option>2</option><option>3</option><option>4</option><option>5+</option>
+                <option>1</option>
+                <option>2</option>
+                <option>3</option>
+                <option>4</option>
+                <option>5+</option>
               </select>
             </label>
 
             <label className="bsu-intake-field">
               <span>Bathrooms</span>
               <select className="bsu-intake-input" value={bathrooms} onChange={(event) => setBathrooms(event.target.value)}>
-                <option>1</option><option>2</option><option>3</option><option>4+</option>
+                <option>1</option>
+                <option>2</option>
+                <option>3</option>
+                <option>4</option>
+                <option>5+</option>
               </select>
             </label>
 
-            <label className="bsu-intake-field">
+
+          </div>
+
+          {/* BSU_REAL_NATIVE_SELECTS_V13 */}
+          {/* BSU_CORNER_PLOT_FACING_V21 */}
+          <div className="bsu-ai-native-select-row bsu-budget-floors-plot-row">
+            <label className="bsu-ai-native-select-panel">
               <span>Budget</span>
-              <select className="bsu-intake-input" value={budget} onChange={(event) => setBudget(event.target.value)}>
-                <option>Below 20 Lakh</option>
+              <select value={budget} onChange={(event) => setBudget(event.target.value)}>
+                <option>10 - 20 Lakh</option>
                 <option>20 - 30 Lakh</option>
                 <option>30 - 40 Lakh</option>
                 <option>40 - 60 Lakh</option>
@@ -2632,84 +3140,340 @@ function NewProjectPage({
               </select>
             </label>
 
-            <div className="bsu-intake-field wide">
-              <span>Rooms & Spaces</span>
-              <div className="bsu-space-grid">
-                {allSpaces.map((item) => (
-                  <button key={item} type="button" onClick={() => toggleSpace(item)} className={spaces.includes(item) ? "bsu-intake-chip selected" : "bsu-intake-chip"}>
-                    {spaces.includes(item) ? "✓ " : ""}{item}
-                  </button>
+            <label className="bsu-ai-native-select-panel">
+              <span>Floors</span>
+              <select value={floors} onChange={(event) => setFloors(event.target.value)}>
+                {floorsList.map((item) => (
+                  <option key={item} value={item}>{item}</option>
                 ))}
-              </div>
-            </div>
+              </select>
+            </label>
 
-            <div className="bsu-intake-field wide">
-              <span>Style</span>
-              <div className="bsu-chip-row">
-                {styleList.map((item) => (
-                  <button key={item} type="button" onClick={() => setStyle(item)} className={style === item ? "bsu-intake-chip selected" : "bsu-intake-chip"}>
-                    {item}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <label className="bsu-intake-field wide">
-              <span>Project Requirement</span>
-              <textarea className="bsu-intake-textarea" value={requirement} readOnly />
+            <label className="bsu-ai-native-select-panel">
+              <span>Plot Type</span>
+              <select
+                value={plotType}
+                onChange={(event) => {
+                  setPlotType(event.target.value);
+                  if (event.target.value !== "Corner Plot") setSideRoadFacing("");
+                  if (event.target.value === "Corner Plot" && !sideRoadFacing) setSideRoadFacing("East");
+                }}
+              >
+                <option>Regular Plot</option>
+                <option>Corner Plot</option>
+              </select>
             </label>
           </div>
 
-          {error ? <p className="bsu-intake-error">{error}</p> : null}
+          <div className={plotType === "Corner Plot" ? "bsu-ai-native-select-row bsu-facing-corner-row corner" : "bsu-ai-native-select-row bsu-facing-corner-row"}>
+            <label className="bsu-ai-native-select-panel">
+              <span>{plotType === "Corner Plot" ? "Front Road Facing" : "Facing"}</span>
+              <select value={facing} onChange={(event) => setFacing(event.target.value)}>
+                {facingList.map((item) => (
+                  <option key={item} value={item}>{item}</option>
+                ))}
+              </select>
+            </label>
 
-          <div className="bsu-intake-actions">
-            <button type="button" onClick={createProjectAndOpenChat} disabled={saving} className="bsu-primary-action">
-              {saving ? "Creating Project..." : "Create Project & Open Chat"}
+            {plotType === "Corner Plot" ? (
+              <label className="bsu-ai-native-select-panel">
+                <span>Side Road Facing</span>
+                <select value={sideRoadFacing || "East"} onChange={(event) => setSideRoadFacing(event.target.value)}>
+                  {facingList.map((item) => (
+                    <option key={item} value={item}>{item}</option>
+                  ))}
+                </select>
+              </label>
+            ) : null}
+          </div>
+
+          <div className="bsu-ai-native-select-triplet-row">
+          <div className="bsu-ai-native-select-panel bsu-ai-native-select-wide">
+            <div className="bsu-ai-native-select-head">
+              <span>Required Outputs</span>
+              <small>{aiRequiredOutputs.length} selected</small>
+            </div>
+            <select
+              value=""
+              onChange={(event) => {
+                const value = event.target.value;
+                if (value) toggleAiOutput(value);
+              }}
+            >
+              <option value="">Select / unselect required output</option>
+              {aiOutputList.map((item) => (
+                <option key={item} value={item}>
+                  {aiRequiredOutputs.includes(item) ? "✓ " : ""}
+                  {item}
+                </option>
+              ))}
+            </select>
+            <p className="bsu-ai-selected-summary">
+              {aiRequiredOutputs.length ? aiRequiredOutputs.join(", ") : "No output selected"}
+            </p>
+          </div>
+
+          <div className="bsu-ai-native-select-panel bsu-ai-native-select-wide">
+            <div className="bsu-ai-native-select-head">
+              <span>Rooms & Spaces</span>
+              <small>{spaces.length} selected</small>
+            </div>
+            <select
+              value=""
+              onChange={(event) => {
+                const value = event.target.value;
+                if (value) toggleSpace(value);
+              }}
+            >
+              <option value="">Select / unselect room or space</option>
+              {allSpaces.map((item) => (
+                <option key={item} value={item}>
+                  {spaces.includes(item) ? "✓ " : ""}
+                  {item}
+                </option>
+              ))}
+            </select>
+            <p className="bsu-ai-selected-summary">
+              {spaces.length ? spaces.join(", ") : "No room or space selected"}
+            </p>
+          </div>
+
+          <label className="bsu-ai-native-select-panel bsu-ai-native-select-wide">
+            <span>Style Direction</span>
+            <select value={style} onChange={(event) => setStyle(event.target.value)}>
+              {styleList.map((item) => (
+                <option key={item} value={item}>{item}</option>
+              ))}
+            </select>
+          </label>
+
+          </div>
+
+          <div className="bsu-ai-panel bsu-ai-upload-panel">
+            <div>
+              <h3>Upload Sketch / Site Photo / Reference</h3>
+              <p>Rough sketch, plan image, site photo, elevation reference, PDF drawing upload karo.</p>
+            </div>
+
+            <label className="bsu-ai-upload-box">
+              <input
+                type="file"
+                multiple
+                accept="image/*,.pdf,.dxf,.dwg"
+                onChange={(event) => handleAiAssetSelect(event.target.files)}
+              />
+              <strong>Upload Project Assets</strong>
+              <span>PNG, JPG, WEBP, PDF, DXF/DWG reference</span>
+            </label>
+
+            {aiAssetMeta.length ? (
+              <div className="bsu-ai-file-list">
+                {aiAssetMeta.map((file) => (
+                  <div key={`${file.name}-${file.size}`}>
+                    <strong>{file.name}</strong>
+                    <span>{file.type || "file"} · {Math.round(file.size / 1024)} KB</span>
+                  </div>
+                ))}
+              </div>
+            ) : null}
+          </div>
+
+          {(error || aiIntakeError) ? <p className="bsu-intake-error">{aiIntakeError || error}</p> : null}
+
+          <div className="bsu-intake-actions bsu-ai-actions">
+            <button type="button" onClick={analyzeAiClientBrief} disabled={aiAnalyzing || aiClientBrief.trim().length < 20} className="bsu-secondary-action">
+              {aiAnalyzing ? "Analyzing Brief..." : "Analyze Brief & Ask Questions"}
             </button>
-            <button type="button" className="bsu-secondary-action" onClick={() => {
-              setProjectName("");
-              setLocation("");
-              setWidth("");
-              setDepth("");
-              setSpaces([]);
-            }}>
-              Clear
+            <button type="button" onClick={createAiProjectAndOpenChat} disabled={saving || aiClientBrief.trim().length < 20} className="bsu-primary-action">
+              {saving ? "Creating Project..." : "Create Project & Open Tools"}
             </button>
           </div>
         </section>
 
-        <aside className="bsu-intake-summary">
-          <div className="bsu-summary-card">
-            <div className="bsu-summary-head">
-              <div>
-                <p>Project Summary</p>
-                <h2>{projectName || "Untitled Project"}</h2>
+        {/* BSU_RIGHT_CHAT_PANEL_V23 */}
+        <aside className="bsu-ai-chat-side-panel">
+          <div className="bsu-ai-chat-card">
+            <div className="bsu-ai-chat-header">
+              <div className="bsu-ai-chat-logo bsu-ai-chat-logo-real">
+                {/* BSU_RIGHT_CHAT_REAL_LOGO_V24 */}
+                <img src="/brand/buildsetu-ai-logo-color.png" alt="BuildSetu AI" />
               </div>
-              <span>Draft</span>
+              <button
+                type="button"
+                onClick={() => {
+                  setAiIntake(null);
+                  setAiAnswers("");
+                  setAiChatInput("");
+                }}
+              >
+                Clear
+              </button>
             </div>
 
-            <div className="bsu-summary-preview">
-              <p>{requirement}</p>
+            <div className="bsu-ai-chat-divider" />
+
+            <label className="bsu-ai-chat-project">
+              <span>Project</span>
+              <select value={projectName} onChange={(event) => setProjectName(event.target.value)}>
+                <option value={projectName}>{projectName || "New Project"}</option>
+              </select>
+            </label>
+
+            <div className="bsu-ai-chat-body">
+              {!aiIntake ? (
+                <div className="bsu-ai-chat-bubble assistant">
+                  <p>
+                    Project selected: <strong>{projectName || "New Project"}</strong>.
+                    <br />
+                    Client brief analyze karne ke liye <strong>Analyze Brief & Ask Questions</strong> button click karo.
+                  </p>
+                  <ul>
+                    <li>AI summary</li>
+                    <li>Missing questions</li>
+                    <li>Structured project brief</li>
+                    <li>Selected outputs</li>
+                  </ul>
+                </div>
+              ) : (
+                <>
+                  <div className="bsu-ai-chat-bubble user">
+                    Brief analyzed
+                  </div>
+
+                  <div className="bsu-ai-chat-bubble assistant">
+                    <p>{aiIntake.briefSummary || "Structured brief ready."}</p>
+                  </div>
+
+                  {aiIntake?.missingQuestions?.length ? (
+                    <div className="bsu-ai-chat-bubble assistant">
+                      <strong>Missing Questions</strong>
+                      <ol>
+                        {aiIntake.missingQuestions.map((question: string, index: number) => (
+                          <li key={`${question}-${index}`}>{question}</li>
+                        ))}
+                      </ol>
+                    </div>
+                  ) : (
+                    <div className="bsu-ai-chat-bubble assistant success">
+                      Starting brief complete hai. Ab project create karke Tools page open kar sakte ho.
+                    </div>
+                  )}
+
+                  {aiAnswers
+                    .split("\n")
+                    .map((answer) => answer.trim())
+                    .filter(Boolean)
+                    .map((answer, index) => {
+                      const nextQuestion = aiIntake?.missingQuestions?.[index + 1];
+
+                      return (
+                        <div key={`ai-answer-${index}-${answer.slice(0, 20)}`}>
+                          <div className="bsu-ai-chat-bubble user">
+                            <p>{answer}</p>
+                          </div>
+                          <div className="bsu-ai-chat-bubble assistant">
+                            <p>
+                              {nextQuestion
+                                ? `Answer saved. Next: ${nextQuestion}`
+                                : "Answer saved. Ab Create Project & Open Tools click karke project chat open kar sakte ho."}
+                            </p>
+                          </div>
+                        </div>
+                      );
+                    })}
+                </>
+              )}
             </div>
 
-            <div className="bsu-summary-grid">
+            <div className="bsu-ai-chat-input">
+              <input
+                value={aiChatInput}
+                onChange={(event) => setAiChatInput(event.target.value)}
+                onKeyDown={(event) => {
+                  if (event.key === "Enter") {
+                    event.preventDefault();
+                    submitAiChatPanelMessage();
+                  }
+                }}
+                placeholder="Ask about selected project..."
+              />
+              <button
+                type="button"
+                onClick={submitAiChatPanelMessage}
+                disabled={aiAnalyzing || !aiChatInput.trim()}
+              >
+                {aiAnalyzing ? "..." : "➤"}
+              </button>
+            </div>
+
+            <p className="bsu-ai-chat-footnote">
+              Project-wise chat selected project ke context me save hoga.
+            </p>
+          </div>
+        </aside>
+
+        <aside className="bsu-intake-summary bsu-ai-assistant-wrap">
+          <div className="bsu-summary-card bsu-ai-assistant-card">
+            <div className="bsu-ai-assistant-top">
+              <p>BuildSetu AI Assistant</p>
+              <h2>Brief samjho, questions poochho, project banao</h2>
+              <span>Project-wise chat save hoga</span>
+            </div>
+
+            <div className="bsu-summary-grid bsu-ai-summary-grid">
+              <div><span>Project</span><strong>{aiIntake?.projectTitle || projectName || "Untitled Project"}</strong></div>
+              <div><span>Status</span><strong>{aiIntake?.status || "Draft"}</strong></div>
               <div><span>Project Type</span><strong>{projectType}</strong></div>
-              <div><span>House Type</span><strong>{houseType}</strong></div>
+              <div><span>Location</span><strong>{location || "-"}</strong></div>
               <div><span>Plot Size</span><strong>{width || "-"} ft × {depth || "-"} ft</strong></div>
               <div><span>Facing</span><strong>{facing}</strong></div>
               <div><span>Floors</span><strong>{floors}</strong></div>
-              <div><span>Bedrooms</span><strong>{bedrooms}</strong></div>
-              <div><span>Bathrooms</span><strong>{bathrooms}</strong></div>
               <div><span>Budget</span><strong>{budget}</strong></div>
+              <div className="wide"><span>Outputs</span><strong>{aiRequiredOutputs.join(", ") || "Not selected"}</strong></div>
               <div className="wide"><span>Spaces</span><strong>{spaces.join(", ") || "Not selected"}</strong></div>
-              <div className="wide"><span>Style</span><strong>{style}</strong></div>
+              <div className="wide"><span>Assets</span><strong>{aiAssetMeta.length ? `${aiAssetMeta.length} uploaded` : "No assets uploaded"}</strong></div>
             </div>
 
-            <button type="button" onClick={createProjectAndOpenChat} disabled={saving} className="bsu-primary-action full">
-              {saving ? "Creating Project..." : "Create Project & Open Chat"}
+            {aiIntake?.briefSummary ? (
+              <div className="bsu-ai-summary-preview">
+                <p>Structured AI Summary</p>
+                <pre>{aiIntake.briefSummary}</pre>
+              </div>
+            ) : (
+              <div className="bsu-ai-summary-preview">
+                <p>Current Draft Summary</p>
+                <pre>{requirement}</pre>
+              </div>
+            )}
+
+            <div className="bsu-ai-questions">
+              <p>AI Questions / Next Guidance</p>
+              {aiAssistantQuestions.map((question: string, index: number) => (
+                <div key={`${question}-${index}`}>
+                  <span>{index + 1}</span>
+                  <strong>{question}</strong>
+                </div>
+              ))}
+            </div>
+
+            {aiIntake?.missingQuestions?.length ? (
+              <label className="bsu-ai-answer-box">
+                <span>Answers for AI Questions</span>
+                <textarea
+                  value={aiAnswers}
+                  onChange={(event) => setAiAnswers(event.target.value)}
+                  placeholder="Example: Road north side hai, staircase internal chahiye, vastu important hai..."
+                />
+              </label>
+            ) : null}
+
+            <button type="button" onClick={createAiProjectAndOpenChat} disabled={saving || aiClientBrief.trim().length < 20} className="bsu-primary-action bsu-ai-full-button">
+              {saving ? "Creating Project..." : "Create Project & Open Tools"}
             </button>
 
-            <p className="bsu-summary-note">Project create hone ke baad sabhi tools project chat ke andar run honge.</p>
+            <p className="bsu-ai-footnote">
+              Project create hone ke baad raw brief, uploaded assets, AI summary aur future tool chats same project workspace me save honge.
+            </p>
           </div>
         </aside>
       </div>
@@ -3024,10 +3788,10 @@ function ProjectWorkspace({ theme }: { theme: ResolvedTheme }) {
         <div className="flex flex-col justify-between gap-4 lg:flex-row lg:items-start">
           <div>
             <div className="mb-3 flex flex-wrap gap-2">
-              <StatusBadge status="AI Draft" theme={theme} />
+              <StatusBadge status="AI Final Draft" theme={theme} />
               <StatusBadge status="Verification Required" theme={theme} />
             </div>
-            <h2 className={cn("text-[26px] font-semibold tracking-[-0.04em]", false ? "text-white" : "text-[#21133f]")}>
+            <h2 className={cn("text-[22px] font-semibold tracking-[-0.04em]", false ? "text-white" : "text-[#21133f]")}>
               30x40 North Facing House — Raipur
             </h2>
             <p className={cn("mt-2 text-sm", false ? "text-slate-500" : "text-[#817397]")}>
@@ -3053,7 +3817,7 @@ function ProjectWorkspace({ theme }: { theme: ResolvedTheme }) {
               <div key={title} className={cn("rounded-2xl border p-4", false ? "border-white/10 bg-black/20" : "border-[#eee7f7] bg-[#fbf8ff]")}>
                 <h3 className={cn("font-medium", false ? "text-white" : "text-[#21133f]")}>{title}</h3>
                 <p className={cn("mt-1 text-sm", false ? "text-slate-500" : "text-[#817397]")}>{desc}</p>
-                <div className="mt-4">
+                <div className="mt-2 shrink-0">
                   <StatusBadge status={status} theme={theme} />
                 </div>
               </div>
@@ -3076,7 +3840,7 @@ function SafetyPanel({ theme }: { theme: ResolvedTheme }) {
           "Final construction documents require professional review.",
           "Structural member size and reinforcement are not finalized by AI.",
           "BOQ quantities are draft until drawings/site are verified.",
-          "BBS requires engineer-entered reinforcement data.",
+          "AI generates complete BBS draft with assumptions; engineer verifies before execution.",
         ].map((item) => (
           <div key={item} className={cn("flex gap-3 rounded-xl border p-3 text-sm leading-6", false ? "border-[#facc15]/20 bg-black/20 text-[#fde68a]" : "border-[#fed7aa] bg-white text-[#9a3412]")}>
             <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0" />
@@ -3141,7 +3905,7 @@ function BbsPage({ theme }: { theme: ResolvedTheme }) {
     shapeCode: "Straight",
     cuttingLength: "1",
     drawingRef: "Manual Entry",
-    status: "Manual Edit - Engineer Review Required",
+    status: "AI Final Draft - Engineer Review Required",
   };
 
   const [projects, setProjects] = useState<BbsProject[]>([]);
@@ -3226,7 +3990,7 @@ function BbsPage({ theme }: { theme: ResolvedTheme }) {
       shapeCode: item.shapeCode || "Straight",
       cuttingLength: String(item.cuttingLength || ""),
       drawingRef: item.drawingRef || "Manual Entry",
-      status: item.status || "Manual Edit - Engineer Review Required",
+      status: item.status || "AI Final Draft - Engineer Review Required",
     });
     setManualFormOpen(true);
   }
@@ -3242,8 +4006,8 @@ function BbsPage({ theme }: { theme: ResolvedTheme }) {
   const bbsShapeCodeOptions = ["Straight", "Bent", "L", "U", "Stirrup", "Stirrup/Tie", "Hook"];
   const bbsCuttingLengthOptions = ["0.45", "0.65", "1.00", "1.15", "1.20", "1.44", "3.10", "3.20", "3.40", "3.50", "3.60", "3.80", "4.20", "4.40", "4.60", "4.80", "6.90"];
   const bbsStatusOptions = [
-    "Manual Edit - Engineer Review Required",
-    "Engineer Input Required",
+    "AI Final Draft - Engineer Review Required",
+    "AI Generated - Engineer Review Required",
     "Engineer Review Required",
     "Edited - Engineer Review Required",
     "Approved by Engineer",
@@ -3701,7 +4465,7 @@ function BbsPage({ theme }: { theme: ResolvedTheme }) {
   }
 
   function shareReport() {
-    const text = `BuildSetu AI BBS Report\nProject: ${selectedProject?.title || "Project"}\nTotal Bars: ${totalBars}\nTotal Weight: ${weightFormat.format(totalWeight)} kg\nStatus: Engineer Review Required`;
+    const text = `BuildSetu AI BBS Report\nProject: ${selectedProject?.title || "Project"}\nTotal Bars: ${totalBars}\nTotal Weight: ${weightFormat.format(totalWeight)} kg\nStatus: AI Final Draft - Engineer Review Required`;
     navigator.clipboard?.writeText(text);
     setMessage("BBS report summary copied.");
   }
@@ -3799,7 +4563,7 @@ function BbsPage({ theme }: { theme: ResolvedTheme }) {
   }, [items]);
 
   const bbsStatusFilterOptions = useMemo(() => {
-    return ["All", ...Array.from(new Set(items.map((item) => item.status || "Review Required"))).sort()];
+    return ["All", ...Array.from(new Set(items.map((item) => item.status || "AI Final Draft - Engineer Review Required"))).sort()];
   }, [items]);
 
   const filteredBbsItems = useMemo(() => {
@@ -3822,7 +4586,7 @@ function BbsPage({ theme }: { theme: ResolvedTheme }) {
 
       const matchesDiameter = bbsDiameterFilter === "All" || String(item.diameter || "") === bbsDiameterFilter;
       const matchesMember = bbsMemberFilter === "All" || (item.memberType || "Other") === bbsMemberFilter;
-      const matchesStatus = bbsStatusFilter === "All" || (item.status || "Review Required") === bbsStatusFilter;
+      const matchesStatus = bbsStatusFilter === "All" || (item.status || "AI Final Draft - Engineer Review Required") === bbsStatusFilter;
 
       return matchesQuery && matchesDiameter && matchesMember && matchesStatus;
     });
@@ -3859,7 +4623,7 @@ function BbsPage({ theme }: { theme: ResolvedTheme }) {
           <td>${Number(item.totalLength || 0).toFixed(2)} m</td>
           <td>${Number(item.unitWeight || 0).toFixed(3)}</td>
           <td>${weightFormat.format(Number(item.totalWeight || 0))}</td>
-          <td>${item.status || "Review Required"}</td>
+          <td>${item.status || "AI Final Draft - Engineer Review Required"}</td>
         </tr>
       `)
       .join("");
@@ -4041,7 +4805,7 @@ function BbsPage({ theme }: { theme: ResolvedTheme }) {
               <div class="meta">
                 <strong>${projectTitle}</strong><br/>
                 Generated: ${generatedOn}<br/>
-                Status: Engineer Review Required
+                Status: AI Final Draft - Engineer Review Required
               </div>
             </div>
 
@@ -4075,7 +4839,7 @@ function BbsPage({ theme }: { theme: ResolvedTheme }) {
             <div class="summary">${diameterRows || '<div class="summary-card"><span>No summary</span><strong>—</strong></div>'}</div>
 
             <div class="note">
-              This is an AI-generated BBS draft for planning and discussion only. Final reinforcement, cutting length, bend deduction, lap length, development length, steel cutting, billing and site execution must be verified by a qualified structural engineer.
+              This is an AI-generated final BBS draft with calculated assumptions. Engineer verification and approval are required before construction execution.
             </div>
           </div>
         </body>
@@ -4167,7 +4931,7 @@ function BbsPage({ theme }: { theme: ResolvedTheme }) {
 
           </div>
 
-          <div className="mt-3 rounded-[18px] border border-[#eee8fb] bg-[#fbfaff] p-3">
+          <div className="mt-2 rounded-[18px] border border-[#eee8fb] bg-[#fbfaff] p-3">
             <div className="grid gap-2.5 md:grid-cols-3 xl:grid-cols-6">
               <BbsManualSelect
                 label="Member Type"
@@ -4246,7 +5010,7 @@ function BbsPage({ theme }: { theme: ResolvedTheme }) {
               />
             </div>
 
-            <div className="mt-3 grid gap-2.5 md:grid-cols-4">
+            <div className="mt-2 grid gap-2.5 md:grid-cols-4">
               {[
                 ["Total Len", `${bbsPreviewTotals(manualForm).totalLength.toFixed(3)} m`],
                 ["Unit Wt", `${bbsPreviewTotals(manualForm).unitWeight.toFixed(3)} kg/m`],
@@ -4261,7 +5025,7 @@ function BbsPage({ theme }: { theme: ResolvedTheme }) {
             </div>
           </div>
 
-          <div className="mt-3 flex flex-col gap-2 sm:flex-row sm:justify-end">
+          <div className="mt-2 flex flex-col gap-2 sm:flex-row sm:justify-end">
             <button
               onClick={closeManualForm}
               className="rounded-xl border border-[#eee8fb] bg-white px-5 py-2 text-[12px] font-black text-[#817397] shadow-sm hover:bg-[#f8f5ff]"
@@ -4310,7 +5074,7 @@ function BbsPage({ theme }: { theme: ResolvedTheme }) {
           </div>
 
 
-          <div className="mt-3 grid gap-2 rounded-2xl border border-[#eee8fb] bg-[#fbfaff] p-2 md:grid-cols-[minmax(0,1.55fr)_112px_128px_128px_66px]">
+          <div className="mt-2 grid gap-2 rounded-2xl border border-[#eee8fb] bg-[#fbfaff] p-2 md:grid-cols-[minmax(0,1.55fr)_112px_128px_128px_66px]">
             <input
               value={bbsSearchQuery}
               onChange={(event) => setBbsSearchQuery(event.target.value)}
@@ -4373,7 +5137,7 @@ function BbsPage({ theme }: { theme: ResolvedTheme }) {
             </button>
           </div>
 
-          <div className="mt-3 overflow-hidden rounded-2xl border border-[#eee8fb] bg-white">
+          <div className="mt-2 overflow-hidden rounded-2xl border border-[#eee8fb] bg-white">
             <div className="max-h-[470px] overflow-auto overscroll-contain">
               <table className="min-w-[980px] w-full table-fixed border-collapse bg-white text-left text-xs">
                 <thead className="sticky top-0 z-10 bg-[#f5f1ff] text-[#6d35ff]">
@@ -4420,7 +5184,7 @@ function BbsPage({ theme }: { theme: ResolvedTheme }) {
                         <td className="px-3 py-3 font-black text-[#21133f]">{weightFormat.format(Number(item.totalWeight || 0))}</td>
                         <td className="px-3 py-2.5">
                           <span className="rounded-full bg-[#fff7e8] px-3 py-1 text-[11px] font-black text-[#9a6412]">
-                            {item.status || "Review Required"}
+                            {item.status || "AI Final Draft - Engineer Review Required"}
                           </span>
                         </td>
                         <td className="px-3 py-2.5">
@@ -4456,7 +5220,7 @@ function BbsPage({ theme }: { theme: ResolvedTheme }) {
             </div>
           </div>
 
-          <div className="mt-3 grid gap-2 sm:grid-cols-3">
+          <div className="mt-2 grid gap-2 sm:grid-cols-3">
             <button
               onClick={exportExcel}
               disabled={!items.length}
@@ -4535,7 +5299,7 @@ function BbsPage({ theme }: { theme: ResolvedTheme }) {
                 </div>
               </div>
 
-              <div className="mt-3 grid grid-cols-3 gap-2">
+              <div className="mt-2 grid grid-cols-3 gap-2">
                 {[
                   ["Top Dia", topDiameterUsage ? `${topDiameterUsage.diameter} mm` : "—"],
                   ["Bars", topDiameterUsage ? numberFormat.format(topDiameterUsage.bars) : "—"],
@@ -4572,7 +5336,7 @@ function BbsPage({ theme }: { theme: ResolvedTheme }) {
           </span>
         </div>
 
-        <div className="mt-3 grid gap-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+        <div className="mt-2 grid gap-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
           {[
             ["Section", selectedColumn.section],
             ["Height", selectedColumn.height],
@@ -4609,7 +5373,7 @@ function BbsPage({ theme }: { theme: ResolvedTheme }) {
       <section className="rounded-[28px] border border-[#e7ddff] bg-white p-4 shadow-[0_10px_24px_rgba(33,19,63,0.045)]">
         <div className="grid gap-3 lg:grid-cols-[1.25fr_repeat(4,minmax(0,1fr))]">
           <div className="flex items-center gap-3 rounded-[22px] bg-[#f8fff9] p-4">
-            <span className="grid h-12 w-12 shrink-0 place-items-center rounded-full bg-[#42c979] text-2xl font-black text-white">
+            <span className="grid h-12 w-12 shrink-0 place-items-center rounded-full bg-[#42c979] text-xl font-black text-white">
               ✓
             </span>
             <div>
@@ -4685,7 +5449,7 @@ function BbsPage({ theme }: { theme: ResolvedTheme }) {
       </section>
 
       <div className="rounded-2xl border border-[#ffe3b3] bg-[#fffaf0] px-5 py-4 text-sm font-semibold leading-6 text-[#8a5a0a]">
-        This is an AI-generated BBS draft for planning and discussion only. Final reinforcement, cutting length,
+        This is an AI-generated final BBS draft with calculated assumptions. Engineer verification and approval are required before construction execution. Final reinforcement, cutting length,
         bend deduction, lap length, development length, steel cutting, billing and site execution must be verified
         by a qualified structural engineer.
       </div>
@@ -4840,7 +5604,7 @@ function ExportPage({ theme }: { theme: ResolvedTheme }) {
 
 function VerificationPage({ theme }: { theme: ResolvedTheme }) {
   const stages = [
-    ["AI Draft", "Generated outputs ready for first review.", "12", FileText],
+    ["AI Final Draft", "AI-generated outputs ready for engineer/client review.", "12", FileText],
     ["Under Verification", "BOQ, BBS or drawing currently being checked.", "4", ShieldCheck],
     ["Changes Required", "Items returned for correction before approval.", "2", AlertTriangle],
     ["Approved", "Reviewed output ready for client/export use.", "8", CheckCircle2],
@@ -4864,7 +5628,7 @@ function VerificationPage({ theme }: { theme: ResolvedTheme }) {
     {
       title: "Client Export Review",
       desc: "Confirm PDF content before sharing with client or contractor.",
-      status: "AI Draft",
+      status: "AI Final Draft",
       action: "Open Exports",
       view: "exports" as ViewKey,
     },
@@ -5848,7 +6612,7 @@ function ProjectWorkspaceShell({
             </button>
 
             <div className="flex flex-wrap items-center gap-2">
-              <h1 className="truncate text-[26px] font-bold leading-tight tracking-[-0.045em] text-[#21133f]">
+              <h1 className="truncate text-[22px] font-bold leading-tight tracking-[-0.045em] text-[#21133f]">
                 {projectTitle}
               </h1>
               <span className="rounded-full bg-[#f0dcff] px-3 py-1 text-[10px] font-bold uppercase tracking-[0.08em] text-[#6f1cc4]">
@@ -5987,10 +6751,10 @@ function ProjectWorkspaceShell({
                 </span>
               </div>
 
-              <h3 className="mt-3 text-sm font-bold text-[#21133f]">{title}</h3>
+              <h3 className="mt-2 text-sm font-bold text-[#21133f]">{title}</h3>
               <p className="mt-1 min-h-[34px] text-[11px] leading-snug text-[#817397]">{desc}</p>
 
-              <div className="mt-3 grid grid-cols-2 gap-2">
+              <div className="mt-2 grid grid-cols-2 gap-2">
                 <div className="rounded-xl bg-[#fbf8ff] px-2 py-2">
                   <p className="text-[10px] text-[#9a88b3]">Scale</p>
                   <p className="mt-0.5 text-[11px] font-semibold text-[#21133f]">1:50 / 1:100</p>
@@ -6049,7 +6813,7 @@ function ProjectWorkspaceShell({
       {workspaceTab === "files" ? (
         <section className="rounded-[22px] border border-dashed border-[#ded5ec] bg-[#fbf8ff] p-8 text-center">
           <FileText className="mx-auto h-8 w-8 text-[#6f1cc4]" />
-          <h2 className="mt-3 text-base font-bold text-[#21133f]">Files and reports</h2>
+          <h2 className="mt-2 text-base font-bold text-[#21133f]">Files and reports</h2>
           <p className="mt-1 text-xs text-[#817397]">
             Yaha project PDFs, reports, agreement, exported drawings aur uploaded reference files save honge.
           </p>
@@ -6370,7 +7134,7 @@ function ProjectWorkspaceTaskBoardShell({
               Back to Projects
             </button>
             <div className="flex flex-wrap items-center gap-2">
-              <h1 className="truncate text-[26px] font-bold leading-tight tracking-[-0.045em] text-[#21133f]">{projectTitle}</h1>
+              <h1 className="truncate text-[22px] font-bold leading-tight tracking-[-0.045em] text-[#21133f]">{projectTitle}</h1>
               <span className="rounded-full bg-[#f0dcff] px-3 py-1 text-[10px] font-bold uppercase tracking-[0.08em] text-[#6f1cc4]">{status}</span>
               <span className="rounded-full bg-emerald-50 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.08em] text-emerald-700">
                 {buildSetuProjectTasks.length} Project Tasks
@@ -6497,11 +7261,11 @@ function ProjectWorkspaceTaskBoardShell({
                 >
                   <div className="flex items-start justify-between gap-2">
                     <span className="rounded-full bg-[#f0dcff] px-2 py-1 text-[9px] font-bold uppercase tracking-[0.08em] text-[#6f1cc4]">{task.category}</span>
-                    <span className="rounded-full bg-amber-50 px-2 py-1 text-[9px] font-bold text-amber-700">AI Draft</span>
+                    <span className="rounded-full bg-amber-50 px-2 py-1 text-[9px] font-bold text-amber-700">AI Final Draft</span>
                   </div>
-                  <h3 className="mt-3 text-sm font-bold text-[#21133f]">{task.title}</h3>
+                  <h3 className="mt-2 text-sm font-bold text-[#21133f]">{task.title}</h3>
                   <p className="mt-1 text-[11px] text-[#817397]">{task.toolName}</p>
-                  <div className="mt-3 rounded-xl bg-[#f7f0ff] px-2 py-1.5 text-[10px] font-semibold text-[#6f1cc4]">
+                  <div className="mt-2 rounded-xl bg-[#f7f0ff] px-2 py-1.5 text-[10px] font-semibold text-[#6f1cc4]">
                     {task.scale} • {task.unit}
                   </div>
                 </button>
@@ -6569,7 +7333,7 @@ function ProjectWorkspaceTaskBoardShell({
                   Open {selectedTask.toolName}
                 </button>
 
-                <p className="mt-3 text-[10.5px] leading-relaxed text-[#817397]">
+                <p className="mt-2 text-[10.5px] leading-relaxed text-[#817397]">
                   Ye task isi project ke context me execute hoga. Next phase me output project/task/version ke andar save hoga.
                 </p>
               </>
@@ -6596,7 +7360,7 @@ function ProjectWorkspaceTaskBoardShell({
       {workspaceTab === "files" ? (
         <section className="rounded-[22px] border border-dashed border-[#ded5ec] bg-[#fbf8ff] p-8 text-center">
           <FileText className="mx-auto h-8 w-8 text-[#6f1cc4]" />
-          <h2 className="mt-3 text-base font-bold text-[#21133f]">Files and reports</h2>
+          <h2 className="mt-2 text-base font-bold text-[#21133f]">Files and reports</h2>
           <p className="mt-1 text-xs text-[#817397]">Project PDFs, reports, agreements, exported drawings aur uploaded reference files yaha save honge.</p>
           <button onClick={() => { setActive("exports"); setUrlView("exports"); }} className="mt-4 rounded-xl bg-[#21133f] px-4 py-2 text-xs font-semibold text-white">Open Reports</button>
         </section>
@@ -6831,6 +7595,17 @@ function ProjectTaskChatInterfaceShell({
     return `data:image/png;base64,${text}`;
   }
 
+function buildToolHrefWithActiveProject(slug: string, projectId?: string) {
+  const cleanSlug = String(slug || "").trim();
+  const cleanProjectId = String(projectId || "").replace(/[^a-zA-Z0-9_-]/g, "");
+
+  if (!cleanSlug) return "/?view=tools";
+
+  const base = `/tools/${encodeURIComponent(cleanSlug)}`;
+  return cleanProjectId ? `${base}?projectId=${encodeURIComponent(cleanProjectId)}` : base;
+}
+
+
   function formatTime(value?: string | null) {
     if (!value) return "";
     try {
@@ -6876,10 +7651,7 @@ function ProjectTaskChatInterfaceShell({
     setRenderError("");
 
     try {
-      const response = await fetch(`/api/renders/list?projectId=${encodeURIComponent(projectId)}&t=${Date.now()}`, {
-        cache: "no-store",
-        credentials: "same-origin",
-      });
+      const response = await fetch(`/api/project-gallery/list?projectId=${encodeURIComponent(projectId)}&limit=80&t=${Date.now()}`, { cache: "no-store" });
 
       const data = await response.json().catch(() => null);
 
@@ -7009,39 +7781,250 @@ function ProjectTaskChatInterfaceShell({
   }
 
   function buildAssistantReply(userPrompt: string, finalPrompt: string) {
-    const lower = `${selectedTool.slug} ${selectedTool.name}`.toLowerCase();
+    const text = String(userPrompt || "").trim();
+    const lower = text.toLowerCase();
+    const toolText = String(selectedTool.slug + " " + selectedTool.name).toLowerCase();
+    const NL = String.fromCharCode(10);
 
-    if (lower.includes("design-brief")) {
-      return [
-        "Brief received. I will convert this into a designer-ready project brief.",
-        "",
-        "Next I will verify:",
-        "• plot and facing",
-        "• floor requirement",
-        "• room requirement",
-        "• style and budget",
-        "• output checklist",
-        "",
-        "Generated prompt is ready for the selected Design Brief Tool.",
-      ].join("\n");
+    function joinLines(lines: string[]) {
+      return lines.filter(Boolean).join(NL);
     }
 
-    if (lower.includes("interior") || lower.includes("exterior") || lower.includes("elevation")) {
-      return [
+    const isHello =
+      lower.length < 8 ||
+      lower === "hi" ||
+      lower === "hello" ||
+      lower === "hey" ||
+      lower === "hii" ||
+      lower === "hy" ||
+      lower === "namaste" ||
+      lower === "bhai" ||
+      lower === "bro";
+
+    if (isImageGenerationTool()) {
+      return joinLines([
         "Image/render requirement received.",
         "",
-        "I prepared a structured visual prompt with style, materials, camera angle, lighting and avoid-rules.",
+        "Main isko visual prompt me convert kar raha hoon:",
+        "• style and material direction",
+        "• camera/view angle",
+        "• lighting and realism",
+        "• avoid-rules for distorted geometry",
         "",
-        "Generated prompt is ready for the selected image/render tool.",
-      ].join("\n");
+        "Image generation OpenAI image API se hoga. Normal project chat BuildSetu backend brain se chalega.",
+        "",
+        "Project: " + projectTitle,
+      ]);
     }
 
-    return [
-      "Requirement received.",
+    if (isHello) {
+      return joinLines([
+        "Haan bhai, main BuildSetu AI assistant hoon.",
+        "",
+        "Main selected project ke context me baat karunga, random answer nahi dunga.",
+        "",
+        "Project: " + projectTitle,
+        "",
+        "Aap mujhe simple language me bol sakte ho:",
+        "1. Iska floor plan kaise banega?",
+        "2. BOQ estimate banana hai",
+        "3. BBS / steel draft chahiye",
+        "4. Interior idea chahiye",
+        "5. Exterior elevation idea chahiye",
+        "6. Client proposal banana hai",
+        "",
+        "Pehle aap batao: is project me sabse pehle kya output chahiye?",
+      ]);
+    }
+
+    if (
+      lower.includes("floor") ||
+      lower.includes("plan") ||
+      lower.includes("layout") ||
+      lower.includes("working plan") ||
+      lower.includes("ghar ka plan") ||
+      lower.includes("naksha") ||
+      toolText.includes("floor") ||
+      toolText.includes("working-plan")
+    ) {
+      return joinLines([
+        "Samjha bhai. Is project ke liye floor plan direction banana hai.",
+        "",
+        "Project: " + projectTitle,
+        "",
+        "Mujhe ye 6 details confirm karo:",
+        "1. Total floors kitne chahiye?",
+        "2. Ground floor me rooms kya-kya chahiye?",
+        "3. First floor me rooms kya-kya chahiye?",
+        "4. Car parking chahiye ya bike parking?",
+        "5. Staircase internal chahiye ya external?",
+        "6. Vastu strict follow karna hai ya practical layout priority hai?",
+        "",
+        "In answers ke baad main room placement, circulation, staircase position aur planning logic step-by-step dunga.",
+      ]);
+    }
+
+    if (
+      lower.includes("boq") ||
+      lower.includes("estimate") ||
+      lower.includes("cost") ||
+      lower.includes("budget") ||
+      lower.includes("quantity") ||
+      lower.includes("rate") ||
+      lower.includes("material") ||
+      toolText.includes("boq") ||
+      toolText.includes("estimate")
+    ) {
+      return joinLines([
+        "BOQ / estimate ke liye main BuildSetu backend brain se draft bana sakta hoon.",
+        "",
+        "Project: " + projectTitle,
+        "",
+        "Mujhe ye inputs chahiye:",
+        "1. Approx built-up area",
+        "2. Floors count",
+        "3. Quality: basic / standard / premium",
+        "4. City/location",
+        "5. Civil only ya electrical/plumbing/finishing bhi include?",
+        "6. Labour included chahiye ya material only?",
+        "",
+        "Phir main BOQ sections banaunga: excavation, PCC, RCC, steel, masonry, plaster, flooring, paint, electrical, plumbing aur finishing.",
+      ]);
+    }
+
+    if (
+      lower.includes("bbs") ||
+      lower.includes("steel") ||
+      lower.includes("bar") ||
+      lower.includes("reinforcement") ||
+      lower.includes("beam") ||
+      lower.includes("column") ||
+      lower.includes("slab") ||
+      lower.includes("rcc") ||
+      lower.includes("footing") ||
+      toolText.includes("bbs") ||
+      toolText.includes("rcc")
+    ) {
+      return joinLines([
+        "BBS / steel draft ke liye safe workflow ye rahega.",
+        "",
+        "Project: " + projectTitle,
+        "",
+        "Mujhe structural inputs chahiye:",
+        "1. Column schedule hai kya?",
+        "2. Beam schedule hai kya?",
+        "3. Slab thickness / reinforcement detail known hai?",
+        "4. Footing type known hai?",
+        "5. Steel grade aur concrete grade known hai?",
+        "",
+        "Main complete AI BBS table, steel summary aur review checklist generate kar sakta hoon. Final execution se pehle structural engineer verification zaruri hai.",
+      ]);
+    }
+
+    if (
+      lower.includes("interior") ||
+      lower.includes("living") ||
+      lower.includes("bedroom") ||
+      lower.includes("kitchen") ||
+      lower.includes("false ceiling") ||
+      lower.includes("furniture") ||
+      lower.includes("wardrobe") ||
+      lower.includes("colour") ||
+      lower.includes("color") ||
+      toolText.includes("interior")
+    ) {
+      return joinLines([
+        "Interior design ke liye main pehle concept direction banaunga.",
+        "",
+        "Project: " + projectTitle,
+        "",
+        "Mujhe ye details bhejo:",
+        "1. Kaunsa room design karna hai?",
+        "2. Room size kya hai?",
+        "3. Style: modern / luxury / minimal / Indian?",
+        "4. Color/material preference?",
+        "5. Budget level?",
+        "6. Furniture/storage requirement?",
+        "",
+        "Phir main layout idea, material palette, lighting aur render prompt ready kar dunga.",
+      ]);
+    }
+
+    if (
+      lower.includes("exterior") ||
+      lower.includes("elevation") ||
+      lower.includes("front") ||
+      lower.includes("facade") ||
+      lower.includes("building look") ||
+      lower.includes("modern look") ||
+      toolText.includes("exterior") ||
+      toolText.includes("elevation")
+    ) {
+      return joinLines([
+        "Exterior elevation ke liye main 3 concept directions bana sakta hoon.",
+        "",
+        "Project: " + projectTitle,
+        "",
+        "Mujhe ye details chahiye:",
+        "1. Front width",
+        "2. Floors count",
+        "3. Balcony chahiye ya nahi",
+        "4. Gate/boundary wall chahiye?",
+        "5. Material preference: wood / stone / glass / tiles",
+        "6. Day view ya night lighting view?",
+        "",
+        "Phir main budget modern, premium white+wood aur luxury glass+stone options dunga.",
+      ]);
+    }
+
+    if (
+      lower.includes("proposal") ||
+      lower.includes("client") ||
+      lower.includes("pdf") ||
+      lower.includes("agreement") ||
+      lower.includes("presentation") ||
+      lower.includes("quotation") ||
+      lower.includes("document") ||
+      toolText.includes("agreement") ||
+      toolText.includes("document")
+    ) {
+      return joinLines([
+        "Client proposal ke liye main project-wise professional draft bana sakta hoon.",
+        "",
+        "Project: " + projectTitle,
+        "",
+        "Proposal structure:",
+        "1. Project brief",
+        "2. Scope of work",
+        "3. Deliverables",
+        "4. Timeline",
+        "5. Payment terms",
+        "6. Revision policy",
+        "7. Exclusions",
+        "8. Professional disclaimer",
+        "9. Next steps",
+        "",
+        "Client name, project value, timeline aur scope bhejo.",
+      ]);
+    }
+
+    return joinLines([
+      "Samjha bhai. Main selected project ke context me answer dunga.",
       "",
-      `I prepared a structured prompt for ${selectedTool.name}.`,
-      "This will stay saved inside this project chat history.",
-    ].join("\n");
+      "Project: " + projectTitle,
+      "",
+      "Aapka message: " + text,
+      "",
+      "Isko kis output me convert karna hai?",
+      "1. Floor plan direction",
+      "2. BOQ estimate",
+      "3. BBS draft",
+      "4. Interior idea",
+      "5. Exterior elevation",
+      "6. Client proposal",
+      "",
+      "Ek option type karo, phir main usi direction me exact guided questions poochunga.",
+    ]);
   }
 
   async function generateImageForProject(finalPrompt: string) {
@@ -7378,7 +8361,33 @@ function ProjectTaskChatInterfaceShell({
       status: "BRIEFING",
     });
 
-    const assistantText = buildAssistantReply(userText, finalPrompt);
+    let assistantText = buildAssistantReply(userText, finalPrompt);
+
+    try {
+      const brainResponse = await fetch("/api/project-chat/send", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        cache: "no-store",
+        credentials: "same-origin",
+        body: JSON.stringify({
+          projectId,
+          projectTitle,
+          message: userText,
+          finalPrompt,
+          toolSlug: selectedTool.slug,
+          toolName: selectedTool.name,
+          isImageTool: isImageGenerationTool(),
+          persist: false,
+        }),
+      });
+
+      const brainData = await brainResponse.json().catch(() => null);
+      if (brainResponse.ok && brainData?.ok && brainData?.reply) {
+        assistantText = String(brainData.reply);
+      }
+    } catch {
+      assistantText = buildAssistantReply(userText, finalPrompt);
+    }
 
     const assistantMessage: ProjectUnifiedChatMessage = {
       id: `local_ai_${Date.now()}`,
@@ -7471,7 +8480,7 @@ function ProjectTaskChatInterfaceShell({
   if (!project) {
     return (
       <div className="mx-auto max-w-3xl rounded-[28px] border border-dashed border-[#ded5ec] bg-[#fbf8ff] p-10 text-center">
-        <h1 className="text-2xl font-black text-[#21133f]">Project select karo</h1>
+        <h1 className="text-xl font-black text-[#21133f]">Project select karo</h1>
         <p className="mt-2 text-sm text-[#817397]">Project chat open karne ke liye pehle ek project select karo.</p>
         <button
           type="button"
@@ -8228,35 +9237,50 @@ export default function SikhadengeBuildDashboard() {
   }, []);
 
 
-  const [active, setActive] = useState<ViewKey>(() => getInitialBuildSetuViewKey());
+  const [active, setActive] = useState<ViewKey>("dashboard");
+
+  const [activeViewReady, setActiveViewReady] = useState(false);
 
   useEffect(() => {
+    const initialView = getInitialBuildSetuViewKey();
+    setActive(initialView);
+    setActiveViewReady(true);
+  }, []);
+
+  useEffect(() => {
+    function buildsetuSyncActiveFromBrowserUrl() {
+      const nextView = getInitialBuildSetuViewKey();
+      setActive(nextView);
+    }
+
+    window.addEventListener("popstate", buildsetuSyncActiveFromBrowserUrl);
+    return () => window.removeEventListener("popstate", buildsetuSyncActiveFromBrowserUrl);
+  }, []);
+
+  useEffect(() => {
+    if (!activeViewReady) return;
+
     try {
       window.localStorage.setItem(BUILDSETU_ACTIVE_VIEW_STORAGE_KEY, active);
 
       const url = new URL(window.location.href);
-      url.searchParams.set("view", active);
-      window.history.replaceState(null, "", `${url.pathname}?${url.searchParams.toString()}${url.hash}`);
+      if (active === "dashboard") {
+        url.searchParams.delete("view");
+      } else {
+        url.searchParams.set("view", active);
+      }
+
+      const qs = url.searchParams.toString();
+      window.history.replaceState(null, "", `${url.pathname}${qs ? `?${qs}` : ""}${url.hash}`);
     } catch {
       // ignore storage/history errors
     }
-  }, [active]);
-
-  const handleBuildSetuSetActive = (id: ViewKey) => {
+  }, [active, activeViewReady]);
+const handleBuildSetuSetActive = (id: ViewKey) => {
     setActive(id);
     setUrlView(id);
   };
 
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-
-    const params = new URLSearchParams(window.location.search);
-    const currentView = params.get("view");
-
-    if (currentView && currentView !== active) {
-      setUrlView(active);
-    }
-  }, [active]);
 
 
   
@@ -8273,11 +9297,25 @@ export default function SikhadengeBuildDashboard() {
     window.addEventListener("popstate", buildsetuOpenExportsFromUrl);
     return () => window.removeEventListener("popstate", buildsetuOpenExportsFromUrl);
   }, []);
-useEffect(() => {
-    persistBuildSetuViewKey(active);
-  }, [active]);
+const [selectedProject, setSelectedProject] = useState<LiveProject | null>(null);
 
-  const [selectedProject, setSelectedProject] = useState<LiveProject | null>(null);
+// BUILDSETU_SELECTED_PROJECT_ACTIVE_ID_SYNC
+useEffect(() => {
+  if (!selectedProject?.id || typeof window === "undefined") return;
+
+  const activeProjectId = String(selectedProject.id);
+
+  window.localStorage.setItem("buildsetu_active_project", JSON.stringify(selectedProject));
+  window.localStorage.setItem("buildsetu.activeProjectId", activeProjectId);
+  window.localStorage.setItem("buildsetu.selectedProjectId", activeProjectId);
+  window.localStorage.setItem("activeProjectId", activeProjectId);
+
+  try {
+    const url = new URL(window.location.href);
+    url.searchParams.set("projectId", activeProjectId);
+    window.history.replaceState(null, "", `${url.pathname}${url.search}${url.hash}`);
+  } catch {}
+}, [selectedProject?.id]);
 
   useEffect(() => {
     if (selectedProject) return;
@@ -8312,6 +9350,7 @@ useEffect(() => {
     }
     if (active === "studio") return <NewProjectPage theme={theme} setActive={handleBuildSetuSetActive} setSelectedProject={setSelectedProject} />;
     if (active === "renders") return <RenderStudio theme={theme} />;
+    if (active === "knowledgeInbox") return <ResearchDraftInternalView />;
     if (active === "boq") return <BoqPage theme={theme} />;
     if (active === "bbs") return <BbsPage theme={theme} />;
     if (active === "exports") return <ExportPage theme={theme} />;

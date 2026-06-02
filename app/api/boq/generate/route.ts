@@ -2,6 +2,7 @@ import { readFile } from "fs/promises";
 import { join } from "path";
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
+import { getProjectPlanLock } from "@/lib/planning/project-plan-lock";
 
 type RateMasterCity = {
   cityMultiplier?: number;
@@ -200,8 +201,105 @@ function getQuantity(item: RateMasterItem, area: ReturnType<typeof inferAreas>) 
   return item.quantityFactor || 1;
 }
 
-function buildRateMasterBoq(project: any, rateMaster: RateMaster) {
-  const area = inferAreas(project);
+
+// BUILDSETU_LOCKED_PLAN_BOQ_V1
+function lockedBoqNum(value: any, fallback = 0) {
+  const n = Number(String(value ?? "").replace(/[^0-9.-]/g, ""));
+  return Number.isFinite(n) ? n : fallback;
+}
+
+function lockedBoqRound2(value: number) {
+  return Math.round(value * 100) / 100;
+}
+
+function lockedBoqText(value: any) {
+  return String(value || "").replace(/\s+/g, " ").trim();
+}
+
+function lockedBoqParseFloors(lock: any, project: any) {
+  const text = lockedBoqText([
+    lock?.basePlan?.floors,
+    lock?.baseAsset?.prompt,
+    lock?.baseAsset?.summary,
+    project?.title,
+    project?.projectType,
+    project?.description,
+  ].filter(Boolean).join(" "));
+
+  const gPlus = text.match(/\bG\s*\+\s*([0-9]+)\b/i);
+  if (gPlus) return Math.max(1, Number(gPlus[1]) + 1);
+
+  const floorsLabel = text.match(/Floors:\s*([A-Za-z0-9+\s-]+)/i);
+  if (floorsLabel) {
+    const g = floorsLabel[1].match(/G\s*\+\s*([0-9]+)/i);
+    if (g) return Math.max(1, Number(g[1]) + 1);
+    const n = floorsLabel[1].match(/([0-9]+)/);
+    if (n) return Math.max(1, Number(n[1]));
+  }
+
+  return 1;
+}
+
+function lockedBoqRoomArea(room: any) {
+  const w = lockedBoqNum(room?.w, 0);
+  const h = lockedBoqNum(room?.h, 0);
+  if (w <= 0 || h <= 0) return 0;
+  return w * h;
+}
+
+function buildLockedPlanBoqArea(lock: any, project: any) {
+  if (!lock?.basePlan) return null;
+
+  const plan = lock.basePlan || {};
+  const rooms = Array.isArray(plan.rooms) ? plan.rooms : [];
+
+  const widthFt = lockedBoqNum(plan.widthFt || plan.plotWidthFt, 0);
+  const depthFt = lockedBoqNum(plan.depthFt || plan.plotDepthFt, 0);
+
+  if (!widthFt || !depthFt) return null;
+
+  const plotArea = lockedBoqRound2(widthFt * depthFt);
+  const floors = lockedBoqParseFloors(lock, project);
+
+  const nonParkingRooms = rooms.filter((room: any) => {
+    const text = lockedBoqText(`${room?.kind || ""} ${room?.name || ""}`).toLowerCase();
+    return !/parking|porch|open/.test(text);
+  });
+
+  const groundBuiltAreaRaw = nonParkingRooms.reduce(
+    (sum: number, room: any) => sum + lockedBoqRoomArea(room),
+    0,
+  );
+
+  const groundBuiltArea = groundBuiltAreaRaw > 0
+    ? Math.min(plotArea * 0.8, Math.max(plotArea * 0.55, groundBuiltAreaRaw))
+    : plotArea * 0.72;
+
+  const coverage = lockedBoqRound2(groundBuiltArea / plotArea);
+  const builtUpArea = lockedBoqRound2(groundBuiltArea * floors);
+
+  return {
+    title: lockedBoqText(plan.projectTitle || project?.title || "Locked Project Plan"),
+    plotArea,
+    builtUpArea,
+    floors,
+    coverage,
+    widthFt,
+    depthFt,
+    facing: plan.facing || "",
+    roomCount: rooms.length,
+    bedrooms: plan.bedrooms || rooms.filter((r: any) => /bed/i.test(`${r?.kind} ${r?.name}`)).length,
+    bathrooms: plan.bathrooms || rooms.filter((r: any) => /toilet|bath/i.test(`${r?.kind} ${r?.name}`)).length,
+    source: "locked_plan_boq_v1",
+    lockedPlanId: lock.id,
+    baseAssetId: lock?.baseAsset?.id || "",
+    baseImageUrl: lock?.baseImageUrl || lock?.baseAsset?.imageUrl || "",
+  };
+}
+
+
+function buildRateMasterBoq(project: any, rateMaster: RateMaster, lockedAreaOverride?: any) {
+  const area = lockedAreaOverride || inferAreas(project);
   const city = inferCity(project, area.title, rateMaster);
   const quality = inferQuality(project, area.title, rateMaster);
   const projectType = inferProjectType(project, area.title, rateMaster);
@@ -230,7 +328,7 @@ function buildRateMasterBoq(project: any, rateMaster: RateMaster) {
       quantity,
       rate,
       amount,
-      status: "Review Required",
+      status: "AI Final Draft - Review Required",
       drawingRef: rateItem.drawingRef,
     });
   }
@@ -250,7 +348,7 @@ function buildRateMasterBoq(project: any, rateMaster: RateMaster) {
       quantity,
       rate,
       amount,
-      status: "Review Required",
+      status: "AI Final Draft - Review Required",
       drawingRef: rateItem.drawingRef,
     });
   }
@@ -288,7 +386,9 @@ export async function POST(request: Request) {
     }
 
     const rateMaster = await loadRateMaster();
-    const generated = buildRateMasterBoq(project, rateMaster);
+    const projectPlanLock = await getProjectPlanLock(projectId).catch(() => null);
+    const lockedAreaOverride = buildLockedPlanBoqArea(projectPlanLock, project);
+    const generated = buildRateMasterBoq(project, rateMaster, lockedAreaOverride);
 
     await prisma.bOQItem.deleteMany({
       where: {
@@ -331,6 +431,15 @@ export async function POST(request: Request) {
       count: items.length,
       totalAmount,
       estimateInputs: {
+        source: generated.area.source || "rate_master_project_fields",
+        lockedPlanId: generated.area.lockedPlanId || null,
+        baseAssetId: generated.area.baseAssetId || null,
+        baseImageUrl: generated.area.baseImageUrl || null,
+        widthFt: generated.area.widthFt || null,
+        depthFt: generated.area.depthFt || null,
+        roomCount: generated.area.roomCount || null,
+        bedrooms: generated.area.bedrooms || null,
+        bathrooms: generated.area.bathrooms || null,
         plotArea: generated.area.plotArea,
         builtUpArea: generated.area.builtUpArea,
         floors: generated.area.floors,
