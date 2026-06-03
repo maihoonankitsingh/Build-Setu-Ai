@@ -644,6 +644,162 @@ function buildToolPrompt(args: {
   });
 }
 
+
+function isBuildSetuTextDocumentTaskForVisibleResponse(toolSlug: string, taskType: string) {
+  // BUILDSETU_TOOL_CHAT_VISIBLE_TEXT_RESPONSE_V1
+  const slug = String(toolSlug || "").toLowerCase();
+  const task = String(taskType || "").toLowerCase();
+
+  if (
+    slug.includes("boq") ||
+    slug.includes("bbs") ||
+    slug.includes("electrical") ||
+    slug.includes("plumbing") ||
+    slug.includes("structure") ||
+    slug.includes("structural") ||
+    slug.includes("rcc") ||
+    slug.includes("working")
+  ) {
+    return true;
+  }
+
+  return [
+    "boq_document",
+    "bbs_document",
+    "electrical_concept",
+    "plumbing_concept",
+    "structure_concept",
+    "structure_drawing",
+    "working_drawing",
+  ].includes(task);
+}
+
+function cleanBuildSetuVisibleResponseText(value: unknown) {
+  return String(value || "")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
+}
+
+
+function enrichBuildSetuVisibleResponseForTask(responseText: string, toolSlug: string, taskType: string) {
+  // BUILDSETU_TOOL_CHAT_VISIBLE_RESPONSE_TASK_ADDENDUM_V1
+  const base = cleanBuildSetuVisibleResponseText(responseText);
+  const slug = String(toolSlug || "").toLowerCase();
+  const task = String(taskType || "").toLowerCase();
+  const hay = `${slug} ${task}`;
+  const low = base.toLowerCase();
+
+  function appendOnce(title: string, lines: string[]) {
+    if (low.includes(title.toLowerCase())) return base;
+    return cleanBuildSetuVisibleResponseText([
+      base,
+      "",
+      title,
+      ...lines,
+    ].join("\n"));
+  }
+
+  if (hay.includes("electrical")) {
+    return appendOnce("Electrical concept checklist:", [
+      "- Light points: room-wise light and fan point planning.",
+      "- Switch boards: room-wise switchboard zones and control grouping.",
+      "- Socket points: 6A/16A power sockets for room, kitchen, utility and appliance zones.",
+      "- DB location: dry, accessible distribution board location with MCB/RCCB review.",
+      "- Safety boundary: final load calculation, wire size, MCB rating, earthing and execution require licensed electrician/electrical engineer verification.",
+    ]);
+  }
+
+  if (hay.includes("plumbing")) {
+    return appendOnce("Plumbing concept checklist:", [
+      "- Water supply: kitchen/toilet/utility water point routing concept.",
+      "- Drainage: soil pipe, waste pipe and floor trap routing concept.",
+      "- Shaft: wet wall and plumbing shaft coordination.",
+      "- Slope/pressure: drainage slope and water pressure assumptions must be verified.",
+      "- Safety boundary: pipe sizing, waterproofing, sewer/STP/septic connection and site execution require qualified plumbing/MEP professional verification.",
+    ]);
+  }
+
+  if (hay.includes("boq")) {
+    return appendOnce("BOQ estimate checklist:", [
+      "- Quantity assumptions: item-wise quantities must come from drawings/site measurement.",
+      "- Rate assumptions: city, material grade, labour scope and GST/transport assumptions must be stated.",
+      "- Review boundary: final BOQ/estimate requires QS/estimator/site verification.",
+    ]);
+  }
+
+  if (hay.includes("bbs")) {
+    return appendOnce("BBS draft checklist:", [
+      "- Member-wise schedule: footing, column, beam, slab and stair members where drawings are available.",
+      "- Bar details: dia, spacing, lap, hook, bend and cutting length must not be invented.",
+      "- Review boundary: final BBS requires structural drawings and licensed structural engineer approval.",
+    ]);
+  }
+
+  if (hay.includes("structure")) {
+    return appendOnce("Structure concept checklist:", [
+      "- Column/beam/slab/foundation coordination must stay concept-level.",
+      "- Do not provide final member sizes, rebar design or certified calculations.",
+      "- Review boundary: final structural design requires soil data, drawings and licensed structural engineer approval.",
+    ]);
+  }
+
+  return base;
+}
+
+function buildVisibleToolChatAssistantText(args: {
+  toolSlug: string;
+  toolName: string;
+  taskType: string;
+  shouldGenerate: boolean;
+  buildSetuAgentResult?: any;
+  fallbackText: string;
+}) {
+  const { toolSlug, taskType, shouldGenerate, buildSetuAgentResult, fallbackText } = args;
+
+  if (!shouldGenerate && isBuildSetuTextDocumentTaskForVisibleResponse(toolSlug, taskType)) {
+    const responseText = cleanBuildSetuVisibleResponseText(buildSetuAgentResult?.responseText);
+    if (responseText) return enrichBuildSetuVisibleResponseForTask(responseText, toolSlug, taskType);
+  }
+
+  return fallbackText;
+}
+
+
+async function fetchBuildSetuCoreAgentResponseForTextChat(args: {
+  req: NextRequest;
+  projectId: string;
+  toolSlug: string;
+  toolName: string;
+  userText: string;
+}) {
+  // BUILDSETU_TOOL_CHAT_CORE_RESPONSE_BRIDGE_V1
+  try {
+    const res = await fetch(new URL("/api/agent/run", args.req.url), {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        cookie: args.req.headers.get("cookie") || "",
+      },
+      body: JSON.stringify({
+        projectId: args.projectId,
+        toolSlug: args.toolSlug,
+        toolName: args.toolName,
+        action: "chat",
+        message: args.userText,
+      }),
+    });
+
+    const data = await res.json().catch(() => null);
+    if (data && data.ok && typeof data.responseText === "string" && data.responseText.trim()) {
+      return data;
+    }
+  } catch {
+    return null;
+  }
+
+  return null;
+}
+
 function buildAssistantText(args: {
   toolSlug: string;
   toolName: string;
@@ -1980,14 +2136,38 @@ export async function POST(req: NextRequest) {
       taskType,
     });
 
+    if (
+      !shouldGenerate &&
+      isBuildSetuTextDocumentTaskForVisibleResponse(toolSlug, taskType) &&
+      !(buildSetuAgentResult?.responseText)
+    ) {
+      const bridgedAgentResult = await fetchBuildSetuCoreAgentResponseForTextChat({
+        req,
+        projectId,
+        toolSlug,
+        toolName,
+        userText,
+      });
+      if (bridgedAgentResult?.responseText) {
+        buildSetuAgentResult = bridgedAgentResult;
+      }
+    }
+
     const assistantMessage: SavedMessage = {
       id: makeId(),
       role: "assistant",
-      text: buildAssistantText({
+      text: buildVisibleToolChatAssistantText({
         toolSlug,
         toolName,
         taskType,
         shouldGenerate,
+        buildSetuAgentResult,
+        fallbackText: buildAssistantText({
+          toolSlug,
+          toolName,
+          taskType,
+          shouldGenerate,
+        }),
       }),
       time: nowTime(),
       kind: shouldGenerate ? "prompt" : "normal",
@@ -2065,6 +2245,7 @@ export async function POST(req: NextRequest) {
       toolSlug,
       toolName,
       taskType,
+      responseText: assistantMessage.text,
       projectMemoryFound: Boolean(projectMemory),
       buildSetuAgent: buildSetuAgentResult
         ? {
