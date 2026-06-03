@@ -441,6 +441,37 @@ function bsFloorPlanExactDimensionLock(sourceText: any) {
 
 
 
+
+function isBuildSetuTextOnlyToolChatAction(action: string, toolSlug: string, taskType: string) {
+  // BUILDSETU_TOOL_CHAT_TEXT_ONLY_CHAT_BYPASS_V1
+  const a = String(action || "").toLowerCase();
+  if (!["chat", "ask"].includes(a)) return false;
+
+  const slug = String(toolSlug || "").toLowerCase();
+  const task = String(taskType || "").toLowerCase();
+
+  if (
+    slug.includes("boq") ||
+    slug.includes("bbs") ||
+    slug.includes("electrical") ||
+    slug.includes("plumbing") ||
+    slug.includes("structure") ||
+    slug.includes("working")
+  ) {
+    return true;
+  }
+
+  return [
+    "boq_document",
+    "bbs_document",
+    "electrical_concept",
+    "plumbing_concept",
+    "structure_drawing",
+    "structure_concept",
+    "working_drawing",
+  ].includes(task);
+}
+
 function domainForToolFeedbackBrain(toolSlug: string, userText: string): BuildSetuAgentDomain {
   const slug = String(toolSlug || "").toLowerCase();
   const text = String(userText || "").toLowerCase();
@@ -1063,8 +1094,10 @@ export async function POST(req: NextRequest) {
     const projectMemory = await getProjectMemory(projectId, toolSlug);
 
     const readOnlyKnowledgeChat = isReadOnlyKnowledgeChatRequest(action, toolSlug, toolName, userText);
-    const shouldGenerate = !readOnlyKnowledgeChat && (
-      wantsGeneration(action, userText) || ["execute", "generate", "run"].includes(String(action || "").toLowerCase())
+    const actionIntent = String(action || "").toLowerCase();
+    const textOnlyToolChatAction = isBuildSetuTextOnlyToolChatAction(actionIntent, toolSlug, taskType);
+    const shouldGenerate = !readOnlyKnowledgeChat && !textOnlyToolChatAction && (
+      wantsGeneration(action, userText) || ["execute", "generate", "run"].includes(actionIntent)
     );
 
     // BUILDSETU_TOOL_CHAT_READONLY_KNOWLEDGE_ACTUAL_ANSWER_V1
