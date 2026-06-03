@@ -4,6 +4,116 @@ import {
   listBuildSetuKnowledge,
 } from "@/lib/agent-knowledge/knowledge-store";
 
+
+function parseBuildSetuCookieValues(cookieHeader: string) {
+  return String(cookieHeader || "")
+    .split(";")
+    .map((part) => part.trim())
+    .filter(Boolean)
+    .map((part) => {
+      const eq = part.indexOf("=");
+      if (eq < 0) return "";
+      try {
+        return decodeURIComponent(part.slice(eq + 1).trim());
+      } catch {
+        return part.slice(eq + 1).trim();
+      }
+    })
+    .filter(Boolean);
+}
+
+async function readBuildSetuJsonFileSafe(relativePath: string) {
+  try {
+    const { readFile } = await import("fs/promises");
+    const { join } = await import("path");
+    const raw = await readFile(join(process.cwd(), relativePath), "utf-8");
+    return JSON.parse(raw);
+  } catch {
+    return null;
+  }
+}
+
+function normalizeBuildSetuSessions(raw: any) {
+  if (!raw) return [];
+
+  if (Array.isArray(raw)) {
+    return raw.map((value, index) => ({
+      ...(value && typeof value === "object" ? value : { value }),
+      __key: String(index),
+    }));
+  }
+
+  if (typeof raw === "object") {
+    const directLists = ["sessions", "items", "data", "rows"];
+    for (const key of directLists) {
+      if (Array.isArray(raw[key])) {
+        return raw[key].map((value: any, index: number) => ({
+          ...(value && typeof value === "object" ? value : { value }),
+          __key: String(index),
+        }));
+      }
+    }
+
+    return Object.entries(raw).map(([key, value]) => ({
+      ...(value && typeof value === "object" ? value : { value }),
+      __key: key,
+    }));
+  }
+
+  return [];
+}
+
+async function getBuildSetuKnowledgeSearchAuth(req: Request) {
+  // BUILDSETU_KNOWLEDGE_SEARCH_AUTH_GUARD_V1
+  const cookieValues = parseBuildSetuCookieValues(req.headers.get("cookie") || "");
+  if (!cookieValues.length) return null;
+
+  const sessionsRaw = await readBuildSetuJsonFileSafe("data/buildsetu-auth-sessions.json");
+  const sessions = normalizeBuildSetuSessions(sessionsRaw);
+
+  for (const session of sessions) {
+    const candidates = [
+      session.__key,
+      session.id,
+      session.token,
+      session.sessionToken,
+      session.sessionId,
+      session.sid,
+      session.value,
+      session.cookie,
+    ]
+      .map((value) => String(value || "").trim())
+      .filter(Boolean);
+
+    const matched = candidates.some((candidate) => cookieValues.includes(candidate));
+    if (!matched) continue;
+
+    const expiresAt = session.expiresAt || session.expiry || session.expires || session.validUntil;
+    if (expiresAt && Number.isFinite(Date.parse(String(expiresAt))) && Date.parse(String(expiresAt)) < Date.now()) {
+      continue;
+    }
+
+    return {
+      id: String(session.userId || session.user?.id || session.email || session.__key || "session"),
+      email: String(session.email || session.user?.email || ""),
+    };
+  }
+
+  return null;
+}
+
+function buildBuildSetuKnowledgeSearchLoginRequiredResponse() {
+  return NextResponse.json(
+    {
+      ok: false,
+      code: "LOGIN_REQUIRED",
+      error: "Please login to search BuildSetu knowledge.",
+    },
+    { status: 401 }
+  );
+}
+
+
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
@@ -168,6 +278,9 @@ function handleSearch(input: SearchInput) {
 }
 
 export async function GET(req: NextRequest) {
+  const buildSetuKnowledgeSearchAuth = await getBuildSetuKnowledgeSearchAuth(req);
+  if (!buildSetuKnowledgeSearchAuth) return buildBuildSetuKnowledgeSearchLoginRequiredResponse();
+
   const url = new URL(req.url);
 
   return NextResponse.json(
@@ -181,6 +294,9 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
+  const buildSetuKnowledgeSearchAuth = await getBuildSetuKnowledgeSearchAuth(req);
+  if (!buildSetuKnowledgeSearchAuth) return buildBuildSetuKnowledgeSearchLoginRequiredResponse();
+
   let body: any = {};
 
   try {
