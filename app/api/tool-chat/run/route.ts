@@ -207,10 +207,19 @@ function detectTask(toolSlug: string, userText: string) {
     return "exterior_elevation";
   }
 
+  // BUILDSETU_TOOL_CHAT_MEP_STRUCTURE_DETECT_TASK_V1
   if (toolSlug.includes("boq")) return "boq_document";
   if (toolSlug.includes("bbs")) return "bbs_document";
+  if (toolSlug.includes("electrical")) return "electrical_concept";
+  if (toolSlug.includes("plumbing")) return "plumbing_concept";
+  if (toolSlug.includes("mep")) return "mep_concept";
   if (toolSlug.includes("working")) return "working_drawing";
-  if (toolSlug.includes("structure")) return "structure_drawing";
+  if (
+    toolSlug.includes("structure") ||
+    toolSlug.includes("structural") ||
+    toolSlug.includes("rcc") ||
+    toolSlug.includes("column-beam")
+  ) return "structure_concept";
 
   return "tool_task";
 }
