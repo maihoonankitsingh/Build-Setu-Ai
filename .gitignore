@@ -89,3 +89,24 @@ buildsetu_ai_logo.zip
 
 # Local snapshots/reports should stay outside repo, but guard anyway
 buildsetu-final-snapshots/
+
+# ===== BuildSetu local runtime data - Phase 15B =====
+# Keep canonical knowledge/training JSON tracked, but ignore live runtime state.
+data/agent-feedback/
+data/agent-knowledge/
+data/buildsetu-research/
+
+# Runtime generated workspace/project state.
+data/generated/*.json
+data/generated/*.png
+data/generated/*.jpg
+data/generated/*.jpeg
+data/generated/*.webp
+data/generated/*.svg
+data/generated/*.mp4
+data/generated/*.wav
+
+# Keep canonical generated seed/master files tracked.
+!data/generated/boq-rate-master.json
+
+# Already tracked legacy runtime files are restored to HEAD and should not be recommitted.
