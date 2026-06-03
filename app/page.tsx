@@ -4419,8 +4419,6 @@ function BbsPage({ theme }: { theme: ResolvedTheme }) {
     }
 
     try {
-      const XLSX = await import("xlsx");
-
       const rows = filteredBbsItems.map((item, index) => ({
         "S.No": index + 1,
         "Bar Mark": item.barMark || "",
@@ -4437,30 +4435,47 @@ function BbsPage({ theme }: { theme: ResolvedTheme }) {
         "Status": item.status || "",
       }));
 
-      const worksheet = XLSX.utils.json_to_sheet(rows);
-      worksheet["!cols"] = [
-        { wch: 8 },
-        { wch: 18 },
-        { wch: 16 },
-        { wch: 12 },
-        { wch: 14 },
-        { wch: 14 },
-        { wch: 12 },
-        { wch: 18 },
-        { wch: 18 },
-        { wch: 18 },
-        { wch: 18 },
-        { wch: 18 },
-        { wch: 30 },
+      const headers = [
+        "S.No",
+        "Bar Mark",
+        "Member Type",
+        "Member ID",
+        "Diameter (mm)",
+        "Shape Code",
+        "No. of Bars",
+        "Cutting Length (m)",
+        "Total Length (m)",
+        "Unit Weight (kg/m)",
+        "Total Weight (kg)",
+        "Drawing Ref",
+        "Status",
       ];
 
-      const workbook = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(workbook, worksheet, "BBS");
-      XLSX.writeFile(workbook, `buildsetu-bbs-${selectedProject?.title || "project"}.xlsx`);
+      const escapeCsvCell = (value: unknown) => {
+        const text = value == null ? "" : String(value);
+        return /[",\n\r]/.test(text) ? `"${text.replace(/"/g, '""')}"` : text;
+      };
 
-      setMessage("BBS Excel file exported.");
+      const csv = [
+        headers.map(escapeCsvCell).join(","),
+        ...rows.map((row) =>
+          headers.map((key) => escapeCsvCell(row[key as keyof typeof row])).join(",")
+        ),
+      ].join("\n");
+
+      const blob = new Blob([`\uFEFF${csv}`], { type: "text/csv;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `buildsetu-bbs-${selectedProject?.title || "project"}.csv`;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(url);
+
+      setMessage("BBS CSV file exported.");
     } catch {
-      setMessage("Unable to export Excel file.");
+      setMessage("Unable to export CSV file.");
     }
   }
 
