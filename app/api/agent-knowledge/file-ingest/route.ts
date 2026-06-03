@@ -3,6 +3,11 @@ import { mkdir, writeFile } from "fs/promises";
 import path from "path";
 import { NextRequest, NextResponse } from "next/server";
 import { addBuildSetuKnowledge } from "@/lib/agent-knowledge/knowledge-store";
+import {
+  extractBuildSetuPdfPages,
+  formatBuildSetuPdfPagesForText,
+  isBuildSetuPdfFile,
+} from "@/lib/agent-knowledge/pdf-page-extract";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -159,7 +164,17 @@ async function ingestOneFile(args: {
   tags: string[];
 }) {
   const { absPath, buffer } = await saveUploadedFile(args.file, args.uploadId);
-  const extractedText = await extractText(args.file, absPath, buffer);
+  const pdfPages = isBuildSetuPdfFile(safe(args.file.name), safe(args.file.type))
+    ? extractBuildSetuPdfPages({
+        absPath,
+        fileName: safe(args.file.name),
+        fileType: safe(args.file.type),
+      })
+    : [];
+
+  const extractedText = pdfPages.length
+    ? formatBuildSetuPdfPagesForText(pdfPages)
+    : await extractText(args.file, absPath, buffer);
 
   const fallbackText = [
     `File uploaded for BuildSetu agent knowledge.`,
@@ -172,7 +187,47 @@ async function ingestOneFile(args: {
     .join("\n");
 
   const content = extractedText || fallbackText;
-  const chunks = chunkText(content);
+  const knowledgeChunks = pdfPages.length
+    ? pdfPages.flatMap((page) => {
+        const pageContent = [
+          `File uploaded for BuildSetu agent knowledge.`,
+          `File name: ${safe(args.file.name)}`,
+          `File type: ${safe(args.file.type) || "application/pdf"}`,
+          `File size: ${args.file.size} bytes`,
+          `PDF page: ${page.pageNumber}`,
+          `Source page: ${page.sourcePage}`,
+          `Source citation: ${page.sourceCitation}`,
+          `Extraction method: ${page.extractionMethod}`,
+          "",
+          page.text,
+        ].join("\n");
+
+        const pageChunks = chunkText(pageContent);
+        return pageChunks.map((text, pageChunkIndex) => ({
+          text,
+          pageNumber: page.pageNumber,
+          sourcePage: page.sourcePage,
+          pageIndex: page.pageIndex,
+          pageRange: page.pageRange,
+          sourceCitation: page.sourceCitation,
+          extractionMethod: page.extractionMethod,
+          pageChunkIndex,
+          pageChunks: pageChunks.length,
+        }));
+      })
+    : chunkText(content).map((text, index) => ({
+        text,
+        pageNumber: null as number | null,
+        sourcePage: null as number | null,
+        pageIndex: null as number | null,
+        pageRange: "",
+        sourceCitation: "",
+        extractionMethod: isBuildSetuPdfFile(safe(args.file.name), safe(args.file.type)) ? "pdftotext-fallback" : "file-text",
+        pageChunkIndex: index,
+        pageChunks: chunkText(content).length,
+      }));
+
+  const chunks = knowledgeChunks.map((item) => item.text);
   const added: any[] = [];
 
   for (let index = 0; index < chunks.length; index += 1) {
@@ -200,6 +255,12 @@ async function ingestOneFile(args: {
         chunkIndex: index,
         chunks: chunks.length,
         fileSize: args.file.size,
+        pageNumber: knowledgeChunks[index]?.pageNumber ?? null,
+        sourcePage: knowledgeChunks[index]?.sourcePage ?? null,
+        pageIndex: knowledgeChunks[index]?.pageIndex ?? null,
+        pageRange: knowledgeChunks[index]?.pageRange || "",
+        sourceCitation: knowledgeChunks[index]?.sourceCitation || "",
+        extractionMethod: knowledgeChunks[index]?.extractionMethod || "",
         extracted: Boolean(extractedText),
       },
       createdAt: new Date().toISOString(),

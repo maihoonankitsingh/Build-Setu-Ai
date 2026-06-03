@@ -8,6 +8,10 @@ import {
   type BuildSetuKnowledgeDomain,
   type BuildSetuKnowledgeSourceType,
 } from "@/lib/agent-knowledge/knowledge-store";
+import {
+  extractBuildSetuPdfPages,
+  formatBuildSetuPdfPagesForText,
+} from "@/lib/agent-knowledge/pdf-page-extract";
 import { addBuildSetuUsageEvent } from "@/lib/agent-usage/usage-cost-store";
 import { checkBuildSetuUsageLimit } from "@/lib/agent-usage/usage-limit-store";
 
@@ -399,9 +403,19 @@ export async function POST(req: NextRequest) {
     }
 
     const saved = await saveUniversalFile(file, uploadId);
+    let pdfPages: any[] = [];
     let extractedText = bestEffortText(detectedType, saved, notes);
     if (detectedType === "pdf") {
-      extractedText = await extractPdfText(saved.absPath, notes);
+      // BUILDSETU_UNIVERSAL_SCAN_PDF_PAGEWISE_EXTRACTION_V1
+      pdfPages = extractBuildSetuPdfPages({
+        absPath: (saved as any).absPath || (saved as any).savedPath,
+        fileName: saved.fileName,
+        fileType: saved.fileType,
+      });
+
+      extractedText = pdfPages.length
+        ? formatBuildSetuPdfPagesForText(pdfPages)
+        : await extractPdfText(saved.absPath, notes);
     }
 
     if (detectedType === "audio") {
@@ -420,6 +434,11 @@ export async function POST(req: NextRequest) {
       `File type: ${saved.fileType}`,
       `Saved path: ${saved.absPath}`,
       "",
+      pdfPages.length
+        ? `PDF page citations:\n${pdfPages.map((page) => `- Page ${page.pageNumber}: ${page.sourceCitation}`).join("\n")}`
+        : detectedType === "pdf"
+          ? "PDF text extraction completed without page-wise citation. Scanned PDF OCR remains pending."
+          : "",
       extractedText,
     ].join("\n");
 
@@ -446,6 +465,15 @@ export async function POST(req: NextRequest) {
         },
         notes,
         extractedText: extractedText.slice(0, 20000),
+        pdfPages: pdfPages.map((page) => ({
+          pageNumber: page.pageNumber,
+          sourcePage: page.sourcePage,
+          pageIndex: page.pageIndex,
+          pageRange: page.pageRange,
+          sourceCitation: page.sourceCitation,
+          extractionMethod: page.extractionMethod,
+          textPreview: String(page.text || "").slice(0, 1000),
+        })),
       },
     });
 
