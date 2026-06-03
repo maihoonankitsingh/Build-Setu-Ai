@@ -317,6 +317,46 @@ function extractBuildSetuPublicUrlFromText(value: unknown) {
   return text;
 }
 
+
+function getBuildSetuInternalFetchBases(req: NextRequest) {
+  // BUILDSETU_TOOLS_RUN_LOCAL_INTERNAL_FETCH_V1
+  const bases = [
+    process.env.BUILDSETU_INTERNAL_BASE_URL,
+    process.env.NEXT_INTERNAL_BASE_URL,
+    "http://127.0.0.1:3016",
+  ];
+
+  try {
+    bases.push(new URL(req.url).origin);
+  } catch {
+    // ignore invalid request URL fallback
+  }
+
+  const seen = new Set<string>();
+  return bases
+    .map((base) => String(base || "").trim().replace(/\/+$/, ""))
+    .filter((base) => {
+      if (!base || seen.has(base)) return false;
+      seen.add(base);
+      return true;
+    });
+}
+
+async function fetchBuildSetuInternalRoute(req: NextRequest, path: string, init: RequestInit) {
+  for (const base of getBuildSetuInternalFetchBases(req)) {
+    try {
+      const res = await fetch(new URL(path, base), {
+        ...init,
+        cache: "no-store",
+      });
+      return res;
+    } catch {
+      // Try next internal base.
+    }
+  }
+  return null;
+}
+
 async function dispatchBuildSetuInternalAgentTool(req: NextRequest, body: any) {
   // BUILDSETU_TOOLS_RUN_INTERNAL_AGENT_TOOL_DISPATCH_V1
   const internalSlug = normalizeBuildSetuInternalToolSlug(body);
@@ -327,7 +367,7 @@ async function dispatchBuildSetuInternalAgentTool(req: NextRequest, body: any) {
   if (internalSlug === "project-db-search") {
     const query = String(body?.query || body?.q || body?.prompt || body?.message || body?.input || "").trim();
 
-    const res = await fetch(new URL("/api/agent-tools/project-db-search", req.url), {
+    const res = await fetchBuildSetuInternalRoute(req, "/api/agent-tools/project-db-search", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -338,8 +378,7 @@ async function dispatchBuildSetuInternalAgentTool(req: NextRequest, body: any) {
         query,
         limit: body?.limit || 10,
       }),
-      cache: "no-store",
-    }).catch(() => null);
+    });
 
     const data = res ? await res.json().catch(() => null) : null;
 
@@ -359,7 +398,7 @@ async function dispatchBuildSetuInternalAgentTool(req: NextRequest, body: any) {
       body?.url || body?.sourceUrl || body?.prompt || body?.message || body?.input || ""
     );
 
-    const res = await fetch(new URL("/api/agent-knowledge/url-ingest", req.url), {
+    const res = await fetchBuildSetuInternalRoute(req, "/api/agent-knowledge/url-ingest", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -373,8 +412,7 @@ async function dispatchBuildSetuInternalAgentTool(req: NextRequest, body: any) {
         domain: body?.domain || "buildsetu",
         tags: body?.tags || ["tool_registry"],
       }),
-      cache: "no-store",
-    }).catch(() => null);
+    });
 
     const data = res ? await res.json().catch(() => null) : null;
 
