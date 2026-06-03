@@ -321,6 +321,81 @@ export async function OPTIONS() {
   return new NextResponse(null, { status: 204 });
 }
 
+
+async function enforceBuildSetuHeavyRouteAuthGate(req: NextRequest, args: {
+  projectId?: string;
+  userId?: string;
+  kind: "image" | "vision" | "file_search";
+  estimatedInr?: number;
+}) {
+  // BUILDSETU_HEAVY_ROUTE_AUTH_USAGE_GATE_V1
+  const authRes = await fetch(new URL("/api/auth/me", req.url), {
+    method: "GET",
+    headers: {
+      cookie: req.headers.get("cookie") || "",
+    },
+    cache: "no-store",
+  }).catch(() => null);
+
+  const authData = authRes ? await authRes.json().catch(() => null) : null;
+
+  if (!authData?.authenticated) {
+    return NextResponse.json(
+      {
+        ok: false,
+        code: "CREDIT_CHECK_FAILED",
+        error: "Please login to use this tool.",
+        buyCreditsUrl: "/credits",
+      },
+      { status: 401 }
+    );
+  }
+
+  const user = authData?.user || {};
+  const planTier = String(user.planId || user.planName || user.plan || user.tier || "free");
+  const userId = String(user.id || user.email || args.userId || "authenticated");
+  const kind = args.kind;
+
+  const limitBody: any = {
+    projectId: args.projectId || "global",
+    userId,
+    planTier,
+    kind,
+    estimatedInr: Number(args.estimatedInr || 0),
+  };
+
+  if (kind === "image") limitBody.imageGenerations = 1;
+  if (kind === "vision") limitBody.visionScans = 1;
+  if (kind === "file_search") limitBody.fileSearches = 1;
+
+  const limitRes = await fetch(new URL("/api/agent-usage/check-limit", req.url), {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      cookie: req.headers.get("cookie") || "",
+    },
+    body: JSON.stringify(limitBody),
+  }).catch(() => null);
+
+  const limitData = limitRes ? await limitRes.json().catch(() => null) : null;
+
+  if (!limitRes || !limitRes.ok || limitData?.allowed === false || limitData?.ok === false) {
+    return NextResponse.json(
+      {
+        ok: false,
+        code: limitData?.code || "USAGE_LIMIT_EXCEEDED",
+        error: limitData?.message || "Usage limit exceeded for your plan.",
+        usage: limitData || null,
+        buyCreditsUrl: "/credits",
+      },
+      { status: limitRes?.status || 402 }
+    );
+  }
+
+  return null;
+}
+
+
 export async function POST(req: NextRequest) {
   const startedAt = Date.now();
   try {
@@ -422,10 +497,19 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const visionUsageLimit = checkBuildSetuUsageLimit({
+    const buildSetuVisionScanHeavyGate = await enforceBuildSetuHeavyRouteAuthGate(req, {
       projectId,
       userId,
-      planTier,
+      kind: "vision",
+      estimatedInr: 0.25,
+    });
+    if (buildSetuVisionScanHeavyGate) return buildSetuVisionScanHeavyGate;
+
+    const visionUsageLimit = checkBuildSetuUsageLimit({
+      // BUILDSETU_VISION_EXISTING_LIMIT_DELEGATED_V1
+      planTier: "unlimited",
+      projectId,
+      userId,
       next: {
         kind: "vision",
         visionScans: 1,
