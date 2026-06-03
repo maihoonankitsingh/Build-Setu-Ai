@@ -294,9 +294,111 @@ function buildItems(section: string, title: string, prompt: string) {
   return buildToolSectionItems({ section, title, prompt });
 }
 
+
+function normalizeBuildSetuInternalToolSlug(body: any) {
+  const slug = String(body?.toolSlug || body?.slug || body?.tool || "").trim().toLowerCase();
+  if (["project-db-search", "project_db_search", "db-search", "database-search"].includes(slug)) return "project-db-search";
+  if (["url-ingest", "url_ingest", "public-url-ingest", "reference-ingest"].includes(slug)) return "url-ingest";
+  return "";
+}
+
+
+function extractBuildSetuPublicUrlFromText(value: unknown) {
+  // BUILDSETU_TOOLS_RUN_URL_EXTRACT_V1
+  const text = String(value || "").trim();
+  if (!text) return "";
+
+  const direct = text.match(/^https?:\/\/[^\s<>"']+$/i);
+  if (direct) return direct[0].replace(/[),.;]+$/g, "");
+
+  const embedded = text.match(/https?:\/\/[^\s<>"']+/i);
+  if (embedded) return embedded[0].replace(/[),.;]+$/g, "");
+
+  return text;
+}
+
+async function dispatchBuildSetuInternalAgentTool(req: NextRequest, body: any) {
+  // BUILDSETU_TOOLS_RUN_INTERNAL_AGENT_TOOL_DISPATCH_V1
+  const internalSlug = normalizeBuildSetuInternalToolSlug(body);
+  if (!internalSlug) return null;
+
+  const projectId = String(body?.projectId || body?.selectedProjectId || "global").trim() || "global";
+
+  if (internalSlug === "project-db-search") {
+    const query = String(body?.query || body?.q || body?.prompt || body?.message || body?.input || "").trim();
+
+    const res = await fetch(new URL("/api/agent-tools/project-db-search", req.url), {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        cookie: req.headers.get("cookie") || "",
+      },
+      body: JSON.stringify({
+        projectId,
+        query,
+        limit: body?.limit || 10,
+      }),
+      cache: "no-store",
+    }).catch(() => null);
+
+    const data = res ? await res.json().catch(() => null) : null;
+
+    return NextResponse.json(
+      {
+        ...(data || { ok: false, code: "PROJECT_DB_SEARCH_FAILED", error: "Project DB search failed." }),
+        routedBy: "/api/tools/run",
+        toolSlug: "project-db-search",
+        internalTool: "project_db_search",
+      },
+      { status: res?.status || 500 }
+    );
+  }
+
+  if (internalSlug === "url-ingest") {
+    const extractedUrl = extractBuildSetuPublicUrlFromText(
+      body?.url || body?.sourceUrl || body?.prompt || body?.message || body?.input || ""
+    );
+
+    const res = await fetch(new URL("/api/agent-knowledge/url-ingest", req.url), {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        cookie: req.headers.get("cookie") || "",
+      },
+      body: JSON.stringify({
+        projectId,
+        url: extractedUrl,
+        sourceUrl: body?.sourceUrl,
+        title: body?.title || body?.toolName || "Public URL reference",
+        domain: body?.domain || "buildsetu",
+        tags: body?.tags || ["tool_registry"],
+      }),
+      cache: "no-store",
+    }).catch(() => null);
+
+    const data = res ? await res.json().catch(() => null) : null;
+
+    return NextResponse.json(
+      {
+        ...(data || { ok: false, code: "URL_INGEST_FAILED", error: "URL ingest failed." }),
+        routedBy: "/api/tools/run",
+        toolSlug: "url-ingest",
+        internalTool: "url_ingest",
+      },
+      { status: res?.status || 500 }
+    );
+  }
+
+  return null;
+}
+
+
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json().catch(() => ({}));
+
+    const buildSetuInternalAgentToolResponse = await dispatchBuildSetuInternalAgentTool(request, body);
+    if (buildSetuInternalAgentToolResponse) return buildSetuInternalAgentToolResponse;
     const slug = safe(body.slug);
     const profile = toolProfiles[slug] || {
       title: safe(body.title, "BuildSetu Tool"),

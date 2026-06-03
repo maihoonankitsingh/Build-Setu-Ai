@@ -828,6 +828,67 @@ function buildBuildSetuAgentFeedbackContext(projectId: string, toolSlug: string,
   }
 }
 
+
+function buildBuildSetuInternalAgentToolRegistryContext(toolSlug: string, userText: string) {
+  // BUILDSETU_INTERNAL_AGENT_TOOL_REGISTRY_CONTEXT_V1
+  const hay = `${toolSlug || ""} ${userText || ""}`.toLowerCase();
+
+  const shouldMentionDbSearch =
+    hay.includes("database") ||
+    hay.includes("db search") ||
+    hay.includes("project data") ||
+    hay.includes("saved project") ||
+    hay.includes("boq") ||
+    hay.includes("bbs") ||
+    hay.includes("tool run") ||
+    hay.includes("render") ||
+    hay.includes("search this project");
+
+  const shouldMentionUrlIngest =
+    hay.includes("url") ||
+    hay.includes("link") ||
+    hay.includes("website") ||
+    hay.includes("reference") ||
+    hay.includes("public page") ||
+    hay.includes("source url") ||
+    hay.includes("ingest");
+
+  if (!shouldMentionDbSearch && !shouldMentionUrlIngest) {
+    return [
+      "BuildSetu internal tool registry:",
+      "- project_db_search: read-only, authenticated, project-scoped search over selected project DB records.",
+      "- url_ingest: authenticated public URL reference ingest with usage limit and SSRF guard.",
+      "- Use these tools only when the user explicitly asks to search saved project data or ingest a public reference URL.",
+    ].join("\\n");
+  }
+
+  const lines = [
+    "BuildSetu internal tool registry:",
+  ];
+
+  if (shouldMentionDbSearch) {
+    lines.push(
+      "- project_db_search is available for read-only project-scoped lookup of project, design brief, BOQ, BBS, renders, tool runs and agreements.",
+      "- project_db_search requires login and project ownership; never expose cross-user data."
+    );
+  }
+
+  if (shouldMentionUrlIngest) {
+    lines.push(
+      "- url_ingest is available for authenticated public URL/reference ingestion into agent knowledge.",
+      "- url_ingest blocks localhost/private/reserved URLs, uses timeout/byte limits, and saves sourceUrl/sourceCitation."
+    );
+  }
+
+  lines.push(
+    "- Chat can explain when these tools are needed.",
+    "- Generate/execute actions must remain auth/usage gated."
+  );
+
+  return lines.join("\\n");
+}
+
+
 export async function runBuildSetuAgent(input: BuildSetuAgentInput): Promise<BuildSetuAgentResult> {
   const projectId = cleanText(input.projectId);
   const toolSlug = cleanText(input.toolSlug || "magic-brief");
@@ -842,9 +903,13 @@ export async function runBuildSetuAgent(input: BuildSetuAgentInput): Promise<Bui
 
   const module = applyToolModuleRoutingOverride(baseModule, toolSlug, userText);
   const context = await buildProjectContext({ projectId, toolSlug });
+  const internalToolRegistryContext = buildBuildSetuInternalAgentToolRegistryContext(toolSlug, userText);
   const brief = context?.brief || null;
   const completeness = toNumber(context?.completeness?.score) ?? 0;
-  const baseContextText = String(context?.contextText || "");
+  const baseContextText = [
+    String(context?.contextText || ""),
+    internalToolRegistryContext,
+  ].filter(Boolean).join("\n\n");
   const feedbackContext = buildBuildSetuAgentFeedbackContext(projectId, toolSlug, userText);
   const contextText = [baseContextText, feedbackContext].filter(Boolean).join("\n\n");
   const missingRequiredStages = arr(context?.missingRequiredStages).map(String);
