@@ -55,6 +55,16 @@ type ToolModule = {
 };
 
 const TOOL_MODULES: Record<string, ToolModule> = {
+
+  "web-search": {
+    taskType: "public_web_research",
+    module: "research",
+    outputMode: "document",
+    label: "Web Search",
+    deliverables: ["public web research summary", "source citations", "reference links", "useful findings"],
+    safetyWarning: "BUILDSETU_WEB_SEARCH_AGENT_REGISTRY_V1 Public web research sources must be verified before construction/legal/financial decisions.",
+  },
+
   "magic-brief": {
     taskType: "project_brief",
     module: "brief",

@@ -156,6 +156,14 @@ async function writeAll(items: ToolRun[]) {
 }
 
 const toolProfiles: Record<string, { title: string; category: string; sections: string[]; nextActions: string[] }> = {
+
+  "web-search": {
+    title: "Web Search",
+    category: "Research",
+    sections: ["Research Summary", "Source Citations", "Useful Findings", "Next Steps"],
+    nextActions: ["Open source", "Save to knowledge", "Run URL ingest", "Add to project notes"],
+  },
+
   "magic-brief": {
     title: "Magic Brief",
     category: "Brief",
@@ -427,6 +435,45 @@ async function dispatchBuildSetuInternalAgentTool(req: NextRequest, body: any) {
     );
   }
 
+  
+  if (internalSlug === "web-search") {
+    // BUILDSETU_WEB_SEARCH_TOOLS_RUN_DISPATCH_V1
+    const query = String(body?.query || body?.q || body?.prompt || body?.message || "").trim();
+    const url = String(body?.url || body?.sourceUrl || "").trim();
+    const urls = Array.isArray(body?.urls) ? body.urls : undefined;
+
+    const res = await fetchBuildSetuInternalRoute(req, "/api/agent-tools/web-search", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        cookie: req.headers.get("cookie") || "",
+      },
+      body: JSON.stringify({
+        projectId,
+        query,
+        q: body?.q,
+        prompt: body?.prompt,
+        message: body?.message,
+        url,
+        sourceUrl: body?.sourceUrl,
+        urls,
+        limit: body?.limit || 5,
+      }),
+    });
+
+    const data = res ? await res.json().catch(() => null) : null;
+
+    return NextResponse.json(
+      {
+        ...(data || { ok: false, code: "WEB_SEARCH_FAILED", error: "Public web research failed." }),
+        routedBy: "/api/tools/run",
+        toolSlug: "web-search",
+        internalTool: "web_search",
+      },
+      { status: res?.status || 500 }
+    );
+  }
+
   return null;
 }
 
@@ -435,7 +482,56 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json().catch(() => ({}));
 
-    const buildSetuInternalAgentToolResponse = await dispatchBuildSetuInternalAgentTool(request, body);
+    
+    
+    const buildSetuRequestedToolSlug = String(body?.toolSlug || body?.slug || body?.tool || "").trim().toLowerCase();
+    if (
+      buildSetuRequestedToolSlug === "web-search" ||
+      buildSetuRequestedToolSlug === "web_search" ||
+      buildSetuRequestedToolSlug === "public-web-search" ||
+      buildSetuRequestedToolSlug === "public_web_search" ||
+      buildSetuRequestedToolSlug === "web-research" ||
+      buildSetuRequestedToolSlug === "web_research" ||
+      buildSetuRequestedToolSlug === "research-web" ||
+      buildSetuRequestedToolSlug === "research_web"
+    ) {
+      // BUILDSETU_WEB_SEARCH_DIRECT_EARLY_BRANCH_V1
+      const res = await fetchBuildSetuInternalRoute(request, "/api/agent-tools/web-search", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          cookie: request.headers.get("cookie") || "",
+        },
+        body: JSON.stringify({
+          projectId: body?.projectId,
+          query: body?.query || body?.q || body?.prompt || body?.message || "",
+          q: body?.q,
+          prompt: body?.prompt,
+          message: body?.message,
+          url: body?.url || body?.sourceUrl || "",
+          sourceUrl: body?.sourceUrl,
+          urls: Array.isArray(body?.urls) ? body.urls : undefined,
+          limit: body?.limit || 5,
+        }),
+      });
+
+      const data = res ? await res.json().catch(() => null) : null;
+
+      return NextResponse.json(
+        {
+          ...(data || { ok: false, code: "WEB_SEARCH_FAILED", error: "Public web research failed." }),
+          routedBy: "/api/tools/run",
+          toolSlug: "web-search",
+          internalTool: "web_search",
+        },
+        { status: res?.status || 500 }
+      );
+    }
+
+const buildSetuEarlyInternalToolResponse = await dispatchBuildSetuInternalAgentTool(request, body); // BUILDSETU_WEB_SEARCH_EARLY_INTERNAL_DISPATCH_V1
+    if (buildSetuEarlyInternalToolResponse) return buildSetuEarlyInternalToolResponse;
+
+const buildSetuInternalAgentToolResponse = await dispatchBuildSetuInternalAgentTool(request, body);
     if (buildSetuInternalAgentToolResponse) return buildSetuInternalAgentToolResponse;
     const slug = safe(body.slug);
     const profile = toolProfiles[slug] || {
