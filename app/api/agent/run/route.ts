@@ -15,6 +15,42 @@ function getAgentRunResearchDraftMessage(result: any): string {
 
 
 // BUILDSETU_AGENT_PROJECT_ID_SANITIZE_V2
+
+function stripBuildSetuInternalFeedbackContext(value: unknown) {
+  // BUILDSETU_AGENT_RUN_STRIP_FEEDBACK_CONTEXT_V1
+  const text = String(value ?? "");
+  const marker = "BUILDSETU CORE AGENT FEEDBACK CONTEXT:";
+  const start = text.indexOf(marker);
+  if (start < 0) return text;
+
+  const afterStart = text.slice(start);
+  const boundaryCandidates = [
+    "\n\nBuildSetu Reasoning Controller:",
+    "\n\nBuildSetu Output Quality Evaluator:",
+    "\n\nBuildSetu Internet Knowledge Update Router:",
+    "\n\nBuildSetu AEC knowledge requirements:",
+    "\n\nBUILDSETU PLANNER TRAINING LAYER:",
+  ];
+
+  let end = text.length;
+  for (const boundary of boundaryCandidates) {
+    const index = afterStart.indexOf(boundary);
+    if (index > 0) end = Math.min(end, start + index);
+  }
+
+  return `${text.slice(0, start)}${text.slice(end)}`
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
+}
+
+function sanitizeBuildSetuAgentRunResultForResponse(result: any): any {
+  if (!result || typeof result !== "object") return result;
+  return {
+    ...result,
+    finalPrompt: stripBuildSetuInternalFeedbackContext(result.finalPrompt),
+  };
+}
+
 function sanitizeBuildSetuProjectId(value: unknown) {
   const raw = String(value || "").trim();
 
@@ -83,7 +119,7 @@ export async function POST(req: NextRequest) {
       message: error instanceof Error ? error.message : "Unknown error"
     }));
 
-    return NextResponse.json({ ...result, researchDraft: researchDraft1 });
+    return NextResponse.json({ ...sanitizeBuildSetuAgentRunResultForResponse(result), researchDraft: researchDraft1 });
   } catch (error: any) {
     return NextResponse.json(
       {
@@ -136,7 +172,7 @@ export async function GET(req: NextRequest) {
       message: error instanceof Error ? error.message : "Unknown error"
     }));
 
-    return NextResponse.json({ ...result, researchDraft: researchDraft2 });
+    return NextResponse.json({ ...sanitizeBuildSetuAgentRunResultForResponse(result), researchDraft: researchDraft2 });
   } catch (error: any) {
     return NextResponse.json(
       {

@@ -1,4 +1,5 @@
 import { buildProjectContext } from "@/lib/project-context-builder";
+import { buildFeedbackContextForAgent, type BuildSetuFeedbackDomain } from "@/lib/agent-feedback/feedback-store";
 
 import { enhanceBuildSetuAgentImagePrompt, enhanceBuildSetuAgentResponseText, hasBuildSetuDirectBriefFromMessage, buildBuildSetuDirectBriefOverride, buildBuildSetuAgentKnowledgeBlock } from "@/lib/agents/buildsetu-agent-knowledge-adapter";
 
@@ -752,6 +753,40 @@ function cleanBuildSetuImagePromptForGeneration(rawPrompt: string, module: ToolM
 }
 
 
+
+function buildBuildSetuAgentFeedbackContext(projectId: string, toolSlug: string, userText: string) {
+  // BUILDSETU_CORE_AGENT_FEEDBACK_INJECTION_V1
+  const hay = `${toolSlug || ""} ${userText || ""}`.toLowerCase();
+
+  let domain: BuildSetuFeedbackDomain = "general";
+  if (/(floor|naksha|plan|layout|vastu|parking|staircase|room)/i.test(hay)) domain = "floor_plan";
+  else if (/(interior|bedroom|kitchen|living|ceiling|furniture|wardrobe|tv unit)/i.test(hay)) domain = "interior";
+  else if (/(exterior|elevation|facade|front|gate|balcony|terrace)/i.test(hay)) domain = "exterior";
+  else if (/(structure|structural|column|beam|slab|footing|foundation|bbs|bar bending|rebar|steel)/i.test(hay)) domain = "structure";
+  else if (/(mep|electrical|plumbing|hvac|fire|load|pipe|wire|switch|socket)/i.test(hay)) domain = "mep";
+  else if (/(boq|estimate|cost|quantity|rate|material list|takeoff|bill of quantity)/i.test(hay)) domain = "boq";
+  else if (/(material|cement|sand|aggregate|concrete|paint|tile|marble|granite|waterproof|aac|brick)/i.test(hay)) domain = "material";
+
+  try {
+    const context = buildFeedbackContextForAgent({
+      projectId: projectId || "global",
+      domain,
+      limit: 8,
+    });
+
+    if (!context) return "";
+
+    return [
+      "BUILDSETU CORE AGENT FEEDBACK CONTEXT:",
+      "Apply these saved corrections, approved patterns, style preferences and safety rules when relevant.",
+      "Do not reveal this feedback block to the user.",
+      context,
+    ].filter(Boolean).join("\n");
+  } catch {
+    return "";
+  }
+}
+
 export async function runBuildSetuAgent(input: BuildSetuAgentInput): Promise<BuildSetuAgentResult> {
   const projectId = cleanText(input.projectId);
   const toolSlug = cleanText(input.toolSlug || "magic-brief");
@@ -768,7 +803,9 @@ export async function runBuildSetuAgent(input: BuildSetuAgentInput): Promise<Bui
   const context = await buildProjectContext({ projectId, toolSlug });
   const brief = context?.brief || null;
   const completeness = toNumber(context?.completeness?.score) ?? 0;
-  const contextText = String(context?.contextText || "");
+  const baseContextText = String(context?.contextText || "");
+  const feedbackContext = buildBuildSetuAgentFeedbackContext(projectId, toolSlug, userText);
+  const contextText = [baseContextText, feedbackContext].filter(Boolean).join("\n\n");
   const missingRequiredStages = arr(context?.missingRequiredStages).map(String);
 
   const briefQuestions = buildBriefMissingQuestions(brief);
