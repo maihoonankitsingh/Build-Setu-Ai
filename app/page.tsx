@@ -276,6 +276,35 @@ const categories: Array<{ label: ToolCategory; icon: BuildSetuIcon }> = [
 ];
 
 const tools: Tool[] = [
+  // BUILDSETU_UI_INTERNAL_TOOL_CARDS_V1
+  ({
+    title: "Project DB Search",
+    name: "Project DB Search",
+    slug: "project-db-search",
+    category: "Construction",
+    icon: BookOpenCheck,
+    badge: "Knowledge",
+    description: "Search saved project data, BOQ, BBS, renders, tool runs and project memory.",
+    subtitle: "Read-only project database search with login and project scoping.",
+    features: ["Project database", "BOQ/BBS", "Saved outputs", "Read-only search"],
+    tags: ["project_db_search", "database search", "saved project data"],
+    time: "Instant",
+    credits: "Login required"
+  } as any),
+  ({
+    title: "URL Ingest",
+    name: "URL Ingest",
+    slug: "url-ingest",
+    category: "Construction",
+    icon: BookOpenCheck,
+    badge: "Knowledge",
+    description: "Add a public website or reference URL into BuildSetu project knowledge.",
+    subtitle: "Public URL reference ingest with source citation and SSRF guard.",
+    features: ["Public URL", "Reference ingest", "Source citation", "Knowledge base"],
+    tags: ["url_ingest", "public reference", "source citation"],
+    time: "Instant",
+    credits: "Login required"
+  } as any),
   {
     title: "Magic Brief",
     category: "Presentation",
