@@ -78,9 +78,129 @@ function sanitizeBuildSetuProjectId(value: unknown) {
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
+
+function buildSetuAgentRunActionRequiresHardGate(body: any) {
+  // BUILDSETU_AGENT_RUN_GENERATE_HARD_GATE_V1
+  const action = String(body?.action || "").toLowerCase();
+  const toolSlug = String(body?.toolSlug || body?.slug || "").toLowerCase();
+  const text = String(body?.message || body?.prompt || body?.input || "").toLowerCase();
+
+  if (["generate", "execute", "run"].includes(action)) return true;
+  if (action === "chat" || action === "ask" || action === "analyze") return false;
+
+  if (
+    text.includes("generate image") ||
+    text.includes("image generate") ||
+    text.includes("final output") ||
+    text.includes("execute") ||
+    text.includes("run tool")
+  ) {
+    return true;
+  }
+
+  if (
+    toolSlug.includes("render") ||
+    toolSlug.includes("image") ||
+    toolSlug.includes("floor-plan") ||
+    toolSlug.includes("interior") ||
+    toolSlug.includes("exterior") ||
+    toolSlug.includes("elevation")
+  ) {
+    return true;
+  }
+
+  return false;
+}
+
+function buildSetuAgentRunUsageKind(body: any) {
+  const toolSlug = String(body?.toolSlug || body?.slug || "").toLowerCase();
+  const text = String(body?.message || body?.prompt || body?.input || "").toLowerCase();
+
+  if (
+    toolSlug.includes("render") ||
+    toolSlug.includes("image") ||
+    toolSlug.includes("floor-plan") ||
+    toolSlug.includes("interior") ||
+    toolSlug.includes("exterior") ||
+    toolSlug.includes("elevation") ||
+    text.includes("generate image") ||
+    text.includes("image generate")
+  ) {
+    return "image";
+  }
+
+  return "tool";
+}
+
+async function enforceBuildSetuAgentRunHardGate(req: NextRequest, body: any) {
+  if (!buildSetuAgentRunActionRequiresHardGate(body)) return null;
+
+  const authRes = await fetch(new URL("/api/auth/me", req.url), {
+    method: "GET",
+    headers: {
+      cookie: req.headers.get("cookie") || "",
+    },
+    cache: "no-store",
+  }).catch(() => null);
+
+  const authData = authRes ? await authRes.json().catch(() => null) : null;
+
+  if (!authData?.authenticated) {
+    return NextResponse.json(
+      {
+        ok: false,
+        code: "CREDIT_CHECK_FAILED",
+        error: "Please login to use this tool.",
+        buyCreditsUrl: "/credits",
+      },
+      { status: 401 }
+    );
+  }
+
+  const user = authData?.user || {};
+  const planTier = String(user.planId || user.planName || user.plan || user.tier || "free");
+  const kind = buildSetuAgentRunUsageKind(body);
+
+  const limitRes = await fetch(new URL("/api/agent-usage/check-limit", req.url), {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      cookie: req.headers.get("cookie") || "",
+    },
+    body: JSON.stringify({
+      projectId: body?.projectId || "global",
+      userId: user.id || user.email || "authenticated",
+      planTier,
+      kind,
+      estimatedInr: kind === "image" ? 5 : 0.25,
+    }),
+  }).catch(() => null);
+
+  const limitData = limitRes ? await limitRes.json().catch(() => null) : null;
+
+  if (!limitRes || !limitRes.ok || limitData?.allowed === false || limitData?.ok === false) {
+    return NextResponse.json(
+      {
+        ok: false,
+        code: limitData?.code || "USAGE_LIMIT_EXCEEDED",
+        error: limitData?.message || "Usage limit exceeded for your plan.",
+        usage: limitData || null,
+        buyCreditsUrl: "/credits",
+      },
+      { status: limitRes?.status || 402 }
+    );
+  }
+
+  return null;
+}
+
+
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json().catch(() => ({}));
+
+    const buildSetuAgentRunHardGate = await enforceBuildSetuAgentRunHardGate(req, body);
+    if (buildSetuAgentRunHardGate) return buildSetuAgentRunHardGate;
 
     const projectId = sanitizeBuildSetuProjectId(body.projectId || body.selectedProjectId || "");
     const toolSlug = String(body.toolSlug || body.slug || "magic-brief").trim();
