@@ -237,6 +237,24 @@ function moduleForTool(toolSlugRaw: string, toolNameRaw: string, messageRaw: str
   const slug = lower(toolSlugRaw);
   const hay = lower(`${toolSlugRaw} ${toolNameRaw} ${messageRaw}`);
 
+  // BUILDSETU_BBS_TOOLSLUG_PRIORITY_ROUTING_V1
+  if (
+    slug === "bbs-generator" ||
+    slug === "bar-bending-schedule" ||
+    slug === "bar-bending-schedule-generator" ||
+    slug.includes("bbs") ||
+    slug.includes("bar-bending")
+  ) {
+    return {
+      taskType: "bbs_document",
+      module: "bbs",
+      outputMode: "document",
+      label: "BBS Generator",
+      deliverables: ["bar bending schedule draft", "member-wise steel summary", "engineer review checklist"],
+      safetyWarning: "BBS draft structural drawings aur licensed structural engineer review ke bina site execution ke liye valid nahi hai.",
+    };
+  }
+
   if (TOOL_MODULES[slug]) return TOOL_MODULES[slug];
 
   if (hay.includes("floor") || hay.includes("naksha") || hay.includes("layout")) return TOOL_MODULES["floor-plan-ai"];
@@ -535,6 +553,29 @@ function applyToolModuleRoutingOverride(baseModule: any, toolSlug: string, userT
   const slug = String(toolSlug || "").toLowerCase();
   const text = String(userText || "").toLowerCase();
   const merged = `${slug} ${text}`;
+
+  // BUILDSETU_BBS_ROUTING_OVERRIDE_GUARD_V1
+  // Keep BBS tool requests locked to BBS before generic material/knowledge overrides see words like "steel".
+  if (
+    slug === "bbs-generator" ||
+    slug === "bar-bending-schedule" ||
+    slug === "bar-bending-schedule-generator" ||
+    slug.includes("bbs") ||
+    slug.includes("bar-bending") ||
+    String(baseModule?.taskType || "") === "bbs_document"
+  ) {
+    return {
+      ...baseModule,
+      taskType: "bbs_document",
+      module: "bbs",
+      outputMode: "text",
+      label: baseModule?.label || "BBS Generator",
+      deliverables: Array.isArray(baseModule?.deliverables) && baseModule.deliverables.length
+        ? baseModule.deliverables
+        : ["bar bending schedule draft", "member-wise steel summary", "engineer review checklist"],
+      safetyWarning: baseModule?.safetyWarning || "BBS draft structural drawings aur licensed structural engineer review ke bina site execution ke liye valid nahi hai.",
+    };
+  }
 
 
   // Knowledge/explanation questions should answer as text, not demand a full image/layout brief.
