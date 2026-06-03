@@ -430,6 +430,33 @@ const baseTools: Record<string, ToolConfig> = {
     quickPrompts: ["Search BOQ", "Find BBS", "Find renders", "Search tool runs"],
     checklist: ["Select project", "Enter search query", "Review read-only results", "Use cited saved context"],
   },
+
+  "web-search": {
+    slug: "web-search",
+    toolSlug: "web-search",
+    name: "Web Search",
+    title: "Web Search",
+    category: "Research",
+    description: "Search public web sources and return cited research snippets for BuildSetu project work.",
+    outputLabel: "Web Search Results",
+    quickPrompts: ["Search public references", "Find official sources", "Research building rules", "Compare source citations"],
+    checklist: ["Enter search query or public URL", "Review cited sources", "Open useful references", "Save important sources to knowledge"],
+
+    placeholder: "Search public web sources or paste a public URL...",
+    cta: "Run Web Search",
+    inputLabel: "Search query or public URL",
+    inputType: "textarea",
+    examples: [
+      "latest low-cost residential construction material references",
+      "https://example.com",
+      "site:gov.in building bye laws residential setback",
+    ],
+    tags: ["research", "web", "citations"],
+    sections: ["Research Summary", "Source Citations", "Useful Findings", "Next Steps"],
+    nextActions: ["Open source", "Save to knowledge", "Run URL ingest", "Add to project notes"],
+    marker: "BUILDSETU_WEB_SEARCH_UI_ENTRY_V1",
+  },
+
   "url-ingest": {
     slug: "url-ingest",
     name: "URL Ingest",
