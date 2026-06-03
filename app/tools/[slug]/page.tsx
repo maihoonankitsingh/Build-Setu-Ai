@@ -2104,12 +2104,83 @@ export default function ToolWorkspacePage() {
 
         setMessages([...nextMessages, assistantMessage]);
 
+        const toolRows = Array.isArray(data?.items) ? data.items : []; // BUILDSETU_INTERNAL_TOOL_OUTPUT_POLISH_V1
+        const rowPreviewSections = toolRows.slice(0, 6).map((item: any, index: number) => {
+          const itemTitle =
+            item?.title ||
+            item?.name ||
+            item?.sourceCitation ||
+            item?.sourceUrl ||
+            item?.url ||
+            item?.id ||
+            `Result ${index + 1}`;
+
+          const itemText =
+            item?.summary ||
+            item?.snippet ||
+            item?.text ||
+            item?.content ||
+            item?.description ||
+            "";
+
+          return itemText
+            ? `${String(itemTitle).slice(0, 90)}: ${String(itemText).replace(/\\s+/g, " ").slice(0, 220)}`
+            : String(itemTitle).slice(0, 260);
+        });
+
+        const previewSections = (() => {
+          if (data?.code === "LOGIN_REQUIRED") {
+            return [
+              "Login required: is tool ko saved project data access ke liye active session chahiye.",
+              "Next action: Login page se sign in karke same tool dobara run karo.",
+              "Security: project database search unauthenticated users ke liye blocked hai.",
+            ];
+          }
+
+          if (data?.code === "CREDIT_CHECK_FAILED") {
+            return [
+              "Login/credits required: public URL reference ingest ke liye account aur available credits chahiye.",
+              "Next action: Credits page par plan/credit status check karo.",
+              "Safety: ingest auth + usage gate ke baad hi public URL fetch karega.",
+            ];
+          }
+
+          if (data?.code === "URL_NOT_ALLOWED") {
+            return [
+              "URL blocked: private, local, localhost, reserved ya internal network URLs allowed nahi hain.",
+              "Next action: sirf public website URL paste karo, for example manufacturer/spec/reference page.",
+              "Security: SSRF guard active hai.",
+            ];
+          }
+
+          if (ok && tool.slug === "url-ingest") {
+            return [
+              "Public URL reference processed.",
+              "Source metadata/citation Knowledge Inbox me review ke liye available hona chahiye.",
+              "Open Knowledge Inbox: /workspace/knowledge-inbox",
+            ];
+          }
+
+          if (rowPreviewSections.length) return rowPreviewSections;
+
+          return [
+            statusText || (ok ? "Tool run completed." : "Tool run failed."),
+            data?.code ? `Status code: ${data.code}` : ok ? "Status: OK" : "Status: Failed",
+            tool.slug === "project-db-search"
+              ? "Tip: broader terms try karo, jaise BOQ, BBS, render, project brief, memory."
+              : "Tip: public URL paste karo aur ingest ke baad Knowledge Inbox check karo.",
+          ].filter(Boolean);
+        })();
+
         setOutput(
           sanitizeToolOutput({
             title: tool.name,
             summary: statusText,
-            rows: Array.isArray(data?.items) ? data.items : [],
+            sections: previewSections,
+            rows: toolRows,
             raw: data,
+            sourceUrl: tool.slug === "url-ingest" ? prompt : "",
+            statusCode: data?.code || "",
           })
         );
 
