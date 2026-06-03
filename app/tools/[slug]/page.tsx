@@ -2023,7 +2023,115 @@ export default function ToolWorkspacePage() {
         buildSetuAgentFirstToolSlugs.has(currentToolSlugForPipeline));
 
     if (shouldUseBuildSetuAgentFirst) {
+  
+    // BUILDSETU_INTERNAL_TOOL_UI_DIRECT_RUN_V1
+    if (["project-db-search", "url-ingest"].includes(tool.slug)) {
       if (busy) return;
+
+      const typedRequirement = input.trim();
+      const prompt = typedRequirement || buildLocalPrompt(tool, selectedProject.title, messages);
+
+      const runUserMessage: ChatMessage | null = typedRequirement
+        ? {
+            id: makeId(),
+            role: "user",
+            text: typedRequirement,
+            time: nowTime(),
+          }
+        : null;
+
+      const nextMessages = runUserMessage ? [...messages, runUserMessage] : messages;
+
+      if (runUserMessage) {
+        setMessages(nextMessages);
+        setInput("");
+      }
+
+      setBusy("execute");
+      setActiveStep(2);
+
+      try {
+        const payload =
+          tool.slug === "project-db-search"
+            ? {
+                projectId,
+                slug: "project-db-search",
+                toolSlug: "project-db-search",
+                query: prompt,
+                prompt,
+                message: prompt,
+              }
+            : {
+                projectId,
+                slug: "url-ingest",
+                toolSlug: "url-ingest",
+                url: prompt,
+                sourceUrl: prompt,
+                title: selectedProject.title ? `${selectedProject.title} reference` : "Public URL reference",
+                domain: "buildsetu",
+                prompt,
+                message: prompt,
+              };
+
+        const res = await fetch("/api/tools/run", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          cache: "no-store",
+          body: JSON.stringify(payload),
+        });
+
+        const data = await res.json().catch(() => ({}));
+        const ok = Boolean(res.ok && data?.ok !== false);
+
+        const statusText =
+          data?.code === "LOGIN_REQUIRED"
+            ? "Login required hai. Is tool ko project scoped saved data access chahiye."
+            : data?.code === "CREDIT_CHECK_FAILED"
+              ? "Login/credits required hai. Credits page se plan/credits check karo."
+              : data?.code === "URL_NOT_ALLOWED"
+                ? "Private/local URL allowed nahi hai. Public website URL paste karo."
+                : data?.error || data?.message || data?.detail || (ok ? "Tool run completed." : "Tool run failed.");
+
+        const assistantMessage: ChatMessage = {
+          id: makeId(),
+          role: "assistant",
+          text: ok
+            ? `${tool.name} completed. ${data?.count ? `${data.count} item(s) processed.` : ""}`
+            : `${tool.name}: ${statusText}`,
+          time: nowTime(),
+        };
+
+        setMessages([...nextMessages, assistantMessage]);
+
+        setOutput(
+          sanitizeToolOutput({
+            title: tool.name,
+            summary: statusText,
+            rows: Array.isArray(data?.items) ? data.items : [],
+            raw: data,
+          })
+        );
+
+        setActiveStep(3);
+        return;
+      } catch (err) {
+        setMessages([
+          ...nextMessages,
+          {
+            id: makeId(),
+            role: "assistant",
+            text: err instanceof Error ? `Server/API issue: ${err.message}` : "Server/API unavailable hai. Thodi der baad retry karo.",
+            time: nowTime(),
+          },
+        ]);
+        return;
+      } finally {
+        setBusy("");
+      }
+    }
+
+    if (busy) return;
 
       const typedRequirementNow = input.trim();
       const basePromptNow =
