@@ -20,7 +20,10 @@ type ResearchDraftPayload = {
   source?: {
     title?: string;
     url?: string;
+    sourceUrl?: string;
     sourceType?: string;
+    sourceCitation?: string;
+    tags?: string[]; // BUILDSETU_RESEARCH_DRAFT_SOURCE_META_TYPES_V1
     publisher?: string;
     effectiveDate?: string;
     version?: string;
@@ -35,6 +38,7 @@ type ResearchDraftPayload = {
   };
   confidence?: "low" | "medium" | "high" | string;
   mergeTarget?: string;
+  tags?: string[]; // BUILDSETU_RESEARCH_DRAFT_TOP_LEVEL_TAGS_TYPE_FIX_V1
   smokeTestsRequired?: string[];
   createdBy?: string;
   notes?: string;
@@ -129,12 +133,18 @@ export async function POST(request: NextRequest) {
       source: {
         title: sourceTitle,
         url: safeString(payload.source?.url),
+        sourceUrl: safeString(payload.source?.sourceUrl, safeString(payload.source?.url)),
         sourceType: safeString(payload.source?.sourceType, "other"),
+        sourceCitation: safeString(
+          payload.source?.sourceCitation,
+          sourceTitle && safeString(payload.source?.url) ? `${sourceTitle} — ${safeString(payload.source?.url)}` : ""
+        ),
+        tags: safeStringArray(payload.source?.tags),
         publisher: safeString(payload.source?.publisher, "unknown"),
         dateAccessed: todayIso(),
         effectiveDate: safeString(payload.source?.effectiveDate, "unknown"),
         version: safeString(payload.source?.version, "unknown")
-      },
+      }, // BUILDSETU_RESEARCH_DRAFT_SOURCE_META_PRESERVE_V1
       extracted: {
         summary: safeString(payload.extracted?.summary),
         checklist: safeStringArray(payload.extracted?.checklist),
@@ -145,6 +155,7 @@ export async function POST(request: NextRequest) {
       },
       confidence,
       mergeTarget: safeString(payload.mergeTarget, "data/buildsetu-knowledge/*.json"),
+      tags: safeStringArray(payload.tags),
       smokeTestsRequired: safeStringArray(payload.smokeTestsRequired),
       createdBy: safeString(payload.createdBy, "BuildSetu Research Draft API"),
       notes: safeString(payload.notes),
