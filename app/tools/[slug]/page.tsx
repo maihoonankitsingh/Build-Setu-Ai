@@ -171,6 +171,8 @@ function stripInternalContextText(value: any) {
 function sanitizeToolOutput(output: any) {
   if (!output || typeof output !== "object") return output;
 
+
+
   const clean = JSON.parse(JSON.stringify(output));
 
   if (typeof clean.summary === "string") {
@@ -846,6 +848,111 @@ function BuildSetuToolOutputReadyListener() {
 
 
 
+
+function BuildSetuWebSearchSaveToKnowledgeCard({
+  output,
+  projectId,
+}: {
+  output: any;
+  projectId?: string;
+}) {
+  // BUILDSETU_WEB_SEARCH_SAVE_CARD_COMPONENT_V1
+  const [saving, setSaving] = useState(false);
+  const [message, setMessage] = useState("");
+  const [error, setError] = useState("");
+
+  const raw = output?.raw || {};
+  const rows = Array.isArray(output?.rows)
+    ? output.rows
+    : Array.isArray(raw?.items)
+      ? raw.items
+      : [];
+
+  const slugText = String(raw?.toolSlug || raw?.slug || output?.toolSlug || output?.slug || "").toLowerCase();
+  const internalTool = String(raw?.internalTool || "").toLowerCase();
+  const titleText = String(output?.title || raw?.title || "").toLowerCase();
+
+  const isWebSearch =
+    slugText === "web-search" ||
+    internalTool === "web_search" ||
+    titleText.includes("web search");
+
+  if (!isWebSearch || !rows.length) return null;
+
+  const saveQuery =
+    String(raw?.query || raw?.prompt || raw?.message || output?.sourceUrl || output?.summary || "web-search-ui-save").trim() ||
+    "web-search-ui-save";
+
+  return (
+    <div className="mt-4 rounded-2xl border border-emerald-400/30 bg-emerald-500/10 p-4">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <p className="text-sm font-semibold text-emerald-100">Save cited web results to Knowledge</p>
+          <p className="mt-1 text-xs text-emerald-100/75">
+            Saves sourceUrl/sourceCitation/snippet into BuildSetu Knowledge Inbox.
+          </p>
+          {message ? <p className="mt-2 text-xs font-semibold text-emerald-100">{message}</p> : null}
+          {error ? <p className="mt-2 text-xs font-semibold text-red-200">{error}</p> : null}
+        </div>
+
+        <div className="flex flex-wrap gap-2">
+          <button
+            type="button"
+            className="rounded-xl border border-emerald-300/40 px-4 py-2 text-sm font-semibold text-emerald-50 transition hover:bg-emerald-400/15 disabled:cursor-not-allowed disabled:opacity-60"
+            disabled={saving}
+            onClick={async () => {
+              // BUILDSETU_WEB_SEARCH_SAVE_CARD_HANDLER_V1
+              try {
+                setSaving(true);
+                setError("");
+                setMessage("");
+
+                const res = await fetch("/api/agent-knowledge/web-search-save", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  credentials: "include",
+                  cache: "no-store",
+                  body: JSON.stringify({
+                    projectId,
+                    query: saveQuery,
+                    prompt: saveQuery,
+                    message: saveQuery,
+                    domain: "web_search",
+                    tags: ["web_search", "public_reference", "ui_saved"],
+                    items: rows,
+                  }),
+                });
+
+                const data = await res.json().catch(() => ({}));
+                if (!res.ok || data?.ok === false) {
+                  throw new Error(data?.error || data?.message || data?.code || "Save to Knowledge failed.");
+                }
+
+                const savedCount = Number(data?.savedCount || rows.length || 0);
+                setMessage(`Saved ${savedCount} source(s). Open Knowledge Inbox to review.`);
+              } catch (err) {
+                setError(err instanceof Error ? err.message : "Save to Knowledge failed.");
+              } finally {
+                setSaving(false);
+              }
+            }}
+          >
+            {saving ? "Saving..." : "Save to Knowledge"}
+          </button>
+
+          <a
+            href="/workspace/knowledge-inbox"
+            className="rounded-xl border border-white/15 px-4 py-2 text-sm font-semibold text-white/85 transition hover:bg-white/10"
+          >
+            Open Knowledge Inbox
+          </a>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+
 function ToolChatMessageIcon({ role }: { role?: string }) {
   const isUser = role === "user";
 
@@ -1041,7 +1148,6 @@ function ToolMessageContent({ text, isUserMessage }: { text: string; isUserMessa
           ))}
         </div>
       ) : null}
-
       {(source || projectId) ? (
         <div className="bsu-tool-output-meta">
           {source ? <span>Source: {source}</span> : null}
@@ -2052,7 +2158,7 @@ export default function ToolWorkspacePage() {
     if (shouldUseBuildSetuAgentFirst) {
   
     // BUILDSETU_INTERNAL_TOOL_UI_DIRECT_RUN_V1
-    if (["project-db-search", "url-ingest"].includes(tool.slug)) {
+    if (["project-db-search", "url-ingest", "web-search"].includes(tool.slug)) { // BUILDSETU_WEB_SEARCH_UI_SAVE_TO_KNOWLEDGE_V1
       if (busy) return;
 
       const typedRequirement = input.trim();
@@ -2088,17 +2194,29 @@ export default function ToolWorkspacePage() {
                 prompt,
                 message: prompt,
               }
-            : {
-                projectId,
-                slug: "url-ingest",
-                toolSlug: "url-ingest",
-                url: prompt,
-                sourceUrl: prompt,
-                title: selectedProject.title ? `${selectedProject.title} reference` : "Public URL reference",
-                domain: "buildsetu",
-                prompt,
-                message: prompt,
-              };
+            : tool.slug === "web-search"
+              ? {
+                  projectId,
+                  slug: "web-search",
+                  toolSlug: "web-search",
+                  query: prompt,
+                  prompt,
+                  message: prompt,
+                  url: /^https?:\/\//i.test(prompt) ? prompt : "",
+                  sourceUrl: /^https?:\/\//i.test(prompt) ? prompt : "",
+                  limit: 5,
+                }
+              : {
+                  projectId,
+                  slug: "url-ingest",
+                  toolSlug: "url-ingest",
+                  url: prompt,
+                  sourceUrl: prompt,
+                  title: selectedProject.title ? `${selectedProject.title} reference` : "Public URL reference",
+                  domain: "buildsetu",
+                  prompt,
+                  message: prompt,
+                };
 
         const res = await fetch("/api/tools/run", {
           method: "POST",
@@ -2188,6 +2306,14 @@ export default function ToolWorkspacePage() {
             ];
           }
 
+          if (ok && tool.slug === "web-search" && rowPreviewSections.length) {
+            return [
+              ...rowPreviewSections,
+              "Save available: neeche Save to Knowledge button se cited web-search results knowledge me save kar sakte ho.",
+              "Open Knowledge Inbox after save: /workspace/knowledge-inbox",
+            ];
+          }
+
           if (rowPreviewSections.length) return rowPreviewSections;
 
           return [
@@ -2206,7 +2332,7 @@ export default function ToolWorkspacePage() {
             sections: previewSections,
             rows: toolRows,
             raw: data,
-            sourceUrl: tool.slug === "url-ingest" ? prompt : "",
+            sourceUrl: tool.slug === "url-ingest" || tool.slug === "web-search" ? prompt : "",
             statusCode: data?.code || "",
           })
         );
@@ -3032,6 +3158,12 @@ export default function ToolWorkspacePage() {
                       ))}
                     </div>
                   </div>
+
+                  <BuildSetuWebSearchSaveToKnowledgeCard
+                    output={output}
+                    projectId={projectId}
+                  /> {/* BUILDSETU_WEB_SEARCH_SAVE_CARD_RENDER_V1 */}
+
                 </div>
               )}
             </div>
