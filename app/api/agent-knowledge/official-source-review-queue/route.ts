@@ -203,6 +203,58 @@ function summarizeQueue(items: JsonObject[]) {
   };
 }
 
+function isAllowedReviewTransition(status: ReviewStatus) {
+  // BUILDSETU_OFFICIAL_SOURCE_REVIEW_ACTION_V1
+  return status === "pending_review" || status === "approved" || status === "rejected";
+}
+
+function normalizeReviewPayload(body: JsonObject) {
+  const itemId = cleanText(body?.itemId || body?.id || "", 240);
+  const statusRaw = cleanText(body?.status || "", 80);
+  const status: ReviewStatus | null = isReviewStatus(statusRaw) && isAllowedReviewTransition(statusRaw)
+    ? statusRaw
+    : null;
+
+  const reviewer = cleanText(body?.reviewer || body?.reviewedBy || "", 160);
+  const notes = cleanText(body?.notes || body?.reviewNotes || "", 4000);
+  const mergeReady = Boolean(body?.mergeReady === true);
+
+  return { itemId, status, reviewer, notes, mergeReady };
+}
+
+function applyReviewToItem(item: JsonObject, reviewInput: ReturnType<typeof normalizeReviewPayload>, userId: string) {
+  const reviewedAt = nowIso();
+  const status = reviewInput.status || "pending_review";
+  const mergeReady = status === "approved" ? reviewInput.mergeReady : false;
+
+  return {
+    ...item,
+    status,
+    updatedAt: reviewedAt,
+    nextAction:
+      status === "approved"
+        ? (mergeReady ? "ready_for_separate_merge_phase" : "approved_but_merge_not_ready")
+        : status === "rejected"
+          ? "source_rejected_manual_review"
+          : "manual_review_required",
+    reviewRequired: true,
+    mergePolicy: "manual_review_required",
+    autoMerge: false,
+    trustedKnowledgeChanged: false,
+    trustedMergeBlockedUntilApproved: !(status === "approved" && mergeReady),
+    review: {
+      ...(item.review || {}),
+      reviewer: reviewInput.reviewer || userId,
+      reviewedBy: userId,
+      reviewedAt,
+      notes: reviewInput.notes,
+      mergeReady,
+      status,
+      trustedMergeExecuted: false,
+    },
+  };
+}
+
 async function requireUser(req: NextRequest) {
   const token = req.cookies.get(AUTH_COOKIE)?.value;
   return getUserFromSession(token);
@@ -255,11 +307,70 @@ export async function POST(req: NextRequest) {
     const body = await req.json().catch(() => ({}));
     const action = cleanText(body?.action || "sync", 40);
 
-    if (action !== "sync") {
+    if (!["sync", "review"].includes(action)) {
       return NextResponse.json(
-        { ok: false, error: "UNSUPPORTED_ACTION", supportedActions: ["sync"] },
+        { ok: false, error: "UNSUPPORTED_ACTION", supportedActions: ["sync", "review"] },
         { status: 400 },
       );
+    }
+
+    if (action === "review") {
+      const reviewInput = normalizeReviewPayload(body);
+
+      if (!reviewInput.itemId || !reviewInput.status) {
+        return NextResponse.json(
+          {
+            ok: false,
+            error: "INVALID_REVIEW_PAYLOAD",
+            required: ["itemId", "status"],
+            allowedStatus: ["pending_review", "approved", "rejected"],
+          },
+          { status: 400 },
+        );
+      }
+
+      const queue = await loadQueue();
+      const existingItems = Array.isArray(queue.items) ? queue.items : [];
+      const index = existingItems.findIndex((item: JsonObject) => cleanText(item?.id || "", 240) === reviewInput.itemId);
+
+      if (index < 0) {
+        return NextResponse.json(
+          { ok: false, error: "REVIEW_QUEUE_ITEM_NOT_FOUND", itemId: reviewInput.itemId },
+          { status: 404 },
+        );
+      }
+
+      const nextItems = existingItems.map((item: JsonObject, itemIndex: number) =>
+        itemIndex === index ? applyReviewToItem(item, reviewInput, user.id) : item,
+      );
+
+      const updatedQueue = {
+        ...queue,
+        version: Number(queue.version || 1),
+        description: "BuildSetu official/trusted source review queue. No auto-merge.",
+        mergePolicy: "manual_review_required",
+        autoMerge: false,
+        items: nextItems,
+        updatedAt: nowIso(),
+        updatedBy: user.id,
+      };
+
+      await writeJson(projectPath(QUEUE_RELATIVE_PATH), updatedQueue);
+
+      const reviewedItem = nextItems[index];
+
+      return NextResponse.json({
+        ok: true,
+        code: "BUILDSETU_OFFICIAL_SOURCE_REVIEW_QUEUE_REVIEWED",
+        queuePath: QUEUE_RELATIVE_PATH,
+        item: reviewedItem,
+        summary: summarizeQueue(nextItems),
+        autoMerge: false,
+        mergePolicy: "manual_review_required",
+        trustedKnowledgeChanged: false,
+        trustedMergeExecuted: false,
+        userId: user.id,
+      });
     }
 
     const root = process.cwd();
