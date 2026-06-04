@@ -307,21 +307,223 @@ function scoreKnowledgeItem(item: any, q: string) {
   return score;
 }
 
-function rankKnowledgeItems(items: any[], q: string, limit: number) {
-  const ranked = [...items]
-    .map((item, index) => ({
-      ...item,
-      score: scoreKnowledgeItem(item, q),
-      _rankIndex: index,
-    }))
-    .sort((a, b) => {
-      if ((b.score || 0) !== (a.score || 0)) return (b.score || 0) - (a.score || 0);
-      return (a._rankIndex || 0) - (b._rankIndex || 0);
-    })
-    .slice(0, Math.max(1, Math.min(Number(limit || 50), 200)))
-    .map(({ _rankIndex, ...item }) => item);
+function bsKnowledgeNormalize(value: unknown) {
+  // BUILDSETU_KNOWLEDGE_DOMAIN_AWARE_SEARCH_V1
+  return String(value || "")
+    .toLowerCase()
+    .replace(/[^a-z0-9_+.-]+/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
 
-  return ranked;
+const BS_KNOWLEDGE_DOMAIN_KEYWORDS: Record<string, string[]> = {
+  architecture_planning: [
+    "floor plan", "planning", "layout", "space", "room", "circulation", "zoning", "setback", "ventilation", "plot", "facing", "site"
+  ],
+  interior_design: [
+    "interior", "kitchen", "wardrobe", "false ceiling", "lighting", "furniture", "finishes", "storage", "tv unit", "modular", "clearance"
+  ],
+  exterior_design: [
+    "exterior", "elevation", "facade", "front", "balcony", "terrace", "cladding", "massing", "opening", "compound wall"
+  ],
+  civil_construction: [
+    "construction", "foundation", "rcc", "masonry", "plaster", "waterproofing", "site work", "curing", "concrete", "shuttering"
+  ],
+  construction_materials: [
+    "material", "cement", "steel", "sand", "aggregate", "brick", "block", "tile", "paint", "wood", "glass", "hardware"
+  ],
+  vastu_guidance: [
+    "vastu", "pooja", "north east", "south west", "entrance", "orientation", "mandir", "kitchen direction", "bedroom direction"
+  ],
+  units_dimensions: [
+    "dimension", "unit", "feet", "meter", "metre", "mm", "sqm", "sqft", "clearance", "door size", "window size", "stair", "parking"
+  ],
+  boq: [
+    "boq", "quantity", "takeoff", "rate", "item", "estimation", "cost", "cement", "steel", "brick", "plaster", "scope"
+  ],
+  bbs: [
+    "bbs", "bar bending", "reinforcement", "rebar", "cut length", "shape code", "stirrup", "main bar", "steel schedule"
+  ],
+  mep_basics: [
+    "mep", "plumbing", "electrical", "hvac", "drainage", "shaft", "pipe", "wiring", "db", "switch", "water supply"
+  ],
+  approvals_bylaws: [
+    "approval", "bylaw", "bye law", "byelaw", "far", "fsi", "setback", "height", "noc", "fire", "authority", "permit", "nbc", "bis"
+  ],
+  quality_check: [
+    "quality", "checklist", "inspection", "snag", "testing", "workmanship", "handover", "site qc", "defect"
+  ],
+  execution_planning: [
+    "execution", "schedule", "sequence", "procurement", "labour", "labor", "timeline", "task", "phase", "workflow"
+  ]
+};
+
+function bsInferKnowledgeDomains(query: string, requestedDomain: string) {
+  const normalizedQuery = bsKnowledgeNormalize(query);
+  const requested = bsKnowledgeNormalize(requestedDomain || "all");
+
+  const scores: Record<string, number> = {};
+  for (const [domain, keywords] of Object.entries(BS_KNOWLEDGE_DOMAIN_KEYWORDS)) {
+    let score = 0;
+
+    if (requested && requested !== "all" && requested === domain) {
+      score += 100;
+    }
+
+    for (const keyword of keywords) {
+      const k = bsKnowledgeNormalize(keyword);
+      if (!k) continue;
+      if (normalizedQuery.includes(k)) score += Math.max(8, k.length);
+    }
+
+    if (score > 0) scores[domain] = score;
+  }
+
+  const inferredDomains = Object.entries(scores)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 4)
+    .map(([domain]) => domain);
+
+  return {
+    requestedDomain: requested || "all",
+    inferredDomains,
+    scores,
+    primaryDomain: inferredDomains[0] || (requested !== "all" ? requested : "general"),
+  };
+}
+
+function bsReadKnowledgeTaxonomyDomains() {
+  try {
+    const raw = readFileSync(join(process.cwd(), "config/buildsetu-knowledge-taxonomy.json"), "utf-8");
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed?.domains) ? parsed.domains : [];
+  } catch {
+    return [];
+  }
+}
+
+function bsBuildTaxonomyKnowledgeItems(domainIntent: any) {
+  const domains = bsReadKnowledgeTaxonomyDomains();
+  const wanted = new Set<string>(domainIntent?.inferredDomains || []);
+
+  return domains
+    .filter((domain: any) => !wanted.size || wanted.has(String(domain?.id || "")))
+    .map((domain: any) => {
+      const id = String(domain?.id || "taxonomy_domain");
+      const title = String(domain?.title || id);
+      const scope = Array.isArray(domain?.scope) ? domain.scope : [];
+      const outputUse = Array.isArray(domain?.outputUse) ? domain.outputUse : [];
+      const reviewLevel = String(domain?.reviewLevel || "");
+
+      return {
+        id: `taxonomy-${id}`,
+        projectId: "global",
+        scope: "global",
+        domain: id,
+        sourceType: "taxonomy",
+        title: `${title} domain guide`,
+        text: [
+          `BuildSetu taxonomy domain: ${title}`,
+          `Domain id: ${id}`,
+          reviewLevel ? `Review level: ${reviewLevel}` : "",
+          scope.length ? `Scope: ${scope.join(", ")}` : "",
+          outputUse.length ? `Output use: ${outputUse.join(", ")}` : "",
+        ].filter(Boolean).join("\n"),
+        url: "",
+        imageUrl: "",
+        tags: ["taxonomy", "domain_guide", id],
+        extracted: {
+          planningRules: scope,
+          styleNotes: [],
+          constraints: reviewLevel ? [`Review level: ${reviewLevel}`] : [],
+          roomIdeas: [],
+          materialIdeas: [],
+          structuralNotes: [],
+          warnings: reviewLevel.includes("required") ? ["Professional review required for final use."] : [],
+        },
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        taxonomyDomain: true,
+      };
+    });
+}
+
+function bsKnowledgeItemText(item: any) {
+  return bsKnowledgeNormalize([
+    item?.title,
+    item?.domain,
+    item?.sourceType,
+    Array.isArray(item?.tags) ? item.tags.join(" ") : "",
+    item?.text,
+    item?.sourceUrl,
+    item?.sourceCitation,
+  ].filter(Boolean).join(" "));
+}
+
+function bsDomainMatchScore(item: any, domainIntent: any) {
+  const inferredDomains = Array.isArray(domainIntent?.inferredDomains) ? domainIntent.inferredDomains : [];
+  if (!inferredDomains.length) return 0;
+
+  const itemDomain = bsKnowledgeNormalize(item?.domain);
+  const itemTags = Array.isArray(item?.tags) ? item.tags.map(bsKnowledgeNormalize) : [];
+  const text = bsKnowledgeItemText(item);
+
+  let score = 0;
+
+  inferredDomains.forEach((domain: string, index: number) => {
+    const weight = Math.max(10, 40 - index * 8);
+    const normalizedDomain = bsKnowledgeNormalize(domain);
+
+    if (itemDomain === normalizedDomain) score += weight + 35;
+    if (itemTags.includes(normalizedDomain)) score += weight + 20;
+    if (text.includes(normalizedDomain.replace(/_/g, " "))) score += weight;
+  });
+
+  if (item?.taxonomyDomain) score += 120;
+  if (String(item?.title || "").toLowerCase().includes("smoke")) score -= 35;
+  if (String(item?.title || "").toLowerCase().includes("vision limit")) score -= 45;
+
+  return score;
+}
+
+function bsSearchTokenScore(item: any, q: string) {
+  const text = bsKnowledgeItemText(item);
+  const tokens = bsKnowledgeNormalize(q)
+    .split(" ")
+    .filter((token) => token.length >= 3)
+    .filter((token) => !["the", "and", "for", "with", "all", "this", "that", "hai", "batao"].includes(token));
+
+  let score = 0;
+  for (const token of tokens) {
+    if (text.includes(token)) score += 8 + Math.min(10, token.length);
+  }
+
+  return score;
+}
+
+function bsAttachDomainScore(item: any, q: string, domainIntent: any) {
+  const baseScore = Number(item?.score || 0);
+  const tokenScore = bsSearchTokenScore(item, q);
+  const domainScore = bsDomainMatchScore(item, domainIntent);
+  const sourceScore = item?.sourceCitation || item?.sourceUrl ? 12 : 0;
+  const score = baseScore + tokenScore + domainScore + sourceScore;
+
+  return {
+    ...item,
+    score,
+    domainScore,
+    matchedDomains: Array.isArray(domainIntent?.inferredDomains) ? domainIntent.inferredDomains : [],
+  };
+}
+
+function rankKnowledgeItems(items: any[], q: string, limit: number, domainIntent?: any) {
+  // BUILDSETU_KNOWLEDGE_DOMAIN_RANKING_V1
+  const ranked = [...items]
+    .map((item) => bsAttachDomainScore(item, q, domainIntent || bsInferKnowledgeDomains(q, "all")))
+    .filter((item) => Number(item.score || 0) > 0 || item?.taxonomyDomain)
+    .sort((a, b) => Number(b.score || 0) - Number(a.score || 0));
+
+  return ranked.slice(0, Math.max(1, Math.min(limit, 50)));
 }
 
 function rankFallbackItems(items: any[], q: string, limit: number) {
@@ -332,7 +534,10 @@ function handleSearch(input: SearchInput) {
   const projectId = safe(input.projectId || "global") || "global";
   const domain = safe(input.domain || "all") || "all";
   const q = safe(input.q || input.query || "");
-  const limit = Math.max(1, Math.min(Number(input.limit || 50), 200));
+  
+  const requestedDomain = safe(input.domain || "all") || "all";
+  const domainIntent = bsInferKnowledgeDomains(q, requestedDomain); // BUILDSETU_KNOWLEDGE_DOMAIN_INTENT_V1
+const limit = Math.max(1, Math.min(Number(input.limit || 50), 200));
   const searchDepth = Math.max(limit, 50);
 
   const items = listBuildSetuKnowledge({
@@ -343,7 +548,8 @@ function handleSearch(input: SearchInput) {
 
   
   const webSearchKnowledgeItems = loadBuildSetuWebSearchKnowledgeItems(); // BUILDSETU_SEARCH_WEB_SEARCH_STORE_SYNC_LOADER_V1
-  const searchableItems = [...webSearchKnowledgeItems, ...(items as any[])]; // BUILDSETU_SEARCH_WEB_SEARCH_ITEMS_MERGED_V1
+  const taxonomyKnowledgeItems = bsBuildTaxonomyKnowledgeItems(domainIntent); // BUILDSETU_KNOWLEDGE_TAXONOMY_ITEMS_MERGED_V1
+  const searchableItems = [...taxonomyKnowledgeItems, ...webSearchKnowledgeItems, ...(items as any[])]; // BUILDSETU_SEARCH_WEB_SEARCH_ITEMS_MERGED_V1
 const context = buildKnowledgeContextForAgent({
     projectId,
     domain: domain as any,
@@ -361,6 +567,8 @@ return {
     projectId,
     domain,
     q,
+    domainIntent, // BUILDSETU_KNOWLEDGE_DOMAIN_RESPONSE_V1
+    taxonomyDomainCount: taxonomyKnowledgeItems.length,
     count: finalItems.length,
     items: finalItemsWithCitations,
     sourceCitations: finalItemsWithCitations.map((item: any) => item.sourceCitation).filter(Boolean),
