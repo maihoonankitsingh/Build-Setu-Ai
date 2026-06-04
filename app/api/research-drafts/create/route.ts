@@ -3,122 +3,19 @@ import { promises as fs } from "fs";
 import path from "path";
 import { NextRequest, NextResponse } from "next/server";
 
-function getCookieValueFromHeader(cookieHeader: string, name: string): string {
-  // BUILDSETU_RESEARCH_DRAFT_CREATE_AUTH_GATE_V2
-  const parts = String(cookieHeader || "").split(";");
-  for (const part of parts) {
-    const idx = part.indexOf("=");
-    if (idx < 0) continue;
-    const key = part.slice(0, idx).trim();
-    if (key !== name) continue;
-    return decodeURIComponent(part.slice(idx + 1).trim());
-  }
-  return "";
-}
+import { AUTH_COOKIE, getUserFromSession } from "@/lib/auth-store";
 
-async function fileContainsText(filePath: string, needle: string): Promise<boolean> {
-  try {
-    const stat = await fs.stat(filePath);
-    if (!stat.isFile() || stat.size > 5_000_000) return false;
-    const text = await fs.readFile(filePath, "utf8");
-    return text.includes(needle);
-  } catch {
-    return false;
-  }
-}
+async function requireResearchDraftCreateAuth(request: NextRequest): Promise<boolean> {
+  // BUILDSETU_RESEARCH_DRAFT_CREATE_AUTH_GATE_V4_DIRECT_AUTH_STORE
+  const token = request.cookies.get(AUTH_COOKIE)?.value;
+  const user = await getUserFromSession(token);
 
-async function sessionTokenExistsInDataDir(token: string): Promise<boolean> {
-  if (!token || token.length < 24) return false;
-
-  const root = path.join(process.cwd(), "data");
-  const allowedExt = new Set([".json", ".jsonl", ".txt"]);
-  const queue: string[] = [root];
-  let scanned = 0;
-
-  while (queue.length && scanned < 1500) {
-    const dir = queue.shift()!;
-    let entries: import("fs").Dirent[];
-
-    try {
-      entries = await fs.readdir(dir, { withFileTypes: true });
-    } catch {
-      continue;
-    }
-
-    for (const entry of entries) {
-      const full = path.join(dir, entry.name);
-
-      if (entry.isDirectory()) {
-        if (
-          entry.name === "node_modules" ||
-          entry.name === ".next" ||
-          entry.name === ".git"
-        ) {
-          continue;
-        }
-        queue.push(full);
-        continue;
-      }
-
-      if (!entry.isFile()) continue;
-      if (!allowedExt.has(path.extname(entry.name).toLowerCase())) continue;
-
-      scanned += 1;
-      if (await fileContainsText(full, token)) return true;
-    }
-  }
-
-  return false;
-}
-
-async function authMeAcceptsCookie(request: Request, cookie: string): Promise<boolean> {
-  try {
-    const authUrl = new URL("/api/auth/me", request.url);
-    const response = await fetch(authUrl.toString(), {
-      headers: {
-        cookie,
-        "cache-control": "no-cache",
-        "x-buildsetu-internal-auth-check": "research-draft-create",
-      },
-      cache: "no-store",
-    });
-
-    if (!response.ok) return false;
-
-    const data = await response.json().catch(() => null);
-    const user =
-      data?.user ??
-      data?.session?.user ??
-      data?.account ??
-      data?.profile ??
-      null;
-
-    if (user && typeof user === "object") {
-      return Boolean(
-        user.id ??
-          user.email ??
-          user.phone ??
-          user.name ??
-          user.role
-      );
-    }
-
-    return data?.authenticated === true || data?.isAuthenticated === true || data?.ok === true;
-  } catch {
-    return false;
-  }
-}
-
-async function requireResearchDraftCreateAuth(request: Request): Promise<boolean> {
-  const cookie = request.headers.get("cookie") ?? "";
-  if (!cookie.trim()) return false;
-
-  if (await authMeAcceptsCookie(request, cookie)) return true;
-
-  const buildSetuSession = getCookieValueFromHeader(cookie, "buildsetu_session");
-  if (await sessionTokenExistsInDataDir(buildSetuSession)) return true;
-
-  return false;
+  return Boolean(
+    user?.id ||
+      user?.email ||
+      user?.phone ||
+      user?.name
+  );
 }
 
 export const runtime = "nodejs";
