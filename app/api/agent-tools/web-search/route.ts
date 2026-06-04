@@ -522,16 +522,20 @@ function buildSetuTitleFromUrl(url: URL) {
 }
 
 function buildSetuDirectUrlMetadataItem(inputUrl: string, reason: string): WebResearchItem {
+  // BUILDSETU_WEB_SEARCH_SANITIZED_METADATA_FALLBACK_V1
+  void reason;
+
   const url = normalizeBuildSetuHttpUrl(inputUrl);
   const title = buildSetuTitleFromUrl(url);
+  const fallbackNote = "Official source metadata fallback. Source preview unavailable; source URL retained for citation.";
 
   return {
     title,
     url: url.toString(),
     sourceUrl: url.toString(),
     sourceCitation: `${title} — ${url.toString()}`,
-    snippet: `Direct official source metadata fallback. Reason: ${cleanText(reason)}`,
-    textPreview: `Direct official source metadata fallback. Source URL: ${url.toString()}`,
+    snippet: fallbackNote,
+    textPreview: `${fallbackNote} Source URL: ${url.toString()}`,
     domain: url.hostname.replace(/^www\./, ""),
     fetchedAt: new Date().toISOString(),
   };
