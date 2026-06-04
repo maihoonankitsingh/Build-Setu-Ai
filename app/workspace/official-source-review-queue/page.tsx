@@ -2,6 +2,8 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 
+type ReviewStatus = "pending_review" | "approved" | "rejected";
+
 type QueueItem = {
   id: string;
   status: string;
@@ -17,6 +19,15 @@ type QueueItem = {
   autoMerge?: boolean;
   nextAction?: string;
   reviewChecklist?: string[];
+  review?: {
+    reviewer?: string;
+    reviewedBy?: string;
+    reviewedAt?: string;
+    notes?: string;
+    mergeReady?: boolean;
+    status?: string;
+    trustedMergeExecuted?: boolean;
+  };
 };
 
 type QueueResponse = {
@@ -40,25 +51,44 @@ type QueueResponse = {
   updatedAt?: string;
 };
 
+type ReviewFormState = {
+  reviewer: string;
+  notes: string;
+  mergeReady: boolean;
+};
+
 function formatCountMap(value?: Record<string, number>) {
   const entries = Object.entries(value || {}).sort((a, b) => b[1] - a[1]);
-
   if (!entries.length) return "None";
-
   return entries.map(([key, count]) => `${key}: ${count}`).join(" · ");
 }
 
 function statusBadge(status: string) {
-  const normalized = String(status || "unknown").replace(/_/g, " ");
-  return normalized;
+  return String(status || "unknown").replace(/_/g, " ");
+}
+
+function statusClass(status: string) {
+  if (status === "approved") return "border-emerald-400/40 bg-emerald-950/30 text-emerald-100";
+  if (status === "rejected") return "border-red-400/40 bg-red-950/30 text-red-100";
+  return "border-amber-400/40 bg-amber-950/30 text-amber-100";
+}
+
+function initialFormState(item: QueueItem): ReviewFormState {
+  return {
+    reviewer: item.review?.reviewer || "workspace-review",
+    notes: item.review?.notes || "",
+    mergeReady: Boolean(item.review?.mergeReady),
+  };
 }
 
 export default function OfficialSourceReviewQueuePage() {
   const [data, setData] = useState<QueueResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [syncing, setSyncing] = useState(false);
+  const [reviewingId, setReviewingId] = useState("");
   const [error, setError] = useState("");
   const [lastAction, setLastAction] = useState("");
+  const [reviewForms, setReviewForms] = useState<Record<string, ReviewFormState>>({});
 
   const loadQueue = useCallback(async () => {
     setLoading(true);
@@ -78,6 +108,12 @@ export default function OfficialSourceReviewQueuePage() {
       }
 
       setData(json);
+
+      const nextForms: Record<string, ReviewFormState> = {};
+      for (const item of json.items || []) {
+        nextForms[item.id] = initialFormState(item);
+      }
+      setReviewForms(nextForms);
     } catch (err: any) {
       setError(err?.message || "Failed to load review queue.");
     } finally {
@@ -110,6 +146,13 @@ export default function OfficialSourceReviewQueuePage() {
       }
 
       setData(json);
+
+      const nextForms: Record<string, ReviewFormState> = {};
+      for (const item of json.items || []) {
+        nextForms[item.id] = initialFormState(item);
+      }
+      setReviewForms(nextForms);
+
       setLastAction(
         `Synced. Created ${json.created ?? 0}, preserved ${json.preserved ?? 0}. Trusted knowledge changed: ${
           json.trustedKnowledgeChanged ? "yes" : "no"
@@ -121,6 +164,83 @@ export default function OfficialSourceReviewQueuePage() {
       setSyncing(false);
     }
   }, []);
+
+  const updateReviewForm = useCallback((itemId: string, patch: Partial<ReviewFormState>) => {
+    setReviewForms((current) => ({
+      ...current,
+      [itemId]: {
+        reviewer: current[itemId]?.reviewer || "workspace-review",
+        notes: current[itemId]?.notes || "",
+        mergeReady: current[itemId]?.mergeReady || false,
+        ...patch,
+      },
+    }));
+  }, []);
+
+  const submitReview = useCallback(
+    async (item: QueueItem, status: ReviewStatus) => {
+      setReviewingId(item.id);
+      setError("");
+      setLastAction("");
+
+      const form = reviewForms[item.id] || initialFormState(item);
+
+      try {
+        const res = await fetch("/api/agent-knowledge/official-source-review-queue", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          cache: "no-store",
+          credentials: "same-origin",
+          body: JSON.stringify({
+            action: "review",
+            itemId: item.id,
+            status,
+            reviewer: form.reviewer || "workspace-review",
+            notes: form.notes,
+            mergeReady: status === "approved" ? form.mergeReady : false,
+          }),
+        });
+
+        const json = (await res.json().catch(() => null)) as QueueResponse & {
+          item?: QueueItem;
+          trustedKnowledgeChanged?: boolean;
+          trustedMergeExecuted?: boolean;
+        };
+
+        if (!res.ok || !json?.ok) {
+          throw new Error(json?.error || `Review update failed with ${res.status}`);
+        }
+
+        setData((current) => {
+          if (!current) return json;
+          const updatedItem = json.item;
+          const currentItems = current.items || [];
+          return {
+            ...current,
+            summary: json.summary || current.summary,
+            items: updatedItem
+              ? currentItems.map((existing) => (existing.id === updatedItem.id ? updatedItem : existing))
+              : currentItems,
+          };
+        });
+
+        if (json.item) {
+          updateReviewForm(json.item.id, initialFormState(json.item));
+        }
+
+        setLastAction(
+          `Review saved as ${status.replace(/_/g, " ")}. Trusted knowledge changed: ${
+            json.trustedKnowledgeChanged ? "yes" : "no"
+          }. Trusted merge executed: ${json.trustedMergeExecuted ? "yes" : "no"}.`,
+        );
+      } catch (err: any) {
+        setError(err?.message || "Failed to save review action.");
+      } finally {
+        setReviewingId("");
+      }
+    },
+    [reviewForms, updateReviewForm],
+  );
 
   useEffect(() => {
     loadQueue();
@@ -142,9 +262,8 @@ export default function OfficialSourceReviewQueuePage() {
                 Official Source Review Queue
               </h1>
               <p className="mt-3 max-w-3xl text-sm leading-6 text-slate-300">
-                Read/sync-only visibility for trusted source candidates. This page does not approve,
-                reject, merge, or write trusted knowledge. Sources must pass manual review before any
-                trusted merge.
+                Review source candidates, add notes, and mark approve/reject/pending. This page still
+                does not merge trusted knowledge. Merge remains a separate future phase.
               </p>
             </div>
 
@@ -158,7 +277,7 @@ export default function OfficialSourceReviewQueuePage() {
               <button
                 type="button"
                 onClick={loadQueue}
-                disabled={loading || syncing}
+                disabled={loading || syncing || Boolean(reviewingId)}
                 className="rounded-2xl border border-slate-700 px-4 py-2 text-sm font-semibold text-slate-200 hover:border-cyan-400 hover:text-cyan-200 disabled:opacity-50"
               >
                 Refresh
@@ -166,7 +285,7 @@ export default function OfficialSourceReviewQueuePage() {
               <button
                 type="button"
                 onClick={syncQueue}
-                disabled={loading || syncing}
+                disabled={loading || syncing || Boolean(reviewingId)}
                 className="rounded-2xl bg-cyan-400 px-4 py-2 text-sm font-bold text-slate-950 hover:bg-cyan-300 disabled:opacity-50"
               >
                 {syncing ? "Syncing..." : "Sync from source packs"}
@@ -174,6 +293,15 @@ export default function OfficialSourceReviewQueuePage() {
             </div>
           </div>
         </header>
+
+        <section
+          data-buildsetu-marker="BUILDSETU_OFFICIAL_SOURCE_REVIEW_ACTIONS_UI_V2"
+          className="rounded-2xl border border-amber-400/30 bg-amber-950/20 p-4 text-sm text-amber-100"
+        >
+          Review controls available after sync: Approve notes only, Reject source, Back to pending.
+          No trusted merge button is present. Trusted knowledge remains unchanged until a separate
+          merge phase is implemented and verified.
+        </section>
 
         {error ? (
           <section className="rounded-2xl border border-red-500/40 bg-red-950/40 p-4 text-sm text-red-100">
@@ -228,61 +356,145 @@ export default function OfficialSourceReviewQueuePage() {
         </section>
 
         <section className="rounded-2xl border border-slate-800 bg-slate-900/70 p-5">
-          <h2 className="text-lg font-bold text-white">Pending review items</h2>
+          <h2 className="text-lg font-bold text-white">Review queue items</h2>
 
           {loading ? (
             <p className="mt-4 text-sm text-slate-400">Loading queue...</p>
           ) : items.length ? (
             <div className="mt-4 space-y-4">
-              {items.map((item) => (
-                <article key={item.id} className="rounded-2xl border border-slate-800 bg-slate-950/70 p-4">
-                  <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
-                    <div>
-                      <p className="text-xs font-semibold uppercase tracking-[0.22em] text-cyan-300">
-                        {statusBadge(item.status)}
-                      </p>
-                      <h3 className="mt-2 text-lg font-bold text-white">{item.title}</h3>
-                      <a
-                        href={item.url}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="mt-1 block break-all text-sm text-cyan-300 hover:text-cyan-200"
-                      >
-                        {item.url}
-                      </a>
+              {items.map((item) => {
+                const form = reviewForms[item.id] || initialFormState(item);
+                const isBusy = reviewingId === item.id;
+
+                return (
+                  <article key={item.id} className="rounded-2xl border border-slate-800 bg-slate-950/70 p-4">
+                    <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
+                      <div>
+                        <p
+                          className={`inline-flex rounded-full border px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] ${statusClass(
+                            item.status,
+                          )}`}
+                        >
+                          {statusBadge(item.status)}
+                        </p>
+                        <h3 className="mt-3 text-lg font-bold text-white">{item.title}</h3>
+                        <a
+                          href={item.url}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="mt-1 block break-all text-sm text-cyan-300 hover:text-cyan-200"
+                        >
+                          {item.url}
+                        </a>
+                      </div>
+                      <div className="rounded-xl border border-amber-400/30 bg-amber-950/30 px-3 py-2 text-xs font-semibold text-amber-100">
+                        {item.trustedMergeBlockedUntilApproved
+                          ? "Merge blocked until approved"
+                          : "Approved for separate merge phase only"}
+                      </div>
                     </div>
-                    <div className="rounded-xl border border-amber-400/30 bg-amber-950/30 px-3 py-2 text-xs font-semibold text-amber-100">
-                      Merge blocked until approved
-                    </div>
-                  </div>
 
-                  <div className="mt-4 flex flex-wrap gap-2">
-                    {(item.domains || []).map((domain) => (
-                      <span
-                        key={`${item.id}-${domain}`}
-                        className="rounded-full border border-slate-700 px-3 py-1 text-xs text-slate-300"
-                      >
-                        {domain}
-                      </span>
-                    ))}
-                  </div>
-
-                  <div className="mt-4 grid gap-3 text-xs text-slate-400 md:grid-cols-3">
-                    <p>Source pack: {item.sourcePackId || "none"}</p>
-                    <p>Policy: {item.mergePolicy || "manual_review_required"}</p>
-                    <p>Auto merge: {item.autoMerge ? "true" : "false"}</p>
-                  </div>
-
-                  <div className="mt-4">
-                    <p className="text-sm font-semibold text-slate-100">Review checklist</p>
-                    <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-slate-300">
-                      {(item.reviewChecklist || []).map((step) => (
-                        <li key={`${item.id}-${step}`}>{step}</li>
+                    <div className="mt-4 flex flex-wrap gap-2">
+                      {(item.domains || []).map((domain) => (
+                        <span
+                          key={`${item.id}-${domain}`}
+                          className="rounded-full border border-slate-700 px-3 py-1 text-xs text-slate-300"
+                        >
+                          {domain}
+                        </span>
                       ))}
-                    </ul>
-                  </div>
-                </article>
-              ))}
+                    </div>
+
+                    <div className="mt-4 grid gap-3 text-xs text-slate-400 md:grid-cols-3">
+                      <p>Source pack: {item.sourcePackId || "none"}</p>
+                      <p>Policy: {item.mergePolicy || "manual_review_required"}</p>
+                      <p>Auto merge: {item.autoMerge ? "true" : "false"}</p>
+                    </div>
+
+                    <div className="mt-5 grid gap-4 md:grid-cols-[1fr_2fr]">
+                      <div className="space-y-3">
+                        <label className="block">
+                          <span className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
+                            Reviewer
+                          </span>
+                          <input
+                            value={form.reviewer}
+                            onChange={(event) => updateReviewForm(item.id, { reviewer: event.target.value })}
+                            className="mt-2 w-full rounded-xl border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-white outline-none focus:border-cyan-400"
+                            placeholder="reviewer name"
+                          />
+                        </label>
+
+                        <label className="flex items-center gap-2 rounded-xl border border-slate-800 bg-slate-900/70 px-3 py-2 text-sm text-slate-200">
+                          <input
+                            type="checkbox"
+                            checked={form.mergeReady}
+                            onChange={(event) => updateReviewForm(item.id, { mergeReady: event.target.checked })}
+                            className="h-4 w-4"
+                          />
+                          Merge-ready after approval only
+                        </label>
+                      </div>
+
+                      <label className="block">
+                        <span className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
+                          Review notes
+                        </span>
+                        <textarea
+                          value={form.notes}
+                          onChange={(event) => updateReviewForm(item.id, { notes: event.target.value })}
+                          className="mt-2 min-h-28 w-full rounded-xl border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-white outline-none focus:border-cyan-400"
+                          placeholder="Add authority/applicability/date/quality notes. No trusted merge happens here."
+                        />
+                      </label>
+                    </div>
+
+                    <div className="mt-4 flex flex-wrap gap-3">
+                      <button
+                        type="button"
+                        disabled={Boolean(reviewingId)}
+                        onClick={() => submitReview(item, "approved")}
+                        className="rounded-xl bg-emerald-400 px-4 py-2 text-sm font-bold text-slate-950 hover:bg-emerald-300 disabled:opacity-50"
+                      >
+                        {isBusy ? "Saving..." : "Approve notes only"}
+                      </button>
+                      <button
+                        type="button"
+                        disabled={Boolean(reviewingId)}
+                        onClick={() => submitReview(item, "rejected")}
+                        className="rounded-xl bg-red-400 px-4 py-2 text-sm font-bold text-slate-950 hover:bg-red-300 disabled:opacity-50"
+                      >
+                        Reject source
+                      </button>
+                      <button
+                        type="button"
+                        disabled={Boolean(reviewingId)}
+                        onClick={() => submitReview(item, "pending_review")}
+                        className="rounded-xl border border-slate-700 px-4 py-2 text-sm font-bold text-slate-200 hover:border-cyan-400 hover:text-cyan-200 disabled:opacity-50"
+                      >
+                        Back to pending
+                      </button>
+                    </div>
+
+                    {item.review?.reviewedAt ? (
+                      <div className="mt-4 rounded-xl border border-slate-800 bg-slate-900/70 p-3 text-xs text-slate-300">
+                        Last reviewed: {item.review.reviewedAt} · Reviewer: {item.review.reviewer || item.review.reviewedBy || "unknown"} ·
+                        Merge ready: {item.review.mergeReady ? "yes" : "no"} · Trusted merge executed:{" "}
+                        {item.review.trustedMergeExecuted ? "yes" : "no"}
+                      </div>
+                    ) : null}
+
+                    <div className="mt-4">
+                      <p className="text-sm font-semibold text-slate-100">Review checklist</p>
+                      <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-slate-300">
+                        {(item.reviewChecklist || []).map((step) => (
+                          <li key={`${item.id}-${step}`}>{step}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  </article>
+                );
+              })}
             </div>
           ) : (
             <div className="mt-4 rounded-2xl border border-dashed border-slate-700 p-5 text-sm text-slate-400">
