@@ -1,6 +1,160 @@
 "use client";
 import ToolUiStandardizer from "@/components/buildsetu/ToolUiStandardizer";
 
+
+function buildSetuUiSafeJsonParse(value: unknown) {
+  try {
+    return JSON.parse(String(value || "{}"));
+  } catch {
+    return {};
+  }
+}
+
+function buildSetuUiDomainAnswerText(value: unknown) {
+  return String(value || "")
+    .toLowerCase()
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function buildSetuUiShouldUseDomainAnswerLocal(payload: any) {
+  // BUILDSETU_UI_DOMAIN_ANSWER_LOCAL_ROUTE_V1
+  const toolText = buildSetuUiDomainAnswerText(`${payload?.toolSlug || ""} ${payload?.toolName || ""}`);
+  const userText = buildSetuUiDomainAnswerText(
+    payload?.message ||
+      payload?.prompt ||
+      (Array.isArray(payload?.messages) ? payload.messages.map((item: any) => item?.content || item?.text || "").join(" ") : "")
+  );
+
+  const combined = `${toolText} ${userText}`;
+
+  const domainKeywordHit = [
+    "domain aware",
+    "domain-aware",
+    "taxonomy",
+    "interior",
+    "exterior",
+    "facade",
+    "elevation",
+    "boq",
+    "bbs",
+    "bar bending",
+    "vastu",
+    "mep",
+    "material",
+    "wardrobe",
+    "false ceiling",
+    "approval",
+    "bylaw",
+    "byelaw",
+    "setback",
+    "dimension",
+    "kitchen",
+    "lighting",
+    "quantity",
+    "takeoff"
+  ].some((keyword) => combined.includes(keyword));
+
+  const explicitGenerationIntent = [
+    "generate image",
+    "render image",
+    "create image",
+    "image generate",
+    "photorealistic",
+    "final render",
+    "generate floor plan",
+    "generate working plan",
+    "generate boq",
+    "generate bbs",
+    "execute",
+    "run tool"
+  ].some((keyword) => userText.includes(keyword));
+
+  const imageTool = [
+    "image",
+    "render",
+    "exterior-elevation",
+    "interior-render"
+  ].some((keyword) => toolText.includes(keyword));
+
+  return domainKeywordHit && !explicitGenerationIntent && !imageTool;
+}
+
+async function buildSetuUiFetchToolChatRun(url: RequestInfo | URL, init?: RequestInit) {
+  if (String(url).includes("/api/tool-chat/run")) {
+    const payload = buildSetuUiSafeJsonParse(init?.body);
+
+    if (buildSetuUiShouldUseDomainAnswerLocal(payload)) {
+      const localPayload = {
+        projectId: payload?.projectId || "global",
+        domain: "all",
+        query:
+          payload?.message ||
+          payload?.prompt ||
+          (Array.isArray(payload?.messages) ? payload.messages.map((item: any) => item?.content || item?.text || "").join("\n") : ""),
+        limit: 6,
+      };
+
+      const response = await fetch("/api/tool-chat/domain-answer-local", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          ...((init?.headers as Record<string, string>) || {}),
+        },
+        cache: "no-store",
+        credentials: "same-origin",
+        body: JSON.stringify(localPayload),
+      });
+
+      const data = await response.clone().json().catch(() => null);
+
+      if (response.ok && data?.ok) {
+        const normalized = {
+          ok: true,
+          action: payload?.action || "chat",
+          projectId: payload?.projectId || "global",
+          projectTitle: payload?.projectTitle || "",
+          toolSlug: payload?.toolSlug || "",
+          toolName: payload?.toolName || "",
+          taskType: "domain_aware_knowledge_answer",
+          messages: [
+            ...(Array.isArray(payload?.messages) ? payload.messages : []),
+            {
+              id: `domain-answer-${Date.now()}`,
+              role: "assistant",
+              text: data.answer || data?.output?.text || "",
+              content: data.answer || data?.output?.text || "",
+              time: new Date().toLocaleTimeString("en-IN", { hour: "numeric", minute: "2-digit" }),
+              kind: "normal",
+            },
+          ],
+          output: data.output || {
+            status: "READY",
+            title: "Local domain-aware saved knowledge answer",
+            text: data.answer || "",
+            source: "domain_answer_local_api_v1",
+          },
+          imagePrompt: "",
+          prompt: data.answer || "",
+          readyToGenerate: false,
+          canImage: false,
+          source: "ui_domain_answer_local_route_v1",
+          domainAnswer: data,
+        };
+
+        return new Response(JSON.stringify(normalized), {
+          status: 200,
+          headers: { "Content-Type": "application/json" },
+        });
+      }
+
+      return response;
+    }
+  }
+
+  return fetch(url, init);
+}
+
 import {
   useEffect,
   useMemo,
@@ -1886,7 +2040,7 @@ export default function ToolWorkspacePage() {
         return;
       }
 
-      const res = await fetch("/api/tool-chat/run", {
+      const res = await buildSetuUiFetchToolChatRun("/api/tool-chat/run", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -2549,7 +2703,7 @@ export default function ToolWorkspacePage() {
         throw new Error("Agent image prompt missing");
       }
 
-      const res = await fetch("/api/tool-chat/run", {
+      const res = await buildSetuUiFetchToolChatRun("/api/tool-chat/run", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
