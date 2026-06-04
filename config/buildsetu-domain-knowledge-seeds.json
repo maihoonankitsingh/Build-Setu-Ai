@@ -1,0 +1,187 @@
+{
+  "version": 1,
+  "description": "BuildSetu curated starter domain knowledge seeds. These are practical planning aids, not final professional/structural/legal approvals.",
+  "policy": {
+    "autoMerge": false,
+    "professionalReviewRequired": true,
+    "usage": "Use as starter guidance with project-specific verification.",
+    "blockedClaims": [
+      "Do not claim final structural design.",
+      "Do not claim final legal approval/bylaw compliance.",
+      "Do not override local authority rules, licensed professional review, or site-specific constraints."
+    ]
+  },
+  "items": [
+    {
+      "id": "seed_interior_kitchen_clearances_v1",
+      "domain": "interior_design",
+      "sourceType": "curated_starter",
+      "title": "Kitchen and wardrobe interior planning checklist",
+      "text": "For kitchen/interior planning, capture room size, cooking platform wall length, appliance list, sink/hob/fridge positions, storage needs, chimney/ventilation, electrical points, plumbing points and working aisle. Keep clear walking movement, avoid shutter collision, check corner units, and coordinate lighting with false ceiling. Wardrobe planning should capture width, depth, shutter type, loft, drawer/shelf/hanging split and nearby switch/socket conflicts.",
+      "tags": ["interior_design", "kitchen", "wardrobe", "false_ceiling", "lighting", "clearance"],
+      "extracted": {
+        "planningRules": [
+          "Confirm appliance list before final kitchen layout.",
+          "Coordinate electrical, plumbing and lighting before modular drawing.",
+          "Check shutter swing/sliding clearance before finalizing wardrobe."
+        ],
+        "warnings": [
+          "Final dimensions must be verified on site by designer/contractor."
+        ]
+      },
+      "sourceCitation": "BuildSetu curated starter knowledge — Interior planning checklist"
+    },
+    {
+      "id": "seed_exterior_materials_facade_v1",
+      "domain": "exterior_design",
+      "sourceType": "curated_starter",
+      "title": "Exterior facade material and elevation checklist",
+      "text": "For exterior/elevation design, define style, number of floors, balcony/terrace treatment, window proportions, main gate/compound wall relation, color palette, cladding areas, lighting, weather protection and maintenance level. Material selection should consider climate exposure, water seepage risk, fixing method, cleaning access, local availability and budget. Avoid overloading facade with too many materials.",
+      "tags": ["exterior_design", "facade", "elevation", "materials", "balcony", "terrace"],
+      "extracted": {
+        "planningRules": [
+          "Use limited material palette for cleaner facade.",
+          "Coordinate elevation openings with actual floor plan.",
+          "Check rain protection and waterproofing details."
+        ],
+        "warnings": [
+          "Facade fixing and waterproofing details require professional/site review."
+        ]
+      },
+      "sourceCitation": "BuildSetu curated starter knowledge — Exterior facade checklist"
+    },
+    {
+      "id": "seed_boq_item_grouping_v1",
+      "domain": "boq",
+      "sourceType": "curated_starter",
+      "title": "BOQ item grouping starter template",
+      "text": "A BOQ draft should group items by stage: site preparation, excavation, PCC, foundation, RCC, reinforcement, shuttering, masonry, plaster, flooring, waterproofing, doors/windows, painting, plumbing, electrical, exterior works and finishing. For each item capture description, unit, approximate quantity, rate placeholder, amount placeholder, assumptions and exclusions. Keep structural and MEP quantities marked for professional verification.",
+      "tags": ["boq", "quantity", "takeoff", "material", "estimation", "item_grouping"],
+      "extracted": {
+        "planningRules": [
+          "Separate civil, finishing, MEP and exterior items.",
+          "Keep assumptions and exclusions visible.",
+          "Mark rate placeholders until vendor/site data is available."
+        ],
+        "warnings": [
+          "Final BOQ requires site measurement and quantity surveyor/engineer review."
+        ]
+      },
+      "sourceCitation": "BuildSetu curated starter knowledge — BOQ item grouping"
+    },
+    {
+      "id": "seed_bbs_inputs_v1",
+      "domain": "bbs",
+      "sourceType": "curated_starter",
+      "title": "BBS required inputs checklist",
+      "text": "Before preparing a BBS draft, collect structural drawings, footing/column/beam/slab schedules, bar diameter, spacing, member sizes, cover, lap/development assumptions, bend details, floor levels and drawing revision number. BBS output should clearly show member, bar mark, diameter, number, spacing, cutting length assumption and total weight placeholder. Never finalize BBS without structural engineer review.",
+      "tags": ["bbs", "bar_bending", "reinforcement", "rebar", "structural_inputs"],
+      "extracted": {
+        "planningRules": [
+          "Ask for structural drawings before BBS.",
+          "Capture drawing revision number.",
+          "Separate assumptions from verified engineer data."
+        ],
+        "warnings": [
+          "BBS finalization must be done by structural engineer."
+        ]
+      },
+      "sourceCitation": "BuildSetu curated starter knowledge — BBS inputs"
+    },
+    {
+      "id": "seed_vastu_advisory_v1",
+      "domain": "vastu_guidance",
+      "sourceType": "curated_starter",
+      "title": "Vastu advisory conflict-handling checklist",
+      "text": "Vastu guidance should be treated as advisory. Capture plot facing, entrance preference, kitchen, pooja, master bedroom, toilet, staircase and water placement preferences. If vastu preference conflicts with safety, structure, ventilation, daylight, circulation, bylaws or client function, safety and legal/technical requirements should take priority. Present vastu suggestions as options, not mandatory compliance.",
+      "tags": ["vastu_guidance", "orientation", "entrance", "kitchen", "pooja", "planning"],
+      "extracted": {
+        "planningRules": [
+          "Treat vastu as advisory.",
+          "Do not override ventilation, safety, structure or bylaws.",
+          "Show conflicts clearly to client."
+        ],
+        "warnings": [
+          "Vastu is not a substitute for building-code or professional design review."
+        ]
+      },
+      "sourceCitation": "BuildSetu curated starter knowledge — Vastu advisory"
+    },
+    {
+      "id": "seed_approval_bylaws_checklist_v1",
+      "domain": "approvals_bylaws",
+      "sourceType": "curated_starter",
+      "title": "Approval and bylaw data collection checklist",
+      "text": "Before bylaw-aware planning, collect plot size, road width, land-use, authority/jurisdiction, setbacks, FAR/FSI, ground coverage, height limit, parking requirement, fire-safety requirement, rainwater/solar/local provisions and required submission drawings. If exact local authority rules are unknown, mark the answer as preliminary and request official source or licensed architect confirmation.",
+      "tags": ["approvals_bylaws", "approval", "setback", "far", "fsi", "authority"],
+      "extracted": {
+        "planningRules": [
+          "Identify local authority before claiming compliance.",
+          "Collect FAR/FSI, setback and height rules.",
+          "Use official sources or licensed professional confirmation."
+        ],
+        "warnings": [
+          "Final approval/bylaw compliance must be verified with local authority/licensed professional."
+        ]
+      },
+      "sourceCitation": "BuildSetu curated starter knowledge — Approval/bylaw checklist"
+    },
+    {
+      "id": "seed_mep_coordination_v1",
+      "domain": "mep_basics",
+      "sourceType": "curated_starter",
+      "title": "MEP coordination starter checklist",
+      "text": "MEP coordination should capture plumbing shaft locations, toilet/kitchen wet-wall alignment, drainage route, water supply route, electrical DB location, switch/socket plan, AC outdoor unit placement, service access and ceiling conflicts. Coordinate MEP before final interior false ceiling and before slab/core cutting decisions. Keep all final load, pipe sizing and drainage slopes for qualified professional review.",
+      "tags": ["mep_basics", "plumbing", "electrical", "hvac", "shaft", "coordination"],
+      "extracted": {
+        "planningRules": [
+          "Coordinate wet areas and shafts early.",
+          "Avoid late core cutting without engineer approval.",
+          "Coordinate false ceiling with AC/electrical/plumbing."
+        ],
+        "warnings": [
+          "Final MEP sizing and safety decisions require MEP professional review."
+        ]
+      },
+      "sourceCitation": "BuildSetu curated starter knowledge — MEP coordination"
+    },
+    {
+      "id": "seed_quality_stage_checklist_v1",
+      "domain": "quality_check",
+      "sourceType": "curated_starter",
+      "title": "Stage-wise site quality checklist",
+      "text": "Quality checks should be stage-wise: excavation marking, foundation level, reinforcement placement before concrete, shuttering alignment, concrete curing, masonry line/level/plumb, plaster surface, waterproofing pond test where applicable, tile slope/joint quality, paint surface preparation, electrical/plumbing pressure/continuity checks and final snag list. Record photos and date-wise observations.",
+      "tags": ["quality_check", "site_qc", "inspection", "snag", "workmanship"],
+      "extracted": {
+        "planningRules": [
+          "Check before work is covered.",
+          "Use photo records for quality tracking.",
+          "Create final snag list before handover."
+        ],
+        "warnings": [
+          "Site engineer/contractor review required for acceptance."
+        ]
+      },
+      "sourceCitation": "BuildSetu curated starter knowledge — Stage-wise quality checklist"
+    },
+    {
+      "id": "seed_units_dimensions_planning_v1",
+      "domain": "units_dimensions",
+      "sourceType": "curated_starter",
+      "title": "Units and dimension verification checklist",
+      "text": "For dimensional planning, always confirm unit system, plot dimensions, wall thickness assumptions, room clear dimensions, door/window sizes, stair width/riser/tread assumptions, parking requirement, furniture clearances and shaft/opening sizes. Mark any standard dimension as assumed until verified against local code, client requirement and site measurement.",
+      "tags": ["units_dimensions", "dimension", "room_size", "door_window", "stair", "parking"],
+      "extracted": {
+        "planningRules": [
+          "Separate clear dimensions from wall-to-wall dimensions.",
+          "Confirm unit system before calculations.",
+          "Verify critical dimensions against local code and site."
+        ],
+        "warnings": [
+          "Final dimensions require site and professional verification."
+        ]
+      },
+      "sourceCitation": "BuildSetu curated starter knowledge — Units and dimensions"
+    }
+  ]
+}

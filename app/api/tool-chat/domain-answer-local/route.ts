@@ -189,6 +189,7 @@ function flattenKnowledge(data: any): AnyRecord[] {
 
 async function readLocalKnowledge(root: string) {
   const candidates = [
+    "config/buildsetu-domain-knowledge-seeds.json", // BUILDSETU_DOMAIN_KNOWLEDGE_SEEDS_READ_V1
     "data/agent-knowledge/web-search/knowledge.json",
     "data/agent-knowledge/knowledge.json",
     "data/buildsetu-knowledge/knowledge.json"
