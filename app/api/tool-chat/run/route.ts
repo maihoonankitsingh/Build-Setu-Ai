@@ -122,6 +122,260 @@ function hasAny(text: string, words: string[]) {
   return words.some((word) => text.includes(word));
 }
 
+
+function bsTcCompactKnowledgeText(value: unknown, max = 360) {
+  const text = String(value ?? "").replace(/\s+/g, " ").trim();
+  return text.length > max ? `${text.slice(0, max)}...` : text;
+}
+
+function bsTcSourceField(item: any, keys: string[]): string {
+  // BUILDSETU_TOOL_CHAT_LOCAL_KNOWLEDGE_FALLBACK_V1
+  const candidates: any[] = [
+    item,
+    item?.source,
+    item?.raw,
+    item?.raw?.source,
+    item?.raw?.original,
+    item?.raw?.original?.source,
+    item?.raw?.originalItem,
+    item?.raw?.originalItem?.source,
+    item?.raw?.originalItem?.original,
+    item?.raw?.originalItem?.original?.source,
+  ];
+
+  for (const candidate of candidates) {
+    if (!candidate || typeof candidate !== "object") continue;
+
+    for (const key of keys) {
+      const value = candidate?.[key];
+      if (typeof value === "string" && value.trim()) return value.trim();
+    }
+  }
+
+  return "";
+}
+
+function bsTcSourceUrl(item: any): string {
+  return bsTcSourceField(item, ["sourceUrl", "url", "href", "link", "canonicalUrl"]);
+}
+
+function bsTcSourceCitation(item: any): string {
+  const direct = bsTcSourceField(item, ["sourceCitation", "citation", "sourceTitle", "reference"]);
+  if (direct) return direct;
+
+  const sourceUrl = bsTcSourceUrl(item);
+  const title = bsTcCompactKnowledgeText(
+    item?.title ||
+      item?.raw?.title ||
+      item?.raw?.original?.title ||
+      item?.raw?.originalItem?.title ||
+      "",
+    160
+  );
+
+  if (sourceUrl && title) return `${title} — ${sourceUrl}`;
+  return sourceUrl;
+}
+
+function bsTcFlattenKnowledgeItems(value: any): any[] {
+  const out: any[] = [];
+
+  function visit(node: any) {
+    if (!node) return;
+
+    if (Array.isArray(node)) {
+      for (const item of node) visit(item);
+      return;
+    }
+
+    if (typeof node !== "object") return;
+
+    const hasKnowledgeShape =
+      typeof node.title === "string" ||
+      typeof node.text === "string" ||
+      typeof node.content === "string" ||
+      typeof node.summary === "string" ||
+      typeof node.sourceType === "string" ||
+      node.source ||
+      node.raw?.original;
+
+    if (hasKnowledgeShape) out.push(node);
+
+    for (const key of ["items", "data", "rows", "knowledge", "entries", "sessions", "documents"]) {
+      if (node[key]) visit(node[key]);
+    }
+  }
+
+  visit(value);
+  return out;
+}
+
+async function bsTcReadJsonFile(filePath: string): Promise<any | null> {
+  try {
+    const raw = await fs.readFile(filePath, "utf8");
+    return JSON.parse(raw);
+  } catch {
+    return null;
+  }
+}
+
+async function bsTcFindKnowledgeJsonFiles(root: string, maxFiles = 120): Promise<string[]> {
+  const files: string[] = [];
+  const queue = [root];
+
+  while (queue.length && files.length < maxFiles) {
+    const current = queue.shift()!;
+    let entries: any[] = [];
+    try {
+      entries = await fs.readdir(current, { withFileTypes: true });
+    } catch {
+      continue;
+    }
+
+    for (const entry of entries) {
+      const full = path.join(current, entry.name);
+
+      if (entry.isDirectory()) {
+        if (entry.name === "node_modules" || entry.name === ".next" || entry.name === ".git") continue;
+        queue.push(full);
+        continue;
+      }
+
+      if (entry.isFile() && entry.name.toLowerCase().endsWith(".json")) {
+        files.push(full);
+        if (files.length >= maxFiles) break;
+      }
+    }
+  }
+
+  return files;
+}
+
+function bsTcKnowledgeText(item: any): string {
+  return [
+    item?.title,
+    item?.text,
+    item?.content,
+    item?.summary,
+    item?.sourceType,
+    item?.domain,
+    item?.fileName,
+    item?.sourceUrl,
+    item?.sourceCitation,
+    item?.raw?.title,
+    item?.raw?.text,
+    item?.raw?.sourceUrl,
+    item?.raw?.sourceCitation,
+    item?.raw?.original?.title,
+    item?.raw?.original?.text,
+    item?.raw?.original?.sourceUrl,
+    item?.raw?.original?.sourceCitation,
+    JSON.stringify(item?.tags || []),
+    JSON.stringify(item?.extracted || {}),
+  ]
+    .filter(Boolean)
+    .join(" ");
+}
+
+function bsTcScoreKnowledgeItem(item: any, query: string) {
+  const haystack = bsTcKnowledgeText(item).toLowerCase();
+  const words = String(query || "")
+    .toLowerCase()
+    .split(/[^a-z0-9]+/i)
+    .map((word) => word.trim())
+    .filter((word) => word.length >= 3);
+
+  let score = 0;
+  for (const word of words) {
+    if (haystack.includes(word)) score += word.length;
+  }
+
+  const exact = String(query || "").trim().toLowerCase();
+  if (exact && haystack.includes(exact)) score += 80;
+
+  return score;
+}
+
+async function bsTcLocalKnowledgeSearch(projectId: string, query: string, limit = 5) {
+  // BUILDSETU_TOOL_CHAT_LOCAL_KNOWLEDGE_SEARCH_V1
+  const roots = [
+    path.join(process.cwd(), "data", "agent-knowledge"),
+    path.join(process.cwd(), "data", "buildsetu-knowledge"),
+  ];
+
+  const files: string[] = [];
+  for (const root of roots) {
+    files.push(...(await bsTcFindKnowledgeJsonFiles(root)));
+  }
+
+  const items: any[] = [];
+  for (const file of files) {
+    const parsed = await bsTcReadJsonFile(file);
+    if (!parsed) continue;
+
+    for (const item of bsTcFlattenKnowledgeItems(parsed)) {
+      items.push({
+        ...item,
+        filePath: file,
+        sourceUrl: bsTcSourceUrl(item),
+        sourceCitation: bsTcSourceCitation(item),
+      });
+    }
+  }
+
+  const ranked = items
+    .map((item) => ({
+      ...item,
+      score: bsTcScoreKnowledgeItem(item, query),
+    }))
+    .filter((item) => item.score > 0)
+    .sort((a, b) => b.score - a.score)
+    .slice(0, Math.max(1, limit));
+
+  return ranked;
+}
+
+async function bsTcBuildLocalKnowledgeAnswer(projectId: string, userText: string) {
+  const items = await bsTcLocalKnowledgeSearch(projectId || "global", userText, 5);
+
+  if (!items.length) {
+    return {
+      text: "Saved knowledge me is query ke liye relevant item nahi mila.",
+      source: "local-knowledge-no-results",
+    };
+  }
+
+  const lines = [
+    "Saved knowledge ke basis par answer:",
+    "",
+  ];
+
+  for (const item of items.slice(0, 3)) {
+    const title = bsTcCompactKnowledgeText(item?.title || item?.sourceType || "Knowledge item", 160);
+    const body = bsTcCompactKnowledgeText(item?.text || item?.content || item?.summary || item?.raw?.original?.text || "", 460);
+    const citation = bsTcCompactKnowledgeText(item?.sourceCitation || item?.sourceUrl || "", 280);
+
+    lines.push(`- ${title}${body ? `: ${body}` : ""}`);
+    if (citation) lines.push(`  Source: ${citation}`);
+  }
+
+  const citations = Array.from(
+    new Set(items.map((item) => String(item?.sourceCitation || item?.sourceUrl || "").trim()).filter(Boolean))
+  ).slice(0, 5);
+
+  if (citations.length) {
+    lines.push("");
+    lines.push("Sources:");
+    for (const citation of citations) lines.push(`- ${citation}`);
+  }
+
+  return {
+    text: lines.join("\n"),
+    source: "local-knowledge-file-fallback",
+  };
+}
+
+
 function detectTask(toolSlug: string, userText: string) {
   const text = userText.toLowerCase();
 
@@ -1302,8 +1556,14 @@ export async function POST(req: NextRequest) {
           answerText = "Saved knowledge context available hai, lekin final answer generate nahi ho paya. Project-chat response verify karo.";
         }
       } catch (error: any) {
-        answerSource = "readonly-knowledge-fallback";
-        answerText = `Saved knowledge answer generate nahi ho paya: ${error?.message || "unknown error"}`;
+        try {
+          const fallback = await bsTcBuildLocalKnowledgeAnswer(projectId || "global", userText);
+          answerSource = fallback.source;
+          answerText = fallback.text;
+        } catch (fallbackError: any) {
+          answerSource = "readonly-knowledge-fallback";
+          answerText = `Saved knowledge answer generate nahi ho paya: ${fallbackError?.message || error?.message || "unknown error"}`;
+        }
       }
 
       const assistantMessage: SavedMessage = {
