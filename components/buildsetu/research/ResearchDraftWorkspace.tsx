@@ -42,7 +42,10 @@ type DraftListItem = {
   source?: {
     title?: string;
     url?: string;
+    sourceUrl?: string;
     sourceType?: string;
+    sourceCitation?: string;
+    tags?: string[]; // BUILDSETU_RESEARCH_WORKSPACE_SOURCE_META_TYPES_V2
     publisher?: string;
     dateAccessed?: string;
     effectiveDate?: string;
@@ -62,6 +65,10 @@ type DraftListItem = {
   };
   createdAt?: string;
   updatedAt?: string;
+  sourceType?: string;
+  sourceUrl?: string;
+  sourceCitation?: string;
+  tags?: string[];
 };
 
 const BUILDSETU_LOGO_SRC = "/brand/buildsetu-login-clean-logo.png";
@@ -215,6 +222,71 @@ function Field({ label, value, accent = false }: { label: string; value?: string
     </div>
   );
 }
+
+
+function BuildSetuResearchSourceMeta({ item }: { item: DraftListItem | any }) {
+  // BUILDSETU_RESEARCH_WORKSPACE_SOURCE_META_COMPONENT_V2
+  const source = item?.source || {};
+  const sourceTitle = String(source?.title || item?.title || "").trim();
+  const sourceType = String(source?.sourceType || item?.sourceType || item?.domain || "").trim();
+  const sourceUrl = String(source?.sourceUrl || source?.url || item?.sourceUrl || item?.url || "").trim();
+  const sourceCitation = String(
+    source?.sourceCitation ||
+      item?.sourceCitation ||
+      (sourceTitle && sourceUrl ? `${sourceTitle} — ${sourceUrl}` : "")
+  ).trim();
+
+  const sourceTags = Array.isArray(source?.tags) ? source.tags : [];
+  const itemTags = Array.isArray(item?.tags) ? item.tags : [];
+  const tags = Array.from(new Set([...sourceTags, ...itemTags].map((tag: any) => String(tag || "").trim()).filter(Boolean))).slice(0, 10);
+
+  const safeSourceUrl = /^https?:\/\//i.test(sourceUrl) ? sourceUrl : "";
+
+  if (!sourceType && !sourceUrl && !sourceCitation && !tags.length) return null;
+
+  return (
+    <div className="mt-3 rounded-2xl border border-[#E8DDF8] bg-[#FBFAFF] p-3 text-[12px] leading-5 text-slate-600">
+      <div className="flex flex-wrap items-center gap-2">
+        {sourceType ? (
+          <span className="rounded-full border border-[#E8DDF8] bg-white px-2.5 py-1 font-semibold uppercase tracking-[0.12em] text-[#6D28D9]">
+            {sourceType}
+          </span>
+        ) : null}
+
+        {tags.map((tag: string) => (
+          <span
+            key={tag}
+            className="rounded-full border border-slate-200 bg-white px-2.5 py-1 font-medium text-slate-500"
+          >
+            {tag}
+          </span>
+        ))}
+      </div>
+
+      {sourceCitation ? (
+        <p className="mt-2 break-words text-slate-700">
+          <span className="font-semibold text-slate-900">Source citation:</span> {sourceCitation}
+        </p>
+      ) : null}
+
+      {safeSourceUrl ? (
+        <a
+          href={safeSourceUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mt-2 inline-flex font-semibold text-[#6D28D9] underline underline-offset-4 hover:text-[#4C1D95]"
+        >
+          Open source
+        </a>
+      ) : sourceUrl ? (
+        <p className="mt-2 break-all text-slate-500">
+          <span className="font-semibold text-slate-700">Source URL:</span> {sourceUrl}
+        </p>
+      ) : null}
+    </div>
+  );
+}
+
 
 export default function ResearchDraftWorkspace() {
   const [activeTab, setActiveTab] = useState<DraftStatus>("pending_review");
@@ -479,7 +551,9 @@ export default function ResearchDraftWorkspace() {
                         <div className="col-span-2 flex h-9 items-center justify-center rounded-2xl bg-slate-50 text-[14px] font-medium text-slate-400">No action required</div>
                       )}
                     </div>
-                  </article>
+                  
+                    <BuildSetuResearchSourceMeta item={draft} /> {/* BUILDSETU_RESEARCH_WORKSPACE_SOURCE_META_ARTICLE_RENDER_V2 */}
+</article>
                 );
               })}
             </div>
