@@ -1,5 +1,5 @@
 {
-  "version": 1,
+  "version": 2,
   "description": "BuildSetu curated starter domain knowledge seeds. These are practical planning aids, not final professional/structural/legal approvals.",
   "policy": {
     "autoMerge": false,
@@ -9,7 +9,8 @@
       "Do not claim final structural design.",
       "Do not claim final legal approval/bylaw compliance.",
       "Do not override local authority rules, licensed professional review, or site-specific constraints."
-    ]
+    ],
+    "lastSeedExpansion": "phase44c_missing_domains"
   },
   "items": [
     {
@@ -18,7 +19,14 @@
       "sourceType": "curated_starter",
       "title": "Kitchen and wardrobe interior planning checklist",
       "text": "For kitchen/interior planning, capture room size, cooking platform wall length, appliance list, sink/hob/fridge positions, storage needs, chimney/ventilation, electrical points, plumbing points and working aisle. Keep clear walking movement, avoid shutter collision, check corner units, and coordinate lighting with false ceiling. Wardrobe planning should capture width, depth, shutter type, loft, drawer/shelf/hanging split and nearby switch/socket conflicts.",
-      "tags": ["interior_design", "kitchen", "wardrobe", "false_ceiling", "lighting", "clearance"],
+      "tags": [
+        "interior_design",
+        "kitchen",
+        "wardrobe",
+        "false_ceiling",
+        "lighting",
+        "clearance"
+      ],
       "extracted": {
         "planningRules": [
           "Confirm appliance list before final kitchen layout.",
@@ -37,7 +45,14 @@
       "sourceType": "curated_starter",
       "title": "Exterior facade material and elevation checklist",
       "text": "For exterior/elevation design, define style, number of floors, balcony/terrace treatment, window proportions, main gate/compound wall relation, color palette, cladding areas, lighting, weather protection and maintenance level. Material selection should consider climate exposure, water seepage risk, fixing method, cleaning access, local availability and budget. Avoid overloading facade with too many materials.",
-      "tags": ["exterior_design", "facade", "elevation", "materials", "balcony", "terrace"],
+      "tags": [
+        "exterior_design",
+        "facade",
+        "elevation",
+        "materials",
+        "balcony",
+        "terrace"
+      ],
       "extracted": {
         "planningRules": [
           "Use limited material palette for cleaner facade.",
@@ -56,7 +71,14 @@
       "sourceType": "curated_starter",
       "title": "BOQ item grouping starter template",
       "text": "A BOQ draft should group items by stage: site preparation, excavation, PCC, foundation, RCC, reinforcement, shuttering, masonry, plaster, flooring, waterproofing, doors/windows, painting, plumbing, electrical, exterior works and finishing. For each item capture description, unit, approximate quantity, rate placeholder, amount placeholder, assumptions and exclusions. Keep structural and MEP quantities marked for professional verification.",
-      "tags": ["boq", "quantity", "takeoff", "material", "estimation", "item_grouping"],
+      "tags": [
+        "boq",
+        "quantity",
+        "takeoff",
+        "material",
+        "estimation",
+        "item_grouping"
+      ],
       "extracted": {
         "planningRules": [
           "Separate civil, finishing, MEP and exterior items.",
@@ -75,7 +97,13 @@
       "sourceType": "curated_starter",
       "title": "BBS required inputs checklist",
       "text": "Before preparing a BBS draft, collect structural drawings, footing/column/beam/slab schedules, bar diameter, spacing, member sizes, cover, lap/development assumptions, bend details, floor levels and drawing revision number. BBS output should clearly show member, bar mark, diameter, number, spacing, cutting length assumption and total weight placeholder. Never finalize BBS without structural engineer review.",
-      "tags": ["bbs", "bar_bending", "reinforcement", "rebar", "structural_inputs"],
+      "tags": [
+        "bbs",
+        "bar_bending",
+        "reinforcement",
+        "rebar",
+        "structural_inputs"
+      ],
       "extracted": {
         "planningRules": [
           "Ask for structural drawings before BBS.",
@@ -94,7 +122,14 @@
       "sourceType": "curated_starter",
       "title": "Vastu advisory conflict-handling checklist",
       "text": "Vastu guidance should be treated as advisory. Capture plot facing, entrance preference, kitchen, pooja, master bedroom, toilet, staircase and water placement preferences. If vastu preference conflicts with safety, structure, ventilation, daylight, circulation, bylaws or client function, safety and legal/technical requirements should take priority. Present vastu suggestions as options, not mandatory compliance.",
-      "tags": ["vastu_guidance", "orientation", "entrance", "kitchen", "pooja", "planning"],
+      "tags": [
+        "vastu_guidance",
+        "orientation",
+        "entrance",
+        "kitchen",
+        "pooja",
+        "planning"
+      ],
       "extracted": {
         "planningRules": [
           "Treat vastu as advisory.",
@@ -113,7 +148,14 @@
       "sourceType": "curated_starter",
       "title": "Approval and bylaw data collection checklist",
       "text": "Before bylaw-aware planning, collect plot size, road width, land-use, authority/jurisdiction, setbacks, FAR/FSI, ground coverage, height limit, parking requirement, fire-safety requirement, rainwater/solar/local provisions and required submission drawings. If exact local authority rules are unknown, mark the answer as preliminary and request official source or licensed architect confirmation.",
-      "tags": ["approvals_bylaws", "approval", "setback", "far", "fsi", "authority"],
+      "tags": [
+        "approvals_bylaws",
+        "approval",
+        "setback",
+        "far",
+        "fsi",
+        "authority"
+      ],
       "extracted": {
         "planningRules": [
           "Identify local authority before claiming compliance.",
@@ -132,7 +174,14 @@
       "sourceType": "curated_starter",
       "title": "MEP coordination starter checklist",
       "text": "MEP coordination should capture plumbing shaft locations, toilet/kitchen wet-wall alignment, drainage route, water supply route, electrical DB location, switch/socket plan, AC outdoor unit placement, service access and ceiling conflicts. Coordinate MEP before final interior false ceiling and before slab/core cutting decisions. Keep all final load, pipe sizing and drainage slopes for qualified professional review.",
-      "tags": ["mep_basics", "plumbing", "electrical", "hvac", "shaft", "coordination"],
+      "tags": [
+        "mep_basics",
+        "plumbing",
+        "electrical",
+        "hvac",
+        "shaft",
+        "coordination"
+      ],
       "extracted": {
         "planningRules": [
           "Coordinate wet areas and shafts early.",
@@ -151,7 +200,13 @@
       "sourceType": "curated_starter",
       "title": "Stage-wise site quality checklist",
       "text": "Quality checks should be stage-wise: excavation marking, foundation level, reinforcement placement before concrete, shuttering alignment, concrete curing, masonry line/level/plumb, plaster surface, waterproofing pond test where applicable, tile slope/joint quality, paint surface preparation, electrical/plumbing pressure/continuity checks and final snag list. Record photos and date-wise observations.",
-      "tags": ["quality_check", "site_qc", "inspection", "snag", "workmanship"],
+      "tags": [
+        "quality_check",
+        "site_qc",
+        "inspection",
+        "snag",
+        "workmanship"
+      ],
       "extracted": {
         "planningRules": [
           "Check before work is covered.",
@@ -170,7 +225,14 @@
       "sourceType": "curated_starter",
       "title": "Units and dimension verification checklist",
       "text": "For dimensional planning, always confirm unit system, plot dimensions, wall thickness assumptions, room clear dimensions, door/window sizes, stair width/riser/tread assumptions, parking requirement, furniture clearances and shaft/opening sizes. Mark any standard dimension as assumed until verified against local code, client requirement and site measurement.",
-      "tags": ["units_dimensions", "dimension", "room_size", "door_window", "stair", "parking"],
+      "tags": [
+        "units_dimensions",
+        "dimension",
+        "room_size",
+        "door_window",
+        "stair",
+        "parking"
+      ],
       "extracted": {
         "planningRules": [
           "Separate clear dimensions from wall-to-wall dimensions.",
@@ -182,6 +244,115 @@
         ]
       },
       "sourceCitation": "BuildSetu curated starter knowledge — Units and dimensions"
+    },
+    {
+      "id": "seed_architecture_planning_intake_v1",
+      "domain": "architecture_planning",
+      "sourceType": "curated_starter",
+      "title": "Architecture planning intake and layout reasoning checklist",
+      "text": "For architectural planning, first capture plot dimensions, road side, facing, family size, required rooms, parking, floors, rental/self-use split, privacy needs, ventilation/daylight, staircase position, setbacks, vastu preference if any, and local approval constraints. A good layout should explain zoning, room adjacency, circulation, open-to-sky/light shaft logic, furniture fit, service core and future expansion assumptions.",
+      "tags": [
+        "architecture_planning",
+        "floor_plan",
+        "layout",
+        "room_adjacency",
+        "circulation",
+        "ventilation"
+      ],
+      "extracted": {
+        "planningRules": [
+          "Capture project brief before layout decisions.",
+          "Separate client preference, site constraint and bylaw constraint.",
+          "Explain circulation and room adjacency clearly."
+        ],
+        "warnings": [
+          "Final planning must be verified against local bylaws and site conditions."
+        ]
+      },
+      "sourceCitation": "BuildSetu curated starter knowledge — Architecture planning intake"
+    },
+    {
+      "id": "seed_civil_construction_stage_sequence_v1",
+      "domain": "civil_construction",
+      "sourceType": "curated_starter",
+      "title": "Civil construction stage sequence checklist",
+      "text": "A civil construction execution checklist should track site clearing, layout marking, excavation, PCC, footing reinforcement/shuttering/concrete, column starter, plinth beam, backfilling, slab cycle, masonry, lintel/chajja, plaster, waterproofing, flooring and finishing interfaces. Each stage should record drawing reference, material readiness, labour readiness, inspection point, photo evidence and hold point before work is covered.",
+      "tags": [
+        "civil_construction",
+        "execution",
+        "foundation",
+        "rcc",
+        "masonry",
+        "plaster",
+        "waterproofing"
+      ],
+      "extracted": {
+        "planningRules": [
+          "Do not cover reinforcement or waterproofing before inspection.",
+          "Record drawing revision and date-wise site photos.",
+          "Track stage hold points before next activity."
+        ],
+        "warnings": [
+          "Structural and concrete work must follow engineer-approved drawings and site supervision."
+        ]
+      },
+      "sourceCitation": "BuildSetu curated starter knowledge — Civil construction sequence"
+    },
+    {
+      "id": "seed_construction_material_selection_v1",
+      "domain": "construction_materials",
+      "sourceType": "curated_starter",
+      "title": "Construction material selection and verification checklist",
+      "text": "Material planning should list cement, steel, sand, aggregate, bricks/blocks, waterproofing compound, tiles, paint, wood/board, glass and hardware with brand/grade/specification placeholder, quantity assumption, delivery schedule, storage requirement and quality check. Track test certificates where applicable, batch/lot details, site storage protection and compatibility with design intent and budget.",
+      "tags": [
+        "construction_materials",
+        "cement",
+        "steel",
+        "sand",
+        "aggregate",
+        "brick",
+        "tile",
+        "paint",
+        "hardware"
+      ],
+      "extracted": {
+        "planningRules": [
+          "Capture grade/specification before procurement.",
+          "Track delivery, storage and quality checks.",
+          "Separate approved material from assumed material."
+        ],
+        "warnings": [
+          "Final material specification should be approved by designer/engineer/client as applicable."
+        ]
+      },
+      "sourceCitation": "BuildSetu curated starter knowledge — Construction material checklist"
+    },
+    {
+      "id": "seed_execution_planning_schedule_v1",
+      "domain": "execution_planning",
+      "sourceType": "curated_starter",
+      "title": "Execution planning and procurement schedule checklist",
+      "text": "Execution planning should break the project into phases, dependencies, material lead times, labour requirements, inspection points, payment milestones, risk items and client decision deadlines. Maintain a lookahead plan for the next 1–2 weeks, mark delayed decisions, long-lead materials, vendor dependencies and approvals. Keep design freeze dates separate from site execution dates to avoid rework.",
+      "tags": [
+        "execution_planning",
+        "schedule",
+        "procurement",
+        "timeline",
+        "labour",
+        "milestone",
+        "workflow"
+      ],
+      "extracted": {
+        "planningRules": [
+          "Track dependencies before assigning dates.",
+          "Maintain weekly lookahead plan.",
+          "Freeze drawings before procurement/execution where possible."
+        ],
+        "warnings": [
+          "Final schedule must be adjusted for site conditions, labour availability and vendor lead times."
+        ]
+      },
+      "sourceCitation": "BuildSetu curated starter knowledge — Execution planning schedule"
     }
   ]
 }
