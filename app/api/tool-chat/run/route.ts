@@ -293,7 +293,8 @@ function bsTcImportantQueryTokens(query: string): string[] {
     "saved", "knowledge", "basis", "batao", "kya", "tha", "answer", "source",
     "citation", "url", "include", "karo", "kar", "ke", "ka", "ki", "me", "mein",
     "hai", "aur", "the", "and", "with", "from", "for", "about", "please",
-    "tell", "give", "basis", "based",
+    "tell", "give", "basis", "based", "bare", "baare", "mein", "me",
+    "saved", "knowledge", "basis", "batao", "kya", "tha", "answer",
   ]);
 
   return bsTcNormalizeRankText(query)
@@ -314,6 +315,17 @@ function bsTcQueryPhrases(tokens: string[]): string[] {
 
   return phrases;
 }
+
+
+function bsTcMinimumKnowledgeScore(query: string): number {
+  // BUILDSETU_TOOL_CHAT_LOCAL_KNOWLEDGE_NO_RESULT_GUARD_V1
+  const tokens = bsTcImportantQueryTokens(query);
+
+  if (tokens.length >= 4) return 90;
+  if (tokens.length >= 2) return 55;
+  return 25;
+}
+
 
 
 function bsTcScoreKnowledgeItem(item: any, query: string) {
@@ -396,12 +408,14 @@ async function bsTcLocalKnowledgeSearch(projectId: string, query: string, limit 
     }
   }
 
+  const minimumScore = bsTcMinimumKnowledgeScore(query);
+
   const ranked = items
     .map((item) => ({
       ...item,
       score: bsTcScoreKnowledgeItem(item, query),
     }))
-    .filter((item) => item.score > 0)
+    .filter((item) => item.score >= minimumScore)
     .sort((a, b) => b.score - a.score)
     .slice(0, Math.max(1, limit));
 
