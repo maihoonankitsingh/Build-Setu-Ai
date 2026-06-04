@@ -2,6 +2,21 @@ import { promises as fs } from "fs";
 import path from "path";
 import { NextRequest, NextResponse } from "next/server";
 
+import { AUTH_COOKIE, getUserFromSession } from "@/lib/auth-store";
+
+async function requireResearchDraftRouteAuth(request: NextRequest): Promise<boolean> {
+  // BUILDSETU_RESEARCH_DRAFT_ROUTES_AUTH_GATE_V1
+  const token = request.cookies.get(AUTH_COOKIE)?.value;
+  const user = await getUserFromSession(token);
+
+  return Boolean(
+    user?.id ||
+      user?.email ||
+      user?.phone ||
+      user?.name
+  );
+}
+
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
@@ -157,6 +172,15 @@ function researchUpdateEntry(draft: Record<string, unknown>, reviewer: string, m
 }
 
 export async function POST(request: NextRequest) {
+  const isResearchDraftMergeAuthed = await requireResearchDraftRouteAuth(request);
+  if (!isResearchDraftMergeAuthed) {
+    return NextResponse.json(
+      { ok: false, error: "LOGIN_REQUIRED" },
+      { status: 401 }
+    );
+  }
+
+
   try {
     const payload = (await request.json()) as MergePayload;
 
