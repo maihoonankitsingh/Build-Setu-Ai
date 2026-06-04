@@ -32,6 +32,196 @@ function cleanText(value: unknown) {
   return String(value || "").replace(/\s+/g, " ").trim();
 }
 
+function buildSetuWebSearchNormalize(value: unknown) {
+  // BUILDSETU_WEB_SEARCH_SAFE_QUALITY_GUARD_V1
+  return String(value || "")
+    .toLowerCase()
+    .replace(/https?:\/\/\S+/g, " ")
+    .replace(/[^a-z0-9.]+/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function buildSetuFocusedWebSearchQuery(query: string) {
+  const q = buildSetuWebSearchNormalize(query);
+
+  if (
+    (q.includes("model") && q.includes("building") && (q.includes("bye") || q.includes("byelaw") || q.includes("laws"))) ||
+    q.includes("mohua") ||
+    q.includes("far") ||
+    q.includes("setback")
+  ) {
+    return '"Model Building Bye Laws 2016" MoHUA PDF building bye laws FAR setback';
+  }
+
+  if (
+    q.includes("national building code") ||
+    q.includes("nbc") ||
+    (q.includes("bis") && (q.includes("building") || q.includes("fire") || q.includes("safety")))
+  ) {
+    return '"National Building Code of India" BIS fire safety PDF building code';
+  }
+
+  return query;
+}
+
+function buildSetuWebSearchHost(urlValue: string) {
+  try {
+    return new URL(urlValue).hostname.replace(/^www\./, "").toLowerCase();
+  } catch {
+    return "";
+  }
+}
+
+function buildSetuWebSearchIsNoiseHost(host: string) {
+  const deny = new Set([
+    "wikipedia.org",
+    "en.wikipedia.org",
+    "britannica.com",
+    "www.britannica.com",
+    "nationalinsurance.nic.co.in",
+    "npci.org.in",
+    "nationalcar.com",
+    "www.nationalcar.com",
+    "nationaltoday.com",
+    "www.nationaltoday.com",
+    "nationalheraldindia.com",
+    "www.nationalheraldindia.com",
+    "scholarships.gov.in",
+  ]);
+
+  return deny.has(host);
+}
+
+function buildSetuWebSearchNoiseTitle(titleValue: string) {
+  const title = buildSetuWebSearchNormalize(titleValue);
+
+  return (
+    title.includes("wikipedia") ||
+    title.includes("britannica") ||
+    title.includes("national insurance") ||
+    title.includes("national scholarship") ||
+    title.includes("national payments corporation") ||
+    title.includes("national car rental") ||
+    title.includes("what is today") ||
+    title.includes("national news latest headlines")
+  );
+}
+
+function buildSetuWebSearchIntent(query: string) {
+  const q = buildSetuWebSearchNormalize(query);
+
+  if (
+    q.includes("model building bye") ||
+    q.includes("building bye laws") ||
+    q.includes("building byelaws") ||
+    q.includes("mohua") ||
+    q.includes("setback") ||
+    q.includes("far")
+  ) {
+    return "building_bye_laws";
+  }
+
+  if (
+    q.includes("national building code") ||
+    q.includes("nbc") ||
+    q.includes("bis") ||
+    (q.includes("fire") && q.includes("safety") && q.includes("building"))
+  ) {
+    return "national_building_code";
+  }
+
+  return "general";
+}
+
+function buildSetuWebSearchIntentMatch(query: string, result: { title: string; url: string; snippet: string }) {
+  const intent = buildSetuWebSearchIntent(query);
+  const host = buildSetuWebSearchHost(result.url);
+  const all = buildSetuWebSearchNormalize([result.title, result.url, result.snippet, host].join(" "));
+
+  if (!host || buildSetuWebSearchIsNoiseHost(host) || buildSetuWebSearchNoiseTitle(result.title)) {
+    return { ok: false, score: -1000 };
+  }
+
+  let score = 0;
+
+  if (host.endsWith(".gov.in") || host.endsWith(".nic.in") || host === "bis.gov.in" || host.includes("mohua")) score += 35;
+  if (all.includes("pdf")) score += 12;
+
+  if (intent === "building_bye_laws") {
+    const must =
+      all.includes("model building bye") ||
+      all.includes("building bye laws") ||
+      all.includes("building byelaws") ||
+      all.includes("bye laws") ||
+      all.includes("byelaws") ||
+      all.includes("mohua") ||
+      all.includes("setback") ||
+      all.includes("floor area ratio") ||
+      /\bfar\b/.test(all);
+
+    if (!must) return { ok: false, score: -500 };
+
+    if (all.includes("model building bye laws")) score += 90;
+    if (all.includes("mohua")) score += 60;
+    if (all.includes("setback")) score += 25;
+    if (/\bfar\b/.test(all) || all.includes("floor area ratio")) score += 25;
+    if (all.includes("building")) score += 15;
+    return { ok: true, score };
+  }
+
+  if (intent === "national_building_code") {
+    const must =
+      all.includes("national building code") ||
+      all.includes("building code") ||
+      all.includes("bureau of indian standards") ||
+      /\bbis\b/.test(all) ||
+      /\bnbc\b/.test(all) ||
+      (all.includes("fire") && all.includes("safety") && all.includes("building"));
+
+    if (!must) return { ok: false, score: -500 };
+
+    if (all.includes("national building code")) score += 95;
+    if (all.includes("bureau of indian standards") || /\bbis\b/.test(all)) score += 65;
+    if (all.includes("fire") && all.includes("safety")) score += 35;
+    if (all.includes("building")) score += 15;
+    return { ok: true, score };
+  }
+
+  const queryTokens = buildSetuWebSearchNormalize(query)
+    .split(" ")
+    .filter((token) => token.length >= 4)
+    .filter((token) => !["official", "source", "india", "indian", "search", "find"].includes(token));
+
+  let matches = 0;
+  for (const token of queryTokens) {
+    if (all.includes(token)) {
+      matches += 1;
+      score += 10;
+    }
+  }
+
+  return { ok: matches >= Math.min(2, queryTokens.length || 1), score };
+}
+
+function buildSetuFilterParsedSearchResults(
+  query: string,
+  results: Array<{ title: string; url: string; snippet: string }>,
+  limit: number,
+) {
+  const filtered = results
+    .map((result) => ({
+      ...result,
+      __quality: buildSetuWebSearchIntentMatch(query, result),
+    }))
+    .filter((result) => result.__quality.ok)
+    .sort((a, b) => b.__quality.score - a.__quality.score)
+    .slice(0, Math.max(1, Math.min(limit, MAX_RESULTS)));
+
+  return filtered.map(({ __quality, ...result }) => result);
+}
+
+
 function decodeBasicHtmlEntities(text: string) {
   return text
     .replace(/&nbsp;/gi, " ")
@@ -351,7 +541,7 @@ async function researchByDuckDuckGo(query: string, limit: number) {
   searchUrl.searchParams.set("q", query);
 
   const fetched = await fetchLimitedText(searchUrl);
-  const parsed = parseDuckDuckGoResults((fetched as any).rawHtml || fetched.text || "", limit); // BUILDSETU_WEB_SEARCH_DDG_RAW_HTML_FIX_V1
+  const parsed = buildSetuFilterParsedSearchResults(query, parseDuckDuckGoResults((fetched as any).rawHtml || fetched.text || "", limit * 4), limit); // BUILDSETU_WEB_SEARCH_DDG_SAFE_FILTER_V1
 
   const items: WebResearchItem[] = [];
 
@@ -394,7 +584,7 @@ async function researchByBing(query: string, limit: number) {
   searchUrl.searchParams.set("count", String(Math.max(1, Math.min(limit, MAX_RESULTS))));
 
   const fetched = await fetchLimitedText(searchUrl);
-  const parsed = parseBingResults((fetched as any).rawHtml || fetched.text || "", limit);
+  const parsed = buildSetuFilterParsedSearchResults(query, parseBingResults((fetched as any).rawHtml || fetched.text || "", limit * 5), limit); // BUILDSETU_WEB_SEARCH_BING_SAFE_FILTER_V1
 
   const items: WebResearchItem[] = [];
 
@@ -432,10 +622,11 @@ async function researchByBing(query: string, limit: number) {
 
 async function researchByPublicSearch(query: string, limit: number) {
   // BUILDSETU_WEB_SEARCH_MULTI_PROVIDER_FALLBACK_V1
+  const focusedQuery = buildSetuFocusedWebSearchQuery(query); // BUILDSETU_WEB_SEARCH_FOCUSED_QUERY_V1
   const errors: string[] = [];
 
   try {
-    const duckItems = await researchByDuckDuckGo(query, limit);
+    const duckItems = await researchByDuckDuckGo(focusedQuery, limit);
     if (duckItems.length) return duckItems;
     errors.push("duckduckgo_empty");
   } catch (error: any) {
@@ -443,14 +634,14 @@ async function researchByPublicSearch(query: string, limit: number) {
   }
 
   try {
-    const bingItems = await researchByBing(query, limit);
+    const bingItems = await researchByBing(focusedQuery, limit);
     if (bingItems.length) return bingItems;
     errors.push("bing_empty");
   } catch (error: any) {
     errors.push(`bing_${cleanText(error?.message || "failed")}`);
   }
 
-  throw new Error(`WEB_SEARCH_NO_RESULTS:${errors.join("|")}`);
+  return []; // BUILDSETU_WEB_SEARCH_NO_RELEVANT_RESULTS_V1
 }
 
 export async function GET() {
@@ -516,6 +707,7 @@ export async function POST(req: NextRequest) {
       toolSlug: "web-search",
       query,
       count: items.length,
+      qualityCode: items.length ? "WEB_SEARCH_RESULTS" : "NO_RELEVANT_RESULTS", // BUILDSETU_WEB_SEARCH_QUALITY_CODE_V1
       items,
       sourceCitations: items.map((item) => item.sourceCitation),
       searchedAt: new Date().toISOString(),
