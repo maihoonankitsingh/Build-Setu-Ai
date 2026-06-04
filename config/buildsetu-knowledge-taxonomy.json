@@ -1,0 +1,111 @@
+{
+  "version": 1,
+  "description": "BuildSetu construction knowledge taxonomy for precise planning, design, construction, materials, vastu, units, dimensions, BOQ/BBS, MEP and approval guidance.",
+  "safetyPolicy": {
+    "autoTrain": false,
+    "autoMerge": false,
+    "professionalReviewRequiredFor": [
+      "structural_design",
+      "legal_approval",
+      "fire_safety",
+      "electrical_load",
+      "MEP_final_design",
+      "building_code_claims",
+      "site_execution_final_decisions"
+    ],
+    "trustedKnowledgeFlow": "source_pack_or_manual_source -> watcher/search/ingest -> pending_review draft -> reviewed merge -> agent knowledge"
+  },
+  "domains": [
+    {
+      "id": "architecture_planning",
+      "title": "Architecture Planning",
+      "scope": ["space planning", "room adjacency", "circulation", "setbacks", "light ventilation", "basic building-code aware planning"],
+      "outputUse": ["floor plan reasoning", "client requirement mapping", "planning checklist"],
+      "reviewLevel": "professional_recommended"
+    },
+    {
+      "id": "interior_design",
+      "title": "Interior Design",
+      "scope": ["room layout", "furniture clearances", "false ceiling", "lighting", "finishes", "storage", "kitchen/wardrobe basics"],
+      "outputUse": ["interior concept", "material palette", "room-wise checklist"],
+      "reviewLevel": "designer_review_recommended"
+    },
+    {
+      "id": "exterior_design",
+      "title": "Exterior Design",
+      "scope": ["facade style", "elevation massing", "materials", "openings", "balcony/terrace treatment", "climate-aware envelope"],
+      "outputUse": ["elevation prompt", "exterior concept", "material guidance"],
+      "reviewLevel": "designer_review_recommended"
+    },
+    {
+      "id": "civil_construction",
+      "title": "Civil Construction",
+      "scope": ["site preparation", "foundation workflow", "RCC basics", "masonry", "plaster", "waterproofing", "quality checklist"],
+      "outputUse": ["execution checklist", "stage planning", "site QA prompts"],
+      "reviewLevel": "engineer_review_required_for_final"
+    },
+    {
+      "id": "construction_materials",
+      "title": "Construction Materials",
+      "scope": ["cement", "steel", "sand", "aggregate", "bricks/blocks", "tiles", "paint", "wood", "glass", "hardware", "waterproofing compounds"],
+      "outputUse": ["material selection", "BOQ assumptions", "quality checklist"],
+      "reviewLevel": "professional_recommended"
+    },
+    {
+      "id": "vastu_guidance",
+      "title": "Vastu Guidance",
+      "scope": ["orientation", "room placement", "entrance preference", "kitchen/pooja/bedroom placement", "non-legal advisory"],
+      "outputUse": ["vastu-aware planning suggestions"],
+      "reviewLevel": "advisory_only"
+    },
+    {
+      "id": "units_dimensions",
+      "title": "Units and Dimensions",
+      "scope": ["metric/imperial conversions", "room dimensions", "door/window sizes", "clearances", "stair basics", "parking dimensions"],
+      "outputUse": ["dimension checks", "unit conversion", "planning validation"],
+      "reviewLevel": "professional_recommended"
+    },
+    {
+      "id": "boq",
+      "title": "BOQ",
+      "scope": ["quantity assumptions", "item grouping", "material takeoff", "rate-analysis placeholders", "scope exclusions"],
+      "outputUse": ["draft BOQ", "cost planning checklist"],
+      "reviewLevel": "quantity_surveyor_review_required_for_final"
+    },
+    {
+      "id": "bbs",
+      "title": "BBS",
+      "scope": ["bar bending schedule concepts", "steel itemization", "cut length assumptions", "shape codes placeholder"],
+      "outputUse": ["draft BBS checklist", "structural coordination"],
+      "reviewLevel": "structural_engineer_review_required"
+    },
+    {
+      "id": "mep_basics",
+      "title": "MEP Basics",
+      "scope": ["plumbing routing basics", "electrical point planning", "HVAC considerations", "drainage slope awareness", "service shafts"],
+      "outputUse": ["MEP coordination checklist"],
+      "reviewLevel": "MEP_engineer_review_required_for_final"
+    },
+    {
+      "id": "approvals_bylaws",
+      "title": "Approvals and Bylaws",
+      "scope": ["authority approval", "FAR/FSI", "setbacks", "height limits", "fire NOC awareness", "local regulation references"],
+      "outputUse": ["approval checklist", "bylaw-aware planning notes"],
+      "reviewLevel": "licensed_professional_review_required"
+    },
+    {
+      "id": "quality_check",
+      "title": "Quality Checks",
+      "scope": ["stage-wise inspection", "material testing reminders", "workmanship checks", "snag list"],
+      "outputUse": ["site QC checklist", "handover checklist"],
+      "reviewLevel": "site_engineer_review_recommended"
+    },
+    {
+      "id": "execution_planning",
+      "title": "Execution Planning",
+      "scope": ["phase planning", "procurement sequencing", "labor coordination", "risk checklist", "daily/weekly task planning"],
+      "outputUse": ["project schedule guidance", "execution plan"],
+      "reviewLevel": "project_manager_review_recommended"
+    }
+  ]
+}

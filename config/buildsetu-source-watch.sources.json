@@ -10,7 +10,27 @@
       "country": "IN",
       "sourceType": "official_primary",
       "url": "https://www.bis.gov.in/standards/technical-department/national-building-code/",
-      "tags": ["bis", "nbc", "construction", "building_code", "planning"]
+      "tags": [
+        "bis",
+        "nbc",
+        "construction",
+        "building_code",
+        "planning",
+        "source_pack",
+        "official_core_building_codes_india",
+        "architecture_planning",
+        "civil_construction",
+        "approvals_bylaws",
+        "units_dimensions"
+      ],
+      "sourcePackId": "official_core_building_codes_india",
+      "sourcePackTitle": "Official Core Building Codes India",
+      "domains": [
+        "architecture_planning",
+        "civil_construction",
+        "approvals_bylaws",
+        "units_dimensions"
+      ]
     },
     {
       "id": "bis-sp73-building-regulations-2023",
@@ -20,7 +40,27 @@
       "country": "IN",
       "sourceType": "official_primary",
       "url": "https://www.bis.gov.in/wp-content/uploads/2024/02/SP-732023-Standardized-Development-and-Building-Regulations-2023.pdf",
-      "tags": ["bis", "planning", "bylaws", "regulations", "dimensions"]
+      "tags": [
+        "bis",
+        "planning",
+        "bylaws",
+        "regulations",
+        "dimensions",
+        "source_pack",
+        "official_core_building_codes_india",
+        "architecture_planning",
+        "civil_construction",
+        "approvals_bylaws",
+        "units_dimensions"
+      ],
+      "sourcePackId": "official_core_building_codes_india",
+      "sourcePackTitle": "Official Core Building Codes India",
+      "domains": [
+        "architecture_planning",
+        "civil_construction",
+        "approvals_bylaws",
+        "units_dimensions"
+      ]
     },
     {
       "id": "mohua-model-building-bye-laws",
@@ -30,7 +70,33 @@
       "country": "IN",
       "sourceType": "official_primary",
       "url": "https://mohua.gov.in/",
-      "tags": ["mohua", "byelaws", "setback", "far", "approval"]
+      "tags": [
+        "mohua",
+        "byelaws",
+        "setback",
+        "far",
+        "approval",
+        "source_pack",
+        "official_core_building_codes_india",
+        "architecture_planning",
+        "civil_construction",
+        "approvals_bylaws",
+        "units_dimensions"
+      ],
+      "sourcePackId": "official_core_building_codes_india",
+      "sourcePackTitle": "Official Core Building Codes India",
+      "domains": [
+        "architecture_planning",
+        "civil_construction",
+        "approvals_bylaws",
+        "units_dimensions"
+      ]
     }
-  ]
+  ],
+  "sourcePackSync": {
+    "enabled": true,
+    "lastSyncedAt": "2026-06-04T12:09:04.732Z",
+    "autoMerge": false,
+    "reviewRequired": true
+  }
 }

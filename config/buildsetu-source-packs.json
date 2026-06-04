@@ -1,0 +1,130 @@
+{
+  "version": 1,
+  "description": "BuildSetu source packs. Any source with watch=true is synced into the daily trusted source watcher. Changed sources create pending-review drafts only.",
+  "autoUpdatePolicy": {
+    "syncToWatcher": true,
+    "watchSchedule": "daily via BUILDSETU_SOURCE_WATCH_CRON",
+    "autoMerge": false,
+    "reviewRequired": true,
+    "flow": "source pack -> source watcher -> pending review draft -> reviewed merge -> agent knowledge"
+  },
+  "packs": [
+    {
+      "id": "official_core_building_codes_india",
+      "title": "Official Core Building Codes India",
+      "domains": ["architecture_planning", "civil_construction", "approvals_bylaws", "units_dimensions"],
+      "priority": "high",
+      "status": "active",
+      "sources": [
+        {
+          "id": "bis-national-building-code",
+          "title": "BIS National Building Code",
+          "category": "construction_code",
+          "priority": "high",
+          "country": "IN",
+          "sourceType": "official_primary",
+          "url": "https://www.bis.gov.in/standards/technical-department/national-building-code/",
+          "watch": true,
+          "tags": ["bis", "nbc", "construction", "building_code", "planning"]
+        },
+        {
+          "id": "bis-sp73-building-regulations-2023",
+          "title": "BIS SP 73:2023 Standardized Development and Building Regulations",
+          "category": "planning_bylaws",
+          "priority": "high",
+          "country": "IN",
+          "sourceType": "official_primary",
+          "url": "https://www.bis.gov.in/wp-content/uploads/2024/02/SP-732023-Standardized-Development-and-Building-Regulations-2023.pdf",
+          "watch": true,
+          "tags": ["bis", "planning", "bylaws", "regulations", "dimensions"]
+        },
+        {
+          "id": "mohua-model-building-bye-laws",
+          "title": "MoHUA Model Building Bye Laws reference",
+          "category": "planning_bylaws",
+          "priority": "high",
+          "country": "IN",
+          "sourceType": "official_primary",
+          "url": "https://mohua.gov.in/",
+          "watch": true,
+          "tags": ["mohua", "byelaws", "setback", "far", "approval"]
+        }
+      ]
+    },
+    {
+      "id": "planning_dimensions_pack",
+      "title": "Planning, Units and Dimensions Pack",
+      "domains": ["units_dimensions", "architecture_planning", "approvals_bylaws"],
+      "priority": "high",
+      "status": "framework_ready",
+      "sources": [],
+      "plannedTopics": [
+        "standard room dimensions",
+        "door/window planning dimensions",
+        "stair and ramp dimensional checks",
+        "parking and circulation clearances",
+        "unit conversions"
+      ]
+    },
+    {
+      "id": "interior_exterior_design_pack",
+      "title": "Interior and Exterior Design Pack",
+      "domains": ["interior_design", "exterior_design", "construction_materials"],
+      "priority": "medium",
+      "status": "framework_ready",
+      "sources": [],
+      "plannedTopics": [
+        "interior furniture clearances",
+        "kitchen and wardrobe planning",
+        "false ceiling and lighting basics",
+        "facade material guidance",
+        "climate-aware exterior design"
+      ]
+    },
+    {
+      "id": "construction_materials_execution_pack",
+      "title": "Construction Materials and Execution Pack",
+      "domains": ["construction_materials", "civil_construction", "quality_check", "execution_planning"],
+      "priority": "high",
+      "status": "framework_ready",
+      "sources": [],
+      "plannedTopics": [
+        "cement and concrete checks",
+        "steel and reinforcement checks",
+        "masonry and plaster checks",
+        "waterproofing checklist",
+        "stage-wise execution planning"
+      ]
+    },
+    {
+      "id": "boq_bbs_mep_pack",
+      "title": "BOQ, BBS and MEP Coordination Pack",
+      "domains": ["boq", "bbs", "mep_basics"],
+      "priority": "high",
+      "status": "framework_ready",
+      "sources": [],
+      "plannedTopics": [
+        "BOQ item grouping",
+        "material quantity assumptions",
+        "BBS review checklist",
+        "plumbing and electrical coordination",
+        "service shaft planning"
+      ]
+    },
+    {
+      "id": "vastu_advisory_pack",
+      "title": "Vastu Advisory Pack",
+      "domains": ["vastu_guidance", "architecture_planning"],
+      "priority": "medium",
+      "status": "framework_ready",
+      "sources": [],
+      "plannedTopics": [
+        "orientation preferences",
+        "room placement advisory",
+        "entrance/kitchen/pooja/bedroom suggestions",
+        "conflict handling with bylaws and site constraints"
+      ],
+      "disclaimer": "Vastu guidance is advisory and must not override safety, bylaws, structure, ventilation or client functional needs."
+    }
+  ]
+}
