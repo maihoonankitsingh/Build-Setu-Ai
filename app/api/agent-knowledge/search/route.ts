@@ -4,36 +4,52 @@ import { readFileSync } from "fs";
 
 import { join } from "path"; // BUILDSETU_SEARCH_JOIN_IMPORT_FIX_V1
 
+function getBuildSetuSearchSourceField(item: any, keys: string[]): string {
+  // BUILDSETU_SEARCH_SOURCE_META_NORMALIZE_V1
+  const candidates: any[] = [
+    item,
+    item?.source,
+    item?.raw,
+    item?.raw?.source,
+    item?.raw?.original,
+    item?.raw?.original?.source,
+    item?.raw?.originalItem,
+    item?.raw?.originalItem?.source,
+    item?.raw?.originalItem?.original,
+    item?.raw?.originalItem?.original?.source,
+  ];
+
+  for (const candidate of candidates) {
+    if (!candidate || typeof candidate !== "object") continue;
+
+    for (const key of keys) {
+      const value = candidate?.[key];
+      if (typeof value === "string" && value.trim()) {
+        return value.trim();
+      }
+    }
+  }
+
+  return "";
+}
+
 function getBuildSetuSearchSourceUrl(item: any): string {
-  // BUILDSETU_SEARCH_SOURCE_CITATION_EXPOSURE_V1
-  return String(
-    item?.sourceUrl ||
-      item?.url ||
-      item?.raw?.sourceUrl ||
-      item?.raw?.url ||
-      item?.raw?.originalItem?.sourceUrl ||
-      item?.raw?.originalItem?.url ||
-      ""
-  ).trim();
+  return getBuildSetuSearchSourceField(item, [
+    "sourceUrl",
+    "url",
+    "href",
+    "link",
+    "canonicalUrl",
+  ]);
 }
 
 function getBuildSetuSearchSourceCitation(item: any): string {
-  const direct = String(
-    item?.sourceCitation ||
-      item?.raw?.sourceCitation ||
-      item?.raw?.originalItem?.sourceCitation ||
-      ""
-  ).trim();
-
-  if (direct) return direct;
-
-  const sourceUrl = getBuildSetuSearchSourceUrl(item);
-  const title = String(item?.title || item?.raw?.originalItem?.title || "").trim();
-
-  if (sourceUrl && title) return `${title} — ${sourceUrl}`;
-  if (sourceUrl) return sourceUrl;
-
-  return "";
+  return getBuildSetuSearchSourceField(item, [
+    "sourceCitation",
+    "citation",
+    "sourceTitle",
+    "reference",
+  ]);
 }
 
 function attachBuildSetuSearchCitations(item: any) {
