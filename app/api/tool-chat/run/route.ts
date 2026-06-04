@@ -277,21 +277,94 @@ function bsTcKnowledgeText(item: any): string {
     .join(" ");
 }
 
-function bsTcScoreKnowledgeItem(item: any, query: string) {
-  const haystack = bsTcKnowledgeText(item).toLowerCase();
-  const words = String(query || "")
-    .toLowerCase()
-    .split(/[^a-z0-9]+/i)
-    .map((word) => word.trim())
-    .filter((word) => word.length >= 3);
 
-  let score = 0;
-  for (const word of words) {
-    if (haystack.includes(word)) score += word.length;
+function bsTcNormalizeRankText(value: unknown): string {
+  return String(value ?? "")
+    .toLowerCase()
+    .replace(/https?:\/\/\S+/g, " ")
+    .replace(/[^a-z0-9]+/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function bsTcImportantQueryTokens(query: string): string[] {
+  // BUILDSETU_TOOL_CHAT_LOCAL_KNOWLEDGE_RANKING_V1
+  const stop = new Set([
+    "saved", "knowledge", "basis", "batao", "kya", "tha", "answer", "source",
+    "citation", "url", "include", "karo", "kar", "ke", "ka", "ki", "me", "mein",
+    "hai", "aur", "the", "and", "with", "from", "for", "about", "please",
+    "tell", "give", "basis", "based",
+  ]);
+
+  return bsTcNormalizeRankText(query)
+    .split(" ")
+    .map((word) => word.trim())
+    .filter((word) => word.length >= 2)
+    .filter((word) => !stop.has(word));
+}
+
+function bsTcQueryPhrases(tokens: string[]): string[] {
+  const phrases: string[] = [];
+
+  for (let size = Math.min(4, tokens.length); size >= 2; size--) {
+    for (let i = 0; i <= tokens.length - size; i++) {
+      phrases.push(tokens.slice(i, i + size).join(" "));
+    }
   }
 
-  const exact = String(query || "").trim().toLowerCase();
-  if (exact && haystack.includes(exact)) score += 80;
+  return phrases;
+}
+
+
+function bsTcScoreKnowledgeItem(item: any, query: string) {
+  const fullText = bsTcNormalizeRankText(bsTcKnowledgeText(item));
+  const titleText = bsTcNormalizeRankText(
+    item?.title ||
+      item?.raw?.title ||
+      item?.raw?.original?.title ||
+      item?.raw?.originalItem?.title ||
+      ""
+  );
+  const sourceText = bsTcNormalizeRankText(
+    [
+      item?.sourceType,
+      item?.sourceUrl,
+      item?.sourceCitation,
+      item?.raw?.original?.sourceType,
+      item?.raw?.original?.sourceUrl,
+      item?.raw?.original?.sourceCitation,
+    ].filter(Boolean).join(" ")
+  );
+
+  const tokens = bsTcImportantQueryTokens(query);
+  const phrases = bsTcQueryPhrases(tokens);
+  const normalizedQuery = bsTcNormalizeRankText(query);
+
+  let score = 0;
+
+  for (const phrase of phrases) {
+    if (!phrase) continue;
+    if (titleText.includes(phrase)) score += 260 + phrase.length * 8;
+    if (sourceText.includes(phrase)) score += 120 + phrase.length * 4;
+    if (fullText.includes(phrase)) score += 80 + phrase.length * 3;
+  }
+
+  for (const token of tokens) {
+    if (!token) continue;
+
+    if (titleText.split(" ").includes(token)) score += 120 + token.length * 4;
+    else if (titleText.includes(token)) score += 80 + token.length * 3;
+
+    if (sourceText.includes(token)) score += 45 + token.length * 2;
+    if (fullText.includes(token)) score += 18 + token.length;
+  }
+
+  if (normalizedQuery && titleText === normalizedQuery) score += 800;
+  if (normalizedQuery && titleText.includes(normalizedQuery)) score += 500;
+  if (normalizedQuery && fullText.includes(normalizedQuery)) score += 220;
+
+  if (String(item?.sourceType || "").toLowerCase().includes("web_search")) score += 40;
+  if (bsTcSourceCitation(item) || bsTcSourceUrl(item)) score += 35;
 
   return score;
 }
