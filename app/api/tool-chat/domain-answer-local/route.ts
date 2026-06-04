@@ -170,6 +170,33 @@ function rankItems(items: AnyRecord[], query: string, intent: AnyRecord, limit: 
     .slice(0, Math.max(1, Math.min(limit, 10)));
 }
 
+function summarizeKnowledgeItems(items: AnyRecord[]) {
+  // BUILDSETU_DOMAIN_ANSWER_LOCAL_KNOWLEDGE_SUMMARY_V1
+  const sourceTypeCounts: Record<string, number> = {};
+  const domainCounts: Record<string, number> = {};
+  const sourceCitationCounts: Record<string, number> = {};
+
+  for (const item of items || []) {
+    const sourceType = cleanText(item?.sourceType || "unknown", 80) || "unknown";
+    const domain = cleanText(item?.domain || "unknown", 80) || "unknown";
+    const citation = cleanText(item?.sourceCitation || item?.sourceUrl || "", 180);
+
+    sourceTypeCounts[sourceType] = (sourceTypeCounts[sourceType] || 0) + 1;
+    domainCounts[domain] = (domainCounts[domain] || 0) + 1;
+    if (citation) sourceCitationCounts[citation] = (sourceCitationCounts[citation] || 0) + 1;
+  }
+
+  return {
+    totalItems: items.length,
+    sourceTypeCounts,
+    domainCounts,
+    topSources: Object.entries(sourceCitationCounts)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 8)
+      .map(([source, count]) => ({ source, count })),
+  };
+}
+
 function flattenKnowledge(data: any): AnyRecord[] {
   if (Array.isArray(data)) return data;
   if (Array.isArray(data?.items)) return data.items;
@@ -273,8 +300,16 @@ export async function POST(req: NextRequest) {
     const taxonomy = await readJson(path.join(root, "config/buildsetu-knowledge-taxonomy.json"), { domains: [] });
     const intent = inferDomains(query, domain);
     const localKnowledge = await readLocalKnowledge(root);
-    const items = rankItems([...taxonomyItems(taxonomy, intent), ...localKnowledge], query, intent, limit);
+    const taxonomyKnowledge = taxonomyItems(taxonomy, intent);
+    const candidateItems = [...taxonomyKnowledge, ...localKnowledge];
+    const items = rankItems(candidateItems, query, intent, limit);
     const answer = buildAnswer(items, intent, query);
+    const knowledgeSummary = {
+      ...summarizeKnowledgeItems(items),
+      candidateSummary: summarizeKnowledgeItems(candidateItems),
+      taxonomyItemCount: taxonomyKnowledge.length,
+      localKnowledgeItemCount: localKnowledge.length,
+    };
 
     return NextResponse.json({
       ok: true,
@@ -285,6 +320,7 @@ export async function POST(req: NextRequest) {
       answer,
       primaryDomain: intent.primaryDomain,
       inferredDomains: intent.inferredDomains,
+      knowledgeSummary,
       items,
       output: {
         status: "READY",
