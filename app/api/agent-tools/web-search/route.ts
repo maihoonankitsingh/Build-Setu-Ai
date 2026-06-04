@@ -509,6 +509,47 @@ async function getLoggedInUser(req: NextRequest) {
   return getUserFromSession(token);
 }
 
+
+function buildSetuTitleFromUrl(url: URL) {
+  // BUILDSETU_WEB_SEARCH_DIRECT_URL_TOLERANT_V1
+  const file = decodeURIComponent(url.pathname.split("/").filter(Boolean).pop() || url.hostname)
+    .replace(/\.[a-z0-9]{2,8}$/i, "")
+    .replace(/[-_]+/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+
+  return file || url.hostname.replace(/^www\./, "");
+}
+
+function buildSetuDirectUrlMetadataItem(inputUrl: string, reason: string): WebResearchItem {
+  const url = normalizeBuildSetuHttpUrl(inputUrl);
+  const title = buildSetuTitleFromUrl(url);
+
+  return {
+    title,
+    url: url.toString(),
+    sourceUrl: url.toString(),
+    sourceCitation: `${title} — ${url.toString()}`,
+    snippet: `Direct official source metadata fallback. Reason: ${cleanText(reason)}`,
+    textPreview: `Direct official source metadata fallback. Source URL: ${url.toString()}`,
+    domain: url.hostname.replace(/^www\./, ""),
+    fetchedAt: new Date().toISOString(),
+  };
+}
+
+function buildSetuIsMetadataFallbackContentError(error: unknown) {
+  const message = cleanText((error as any)?.message || error);
+
+  return (
+    message.includes("UNSUPPORTED_CONTENT_TYPE") ||
+    message.includes("URL_CONTENT_TOO_LARGE") ||
+    message.includes("fetch failed") ||
+    message.includes("terminated") ||
+    message.includes("aborted") ||
+    message.includes("Body is unusable")
+  );
+}
+
 function extractCandidateUrls(body: any) {
   const urls = [
     body?.url,
@@ -525,12 +566,25 @@ function extractCandidateUrls(body: any) {
 }
 
 async function researchDirectUrls(urls: string[]) {
+  // BUILDSETU_WEB_SEARCH_DIRECT_URL_RESEARCH_TOLERANT_V1
   const items: WebResearchItem[] = [];
 
   for (const rawUrl of urls.slice(0, MAX_RESULTS)) {
-    const url = normalizeBuildSetuHttpUrl(rawUrl);
-    const fetched = await fetchLimitedText(url);
-    items.push(webResearchItemFromFetched({ inputUrl: rawUrl, fetched }));
+    try {
+      const url = normalizeBuildSetuHttpUrl(rawUrl);
+      const fetched = await fetchLimitedText(url);
+      items.push(webResearchItemFromFetched({ inputUrl: rawUrl, fetched }));
+    } catch (error) {
+      if (!buildSetuIsMetadataFallbackContentError(error)) {
+        continue;
+      }
+
+      try {
+        items.push(buildSetuDirectUrlMetadataItem(rawUrl, cleanText((error as any)?.message || error)));
+      } catch {
+        // skip invalid fallback URL
+      }
+    }
   }
 
   return items;
