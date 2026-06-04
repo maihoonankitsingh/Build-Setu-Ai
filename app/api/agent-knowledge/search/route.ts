@@ -1,4 +1,73 @@
 import { NextRequest, NextResponse } from "next/server";
+
+import { readFileSync } from "fs";
+
+import { join } from "path"; // BUILDSETU_SEARCH_JOIN_IMPORT_FIX_V1
+
+function getBuildSetuSearchSourceUrl(item: any): string {
+  // BUILDSETU_SEARCH_SOURCE_CITATION_EXPOSURE_V1
+  return String(
+    item?.sourceUrl ||
+      item?.url ||
+      item?.raw?.sourceUrl ||
+      item?.raw?.url ||
+      item?.raw?.originalItem?.sourceUrl ||
+      item?.raw?.originalItem?.url ||
+      ""
+  ).trim();
+}
+
+function getBuildSetuSearchSourceCitation(item: any): string {
+  const direct = String(
+    item?.sourceCitation ||
+      item?.raw?.sourceCitation ||
+      item?.raw?.originalItem?.sourceCitation ||
+      ""
+  ).trim();
+
+  if (direct) return direct;
+
+  const sourceUrl = getBuildSetuSearchSourceUrl(item);
+  const title = String(item?.title || item?.raw?.originalItem?.title || "").trim();
+
+  if (sourceUrl && title) return `${title} — ${sourceUrl}`;
+  if (sourceUrl) return sourceUrl;
+
+  return "";
+}
+
+function attachBuildSetuSearchCitations(item: any) {
+  const sourceUrl = getBuildSetuSearchSourceUrl(item);
+  const sourceCitation = getBuildSetuSearchSourceCitation(item);
+
+  return {
+    ...item,
+    sourceUrl,
+    sourceCitation,
+  };
+}
+
+function loadBuildSetuWebSearchKnowledgeItems(): any[] {
+  // BUILDSETU_SEARCH_WEB_SEARCH_STORE_MERGE_V1
+  try {
+    const raw = readFileSync(join(process.cwd(), "data/agent-knowledge/web-search/knowledge.json"), "utf-8");
+    const parsed = JSON.parse(raw);
+    const items = Array.isArray(parsed) ? parsed : Array.isArray(parsed?.items) ? parsed.items : [];
+
+    return items.map((item: any) => ({
+      ...item,
+      domain: item?.domain || "web_search",
+      scope: item?.scope || (item?.projectId ? "project" : "global"),
+      sourceType: item?.sourceType || "web_search",
+      tags: Array.from(new Set([...(Array.isArray(item?.tags) ? item.tags : []), "web_search", "public_reference"])),
+      sourceUrl: getBuildSetuSearchSourceUrl(item),
+      sourceCitation: getBuildSetuSearchSourceCitation(item),
+    }));
+  } catch {
+    return [];
+  }
+}
+
 import {
   buildKnowledgeContextForAgent,
   listBuildSetuKnowledge,
@@ -256,23 +325,29 @@ function handleSearch(input: SearchInput) {
     limit: searchDepth,
   });
 
-  const context = buildKnowledgeContextForAgent({
+  
+  const webSearchKnowledgeItems = loadBuildSetuWebSearchKnowledgeItems(); // BUILDSETU_SEARCH_WEB_SEARCH_STORE_SYNC_LOADER_V1
+  const searchableItems = [...webSearchKnowledgeItems, ...(items as any[])]; // BUILDSETU_SEARCH_WEB_SEARCH_ITEMS_MERGED_V1
+const context = buildKnowledgeContextForAgent({
     projectId,
     domain: domain as any,
     limit: Math.min(searchDepth, 50),
   });
 
-  const finalItems = items.length
-    ? rankKnowledgeItems(items as any[], q, limit)
+  const finalItems = searchableItems.length
+    ? rankKnowledgeItems(searchableItems as any[], q, limit)
     : rankFallbackItems(fallbackItemsFromContext(context, searchDepth), q, limit);
 
-  return {
+  
+  const finalItemsWithCitations = finalItems.map(attachBuildSetuSearchCitations); // BUILDSETU_SEARCH_FINALITEMS_CITATION_EXPOSURE_V1
+return {
     ok: true,
     projectId,
     domain,
     q,
     count: finalItems.length,
-    items: finalItems,
+    items: finalItemsWithCitations,
+    sourceCitations: finalItemsWithCitations.map((item: any) => item.sourceCitation).filter(Boolean),
     context,
   };
 }
