@@ -1,0 +1,36 @@
+{
+  "version": 1,
+  "description": "BuildSetu trusted construction/interior/exterior/planning source watch registry. Changes create pending review alerts, not auto-merged knowledge.",
+  "sources": [
+    {
+      "id": "bis-national-building-code",
+      "title": "BIS National Building Code",
+      "category": "construction_code",
+      "priority": "high",
+      "country": "IN",
+      "sourceType": "official_primary",
+      "url": "https://www.bis.gov.in/standards/technical-department/national-building-code/",
+      "tags": ["bis", "nbc", "construction", "building_code", "planning"]
+    },
+    {
+      "id": "bis-sp73-building-regulations-2023",
+      "title": "BIS SP 73:2023 Standardized Development and Building Regulations",
+      "category": "planning_bylaws",
+      "priority": "high",
+      "country": "IN",
+      "sourceType": "official_primary",
+      "url": "https://www.bis.gov.in/wp-content/uploads/2024/02/SP-732023-Standardized-Development-and-Building-Regulations-2023.pdf",
+      "tags": ["bis", "planning", "bylaws", "regulations", "dimensions"]
+    },
+    {
+      "id": "mohua-model-building-bye-laws",
+      "title": "MoHUA Model Building Bye Laws reference",
+      "category": "planning_bylaws",
+      "priority": "high",
+      "country": "IN",
+      "sourceType": "official_primary",
+      "url": "https://mohua.gov.in/",
+      "tags": ["mohua", "byelaws", "setback", "far", "approval"]
+    }
+  ]
+}

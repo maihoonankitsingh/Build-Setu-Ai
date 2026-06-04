@@ -110,3 +110,7 @@ data/generated/*.wav
 !data/generated/boq-rate-master.json
 
 # Already tracked legacy runtime files are restored to HEAD and should not be recommitted.
+
+# BUILDSETU_SOURCE_WATCH_RUNTIME
+data/buildsetu-source-watch/state.json
+data/buildsetu-source-watch/changes/
