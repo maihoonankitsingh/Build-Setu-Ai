@@ -2,6 +2,55 @@ import { NextRequest, NextResponse } from "next/server";
 import { promises as fs } from "fs";
 import path from "path";
 
+import { AUTH_COOKIE, getUserFromSession } from "@/lib/auth-store";
+
+function bsPrivateApiCookieValue(cookieHeader: string, name: string): string {
+  // BUILDSETU_PRIVATE_API_AUTH_GATE_V1
+  const parts = String(cookieHeader || "").split(";");
+
+  for (const part of parts) {
+    const index = part.indexOf("=");
+    if (index < 0) continue;
+
+    const key = part.slice(0, index).trim();
+    const value = part.slice(index + 1).trim();
+
+    if (key === name) {
+      try {
+        return decodeURIComponent(value);
+      } catch {
+        return value;
+      }
+    }
+  }
+
+  return "";
+}
+
+async function requireBuildSetuPrivateApiAuth(request: Request): Promise<boolean> {
+  const token = bsPrivateApiCookieValue(request.headers.get("cookie") || "", AUTH_COOKIE);
+  const user = await getUserFromSession(token || undefined);
+
+  return Boolean(
+    user?.id ||
+      user?.email ||
+      user?.phone ||
+      user?.name
+  );
+}
+
+function buildSetuPrivateApiLoginRequiredResponse(): Response {
+  return new Response(
+    JSON.stringify({ ok: false, error: "LOGIN_REQUIRED" }),
+    {
+      status: 401,
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }
+  );
+}
+
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
@@ -65,6 +114,13 @@ function makeMessage(body: any): ChatMessage {
 }
 
 export async function GET(request: NextRequest) {
+
+  // BUILDSETU_PRIVATE_API_GET_AUTH_APPLIED
+  const isBuildSetuPrivateApiAuthed = await requireBuildSetuPrivateApiAuth(request);
+  if (!isBuildSetuPrivateApiAuthed) {
+    return buildSetuPrivateApiLoginRequiredResponse();
+  }
+
   const projectId = String(request.nextUrl.searchParams.get("projectId") || "").trim();
 
   if (!projectId) {
@@ -82,6 +138,13 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
+
+  // BUILDSETU_PRIVATE_API_POST_AUTH_APPLIED
+  const isBuildSetuPrivateApiAuthed = await requireBuildSetuPrivateApiAuth(request);
+  if (!isBuildSetuPrivateApiAuthed) {
+    return buildSetuPrivateApiLoginRequiredResponse();
+  }
+
   const body = await request.json().catch(() => null);
 
   if (!body || typeof body !== "object") {
@@ -112,6 +175,13 @@ export async function POST(request: NextRequest) {
 }
 
 export async function DELETE(request: NextRequest) {
+
+  // BUILDSETU_PRIVATE_API_DELETE_AUTH_APPLIED
+  const isBuildSetuPrivateApiAuthed = await requireBuildSetuPrivateApiAuth(request);
+  if (!isBuildSetuPrivateApiAuthed) {
+    return buildSetuPrivateApiLoginRequiredResponse();
+  }
+
   const projectId = String(request.nextUrl.searchParams.get("projectId") || "").trim();
 
   if (!projectId) {
