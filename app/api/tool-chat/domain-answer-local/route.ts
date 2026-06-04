@@ -141,33 +141,103 @@ function itemBody(item: AnyRecord) {
   );
 }
 
-function scoreItem(item: AnyRecord, query: string, intent: AnyRecord) {
-  const text = itemCombinedText(item);
-  const qTokens = normalize(query).split(" ").filter((token) => token.length >= 3);
-  let score = Number(item?.score || 0);
+const DOMAIN_ANSWER_RANKING_POLICY = "primary_domain_seed_priority_v2"; // BUILDSETU_DOMAIN_ANSWER_RANKING_PRECISION_V2
+
+function tokenScoreForItem(text: string, query: string) {
+  const stopwords = new Set(["batao", "kya", "hai", "ke", "liye", "and", "the", "with", "for", "checklist"]);
+  const qTokens = normalize(query)
+    .split(" ")
+    .filter((token) => token.length >= 3 && !stopwords.has(token));
+
+  let score = 0;
 
   for (const token of qTokens) {
     if (text.includes(token)) score += 8 + Math.min(10, token.length);
   }
 
-  for (const [index, domain] of (intent?.inferredDomains || []).entries()) {
-    const normalizedDomain = normalize(domain);
-    const weight = Math.max(10, 40 - index * 8);
+  return score;
+}
 
-    if (normalize(item?.domain) === normalizedDomain) score += weight + 40;
-    if (Array.isArray(item?.tags) && item.tags.map(normalize).includes(normalizedDomain)) score += weight + 20;
-    if (text.includes(normalizedDomain.replace(/_/g, " "))) score += weight;
+function scoreItem(item: AnyRecord, query: string, intent: AnyRecord) {
+  const text = itemCombinedText(item);
+  const inferredDomains = Array.isArray(intent?.inferredDomains) ? intent.inferredDomains : [];
+  const primaryDomain = normalize(intent?.primaryDomain || inferredDomains[0] || "");
+  const itemDomain = normalize(item?.domain);
+  const sourceType = normalize(item?.sourceType);
+  const tagSet = new Set(Array.isArray(item?.tags) ? item.tags.map((tag: unknown) => normalize(tag)) : []);
+
+  let score = Number(item?.score || 0);
+  const directTokenScore = tokenScoreForItem(text, query);
+  score += directTokenScore;
+
+  inferredDomains.forEach((domain: unknown, index: number) => {
+    const normalizedDomain = normalize(domain);
+    const isPrimary = index === 0;
+    const baseWeight = Math.max(10, 44 - index * 10);
+
+    if (itemDomain === normalizedDomain) {
+      score += baseWeight + (isPrimary ? 95 : 28);
+    }
+
+    if (tagSet.has(normalizedDomain)) {
+      score += baseWeight + (isPrimary ? 45 : 18);
+    }
+
+    if (text.includes(normalizedDomain.replace(/_/g, " "))) {
+      score += isPrimary ? 24 : 8;
+    }
+  });
+
+  const isPrimaryDomainItem = Boolean(primaryDomain && itemDomain === primaryDomain);
+  const isInferredDomainItem = inferredDomains.map((domain: unknown) => normalize(domain)).includes(itemDomain);
+
+  if (isPrimaryDomainItem && sourceType === "curated_starter") score += 140;
+  if (isPrimaryDomainItem && sourceType === "taxonomy") score += 120;
+
+  if (!isPrimaryDomainItem && isInferredDomainItem && sourceType === "curated_starter") score += 28;
+  if (!isPrimaryDomainItem && isInferredDomainItem && sourceType === "taxonomy") score += 20;
+
+  if (!isInferredDomainItem && sourceType === "curated_starter") {
+    score -= directTokenScore >= 55 ? 12 : 70;
+  }
+
+  if (!isInferredDomainItem && sourceType === "taxonomy") {
+    score -= 55;
   }
 
   return score;
 }
 
 function rankItems(items: AnyRecord[], query: string, intent: AnyRecord, limit: number) {
-  return items
-    .map((item) => ({ ...item, score: scoreItem(item, query, intent), matchedDomains: intent?.inferredDomains || [] }))
-    .filter((item) => Number(item.score || 0) > 0)
-    .sort((a, b) => Number(b.score || 0) - Number(a.score || 0))
-    .slice(0, Math.max(1, Math.min(limit, 10)));
+  // BUILDSETU_DOMAIN_ANSWER_PRIMARY_SEED_GUARD_V2
+  const maxItems = Math.max(1, Math.min(limit, 10));
+  const inferredDomains = Array.isArray(intent?.inferredDomains) ? intent.inferredDomains : [];
+  const primaryDomain = normalize(intent?.primaryDomain || inferredDomains[0] || "");
+
+  const ranked: AnyRecord[] = items
+    .map((item: AnyRecord) => ({
+      ...item,
+      score: scoreItem(item, query, intent),
+      matchedDomains: inferredDomains,
+    }))
+    .filter((item: AnyRecord) => Number(item?.score || 0) > 0)
+    .sort((a: AnyRecord, b: AnyRecord) => Number(b?.score || 0) - Number(a?.score || 0));
+
+  const primaryCurated = ranked.find((item: AnyRecord) => normalize(item?.domain) === primaryDomain && normalize(item?.sourceType) === "curated_starter");
+  const primaryTaxonomy = ranked.find((item: AnyRecord) => normalize(item?.domain) === primaryDomain && normalize(item?.sourceType) === "taxonomy");
+
+  const selected: AnyRecord[] = [];
+
+  for (const mustHave of [primaryTaxonomy, primaryCurated]) {
+    if (mustHave && !selected.some((item: AnyRecord) => item?.id === mustHave?.id)) selected.push(mustHave);
+  }
+
+  for (const item of ranked) {
+    if (selected.length >= maxItems) break;
+    if (!selected.some((existing: AnyRecord) => existing?.id === item?.id)) selected.push(item);
+  }
+
+  return selected.slice(0, maxItems);
 }
 
 function summarizeKnowledgeItems(items: AnyRecord[]) {
@@ -309,6 +379,7 @@ export async function POST(req: NextRequest) {
       candidateSummary: summarizeKnowledgeItems(candidateItems),
       taxonomyItemCount: taxonomyKnowledge.length,
       localKnowledgeItemCount: localKnowledge.length,
+      rankingPolicy: DOMAIN_ANSWER_RANKING_POLICY,
     };
 
     return NextResponse.json({
