@@ -127,6 +127,99 @@ function parseDuckDuckGoResults(html: string, limit: number) {
   return items;
 }
 
+function decodeBingUrlParam(value: string) {
+  const clean = cleanText(value);
+  if (!clean) return "";
+
+  const candidates = [
+    clean,
+    clean.replace(/^a1/i, ""),
+    clean.replace(/^a2/i, ""),
+  ];
+
+  for (const candidate of candidates) {
+    try {
+      const padded = candidate.replace(/-/g, "+").replace(/_/g, "/").padEnd(Math.ceil(candidate.length / 4) * 4, "=");
+      const decoded = Buffer.from(padded, "base64").toString("utf8");
+      if (/^https?:\/\//i.test(decoded)) return decoded;
+    } catch {
+      // try next candidate
+    }
+  }
+
+  return "";
+}
+
+function normalizeBingHref(href: string) {
+  // BUILDSETU_WEB_SEARCH_BING_FALLBACK_V1
+  const raw = decodeBasicHtmlEntities(cleanText(href));
+  if (!raw) return "";
+
+  try {
+    const url = new URL(raw, "https://www.bing.com");
+
+    if (url.hostname.endsWith("bing.com") && url.pathname.startsWith("/ck/a")) {
+      const u = url.searchParams.get("u");
+      const decoded = u ? decodeBingUrlParam(u) : "";
+      if (decoded) return decoded;
+    }
+
+    if (url.protocol === "http:" || url.protocol === "https:") return url.toString();
+  } catch {
+    return "";
+  }
+
+  return "";
+}
+
+function parseBingResults(html: string, limit: number) {
+  const items: Array<{ title: string; url: string; snippet: string }> = [];
+  const seen = new Set<string>();
+
+  const blockRegex = /<li[^>]+class=["'][^"']*\bb_algo\b[^"']*["'][^>]*>([\s\S]*?)<\/li>/gi;
+  let match: RegExpExecArray | null;
+
+  while ((match = blockRegex.exec(html)) && items.length < limit) {
+    const block = match[1] || "";
+    const link =
+      block.match(/<h2[^>]*>\s*<a[^>]+href=["']([^"']+)["'][^>]*>([\s\S]*?)<\/a>\s*<\/h2>/i) ||
+      block.match(/<a[^>]+href=["']([^"']+)["'][^>]*>([\s\S]*?)<\/a>/i);
+
+    if (!link) continue;
+
+    const url = normalizeBingHref(link[1]);
+    const title = cleanText(decodeBasicHtmlEntities(String(link[2] || "").replace(/<[^>]+>/g, " ")));
+
+    if (!url || !title || seen.has(url)) continue;
+
+    let host = "";
+    try {
+      host = new URL(url).hostname.replace(/^www\./, "");
+    } catch {
+      host = "";
+    }
+
+    if (!host || host.endsWith("bing.com")) continue;
+
+    seen.add(url);
+
+    const snippet = cleanText(
+      decodeBasicHtmlEntities(
+        (
+          block.match(/<p[^>]*>([\s\S]*?)<\/p>/i)?.[1] ||
+          block.match(/<div[^>]+class=["'][^"']*b_caption[^"']*["'][^>]*>[\s\S]*?<p[^>]*>([\s\S]*?)<\/p>/i)?.[1] ||
+          ""
+        ).replace(/<[^>]+>/g, " "),
+      ),
+    );
+
+    items.push({ title, url, snippet });
+  }
+
+  return items;
+}
+
+
 async function fetchLimitedText(url: URL) {
   await assertBuildSetuPublicResolvableUrl(url);
 
@@ -188,6 +281,7 @@ async function fetchLimitedText(url: URL) {
       finalUrl: url.toString(),
       contentType,
       bytes: total,
+        rawHtml: contentType.includes("text/plain") ? "" : raw.slice(0, MAX_URL_BYTES), // BUILDSETU_WEB_SEARCH_RAW_HTML_FOR_PARSERS_V1
       ...readable,
     };
   } finally {
@@ -257,7 +351,7 @@ async function researchByDuckDuckGo(query: string, limit: number) {
   searchUrl.searchParams.set("q", query);
 
   const fetched = await fetchLimitedText(searchUrl);
-  const parsed = parseDuckDuckGoResults(fetched.text || "", limit); // BUILDSETU_WEB_SEARCH_DDG_TEXT_FIX_V1
+  const parsed = parseDuckDuckGoResults((fetched as any).rawHtml || fetched.text || "", limit); // BUILDSETU_WEB_SEARCH_DDG_RAW_HTML_FIX_V1
 
   const items: WebResearchItem[] = [];
 
@@ -291,6 +385,72 @@ async function researchByDuckDuckGo(query: string, limit: number) {
   }
 
   return items;
+}
+
+async function researchByBing(query: string, limit: number) {
+  // BUILDSETU_WEB_SEARCH_BING_RESEARCH_V1
+  const searchUrl = new URL("https://www.bing.com/search");
+  searchUrl.searchParams.set("q", query);
+  searchUrl.searchParams.set("count", String(Math.max(1, Math.min(limit, MAX_RESULTS))));
+
+  const fetched = await fetchLimitedText(searchUrl);
+  const parsed = parseBingResults((fetched as any).rawHtml || fetched.text || "", limit);
+
+  const items: WebResearchItem[] = [];
+
+  for (const result of parsed.slice(0, limit)) {
+    try {
+      const url = normalizeBuildSetuHttpUrl(result.url);
+      const fetchedPage = await fetchLimitedText(url);
+      items.push(webResearchItemFromFetched({
+        inputUrl: result.url,
+        fetched: fetchedPage,
+        fallbackTitle: result.title,
+        fallbackSnippet: result.snippet,
+      }));
+    } catch {
+      try {
+        const url = normalizeBuildSetuHttpUrl(result.url);
+        items.push({
+          title: result.title,
+          url: url.toString(),
+          sourceUrl: url.toString(),
+          sourceCitation: `${result.title} — ${url.toString()}`,
+          snippet: result.snippet,
+          textPreview: result.snippet,
+          domain: url.hostname.replace(/^www\./, ""),
+          fetchedAt: new Date().toISOString(),
+        });
+      } catch {
+        // skip invalid result
+      }
+    }
+  }
+
+  return items;
+}
+
+async function researchByPublicSearch(query: string, limit: number) {
+  // BUILDSETU_WEB_SEARCH_MULTI_PROVIDER_FALLBACK_V1
+  const errors: string[] = [];
+
+  try {
+    const duckItems = await researchByDuckDuckGo(query, limit);
+    if (duckItems.length) return duckItems;
+    errors.push("duckduckgo_empty");
+  } catch (error: any) {
+    errors.push(`duckduckgo_${cleanText(error?.message || "failed")}`);
+  }
+
+  try {
+    const bingItems = await researchByBing(query, limit);
+    if (bingItems.length) return bingItems;
+    errors.push("bing_empty");
+  } catch (error: any) {
+    errors.push(`bing_${cleanText(error?.message || "failed")}`);
+  }
+
+  throw new Error(`WEB_SEARCH_NO_RESULTS:${errors.join("|")}`);
 }
 
 export async function GET() {
@@ -348,8 +508,8 @@ export async function POST(req: NextRequest) {
     }
 
     const items = candidateUrls.length
-      ? await researchDirectUrls(candidateUrls)
-      : await researchByDuckDuckGo(query, limit);
+        ? await researchDirectUrls(candidateUrls)
+        : await researchByPublicSearch(query, limit);
 
     return NextResponse.json({
       ok: true,
