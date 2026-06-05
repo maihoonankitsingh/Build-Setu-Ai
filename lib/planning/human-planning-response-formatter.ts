@@ -81,6 +81,28 @@ type ConceptPlanningActionEngineLike = {
   outputSequence?: string[];
 };
 
+// BUILDSETU_PHASE_47G2_ROOM_FIT_HUMAN_MERGE
+type RoomFurnitureFitEngineLike = {
+  hasRoomFitContext?: boolean;
+  primaryUseDetected?: string;
+  checks?: Array<{
+    id?: string;
+    roomType?: string;
+    sourceDimension?: string;
+    widthFeet?: number | null;
+    depthFeet?: number | null;
+    areaSqFt?: number | null;
+    status?: string;
+    fitSummary?: string;
+    furnitureOrFixtureFit?: string[];
+    clearanceNotes?: string[];
+    warnings?: string[];
+    nextDataNeeded?: string[];
+  }>;
+  globalNotes?: string[];
+  professionalNotes?: string[];
+};
+
 export type BuildSetuHumanPlanningResponse = {
   responseVersion: "47E-1";
   title: string;
@@ -100,6 +122,10 @@ export type BuildSetuHumanPlanningResponse = {
     adjacencyCirculationLogic: string[];
     serviceCoreLogic: string[];
     outputSequence: string[];
+    roomFurnitureFitChecks: string[];
+    clearanceNotes: string[];
+    furnitureFixtureWarnings: string[];
+    dataNeededForFinalLayout: string[];
     riskAndVerification: string[];
     nextBestActions: string[];
   };
@@ -188,8 +214,12 @@ function buildMarkdown(title: string, sections: BuildSetuHumanPlanningResponse["
     ["11. Adjacency / circulation logic", sections.adjacencyCirculationLogic],
     ["12. Service core logic", sections.serviceCoreLogic],
     ["13. Output sequence", sections.outputSequence],
-    ["14. Risks / professional verification", sections.riskAndVerification],
-    ["15. Next best action", sections.nextBestActions],
+    ["14. Room / furniture fit checks", sections.roomFurnitureFitChecks],
+    ["15. Clearance notes", sections.clearanceNotes],
+    ["16. Furniture / fixture warnings", sections.furnitureFixtureWarnings],
+    ["17. Data needed for final layout", sections.dataNeededForFinalLayout],
+    ["18. Risks / professional verification", sections.riskAndVerification],
+    ["19. Next best action", sections.nextBestActions],
   ];
 
   for (const [heading, lines] of ordered) {
@@ -216,6 +246,7 @@ export function buildHumanPlanningResponse(input: {
   buildingTypeClassification?: BuildingTypeClassificationLike;
   planningModeQuestionTuning?: PlanningModeQuestionTuningLike;
   conceptPlanningActionEngine?: ConceptPlanningActionEngineLike;
+  roomFurnitureFitEngine?: RoomFurnitureFitEngineLike;
 }): BuildSetuHumanPlanningResponse {
   const inputText = cleanText(input.inputText);
   const dim = input.dimensionUnderstanding;
@@ -223,6 +254,7 @@ export function buildHumanPlanningResponse(input: {
   const building = input.buildingTypeClassification;
   const mode = input.planningModeQuestionTuning;
   const concept = input.conceptPlanningActionEngine;
+  const roomFit = input.roomFurnitureFitEngine;
 
   const category = normalizeLabel(building?.category);
   const subType = normalizeLabel(building?.subType);
@@ -254,6 +286,10 @@ export function buildHumanPlanningResponse(input: {
     adjacencyCirculationLogic: [],
     serviceCoreLogic: [],
     outputSequence: [],
+    roomFurnitureFitChecks: [],
+    clearanceNotes: [],
+    furnitureFixtureWarnings: [],
+    dataNeededForFinalLayout: [],
     riskAndVerification: [],
     nextBestActions: [],
   };
@@ -384,6 +420,56 @@ export function buildHumanPlanningResponse(input: {
     pushUnique(sections.outputSequence, "3. Add professional verification notes.");
   }
 
+  if (roomFit?.checks?.length) {
+    for (const check of roomFit.checks.slice(0, 10)) {
+      const roomLabel = cleanText(check.roomType || "room");
+      const source = cleanText(check.sourceDimension || "dimension");
+      const status = cleanText(check.status || "needs_more_info");
+      const summary = cleanText(check.fitSummary || "Fit summary unavailable.");
+      pushUnique(sections.roomFurnitureFitChecks, `${roomLabel} ${source}: ${status} — ${summary}`);
+
+      for (const item of check.furnitureOrFixtureFit || []) {
+        pushUnique(sections.roomFurnitureFitChecks, `${roomLabel} fit: ${item}`);
+      }
+
+      for (const item of check.clearanceNotes || []) {
+        pushUnique(sections.clearanceNotes, `${roomLabel}: ${item}`);
+      }
+
+      for (const item of check.warnings || []) {
+        pushUnique(sections.furnitureFixtureWarnings, `${roomLabel}: ${item}`);
+      }
+
+      for (const item of check.nextDataNeeded || []) {
+        pushUnique(sections.dataNeededForFinalLayout, `${roomLabel}: ${item}`);
+      }
+    }
+  }
+
+  for (const item of roomFit?.globalNotes || []) {
+    pushUnique(sections.dataNeededForFinalLayout, item);
+  }
+
+  for (const item of roomFit?.professionalNotes || []) {
+    pushUnique(sections.riskAndVerification, item);
+  }
+
+  if (!sections.roomFurnitureFitChecks.length) {
+    pushUnique(sections.roomFurnitureFitChecks, "No room-level fit check available yet. Add room dimensions to validate furniture and fixtures.");
+  }
+
+  if (!sections.clearanceNotes.length) {
+    pushUnique(sections.clearanceNotes, "Clearance notes will be generated after room use, furniture list and opening positions are confirmed.");
+  }
+
+  if (!sections.furnitureFixtureWarnings.length) {
+    pushUnique(sections.furnitureFixtureWarnings, "No furniture/fixture warning detected at concept level.");
+  }
+
+  if (!sections.dataNeededForFinalLayout.length) {
+    pushUnique(sections.dataNeededForFinalLayout, "Confirm site measurement, wall thickness, doors, windows, columns and service points before final layout.");
+  }
+
   for (const risk of mq?.riskFlags || []) {
     pushUnique(sections.riskAndVerification, risk);
   }
@@ -441,20 +527,27 @@ export function buildHumanPlanningResponse(input: {
     pushUnique(sections.nextBestActions, "Keep output concept-level and escalate fire/accessibility/MEP/local norms verification.");
   }
 
+  const primaryRoomUse = cleanText(roomFit?.primaryUseDetected || "");
+  const hasRoomFitOnly = Boolean(roomFit?.hasRoomFitContext && !dim?.summary?.hasPlotDimension);
+
   const title =
-    planningMode === "room_interior"
-      ? "BuildSetu Interior Planning Response"
-      : planningMode === "residential_building"
-        ? "BuildSetu Residential Planning Response"
-        : planningMode === "commercial_building"
-          ? "BuildSetu Commercial Planning Response"
-          : planningMode === "mixed_use_building"
-            ? "BuildSetu Mixed-use Planning Response"
-            : planningMode === "public_or_special_building"
-              ? "BuildSetu Public/Special-use Planning Response"
-              : planningMode === "industrial_storage"
-                ? "BuildSetu Industrial/Storage Planning Response"
-                : "BuildSetu Human-like Planning Response";
+    hasRoomFitOnly && primaryRoomUse === "office"
+      ? "BuildSetu Commercial Interior Planning Response"
+      : hasRoomFitOnly && ["bedroom", "kitchen", "toilet", "living", "generic_room"].includes(primaryRoomUse)
+        ? "BuildSetu Interior Planning Response"
+        : planningMode === "room_interior"
+          ? "BuildSetu Interior Planning Response"
+          : planningMode === "residential_building"
+            ? "BuildSetu Residential Planning Response"
+            : planningMode === "commercial_building"
+              ? "BuildSetu Commercial Planning Response"
+              : planningMode === "mixed_use_building"
+                ? "BuildSetu Mixed-use Planning Response"
+                : planningMode === "public_or_special_building"
+                  ? "BuildSetu Public/Special-use Planning Response"
+                  : planningMode === "industrial_storage"
+                    ? "BuildSetu Industrial/Storage Planning Response"
+                    : "BuildSetu Human-like Planning Response";
 
   const markdown = buildMarkdown(title, sections);
 
