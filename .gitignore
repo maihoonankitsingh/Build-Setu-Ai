@@ -118,3 +118,6 @@ data/buildsetu-source-watch/changes/
 data/buildsetu-manual-verification-records/
 # BuildSetu runtime generated source candidate previews
 app/api/agent-knowledge/pending-exact-source-candidates/
+
+# Runtime exact source candidate records
+data/buildsetu-pending-exact-source-candidates/
