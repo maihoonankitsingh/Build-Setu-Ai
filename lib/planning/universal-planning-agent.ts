@@ -7,6 +7,7 @@ import { buildWorkingDrawings } from "./working-drawing-engine";
 import { buildDimensionUnderstandingPromptBlock, understandBuildSetuDimensions } from "./dimension-understanding-engine";
 import { buildPlanningMissingQuestionEngine, buildPlanningMissingQuestionPromptBlock } from "./missing-question-engine";
 import { buildBuildingTypeClassifierPromptBlock, classifyBuildSetuBuildingType } from "./building-type-classifier";
+import { buildPlanningModeQuestionPromptBlock, buildPlanningModeQuestionTuning } from "./planning-mode-question-tuner";
 
 type UniversalPlanningAgentInput = {
   prompt?: string;
@@ -51,7 +52,7 @@ function buildUniversalPlanningDimensionContext(inputText: string) {
   };
 }
 
-export async function runUniversalPlanningAgent(input: UniversalPlanningAgentInput): Promise<UniversalPlanningResult & { dimensionUnderstanding: ReturnType<typeof buildUniversalPlanningDimensionContext>; planningMissingQuestionEngine: ReturnType<typeof buildPlanningMissingQuestionEngine>; buildingTypeClassification: ReturnType<typeof classifyBuildSetuBuildingType> }> {
+export async function runUniversalPlanningAgent(input: UniversalPlanningAgentInput): Promise<UniversalPlanningResult & { dimensionUnderstanding: ReturnType<typeof buildUniversalPlanningDimensionContext>; planningMissingQuestionEngine: ReturnType<typeof buildPlanningMissingQuestionEngine>; buildingTypeClassification: ReturnType<typeof classifyBuildSetuBuildingType>; planningModeQuestionTuning: ReturnType<typeof buildPlanningModeQuestionTuning> }> {
   const inputText = getPlanningInputText(input);
   const dimensionUnderstanding = buildUniversalPlanningDimensionContext(inputText);
 
@@ -69,6 +70,13 @@ export async function runUniversalPlanningAgent(input: UniversalPlanningAgentInp
     missingQuestionEngine: planningMissingQuestionEngine,
   });
   const buildingTypePromptBlock = buildBuildingTypeClassifierPromptBlock(buildingTypeClassification);
+  const planningModeQuestionTuning = buildPlanningModeQuestionTuning({
+    inputText,
+    buildingTypeClassification,
+    missingQuestionEngine: planningMissingQuestionEngine,
+    dimensionUnderstanding,
+  });
+  const planningModeQuestionPromptBlock = buildPlanningModeQuestionPromptBlock(planningModeQuestionTuning);
   const spaceProgram = getSpaceProgram(requirement);
   const vastuReport = runVastuEngine(requirement, spaceProgram);
   const buildingRules = getBuildingRules(requirement);
@@ -87,6 +95,12 @@ export async function runUniversalPlanningAgent(input: UniversalPlanningAgentInp
           "",
           "Building Type Classification",
           buildingTypePromptBlock,
+          "",
+          "Planning Mode Question Tuning",
+          planningModeQuestionPromptBlock,
+          "",
+          "Planning Mode Question Tuning",
+          planningModeQuestionPromptBlock,
           "",
           "Building Type Classification",
           buildingTypePromptBlock,
@@ -114,6 +128,7 @@ export async function runUniversalPlanningAgent(input: UniversalPlanningAgentInp
     dimensionUnderstanding,
     planningMissingQuestionEngine,
     buildingTypeClassification,
+    planningModeQuestionTuning,
     buildingRules,
     vastuReport,
     spaceProgram,
