@@ -208,6 +208,90 @@ export async function GET() {
   );
 }
 
+
+export async function DELETE(request: NextRequest) {
+  const recordId = cleanText(request.nextUrl.searchParams.get("recordId") || "", 320);
+
+  if (!recordId) {
+    return NextResponse.json(
+      {
+        ok: false,
+        error: "recordId_required",
+        trustedKnowledgeWrite: false,
+        trustedMergeExecuted: false,
+        mergeActionAvailable: false,
+      },
+      { status: 400 }
+    );
+  }
+
+  const root = await loadRecords();
+  const records = asArray(root.records).map(sanitizeRecord);
+  const target = records.find((record) => record.id === recordId);
+
+  if (!target) {
+    return NextResponse.json(
+      {
+        ok: false,
+        error: "record_not_found",
+        recordId,
+        trustedKnowledgeWrite: false,
+        trustedMergeExecuted: false,
+        mergeActionAvailable: false,
+      },
+      { status: 404 }
+    );
+  }
+
+  const remainingRecords = records.filter((record) => record.id !== recordId);
+  const timestamp = nowIso();
+
+  if (remainingRecords.length === 0) {
+    await fs.rm(projectPath(RECORDS_RELATIVE_PATH), { force: true });
+    try {
+      await fs.rmdir(path.dirname(projectPath(RECORDS_RELATIVE_PATH)));
+    } catch {}
+  } else {
+    await writeJson(projectPath(RECORDS_RELATIVE_PATH), {
+      ok: true,
+      phase: "46O-2",
+      recordsPolicy:
+        "manual_verification_records_delete_only_no_source_registry_change_no_extraction_no_qa_ready_no_merge_no_write",
+      trustedMergeEnabled: false,
+      trustedKnowledgeWrite: false,
+      trustedKnowledgeChanged: false,
+      trustedMergeExecuted: false,
+      mergeActionAvailable: false,
+      updatedAt: timestamp,
+      records: remainingRecords,
+    });
+  }
+
+  return NextResponse.json(
+    {
+      ok: true,
+      phase: "46O-2",
+      message: "Manual verification record deleted separately. Source registry was not changed.",
+      deletedRecordId: recordId,
+      trustedMergeEnabled: false,
+      trustedKnowledgeWrite: false,
+      trustedKnowledgeChanged: false,
+      trustedMergeExecuted: false,
+      mergeActionAvailable: false,
+      sourceRegistryChanged: false,
+      extractionAllowedChanged: false,
+      qaReadyAllowedChanged: false,
+      trustedMergeCandidateAllowedChanged: false,
+      summary: summarize(remainingRecords),
+    },
+    {
+      headers: {
+        "cache-control": "no-store",
+      },
+    }
+  );
+}
+
 export async function POST(request: NextRequest) {
   let body: JsonObject;
 
