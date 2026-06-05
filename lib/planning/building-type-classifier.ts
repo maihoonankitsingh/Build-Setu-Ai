@@ -287,6 +287,30 @@ export function classifyBuildSetuBuildingType(input: {
 
   let best = scoreMap.sort((a, b) => b.score - a.score)[0];
 
+  // BUILDSETU_PHASE_47C2_HEALTHCARE_PRIORITY
+  // Healthcare/clinic words must win over generic commercial/mixed-use scoring.
+  if (healthcare.score > 0) {
+    best = {
+      category: "healthcare",
+      subType: has(/\bhospital\b/i, text) ? "hospital" : "clinic / healthcare fitout",
+      occupancyGroup: "institutional_healthcare",
+      planningMode: "public_or_special_building",
+      score: healthcare.score + 3,
+      signals: healthcare.signals,
+    };
+  }
+
+  if (educational.score > 0 && best.category !== "healthcare") {
+    best = {
+      category: "educational",
+      subType: has(/\bschool\b/i, text) ? "school" : "coaching / education space",
+      occupancyGroup: "educational",
+      planningMode: "public_or_special_building",
+      score: educational.score + 3,
+      signals: educational.signals,
+    };
+  }
+
   if (hasInteriorOnly) {
     best = {
       category: "interior_only",
