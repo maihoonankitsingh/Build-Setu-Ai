@@ -743,6 +743,23 @@ function ManualVerificationCard({
   );
 }
 
+
+function Panel({ children }: { children: any }) {
+  return (
+    <section
+      style={{
+        background: "#ffffff",
+        border: "1px solid #e2e8f0",
+        borderRadius: 22,
+        padding: 20,
+        boxShadow: "0 10px 30px rgba(15, 23, 42, 0.06)",
+      }}
+    >
+      {children}
+    </section>
+  );
+}
+
 function SmallBreakdown({
   title,
   data,
