@@ -18,6 +18,7 @@ import { buildPlanningProjectMemoryEngine, buildPlanningProjectMemoryPromptBlock
 import { buildPlanningOutputRoutingEngine, buildPlanningOutputRoutingPromptBlock } from "./planning-output-routing-engine";
 import { buildPlanningRegressionQaEngine, buildPlanningRegressionQaPromptBlock } from "./planning-regression-qa-engine";
 import { buildPlanningUiConsumptionAdapter, buildPlanningUiConsumptionPromptBlock } from "./planning-ui-consumption-adapter";
+import { buildStructuralGridIntelligenceEngine, buildStructuralGridIntelligencePromptBlock } from "./structural-grid-intelligence-engine";
 
 type UniversalPlanningAgentInput = {
   prompt?: string;
@@ -63,7 +64,7 @@ function buildUniversalPlanningDimensionContext(inputText: string) {
   };
 }
 
-export async function runUniversalPlanningAgent(input: UniversalPlanningAgentInput): Promise<UniversalPlanningResult & { dimensionUnderstanding: ReturnType<typeof buildUniversalPlanningDimensionContext>; planningMissingQuestionEngine: ReturnType<typeof buildPlanningMissingQuestionEngine>; buildingTypeClassification: ReturnType<typeof classifyBuildSetuBuildingType>; planningModeQuestionTuning: ReturnType<typeof buildPlanningModeQuestionTuning>; humanPlanningResponse: ReturnType<typeof buildHumanPlanningResponse>; conceptPlanningActionEngine: ReturnType<typeof buildConceptPlanningActionEngine>; roomFurnitureFitEngine: ReturnType<typeof buildRoomFurnitureFitEngine>; roomSpaceStandardsEngine: ReturnType<typeof buildRoomSpaceStandardsEngine>; planningCategoryIntelligence: ReturnType<typeof buildPlanningCategoryIntelligenceEngine>; planningReferenceIntelligence: ReturnType<typeof buildPlanningReferenceIntelligenceEngine>; planningProjectMemoryEngine: ReturnType<typeof buildPlanningProjectMemoryEngine>; planningOutputRoutingEngine: ReturnType<typeof buildPlanningOutputRoutingEngine>; planningRegressionQaEngine: ReturnType<typeof buildPlanningRegressionQaEngine>; planningUiConsumptionAdapter: ReturnType<typeof buildPlanningUiConsumptionAdapter> }> {
+export async function runUniversalPlanningAgent(input: UniversalPlanningAgentInput): Promise<UniversalPlanningResult & { dimensionUnderstanding: ReturnType<typeof buildUniversalPlanningDimensionContext>; planningMissingQuestionEngine: ReturnType<typeof buildPlanningMissingQuestionEngine>; buildingTypeClassification: ReturnType<typeof classifyBuildSetuBuildingType>; planningModeQuestionTuning: ReturnType<typeof buildPlanningModeQuestionTuning>; humanPlanningResponse: ReturnType<typeof buildHumanPlanningResponse>; conceptPlanningActionEngine: ReturnType<typeof buildConceptPlanningActionEngine>; roomFurnitureFitEngine: ReturnType<typeof buildRoomFurnitureFitEngine>; roomSpaceStandardsEngine: ReturnType<typeof buildRoomSpaceStandardsEngine>; planningCategoryIntelligence: ReturnType<typeof buildPlanningCategoryIntelligenceEngine>; planningReferenceIntelligence: ReturnType<typeof buildPlanningReferenceIntelligenceEngine>; planningProjectMemoryEngine: ReturnType<typeof buildPlanningProjectMemoryEngine>; planningOutputRoutingEngine: ReturnType<typeof buildPlanningOutputRoutingEngine>; planningRegressionQaEngine: ReturnType<typeof buildPlanningRegressionQaEngine>; planningUiConsumptionAdapter: ReturnType<typeof buildPlanningUiConsumptionAdapter>; structuralGridIntelligence: ReturnType<typeof buildStructuralGridIntelligenceEngine> }> {
   const inputText = getPlanningInputText(input);
   const dimensionUnderstanding = buildUniversalPlanningDimensionContext(inputText);
 
@@ -119,6 +120,14 @@ export async function runUniversalPlanningAgent(input: UniversalPlanningAgentInp
     roomSpaceStandardsEngine,
   });
   const planningCategoryIntelligencePromptBlock = buildPlanningCategoryIntelligencePromptBlock(planningCategoryIntelligence);
+  const structuralGridIntelligence = buildStructuralGridIntelligenceEngine({
+    inputText,
+    dimensionUnderstanding,
+    buildingTypeClassification,
+    planningCategoryIntelligence,
+  });
+  const structuralGridIntelligencePromptBlock = buildStructuralGridIntelligencePromptBlock(structuralGridIntelligence);
+
   const planningReferenceIntelligence = buildPlanningReferenceIntelligenceEngine({
     inputText,
     buildingTypeClassification,
@@ -226,8 +235,14 @@ export async function runUniversalPlanningAgent(input: UniversalPlanningAgentInp
           "Planning QA Regression Matrix",
           planningRegressionQaPromptBlock,
           "",
+          "Structural Grid Intelligence",
+          structuralGridIntelligencePromptBlock,
+          "",
           "Planning UI Consumption Adapter",
           planningUiConsumptionPromptBlock,
+          "",
+          "Structural Grid Intelligence",
+          structuralGridIntelligencePromptBlock,
           "",
           "Planning UI Consumption Adapter",
           planningUiConsumptionPromptBlock,
@@ -302,6 +317,7 @@ export async function runUniversalPlanningAgent(input: UniversalPlanningAgentInp
     planningOutputRoutingEngine,
     planningRegressionQaEngine,
     planningUiConsumptionAdapter,
+    structuralGridIntelligence,
     buildingRules,
     vastuReport,
     spaceProgram,
