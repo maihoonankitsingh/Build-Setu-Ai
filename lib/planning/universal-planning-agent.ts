@@ -79,14 +79,6 @@ export async function runUniversalPlanningAgent(input: UniversalPlanningAgentInp
     dimensionUnderstanding,
   });
   const planningModeQuestionPromptBlock = buildPlanningModeQuestionPromptBlock(planningModeQuestionTuning);
-  const humanPlanningResponse = buildHumanPlanningResponse({
-    inputText,
-    dimensionUnderstanding,
-    planningMissingQuestionEngine,
-    buildingTypeClassification,
-    planningModeQuestionTuning,
-  });
-  const humanPlanningResponsePromptBlock = buildHumanPlanningResponsePromptBlock(humanPlanningResponse);
   const conceptPlanningActionEngine = buildConceptPlanningActionEngine({
     inputText,
     dimensionUnderstanding,
@@ -95,6 +87,15 @@ export async function runUniversalPlanningAgent(input: UniversalPlanningAgentInp
     planningModeQuestionTuning,
   });
   const conceptPlanningActionPromptBlock = buildConceptPlanningActionPromptBlock(conceptPlanningActionEngine);
+  const humanPlanningResponse = buildHumanPlanningResponse({
+    inputText,
+    dimensionUnderstanding,
+    planningMissingQuestionEngine,
+    buildingTypeClassification,
+    planningModeQuestionTuning,
+    conceptPlanningActionEngine,
+  });
+  const humanPlanningResponsePromptBlock = buildHumanPlanningResponsePromptBlock(humanPlanningResponse);
   const spaceProgram = getSpaceProgram(requirement);
   const vastuReport = runVastuEngine(requirement, spaceProgram);
   const buildingRules = getBuildingRules(requirement);

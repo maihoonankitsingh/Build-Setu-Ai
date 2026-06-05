@@ -54,6 +54,33 @@ type PlanningModeQuestionTuningLike = {
   outputGuidance?: string[];
 };
 
+// BUILDSETU_PHASE_47F2_HUMAN_CONCEPT_MERGE
+type ConceptPlanningActionEngineLike = {
+  actionMode?: string;
+  canStartConcept?: boolean;
+  planningMode?: string;
+  category?: string;
+  riskLevel?: string;
+  conceptActions?: Array<{
+    actionId?: string;
+    priority?: string;
+    title?: string;
+    detail?: string;
+  }>;
+  zoningMoves?: Array<{
+    zone?: string;
+    placementLogic?: string;
+    adjacency?: string[];
+    notes?: string[];
+  }>;
+  adjacencyLogic?: string[];
+  circulationLogic?: string[];
+  serviceCoreLogic?: string[];
+  dimensionalChecks?: string[];
+  professionalVerification?: string[];
+  outputSequence?: string[];
+};
+
 export type BuildSetuHumanPlanningResponse = {
   responseVersion: "47E-1";
   title: string;
@@ -68,6 +95,11 @@ export type BuildSetuHumanPlanningResponse = {
     recommendedQuestions: string[];
     assumptionsAllowed: string[];
     planningFocus: string[];
+    conceptPlanningActions: string[];
+    zoningMoves: string[];
+    adjacencyCirculationLogic: string[];
+    serviceCoreLogic: string[];
+    outputSequence: string[];
     riskAndVerification: string[];
     nextBestActions: string[];
   };
@@ -151,8 +183,13 @@ function buildMarkdown(title: string, sections: BuildSetuHumanPlanningResponse["
     ["6. Recommended questions", sections.recommendedQuestions],
     ["7. Assumptions allowed", sections.assumptionsAllowed],
     ["8. Planning focus", sections.planningFocus],
-    ["9. Risks / professional verification", sections.riskAndVerification],
-    ["10. Next best action", sections.nextBestActions],
+    ["9. Concept planning actions", sections.conceptPlanningActions],
+    ["10. Zoning moves", sections.zoningMoves],
+    ["11. Adjacency / circulation logic", sections.adjacencyCirculationLogic],
+    ["12. Service core logic", sections.serviceCoreLogic],
+    ["13. Output sequence", sections.outputSequence],
+    ["14. Risks / professional verification", sections.riskAndVerification],
+    ["15. Next best action", sections.nextBestActions],
   ];
 
   for (const [heading, lines] of ordered) {
@@ -178,12 +215,14 @@ export function buildHumanPlanningResponse(input: {
   planningMissingQuestionEngine?: MissingQuestionEngineLike;
   buildingTypeClassification?: BuildingTypeClassificationLike;
   planningModeQuestionTuning?: PlanningModeQuestionTuningLike;
+  conceptPlanningActionEngine?: ConceptPlanningActionEngineLike;
 }): BuildSetuHumanPlanningResponse {
   const inputText = cleanText(input.inputText);
   const dim = input.dimensionUnderstanding;
   const mq = input.planningMissingQuestionEngine;
   const building = input.buildingTypeClassification;
   const mode = input.planningModeQuestionTuning;
+  const concept = input.conceptPlanningActionEngine;
 
   const category = normalizeLabel(building?.category);
   const subType = normalizeLabel(building?.subType);
@@ -210,6 +249,11 @@ export function buildHumanPlanningResponse(input: {
     recommendedQuestions: [],
     assumptionsAllowed: [],
     planningFocus: [],
+    conceptPlanningActions: [],
+    zoningMoves: [],
+    adjacencyCirculationLogic: [],
+    serviceCoreLogic: [],
+    outputSequence: [],
     riskAndVerification: [],
     nextBestActions: [],
   };
@@ -276,6 +320,70 @@ export function buildHumanPlanningResponse(input: {
     pushUnique(sections.planningFocus, "Collect missing requirements, then prepare zoning, circulation and service-core logic.");
   }
 
+  if (concept?.conceptActions?.length) {
+    for (const action of concept.conceptActions.slice(0, 8)) {
+      pushUnique(
+        sections.conceptPlanningActions,
+        `${cleanText(action.title)}: ${cleanText(action.detail)}`
+      );
+    }
+  }
+
+  if (concept?.zoningMoves?.length) {
+    for (const zone of concept.zoningMoves.slice(0, 8)) {
+      pushUnique(
+        sections.zoningMoves,
+        `${cleanText(zone.zone)}: ${cleanText(zone.placementLogic)}`
+      );
+
+      for (const note of zone.notes || []) {
+        pushUnique(sections.zoningMoves, `${cleanText(zone.zone)} note: ${note}`);
+      }
+    }
+  }
+
+  for (const item of concept?.adjacencyLogic || []) {
+    pushUnique(sections.adjacencyCirculationLogic, item);
+  }
+
+  for (const item of concept?.circulationLogic || []) {
+    pushUnique(sections.adjacencyCirculationLogic, item);
+  }
+
+  for (const item of concept?.serviceCoreLogic || []) {
+    pushUnique(sections.serviceCoreLogic, item);
+  }
+
+  for (const item of concept?.dimensionalChecks || []) {
+    pushUnique(sections.detectedDimensions, item);
+  }
+
+  for (const item of concept?.outputSequence || []) {
+    pushUnique(sections.outputSequence, item);
+  }
+
+  if (!sections.conceptPlanningActions.length) {
+    pushUnique(sections.conceptPlanningActions, "Concept action engine has not produced a mode-specific action yet.");
+  }
+
+  if (!sections.zoningMoves.length) {
+    pushUnique(sections.zoningMoves, "Zoning moves will be generated after critical planning details are confirmed.");
+  }
+
+  if (!sections.adjacencyCirculationLogic.length) {
+    pushUnique(sections.adjacencyCirculationLogic, "Adjacency and circulation logic will be finalized after planning constraints are confirmed.");
+  }
+
+  if (!sections.serviceCoreLogic.length) {
+    pushUnique(sections.serviceCoreLogic, "Service/core logic will be finalized after use, floor count and service requirements are confirmed.");
+  }
+
+  if (!sections.outputSequence.length) {
+    pushUnique(sections.outputSequence, "1. Confirm missing details.");
+    pushUnique(sections.outputSequence, "2. Generate concept zoning.");
+    pushUnique(sections.outputSequence, "3. Add professional verification notes.");
+  }
+
   for (const risk of mq?.riskFlags || []) {
     pushUnique(sections.riskAndVerification, risk);
   }
@@ -286,6 +394,10 @@ export function buildHumanPlanningResponse(input: {
 
   for (const escalation of mode?.professionalEscalations || []) {
     pushUnique(sections.riskAndVerification, escalation);
+  }
+
+  for (const verification of concept?.professionalVerification || []) {
+    pushUnique(sections.riskAndVerification, verification);
   }
 
   if (!sections.riskAndVerification.length) {
