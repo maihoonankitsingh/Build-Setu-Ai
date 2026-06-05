@@ -67,6 +67,16 @@ function getAllPackSources(packs: JsonObject[]) {
       verificationNotes: cleanText(source?.verificationNotes || "", 1200),
       lastVerifiedAt: cleanText(source?.lastVerifiedAt || "", 120),
       verifiedBy: cleanText(source?.verifiedBy || "", 160),
+      serverSmokeStatus: cleanText(source?.serverSmokeStatus || "", 160),
+      serverSmokeDiagnosticStatus: cleanText(source?.serverSmokeDiagnosticStatus || "", 160),
+      manualBrowserVerificationRequired: source?.manualBrowserVerificationRequired === true,
+      manualVerificationStatus: cleanText(source?.manualVerificationStatus || "", 160),
+      manualVerificationNotes: cleanText(source?.manualVerificationNotes || "", 1000),
+      sourceInvalidConfirmed: source?.sourceInvalidConfirmed === true,
+      extractionAllowed: source?.extractionAllowed === true,
+      qaReadyAllowed: source?.qaReadyAllowed === true,
+      trustedMergeCandidateAllowed: source?.trustedMergeCandidateAllowed === true,
+      reviewedForExtraction: source?.reviewedForExtraction === true,
       trustedKnowledgeWrite: source?.trustedKnowledgeWrite === true,
       trustedMergeExecuted: source?.trustedMergeExecuted === true,
     }))
@@ -99,6 +109,69 @@ function duplicateKeys(sources: JsonObject[]) {
 function isStateUtAuthorityIndex(source: JsonObject) {
   const id = cleanText(source?.id || "", 260);
   return id.startsWith("india-") && id.endsWith("-approval-authority-index");
+}
+
+function manualVerificationSummary(sources: JsonObject[]) {
+  const items = sources.filter((source) =>
+    source.manualBrowserVerificationRequired === true ||
+    source.manualVerificationStatus ||
+    source.serverSmokeStatus ||
+    source.serverSmokeDiagnosticStatus
+  );
+
+  const byManualVerificationStatus = items.reduce((acc: Record<string, number>, source) => {
+    const key = cleanText(source.manualVerificationStatus || "unknown", 120);
+    acc[key] = (acc[key] || 0) + 1;
+    return acc;
+  }, {});
+
+  const byServerSmokeDiagnosticStatus = items.reduce((acc: Record<string, number>, source) => {
+    const key = cleanText(source.serverSmokeDiagnosticStatus || "unknown", 120);
+    acc[key] = (acc[key] || 0) + 1;
+    return acc;
+  }, {});
+
+  return {
+    totalManualVerificationItems: items.length,
+    manualBrowserVerificationRequired: items.filter(
+      (source) => source.manualBrowserVerificationRequired === true
+    ).length,
+    pendingManualBrowserVerification: items.filter(
+      (source) => source.manualVerificationStatus === "pending_manual_browser_verification"
+    ).length,
+    sourceInvalidConfirmed: items.filter(
+      (source) => source.sourceInvalidConfirmed === true
+    ).length,
+    extractionAllowed: items.filter((source) => source.extractionAllowed === true).length,
+    qaReadyAllowed: items.filter((source) => source.qaReadyAllowed === true).length,
+    trustedMergeCandidateAllowed: items.filter(
+      (source) => source.trustedMergeCandidateAllowed === true
+    ).length,
+    trustedKnowledgeWrite: items.filter(
+      (source) => source.trustedKnowledgeWrite === true
+    ).length,
+    trustedMergeExecuted: items.filter(
+      (source) => source.trustedMergeExecuted === true
+    ).length,
+    byManualVerificationStatus,
+    byServerSmokeDiagnosticStatus,
+    items: items.map((source) => ({
+      id: source.id,
+      jurisdiction: source.jurisdiction?.stateOrUnionTerritory || "",
+      exactSourceTitle: source.exactSourceTitle || source.title || "",
+      exactSourceUrl: source.exactSourceUrl || source.url || "",
+      serverSmokeStatus: source.serverSmokeStatus || "",
+      serverSmokeDiagnosticStatus: source.serverSmokeDiagnosticStatus || "",
+      manualBrowserVerificationRequired: source.manualBrowserVerificationRequired === true,
+      manualVerificationStatus: source.manualVerificationStatus || "",
+      sourceInvalidConfirmed: source.sourceInvalidConfirmed === true,
+      extractionAllowed: source.extractionAllowed === true,
+      qaReadyAllowed: source.qaReadyAllowed === true,
+      trustedMergeCandidateAllowed: source.trustedMergeCandidateAllowed === true,
+      trustedKnowledgeWrite: source.trustedKnowledgeWrite === true,
+      trustedMergeExecuted: source.trustedMergeExecuted === true,
+    })),
+  };
 }
 
 function stateUtTrackerSummary(sources: JsonObject[]) {
@@ -216,6 +289,7 @@ export async function GET() {
         duplicateWatchSourceKeys: duplicateKeys(watchSources).length,
       },
       stateUtVerificationTracker: stateUtTrackerSummary(allPackSources),
+      manualVerification: manualVerificationSummary(allPackSources),
     },
     domainCoverage: byDomain(allPackSources),
     packs: packs.map((pack) => ({
