@@ -114,3 +114,5 @@ data/generated/*.wav
 # BUILDSETU_SOURCE_WATCH_RUNTIME
 data/buildsetu-source-watch/state.json
 data/buildsetu-source-watch/changes/
+# BuildSetu runtime/admin-generated manual verification records
+data/buildsetu-manual-verification-records/
