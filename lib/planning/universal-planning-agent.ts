@@ -28,6 +28,7 @@ import { buildFurnitureQuantityBasisEngine, buildFurnitureQuantityBasisPromptBlo
 import { buildMaterialPriceSourceFreshnessEngine, buildMaterialPriceSourceFreshnessPromptBlock } from "./material-price-source-freshness-engine";
 import { buildMaterialWebSearchRateAdapter, buildMaterialWebSearchRateAdapterPromptBlock } from "./material-web-search-rate-adapter";
 import { buildBoqMaterialMappingEngine, buildBoqMaterialMappingPromptBlock } from "./boq-material-mapping-engine";
+import { buildMaterialResponseMergeEngine, buildMaterialResponseMergePromptBlock, buildMaterialResponseMarkdown } from "./material-response-merge-engine";
 
 type UniversalPlanningAgentInput = {
   prompt?: string;
@@ -73,7 +74,7 @@ function buildUniversalPlanningDimensionContext(inputText: string) {
   };
 }
 
-export async function runUniversalPlanningAgent(input: UniversalPlanningAgentInput): Promise<UniversalPlanningResult & { dimensionUnderstanding: ReturnType<typeof buildUniversalPlanningDimensionContext>; planningMissingQuestionEngine: ReturnType<typeof buildPlanningMissingQuestionEngine>; buildingTypeClassification: ReturnType<typeof classifyBuildSetuBuildingType>; planningModeQuestionTuning: ReturnType<typeof buildPlanningModeQuestionTuning>; humanPlanningResponse: ReturnType<typeof buildHumanPlanningResponse>; conceptPlanningActionEngine: ReturnType<typeof buildConceptPlanningActionEngine>; roomFurnitureFitEngine: ReturnType<typeof buildRoomFurnitureFitEngine>; roomSpaceStandardsEngine: ReturnType<typeof buildRoomSpaceStandardsEngine>; planningCategoryIntelligence: ReturnType<typeof buildPlanningCategoryIntelligenceEngine>; planningReferenceIntelligence: ReturnType<typeof buildPlanningReferenceIntelligenceEngine>; planningProjectMemoryEngine: ReturnType<typeof buildPlanningProjectMemoryEngine>; planningOutputRoutingEngine: ReturnType<typeof buildPlanningOutputRoutingEngine>; planningRegressionQaEngine: ReturnType<typeof buildPlanningRegressionQaEngine>; planningUiConsumptionAdapter: ReturnType<typeof buildPlanningUiConsumptionAdapter>; structuralGridIntelligence: ReturnType<typeof buildStructuralGridIntelligenceEngine>; foundationSoilRiskEngine: ReturnType<typeof buildFoundationSoilRiskEngine>; seismicWindRiskEngine: ReturnType<typeof buildSeismicWindRiskEngine>; structuralResponseMergeEngine: ReturnType<typeof buildStructuralResponseMergeEngine>; materialTaxonomyEngine: ReturnType<typeof buildMaterialTaxonomyEngine>; interiorMaterialSelectorEngine: ReturnType<typeof buildInteriorMaterialSelectorEngine>; furnitureQuantityBasisEngine: ReturnType<typeof buildFurnitureQuantityBasisEngine>; materialPriceSourceFreshnessEngine: ReturnType<typeof buildMaterialPriceSourceFreshnessEngine>; materialWebSearchRateAdapter: ReturnType<typeof buildMaterialWebSearchRateAdapter>; boqMaterialMappingEngine: ReturnType<typeof buildBoqMaterialMappingEngine> }> {
+export async function runUniversalPlanningAgent(input: UniversalPlanningAgentInput): Promise<UniversalPlanningResult & { dimensionUnderstanding: ReturnType<typeof buildUniversalPlanningDimensionContext>; planningMissingQuestionEngine: ReturnType<typeof buildPlanningMissingQuestionEngine>; buildingTypeClassification: ReturnType<typeof classifyBuildSetuBuildingType>; planningModeQuestionTuning: ReturnType<typeof buildPlanningModeQuestionTuning>; humanPlanningResponse: ReturnType<typeof buildHumanPlanningResponse>; conceptPlanningActionEngine: ReturnType<typeof buildConceptPlanningActionEngine>; roomFurnitureFitEngine: ReturnType<typeof buildRoomFurnitureFitEngine>; roomSpaceStandardsEngine: ReturnType<typeof buildRoomSpaceStandardsEngine>; planningCategoryIntelligence: ReturnType<typeof buildPlanningCategoryIntelligenceEngine>; planningReferenceIntelligence: ReturnType<typeof buildPlanningReferenceIntelligenceEngine>; planningProjectMemoryEngine: ReturnType<typeof buildPlanningProjectMemoryEngine>; planningOutputRoutingEngine: ReturnType<typeof buildPlanningOutputRoutingEngine>; planningRegressionQaEngine: ReturnType<typeof buildPlanningRegressionQaEngine>; planningUiConsumptionAdapter: ReturnType<typeof buildPlanningUiConsumptionAdapter>; structuralGridIntelligence: ReturnType<typeof buildStructuralGridIntelligenceEngine>; foundationSoilRiskEngine: ReturnType<typeof buildFoundationSoilRiskEngine>; seismicWindRiskEngine: ReturnType<typeof buildSeismicWindRiskEngine>; structuralResponseMergeEngine: ReturnType<typeof buildStructuralResponseMergeEngine>; materialTaxonomyEngine: ReturnType<typeof buildMaterialTaxonomyEngine>; interiorMaterialSelectorEngine: ReturnType<typeof buildInteriorMaterialSelectorEngine>; furnitureQuantityBasisEngine: ReturnType<typeof buildFurnitureQuantityBasisEngine>; materialPriceSourceFreshnessEngine: ReturnType<typeof buildMaterialPriceSourceFreshnessEngine>; materialWebSearchRateAdapter: ReturnType<typeof buildMaterialWebSearchRateAdapter>; boqMaterialMappingEngine: ReturnType<typeof buildBoqMaterialMappingEngine>; materialResponseMergeEngine: ReturnType<typeof buildMaterialResponseMergeEngine> }> {
   const inputText = getPlanningInputText(input);
   const dimensionUnderstanding = buildUniversalPlanningDimensionContext(inputText);
 
@@ -194,6 +195,15 @@ export async function runUniversalPlanningAgent(input: UniversalPlanningAgentInp
     materialWebSearchRateAdapter,
   });
   const boqMaterialMappingPromptBlock = buildBoqMaterialMappingPromptBlock(boqMaterialMappingEngine);
+  const materialResponseMergeEngine = buildMaterialResponseMergeEngine({
+    materialTaxonomyEngine,
+    interiorMaterialSelectorEngine,
+    furnitureQuantityBasisEngine,
+    materialPriceSourceFreshnessEngine,
+    materialWebSearchRateAdapter,
+    boqMaterialMappingEngine,
+  });
+  const materialResponseMergePromptBlock = buildMaterialResponseMergePromptBlock(materialResponseMergeEngine);
 
   const planningReferenceIntelligence = buildPlanningReferenceIntelligenceEngine({
     inputText,
@@ -243,6 +253,23 @@ export async function runUniversalPlanningAgent(input: UniversalPlanningAgentInp
   humanPlanningResponseForStructuralMerge.markdown = [
     String(humanPlanningResponseForStructuralMerge.markdown || "").trim(),
     buildStructuralResponseMarkdown(structuralResponseMergeEngine),
+  ].filter(Boolean).join("\n\n");
+
+  // BUILDSETU_PHASE_M7_MATERIAL_RESPONSE_AFTER_HUMAN_RESPONSE
+  const humanPlanningResponseForMaterialMerge: any = humanPlanningResponse as any;
+  humanPlanningResponseForMaterialMerge.sections = {
+    ...(humanPlanningResponseForMaterialMerge.sections || {}),
+    materialSelection: materialResponseMergeEngine.materialSections.materialSelection,
+    materialInteriorGuidance: materialResponseMergeEngine.materialSections.interiorGuidance,
+    materialQuantityBasis: materialResponseMergeEngine.materialSections.quantityBasis,
+    materialPriceSourcePolicy: materialResponseMergeEngine.materialSections.priceSourcePolicy,
+    materialWebSearchPlan: materialResponseMergeEngine.materialSections.webSearchPlan,
+    materialBoqMapping: materialResponseMergeEngine.materialSections.boqMaterialMapping,
+    materialMissingInputs: materialResponseMergeEngine.materialSections.missingInputs,
+  };
+  humanPlanningResponseForMaterialMerge.markdown = [
+    String(humanPlanningResponseForMaterialMerge.markdown || "").trim(),
+    buildMaterialResponseMarkdown(materialResponseMergeEngine),
   ].filter(Boolean).join("\n\n");
 
   const planningRegressionQaEngine = buildPlanningRegressionQaEngine({
@@ -344,6 +371,9 @@ export async function runUniversalPlanningAgent(input: UniversalPlanningAgentInp
           "BOQ Material Mapping Intelligence",
           boqMaterialMappingPromptBlock,
           "",
+          "Material Response Merge",
+          materialResponseMergePromptBlock,
+          "",
           "Planning UI Consumption Adapter",
           planningUiConsumptionPromptBlock,
           "",
@@ -376,6 +406,9 @@ export async function runUniversalPlanningAgent(input: UniversalPlanningAgentInp
           "",
           "BOQ Material Mapping Intelligence",
           boqMaterialMappingPromptBlock,
+          "",
+          "Material Response Merge",
+          materialResponseMergePromptBlock,
           "",
           "Planning UI Consumption Adapter",
           planningUiConsumptionPromptBlock,
@@ -460,6 +493,7 @@ export async function runUniversalPlanningAgent(input: UniversalPlanningAgentInp
     materialPriceSourceFreshnessEngine,
     materialWebSearchRateAdapter,
     boqMaterialMappingEngine,
+    materialResponseMergeEngine,
     buildingRules,
     vastuReport,
     spaceProgram,
