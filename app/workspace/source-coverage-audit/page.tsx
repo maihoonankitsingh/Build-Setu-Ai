@@ -41,6 +41,35 @@ type AuditData = {
       byExactSourceStatus: Record<string, number>;
       byPriority: Record<string, number>;
     };
+    manualVerification?: {
+      totalManualVerificationItems: number;
+      manualBrowserVerificationRequired: number;
+      pendingManualBrowserVerification: number;
+      sourceInvalidConfirmed: number;
+      extractionAllowed: number;
+      qaReadyAllowed: number;
+      trustedMergeCandidateAllowed: number;
+      trustedKnowledgeWrite: number;
+      trustedMergeExecuted: number;
+      byManualVerificationStatus: Record<string, number>;
+      byServerSmokeDiagnosticStatus: Record<string, number>;
+      items: Array<{
+        id: string;
+        jurisdiction: string;
+        exactSourceTitle: string;
+        exactSourceUrl: string;
+        serverSmokeStatus: string;
+        serverSmokeDiagnosticStatus: string;
+        manualBrowserVerificationRequired: boolean;
+        manualVerificationStatus: string;
+        sourceInvalidConfirmed: boolean;
+        extractionAllowed: boolean;
+        qaReadyAllowed: boolean;
+        trustedMergeCandidateAllowed: boolean;
+        trustedKnowledgeWrite: boolean;
+        trustedMergeExecuted: boolean;
+      }>;
+    };
   };
   domainCoverage: Record<string, number>;
   packs: Array<{
@@ -112,6 +141,21 @@ export default function SourceCoverageAuditPage() {
     byVerificationStatus: {},
     byExactSourceStatus: {},
     byPriority: {},
+  };
+
+  const manualVerification = audit?.summary?.manualVerification || {
+    totalManualVerificationItems: 0,
+    manualBrowserVerificationRequired: 0,
+    pendingManualBrowserVerification: 0,
+    sourceInvalidConfirmed: 0,
+    extractionAllowed: 0,
+    qaReadyAllowed: 0,
+    trustedMergeCandidateAllowed: 0,
+    trustedKnowledgeWrite: 0,
+    trustedMergeExecuted: 0,
+    byManualVerificationStatus: {},
+    byServerSmokeDiagnosticStatus: {},
+    items: [],
   };
   const safety = audit?.summary?.safety || {
     unsafeSources: 0,
@@ -245,6 +289,104 @@ export default function SourceCoverageAuditPage() {
               <SmallBreakdown title="Exact Source Status" data={tracker.byExactSourceStatus} />
               <SmallBreakdown title="Priority" data={tracker.byPriority} />
             </div>
+          </section>
+
+          <section
+            style={{
+              border: "1px solid #fed7aa",
+              borderRadius: 16,
+              padding: 20,
+              marginBottom: 24,
+              background: "#fff7ed",
+            }}
+          >
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                gap: 12,
+                flexWrap: "wrap",
+                marginBottom: 16,
+              }}
+            >
+              <div>
+                <h2 style={{ margin: "0 0 6px", fontSize: 22 }}>
+                  Manual Verification Queue
+                </h2>
+                <p style={{ margin: 0, color: "#9a3412" }}>
+                  Blocked exact sources that need browser/manual verification before extraction.
+                </p>
+              </div>
+              <span
+                style={{
+                  borderRadius: 999,
+                  padding: "8px 12px",
+                  background: "#ffedd5",
+                  color: "#9a3412",
+                  fontWeight: 800,
+                  height: "fit-content",
+                }}
+              >
+                {manualVerification.pendingManualBrowserVerification} Pending
+              </span>
+            </div>
+
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fit, minmax(170px, 1fr))",
+                gap: 12,
+                marginBottom: 16,
+              }}
+            >
+              <Metric
+                label="Manual Items"
+                value={manualVerification.totalManualVerificationItems}
+              />
+              <Metric
+                label="Browser Verification"
+                value={manualVerification.manualBrowserVerificationRequired}
+              />
+              <Metric
+                label="Invalid Confirmed"
+                value={manualVerification.sourceInvalidConfirmed}
+              />
+              <Metric
+                label="Extraction Allowed"
+                value={manualVerification.extractionAllowed}
+              />
+              <Metric
+                label="QA Ready Allowed"
+                value={manualVerification.qaReadyAllowed}
+              />
+              <Metric
+                label="Merge Candidate Allowed"
+                value={manualVerification.trustedMergeCandidateAllowed}
+              />
+            </div>
+
+            <div style={{ display: "grid", gap: 12, marginBottom: 16 }}>
+              <SmallBreakdown
+                title="Manual Verification Status"
+                data={manualVerification.byManualVerificationStatus}
+              />
+              <SmallBreakdown
+                title="Server Smoke Diagnostic"
+                data={manualVerification.byServerSmokeDiagnosticStatus}
+              />
+            </div>
+
+            {manualVerification.items.length === 0 ? (
+              <p style={{ margin: 0, color: "#166534" }}>
+                No manual verification items.
+              </p>
+            ) : (
+              <div style={{ display: "grid", gap: 12 }}>
+                {manualVerification.items.map((item) => (
+                  <ManualVerificationCard key={item.id} item={item} />
+                ))}
+              </div>
+            )}
           </section>
 
           <section
@@ -387,6 +529,82 @@ function Td({ children }: { children: React.ReactNode }) {
     >
       {children}
     </td>
+  );
+}
+
+function ManualVerificationCard({
+  item,
+}: {
+  item: NonNullable<AuditData["summary"]["manualVerification"]>["items"][number];
+}) {
+  return (
+    <article
+      style={{
+        border: "1px solid #fdba74",
+        borderRadius: 14,
+        padding: 14,
+        background: "#ffffff",
+      }}
+    >
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          gap: 12,
+          flexWrap: "wrap",
+          marginBottom: 8,
+        }}
+      >
+        <strong>{item.jurisdiction}</strong>
+        <span
+          style={{
+            borderRadius: 999,
+            padding: "4px 9px",
+            background: "#ffedd5",
+            color: "#9a3412",
+            fontSize: 12,
+            fontWeight: 800,
+          }}
+        >
+          {item.serverSmokeDiagnosticStatus || "manual_verification_required"}
+        </span>
+      </div>
+
+      <div style={{ fontWeight: 700, marginBottom: 6 }}>
+        {item.exactSourceTitle}
+      </div>
+
+      <a
+        href={item.exactSourceUrl}
+        target="_blank"
+        rel="noreferrer"
+        style={{
+          display: "block",
+          color: "#2563eb",
+          overflowWrap: "anywhere",
+          marginBottom: 8,
+        }}
+      >
+        {item.exactSourceUrl}
+      </a>
+
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))",
+          gap: 8,
+          fontSize: 13,
+          color: "#334155",
+        }}
+      >
+        <span>Status: {item.manualVerificationStatus}</span>
+        <span>Manual required: {String(item.manualBrowserVerificationRequired)}</span>
+        <span>Invalid confirmed: {String(item.sourceInvalidConfirmed)}</span>
+        <span>Extraction allowed: {String(item.extractionAllowed)}</span>
+        <span>QA-ready allowed: {String(item.qaReadyAllowed)}</span>
+        <span>Merge candidate: {String(item.trustedMergeCandidateAllowed)}</span>
+      </div>
+    </article>
   );
 }
 
