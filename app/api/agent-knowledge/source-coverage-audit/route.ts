@@ -9,6 +9,7 @@ type JsonObject = Record<string, any>;
 
 const PACKS_RELATIVE_PATH = "config/buildsetu-source-packs.json";
 const WATCH_RELATIVE_PATH = "config/buildsetu-source-watch.sources.json";
+const MANUAL_RECORDS_RELATIVE_PATH = "data/buildsetu-manual-verification-records/records.json";
 
 const EXPECTED_STATE_COUNT = 28;
 const EXPECTED_UT_COUNT = 8;
@@ -109,6 +110,66 @@ function duplicateKeys(sources: JsonObject[]) {
 function isStateUtAuthorityIndex(source: JsonObject) {
   const id = cleanText(source?.id || "", 260);
   return id.startsWith("india-") && id.endsWith("-approval-authority-index");
+}
+
+
+function manualVerificationRecordsSummary(recordsRoot: JsonObject) {
+  const records = asArray(recordsRoot?.records).map((record) => ({
+    id: cleanText(record?.id || "", 320),
+    sourceId: cleanText(record?.sourceId || "", 260),
+    jurisdiction: cleanText(record?.jurisdiction || "", 160),
+    exactSourceTitle: cleanText(record?.exactSourceTitle || "", 300),
+    exactSourceUrl: cleanText(record?.exactSourceUrl || "", 1400),
+    decision: cleanText(record?.decision || "", 160),
+    reviewerName: cleanText(record?.reviewerName || "", 160),
+    reviewerRole: cleanText(record?.reviewerRole || "", 160),
+    createdAt: cleanText(record?.createdAt || "", 120),
+    updatedAt: cleanText(record?.updatedAt || "", 120),
+    sourceRegistryChanged: record?.safety?.sourceRegistryChanged === true,
+    extractionAllowedChanged: record?.safety?.extractionAllowedChanged === true,
+    qaReadyAllowedChanged: record?.safety?.qaReadyAllowedChanged === true,
+    trustedMergeCandidateAllowedChanged:
+      record?.safety?.trustedMergeCandidateAllowedChanged === true,
+    trustedKnowledgeWrite: record?.trustedKnowledgeWrite === true,
+    trustedMergeExecuted: record?.trustedMergeExecuted === true,
+  }));
+
+  const byDecision = records.reduce((acc: Record<string, number>, record) => {
+    const key = record.decision || "unknown";
+    acc[key] = (acc[key] || 0) + 1;
+    return acc;
+  }, {});
+
+  const byJurisdiction = records.reduce((acc: Record<string, number>, record) => {
+    const key = record.jurisdiction || "unknown";
+    acc[key] = (acc[key] || 0) + 1;
+    return acc;
+  }, {});
+
+  const unsafeRecords = records.filter(
+    (record) =>
+      record.sourceRegistryChanged ||
+      record.extractionAllowedChanged ||
+      record.qaReadyAllowedChanged ||
+      record.trustedMergeCandidateAllowedChanged ||
+      record.trustedKnowledgeWrite ||
+      record.trustedMergeExecuted
+  );
+
+  return {
+    totalRecords: records.length,
+    byDecision,
+    byJurisdiction,
+    unsafeRecords: unsafeRecords.length,
+    trustedKnowledgeWrite: records.filter((record) => record.trustedKnowledgeWrite).length,
+    trustedMergeExecuted: records.filter((record) => record.trustedMergeExecuted).length,
+    extractionUnlocked: records.filter((record) => record.extractionAllowedChanged).length,
+    qaReadyUnlocked: records.filter((record) => record.qaReadyAllowedChanged).length,
+    mergeCandidateUnlocked: records.filter(
+      (record) => record.trustedMergeCandidateAllowedChanged
+    ).length,
+    latestRecords: records.slice(-10).reverse(),
+  };
 }
 
 function manualVerificationSummary(sources: JsonObject[]) {
@@ -290,6 +351,9 @@ export async function GET() {
       },
       stateUtVerificationTracker: stateUtTrackerSummary(allPackSources),
       manualVerification: manualVerificationSummary(allPackSources),
+      manualVerificationRecords: manualVerificationRecordsSummary(
+        await readJson(projectPath(MANUAL_RECORDS_RELATIVE_PATH), { records: [] })
+      ),
     },
     domainCoverage: byDomain(allPackSources),
     packs: packs.map((pack) => ({
