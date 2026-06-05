@@ -464,6 +464,53 @@ export default function SourceCoverageAuditClient() {
                   <p style={{ margin: "8px 0 0", color: "#64748b", lineHeight: 1.6 }}>
                     Read-only completion summary. Manual records are checked against the browser verification queue.
                   </p>
+                  <div
+                    style={{
+                      display: "flex",
+                      gap: 10,
+                      flexWrap: "wrap",
+                      marginTop: 14,
+                    }}
+                  >
+                    <a
+                      href="/api/agent-knowledge/manual-verification-final-report/export?format=json"
+                      download
+                      style={{
+                        display: "inline-flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        borderRadius: 12,
+                        padding: "10px 12px",
+                        background: "#0f172a",
+                        color: "#ffffff",
+                        textDecoration: "none",
+                        fontSize: 13,
+                        fontWeight: 800,
+                        border: "1px solid #0f172a",
+                      }}
+                    >
+                      Download Final Report JSON
+                    </a>
+                    <a
+                      href="/api/agent-knowledge/manual-verification-final-report/export?format=markdown"
+                      download
+                      style={{
+                        display: "inline-flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        borderRadius: 12,
+                        padding: "10px 12px",
+                        background: "#ffffff",
+                        color: "#0f172a",
+                        textDecoration: "none",
+                        fontSize: 13,
+                        fontWeight: 800,
+                        border: "1px solid #cbd5e1",
+                      }}
+                    >
+                      Download Final Report Markdown
+                    </a>
+                  </div>
                 </div>
 
                 <span

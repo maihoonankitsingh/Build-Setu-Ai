@@ -35,6 +35,11 @@ export default function SourceCoverageAuditPage() {
         Completion Pass
         Completion Blocked
         manualVerificationRecordPass
+        Download Final Report JSON
+        Download Final Report Markdown
+        manual-verification-final-report/export
+        format=json
+        format=markdown
         remainingManualBrowserVerificationRecords
         Total Records
         Unsafe Records
