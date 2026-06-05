@@ -792,6 +792,7 @@ function Sidebar({
             <div key={item.id}>
               {withDivider && <div className={cn("my-0.5 h-px shrink-0", false ? "bg-white/10" : "bg-[#eee7f7]")} />}
               <button
+                data-nav-href={item.href || ""}
                 onClick={() => {
                   if (item.href) {
                     window.location.href = item.href;
