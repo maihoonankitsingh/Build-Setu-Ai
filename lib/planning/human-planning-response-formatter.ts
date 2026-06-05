@@ -1,0 +1,355 @@
+// BUILDSETU_PHASE_47E1_HUMAN_PLANNING_RESPONSE_FORMATTER
+
+type DimensionContextLike = {
+  summary?: {
+    totalPairs?: number;
+    totalSingles?: number;
+    hasPlotDimension?: boolean;
+    hasRoomDimension?: boolean;
+    primaryPlotAreaSqFt?: number | null;
+  };
+  pairs?: Array<{
+    raw?: string;
+    intent?: string;
+    widthFeet?: number | null;
+    depthFeet?: number | null;
+    areaSqFt?: number | null;
+    confidence?: string;
+  }>;
+  warnings?: string[];
+};
+
+type MissingQuestionEngineLike = {
+  readiness?: string;
+  criticalQuestions?: Array<{ id?: string; question?: string; reason?: string; category?: string }>;
+  recommendedQuestions?: Array<{ id?: string; question?: string; reason?: string; category?: string }>;
+  optionalQuestions?: Array<{ id?: string; question?: string; reason?: string; category?: string }>;
+  assumptionsAllowed?: string[];
+  riskFlags?: string[];
+  detected?: Record<string, unknown>;
+};
+
+type BuildingTypeClassificationLike = {
+  category?: string;
+  subType?: string;
+  occupancyGroup?: string;
+  planningMode?: string;
+  confidence?: string;
+  riskLevel?: string;
+  detectedSignals?: string[];
+  recommendedPlanningFocus?: string[];
+  escalationFlags?: string[];
+  assumptions?: string[];
+};
+
+type PlanningModeQuestionTuningLike = {
+  mode?: string;
+  category?: string;
+  riskLevel?: string;
+  criticalQuestions?: Array<{ id?: string; question?: string; reason?: string; category?: string }>;
+  recommendedQuestions?: Array<{ id?: string; question?: string; reason?: string; category?: string }>;
+  optionalQuestions?: Array<{ id?: string; question?: string; reason?: string; category?: string }>;
+  planningFocus?: string[];
+  professionalEscalations?: string[];
+  outputGuidance?: string[];
+};
+
+export type BuildSetuHumanPlanningResponse = {
+  responseVersion: "47E-1";
+  title: string;
+  readiness: string;
+  summary: string;
+  sections: {
+    understanding: string[];
+    detectedDimensions: string[];
+    buildingType: string[];
+    planningReadiness: string[];
+    missingCriticalQuestions: string[];
+    recommendedQuestions: string[];
+    assumptionsAllowed: string[];
+    planningFocus: string[];
+    riskAndVerification: string[];
+    nextBestActions: string[];
+  };
+  markdown: string;
+};
+
+function cleanText(value: unknown): string {
+  return String(value || "").replace(/\s+/g, " ").trim();
+}
+
+function normalizeLabel(value: unknown, fallback = "unknown"): string {
+  const clean = cleanText(value);
+  return clean || fallback;
+}
+
+function pushUnique(list: string[], value: string) {
+  const clean = cleanText(value);
+  if (!clean) return;
+
+  if (!list.some((item) => item.toLowerCase() === clean.toLowerCase())) {
+    list.push(clean);
+  }
+}
+
+function questionTexts(items?: Array<{ question?: string }>, limit = 6): string[] {
+  return (items || [])
+    .map((item) => cleanText(item.question))
+    .filter(Boolean)
+    .slice(0, limit);
+}
+
+function dimensionLines(dimensionUnderstanding?: DimensionContextLike): string[] {
+  const lines: string[] = [];
+  const dim = dimensionUnderstanding;
+
+  if (!dim) {
+    return ["Dimension context not available."];
+  }
+
+  const summary = dim.summary || {};
+  const pairs = dim.pairs || [];
+
+  if (summary.primaryPlotAreaSqFt != null) {
+    pushUnique(lines, `Primary detected area: approx ${summary.primaryPlotAreaSqFt} sq ft.`);
+  }
+
+  const plotPairs = pairs.filter((pair) => pair.intent === "plot");
+  const roomPairs = pairs.filter((pair) => pair.intent === "room");
+
+  for (const pair of plotPairs.slice(0, 4)) {
+    pushUnique(
+      lines,
+      `Plot/site: ${pair.raw || "dimension"} => ${pair.widthFeet ?? "?"} ft x ${pair.depthFeet ?? "?"} ft, approx ${pair.areaSqFt ?? "?"} sq ft.`
+    );
+  }
+
+  for (const pair of roomPairs.slice(0, 6)) {
+    pushUnique(
+      lines,
+      `Room/interior: ${pair.raw || "dimension"} => ${pair.widthFeet ?? "?"} ft x ${pair.depthFeet ?? "?"} ft, approx ${pair.areaSqFt ?? "?"} sq ft.`
+    );
+  }
+
+  if (!lines.length) {
+    pushUnique(lines, "No reliable plot/room dimension was detected. Ask user for width x depth.");
+  }
+
+  return lines;
+}
+
+function buildMarkdown(title: string, sections: BuildSetuHumanPlanningResponse["sections"]): string {
+  const parts: string[] = [];
+  parts.push(`# ${title}`);
+
+  const ordered: Array<[string, string[]]> = [
+    ["1. Understanding", sections.understanding],
+    ["2. Detected dimensions", sections.detectedDimensions],
+    ["3. Building type", sections.buildingType],
+    ["4. Planning readiness", sections.planningReadiness],
+    ["5. Missing critical questions", sections.missingCriticalQuestions],
+    ["6. Recommended questions", sections.recommendedQuestions],
+    ["7. Assumptions allowed", sections.assumptionsAllowed],
+    ["8. Planning focus", sections.planningFocus],
+    ["9. Risks / professional verification", sections.riskAndVerification],
+    ["10. Next best action", sections.nextBestActions],
+  ];
+
+  for (const [heading, lines] of ordered) {
+    parts.push("");
+    parts.push(`## ${heading}`);
+
+    if (!lines.length) {
+      parts.push("- None.");
+      continue;
+    }
+
+    for (const line of lines) {
+      parts.push(`- ${line}`);
+    }
+  }
+
+  return parts.join("\n");
+}
+
+export function buildHumanPlanningResponse(input: {
+  inputText: string;
+  dimensionUnderstanding?: DimensionContextLike;
+  planningMissingQuestionEngine?: MissingQuestionEngineLike;
+  buildingTypeClassification?: BuildingTypeClassificationLike;
+  planningModeQuestionTuning?: PlanningModeQuestionTuningLike;
+}): BuildSetuHumanPlanningResponse {
+  const inputText = cleanText(input.inputText);
+  const dim = input.dimensionUnderstanding;
+  const mq = input.planningMissingQuestionEngine;
+  const building = input.buildingTypeClassification;
+  const mode = input.planningModeQuestionTuning;
+
+  const category = normalizeLabel(building?.category);
+  const subType = normalizeLabel(building?.subType);
+  const planningMode = normalizeLabel(building?.planningMode || mode?.mode);
+  const riskLevel = normalizeLabel(building?.riskLevel || mode?.riskLevel);
+  const readiness = normalizeLabel(mq?.readiness, "can_start_concept");
+
+  const critical = [
+    ...questionTexts(mq?.criticalQuestions, 8),
+    ...questionTexts(mode?.criticalQuestions, 8),
+  ];
+
+  const recommended = [
+    ...questionTexts(mq?.recommendedQuestions, 8),
+    ...questionTexts(mode?.recommendedQuestions, 8),
+  ];
+
+  const sections: BuildSetuHumanPlanningResponse["sections"] = {
+    understanding: [],
+    detectedDimensions: [],
+    buildingType: [],
+    planningReadiness: [],
+    missingCriticalQuestions: [],
+    recommendedQuestions: [],
+    assumptionsAllowed: [],
+    planningFocus: [],
+    riskAndVerification: [],
+    nextBestActions: [],
+  };
+
+  pushUnique(sections.understanding, inputText ? `User requirement: ${inputText}` : "User requirement text is empty or unavailable.");
+  pushUnique(sections.understanding, `Planning mode detected: ${planningMode}.`);
+  pushUnique(sections.understanding, `Current response is preliminary planning assistance, not final approval drawings.`);
+
+  for (const line of dimensionLines(dim)) pushUnique(sections.detectedDimensions, line);
+
+  pushUnique(sections.buildingType, `Category: ${category}.`);
+  pushUnique(sections.buildingType, `Sub-type: ${subType}.`);
+  pushUnique(sections.buildingType, `Occupancy group: ${normalizeLabel(building?.occupancyGroup)}.`);
+  pushUnique(sections.buildingType, `Classifier confidence: ${normalizeLabel(building?.confidence)}.`);
+  pushUnique(sections.buildingType, `Risk level: ${riskLevel}.`);
+
+  for (const signal of building?.detectedSignals || []) {
+    pushUnique(sections.buildingType, `Signal: ${signal}.`);
+  }
+
+  pushUnique(sections.planningReadiness, `Readiness: ${readiness}.`);
+
+  if (readiness === "needs_critical_details") {
+    pushUnique(sections.planningReadiness, "Detailed planning should wait until critical details are answered.");
+  } else if (readiness === "can_start_concept") {
+    pushUnique(sections.planningReadiness, "Concept planning can start using stated details and explicit assumptions.");
+  } else {
+    pushUnique(sections.planningReadiness, "Sufficient details are available for a more detailed planning response.");
+  }
+
+  if (critical.length) {
+    for (const question of critical) pushUnique(sections.missingCriticalQuestions, question);
+  } else {
+    pushUnique(sections.missingCriticalQuestions, "No hard critical blocker detected for concept-level planning.");
+  }
+
+  if (recommended.length) {
+    for (const question of recommended) pushUnique(sections.recommendedQuestions, question);
+  } else {
+    pushUnique(sections.recommendedQuestions, "No immediate recommended question detected beyond normal verification.");
+  }
+
+  for (const assumption of mq?.assumptionsAllowed || []) {
+    pushUnique(sections.assumptionsAllowed, assumption);
+  }
+
+  for (const assumption of building?.assumptions || []) {
+    pushUnique(sections.assumptionsAllowed, assumption);
+  }
+
+  if (!sections.assumptionsAllowed.length) {
+    pushUnique(sections.assumptionsAllowed, "Use only explicit user-provided information; do not invent final bylaw or structural values.");
+  }
+
+  for (const focus of building?.recommendedPlanningFocus || []) {
+    pushUnique(sections.planningFocus, focus);
+  }
+
+  for (const focus of mode?.planningFocus || []) {
+    pushUnique(sections.planningFocus, focus);
+  }
+
+  if (!sections.planningFocus.length) {
+    pushUnique(sections.planningFocus, "Collect missing requirements, then prepare zoning, circulation and service-core logic.");
+  }
+
+  for (const risk of mq?.riskFlags || []) {
+    pushUnique(sections.riskAndVerification, risk);
+  }
+
+  for (const escalation of building?.escalationFlags || []) {
+    pushUnique(sections.riskAndVerification, escalation);
+  }
+
+  for (const escalation of mode?.professionalEscalations || []) {
+    pushUnique(sections.riskAndVerification, escalation);
+  }
+
+  if (!sections.riskAndVerification.length) {
+    pushUnique(sections.riskAndVerification, "Final architectural, structural, MEP and local bylaw compliance must be verified by qualified professionals before execution.");
+  }
+
+  if (critical.length) {
+    pushUnique(sections.nextBestActions, "Ask the critical questions first, then generate the concept plan.");
+  }
+
+  if (!critical.length && recommended.length) {
+    pushUnique(sections.nextBestActions, "Proceed with concept planning, while listing recommended assumptions clearly.");
+  }
+
+  if (!critical.length && !recommended.length) {
+    pushUnique(sections.nextBestActions, "Proceed to detailed concept planning with dimensions, zoning, circulation and verification notes.");
+  }
+
+  if (planningMode === "room_interior") {
+    pushUnique(sections.nextBestActions, "Prepare furniture layout options and ask for door/window/electrical positions if missing.");
+  }
+
+  if (planningMode === "residential_building") {
+    pushUnique(sections.nextBestActions, "Prepare residential zoning with entry, parking, stair, living, kitchen, bedroom and service logic.");
+  }
+
+  if (planningMode === "mixed_use_building") {
+    pushUnique(sections.nextBestActions, "Prepare separate residential/commercial access and service-separation options.");
+  }
+
+  if (planningMode === "public_or_special_building" || riskLevel === "high") {
+    pushUnique(sections.nextBestActions, "Keep output concept-level and escalate fire/accessibility/MEP/local norms verification.");
+  }
+
+  const title =
+    planningMode === "room_interior"
+      ? "BuildSetu Interior Planning Response"
+      : planningMode === "residential_building"
+        ? "BuildSetu Residential Planning Response"
+        : planningMode === "mixed_use_building"
+          ? "BuildSetu Mixed-use Planning Response"
+          : planningMode === "public_or_special_building"
+            ? "BuildSetu Public/Special-use Planning Response"
+            : "BuildSetu Human-like Planning Response";
+
+  const markdown = buildMarkdown(title, sections);
+
+  return {
+    responseVersion: "47E-1",
+    title,
+    readiness,
+    summary: `${category} / ${planningMode} planning response prepared with ${critical.length} critical and ${recommended.length} recommended questions.`,
+    sections,
+    markdown,
+  };
+}
+
+export function buildHumanPlanningResponsePromptBlock(result: BuildSetuHumanPlanningResponse): string {
+  return [
+    "HUMAN-LIKE PLANNING RESPONSE:",
+    `- Title: ${result.title}`,
+    `- Readiness: ${result.readiness}`,
+    `- Summary: ${result.summary}`,
+    "Formatted response:",
+    result.markdown,
+  ].join("\n");
+}
