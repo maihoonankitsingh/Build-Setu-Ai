@@ -247,13 +247,19 @@ type Tool = {
 
 type BuildSetuIcon = React.ComponentType<{ className?: string }>;
 
-const navItems: Array<{ id: ViewKey | "credits"; label: string; icon: BuildSetuIcon; href?: string }> = [
+const navItems: Array<{ id: ViewKey | "credits" | "sourceVerification"; label: string; icon: BuildSetuIcon; href?: string }> = [
   { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
   { id: "tools", label: "All Tools", icon: Boxes },
   { id: "projects", label: "Projects", icon: FolderKanban },
   { id: "studio", label: "New Project", icon: Plus },
   { id: "renders", label: "Render Studio", icon: ImageIcon },
   { id: "knowledgeInbox", label: "Knowledge Inbox", icon: BookOpenCheck },
+  {
+    id: "sourceVerification",
+    label: "Source Verify",
+    icon: BookOpenCheck,
+    href: "/workspace/source-coverage-audit",
+  },
   { id: "boq", label: "BOQ / Estimate", icon: Calculator },
   { id: "bbs", label: "BBS", icon: ClipboardList },
   { id: "exports", label: "Exports", icon: FileText },
@@ -780,7 +786,7 @@ function Sidebar({
         {navItems.map((item, index) => {
           const Icon = item.icon;
           const selected = active === item.id;
-          const withDivider = index === 5 || index === 9;
+          const withDivider = index === 5 || index === 10;
 
           return (
             <div key={item.id}>
