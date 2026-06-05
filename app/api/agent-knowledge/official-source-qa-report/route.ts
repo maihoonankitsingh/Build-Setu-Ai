@@ -1,6 +1,27 @@
-import { NextRequest, NextResponse } from "next/server";
+import { promises as fs } from "node:fs";
+import path from "node:path";
+import { NextResponse } from "next/server";
 
+export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
+
+type JsonObject = Record<string, any>;
+
+const QUEUE_RELATIVE_PATH = "data/buildsetu-source-review-queue/queue.json";
+const DRAFT_RELATIVE_PATH = "data/buildsetu-source-extraction-drafts/drafts.json";
+
+function projectPath(...parts: string[]) {
+  return path.join(process.cwd(), ...parts);
+}
+
+async function readJson(filePath: string, fallback: any) {
+  try {
+    const raw = await fs.readFile(filePath, "utf8");
+    return JSON.parse(raw);
+  } catch {
+    return fallback;
+  }
+}
 
 function asArray(value: any): any[] {
   if (Array.isArray(value)) return value;
@@ -12,137 +33,151 @@ function asArray(value: any): any[] {
   return [];
 }
 
-function getSourceId(item: any): string {
-  return String(
+function cleanText(value: unknown, max = 2000) {
+  return String(value || "")
+    .replace(/\s+/g, " ")
+    .trim()
+    .slice(0, max);
+}
+
+function getSourceId(item: JsonObject): string {
+  return cleanText(
     item?.sourceId ||
       item?.source_id ||
+      item?.sourceReviewItem?.sourceId ||
+      item?.sourceReviewItemId ||
       item?.id ||
       item?.slug ||
       item?.source?.id ||
       item?.source?.sourceId ||
-      ""
+      "",
+    240
   );
 }
 
-async function fetchInternalJson(req: NextRequest, path: string) {
-  const url = new URL(path, req.url);
-
-  const res = await fetch(url.toString(), {
-    method: "GET",
-    headers: {
-      cookie: req.headers.get("cookie") || "",
-    },
-    cache: "no-store",
-  });
-
-  const text = await res.text();
-
-  let json: any = null;
-  try {
-    json = text ? JSON.parse(text) : null;
-  } catch {
-    json = { raw: text };
-  }
-
-  return {
-    ok: res.ok,
-    status: res.status,
-    json,
-  };
+function getDraftId(draft: JsonObject): string {
+  return cleanText(draft?.draftId || draft?.id || "", 260);
 }
 
-export async function GET(req: NextRequest) {
-  const draftsRes = await fetchInternalJson(
-    req,
-    "/api/agent-knowledge/official-source-extraction-drafts"
+function getDraftTitle(draft: JsonObject, queueItem: JsonObject) {
+  return cleanText(
+    draft?.sourceTitle ||
+      draft?.title ||
+      draft?.sourceReviewItem?.title ||
+      queueItem?.title ||
+      queueItem?.sourceTitle ||
+      queueItem?.source?.title ||
+      "",
+    260
   );
+}
 
-  const queueRes = await fetchInternalJson(
-    req,
-    "/api/agent-knowledge/official-source-review-queue"
+function getDraftUrl(draft: JsonObject, queueItem: JsonObject) {
+  return cleanText(
+    draft?.sourceUrl ||
+      draft?.url ||
+      draft?.sourceReviewItem?.url ||
+      queueItem?.url ||
+      queueItem?.sourceUrl ||
+      queueItem?.source?.url ||
+      "",
+    1200
   );
+}
 
-  if (!draftsRes.ok) {
-    return NextResponse.json(
-      {
-        ok: false,
-        error: "Unable to read extraction drafts.",
-        upstreamStatus: draftsRes.status,
-      },
-      { status: 502 }
-    );
-  }
+function getClaims(draft: JsonObject) {
+  const claims =
+    draft?.claims ||
+    draft?.extractedDraft?.claims ||
+    draft?.qa?.claims ||
+    [];
 
-  const drafts = asArray(draftsRes.json);
-  const queueItems = asArray(queueRes.json);
+  return Array.isArray(claims) ? claims : [];
+}
 
-  const queueBySourceId = new Map<string, any>();
+function getCitationChecks(draft: JsonObject) {
+  const checks =
+    draft?.citationChecks ||
+    draft?.extractedDraft?.citationChecks ||
+    draft?.qa?.citationChecks ||
+    {};
+
+  if (Array.isArray(checks)) return checks;
+  if (checks && typeof checks === "object") return [checks];
+  return [];
+}
+
+function queueMapBySourceId(queueItems: JsonObject[]) {
+  const out = new Map<string, JsonObject>();
+
   for (const item of queueItems) {
     const sourceId = getSourceId(item);
-    if (sourceId) queueBySourceId.set(sourceId, item);
+    if (sourceId) out.set(sourceId, item);
+
+    const itemId = cleanText(item?.id || "", 260);
+    if (itemId) out.set(itemId, item);
   }
 
-  const reports = drafts.map((draft: any) => {
-    const sourceId = getSourceId(draft);
-    const queueItem = queueBySourceId.get(sourceId) || {};
+  return out;
+}
 
-    const source = draft?.source || queueItem?.source || {};
+export async function GET() {
+  const draftsData = await readJson(projectPath(DRAFT_RELATIVE_PATH), {
+    version: 1,
+    items: [],
+    trustedKnowledgeWrite: false,
+  });
+
+  const queueData = await readJson(projectPath(QUEUE_RELATIVE_PATH), {
+    version: 1,
+    items: [],
+    mergePolicy: "manual_review_required",
+    autoMerge: false,
+  });
+
+  const drafts = asArray(draftsData);
+  const queueItems = asArray(queueData);
+  const queueBySourceId = queueMapBySourceId(queueItems);
+
+  const reports = drafts.map((draft: JsonObject) => {
+    const sourceId = getSourceId(draft);
+    const sourceReviewItemId = cleanText(draft?.sourceReviewItemId || "", 260);
+    const queueItem =
+      queueBySourceId.get(sourceId) ||
+      queueBySourceId.get(sourceReviewItemId) ||
+      {};
 
     return {
-      draftId: draft?.draftId || draft?.id || "",
+      draftId: getDraftId(draft),
       sourceId,
-      sourceTitle:
-        draft?.sourceTitle ||
-        source?.title ||
-        queueItem?.title ||
-        queueItem?.sourceTitle ||
-        "",
-      sourceUrl:
-        draft?.sourceUrl ||
-        source?.url ||
-        queueItem?.url ||
-        queueItem?.sourceUrl ||
-        "",
+      sourceTitle: getDraftTitle(draft, queueItem),
+      sourceUrl: getDraftUrl(draft, queueItem),
       reviewStatus:
-        queueItem?.status ||
-        queueItem?.reviewStatus ||
-        draft?.reviewStatus ||
-        "unknown",
+        cleanText(queueItem?.status || draft?.reviewStatusAtDraftCreation || draft?.reviewStatus || "unknown", 80),
       draftStatus:
-        draft?.status ||
-        draft?.draftStatus ||
-        "unknown",
+        cleanText(draft?.status || draft?.draftStatus || "unknown", 80),
       qaStatus:
-        draft?.qaStatus ||
-        "extraction_pending",
+        cleanText(draft?.qaStatus || draft?.qa?.status || "extraction_pending", 80),
       summary:
-        draft?.summary ||
-        "",
+        cleanText(draft?.summary || draft?.extractedDraft?.summary || "", 4000),
       jurisdiction:
-        draft?.jurisdiction ||
-        "",
+        cleanText(draft?.jurisdiction || draft?.extractedDraft?.jurisdiction || "", 1200),
       applicability:
-        draft?.applicability ||
-        "",
+        cleanText(draft?.applicability || draft?.extractedDraft?.applicability || "", 1200),
       versionDate:
-        draft?.versionDate ||
-        "",
-      claims:
-        Array.isArray(draft?.claims) ? draft.claims : [],
-      citationChecks:
-        Array.isArray(draft?.citationChecks) ? draft.citationChecks : [],
+        cleanText(draft?.versionDate || draft?.extractedDraft?.versionDate || "", 500),
+      claims: getClaims(draft),
+      citationChecks: getCitationChecks(draft),
       reviewer:
-        draft?.reviewer ||
-        queueItem?.reviewer ||
-        "",
+        cleanText(draft?.reviewer || draft?.qa?.reviewer || queueItem?.review?.reviewer || "", 240),
       qaNotes:
-        draft?.qaNotes ||
-        "",
+        cleanText(draft?.qaNotes || draft?.qa?.notes || "", 4000),
       safetyBoundary: {
         mode: "read_only_qa_report",
         trustedMergeEnabled: false,
         trustedKnowledgeWrite: false,
         trustedKnowledgeChanged: false,
+        trustedMergeExecuted: false,
         mergeActionAvailable: false,
       },
     };
@@ -150,10 +185,12 @@ export async function GET(req: NextRequest) {
 
   return NextResponse.json({
     ok: true,
-    phase: "45E-1",
+    phase: "45E-4",
     reportPolicy: "read_only_no_edit_no_merge",
     trustedMergeEnabled: false,
     trustedKnowledgeWrite: false,
+    trustedKnowledgeChanged: false,
+    trustedMergeExecuted: false,
     count: reports.length,
     reports,
   });
