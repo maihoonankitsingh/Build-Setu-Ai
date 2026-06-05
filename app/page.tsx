@@ -8414,6 +8414,8 @@ function buildToolHrefWithActiveProject(slug: string, projectId?: string) {
 
     let assistantText = buildAssistantReply(userText, finalPrompt);
 
+    let planningAgentData: any = null;
+
     try {
       const brainResponse = await fetch("/api/project-chat/send", {
         method: "POST",
@@ -8440,6 +8442,45 @@ function buildToolHrefWithActiveProject(slug: string, projectId?: string) {
       assistantText = buildAssistantReply(userText, finalPrompt);
     }
 
+    try {
+      // BUILDSETU_PHASE_47R1_PROJECT_CHAT_ATTACH_PLANNING_AGENT
+      const planningResponse = await fetch("/api/planning/universal-agent", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        cache: "no-store",
+        credentials: "same-origin",
+        body: JSON.stringify({
+          projectId,
+          projectTitle,
+          projectName: projectTitle,
+          message: userText,
+          userText,
+          prompt: finalPrompt,
+          toolSlug: selectedTool.slug,
+          toolName: selectedTool.name,
+        }),
+      });
+
+      const planningData = await planningResponse.json().catch(() => null);
+      if (planningResponse.ok && planningData?.ok) {
+        planningAgentData = planningData;
+      }
+    } catch {
+      planningAgentData = null;
+    }
+
+    const assistantResultJson = planningAgentData
+      ? {
+          summary: assistantText,
+          planningAgent: planningAgentData,
+          planningUiConsumptionAdapter: planningAgentData?.planningUiConsumptionAdapter || null,
+          humanPlanningResponse: planningAgentData?.humanPlanningResponse || null,
+          planningOutputRoutingEngine: planningAgentData?.planningOutputRoutingEngine || null,
+          planningProjectMemoryEngine: planningAgentData?.planningProjectMemoryEngine || null,
+          planningRegressionQaEngine: planningAgentData?.planningRegressionQaEngine || null,
+        }
+      : { summary: assistantText };
+
     const assistantMessage: ProjectUnifiedChatMessage = {
       id: `local_ai_${Date.now()}`,
       role: "assistant",
@@ -8448,7 +8489,7 @@ function buildToolHrefWithActiveProject(slug: string, projectId?: string) {
       toolName: selectedTool.name,
       content: assistantText,
       finalPrompt,
-      resultJson: { summary: assistantText },
+      resultJson: assistantResultJson,
       status: "RESULT_GENERATED",
       createdAt: new Date().toISOString(),
     };
@@ -8460,7 +8501,7 @@ function buildToolHrefWithActiveProject(slug: string, projectId?: string) {
       messageType: "result",
       content: assistantText,
       finalPrompt,
-      resultJson: { summary: assistantText },
+      resultJson: assistantResultJson,
       status: "RESULT_GENERATED",
     });
 
@@ -8544,6 +8585,120 @@ function buildToolHrefWithActiveProject(slug: string, projectId?: string) {
     );
   }
 
+  // BUILDSETU_PHASE_47R1_PROJECT_CHAT_PLANNING_UI_RENDERER
+  function getPlanningUiAdapterFromMessage(message: ProjectUnifiedChatMessage) {
+    const data: any = message?.resultJson || {};
+    return (
+      data?.planningUiConsumptionAdapter ||
+      data?.planningAgent?.planningUiConsumptionAdapter ||
+      data?.result?.planningUiConsumptionAdapter ||
+      data?.agent?.planningUiConsumptionAdapter ||
+      null
+    );
+  }
+
+  function renderPlanningUiAdapterCards(adapter: any) {
+    if (!adapter || adapter.engineVersion !== "47Q-1") return null;
+
+    const qa = adapter.qaBadge || {};
+    const actionCards = Array.isArray(adapter.actionCards) ? adapter.actionCards : [];
+    const decisionCards = Array.isArray(adapter.decisionCards) ? adapter.decisionCards : [];
+    const blockedCards = Array.isArray(adapter.blockedCards) ? adapter.blockedCards : [];
+    const sectionTabs = Array.isArray(adapter.sectionTabs) ? adapter.sectionTabs : [];
+
+    return (
+      <div className="mt-3 space-y-3 rounded-[20px] border border-[#e8ddf8] bg-[#fbf8ff] p-3">
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <div>
+            <div className="text-[11px] font-black uppercase tracking-[0.14em] text-[#7c3aed]">Planning package</div>
+            <div className="mt-0.5 text-[13px] font-black text-[#21133f]">{adapter.title || "BuildSetu Planning Response"}</div>
+          </div>
+          <div className="rounded-full border border-[#d8c8f2] bg-white px-3 py-1 text-[11px] font-black text-[#21133f]">
+            QA: {qa.status || "unknown"} · {qa.pass || 0}/{(qa.pass || 0) + (qa.warn || 0) + (qa.fail || 0)}
+          </div>
+        </div>
+
+        {adapter.primaryCta ? (
+          <div className="rounded-2xl border border-[#d8c8f2] bg-white p-3">
+            <div className="text-[11px] font-bold uppercase tracking-[0.12em] text-[#817397]">Primary next action</div>
+            <div className="mt-1 text-[13px] font-black text-[#21133f]">{adapter.primaryCta}</div>
+          </div>
+        ) : null}
+
+        {actionCards.length ? (
+          <div className="grid gap-2 md:grid-cols-2">
+            {actionCards.slice(0, 6).map((card: any) => (
+              <button
+                key={card.id || card.title}
+                type="button"
+                className="rounded-2xl border border-[#e8ddf8] bg-white p-3 text-left transition hover:border-[#7c3aed]"
+                title={card.targetWorkflow || ""}
+              >
+                <div className="flex items-center justify-between gap-2">
+                  <span className="text-[12px] font-black text-[#21133f]">{card.title || "Planning action"}</span>
+                  <span className="rounded-full bg-[#f1ecff] px-2 py-0.5 text-[10px] font-bold text-[#6d28d9]">
+                    {card.priority || "action"}
+                  </span>
+                </div>
+                <p className="mt-1 text-[11px] leading-relaxed text-[#6b5c7f]">{card.description || "Ready for planning workflow."}</p>
+              </button>
+            ))}
+          </div>
+        ) : null}
+
+        {decisionCards.length ? (
+          <details className="rounded-2xl border border-[#e8ddf8] bg-white p-3">
+            <summary className="cursor-pointer text-[12px] font-black text-[#21133f]">
+              Lock decisions ({decisionCards.length})
+            </summary>
+            <div className="mt-2 space-y-2">
+              {decisionCards.slice(0, 8).map((card: any) => (
+                <div key={card.id || card.title} className="rounded-xl bg-[#fbf8ff] p-2">
+                  <div className="text-[11px] font-black text-[#21133f]">{card.title || "Decision"}</div>
+                  <div className="mt-0.5 text-[11px] leading-relaxed text-[#6b5c7f]">{card.description || ""}</div>
+                </div>
+              ))}
+            </div>
+          </details>
+        ) : null}
+
+        {blockedCards.length ? (
+          <details className="rounded-2xl border border-[#fecaca] bg-[#fff7f7] p-3">
+            <summary className="cursor-pointer text-[12px] font-black text-[#991b1b]">
+              Blocked outputs ({blockedCards.length})
+            </summary>
+            <div className="mt-2 space-y-2">
+              {blockedCards.slice(0, 6).map((card: any) => (
+                <div key={card.id || card.title} className="rounded-xl bg-white p-2">
+                  <div className="text-[11px] font-black text-[#991b1b]">{card.title || "Blocked output"}</div>
+                  <div className="mt-0.5 text-[11px] leading-relaxed text-[#7f1d1d]">{card.description || ""}</div>
+                </div>
+              ))}
+            </div>
+          </details>
+        ) : null}
+
+        {sectionTabs.length ? (
+          <details className="rounded-2xl border border-[#e8ddf8] bg-white p-3">
+            <summary className="cursor-pointer text-[12px] font-black text-[#21133f]">
+              Planning sections ({sectionTabs.length})
+            </summary>
+            <div className="mt-2 grid gap-2 md:grid-cols-2">
+              {sectionTabs.slice(0, 12).map((tab: any) => (
+                <div key={tab.id || tab.title} className="rounded-xl bg-[#fbf8ff] p-2">
+                  <div className="text-[11px] font-black text-[#21133f]">{tab.title || "Section"} · {tab.itemCount || 0}</div>
+                  {(Array.isArray(tab.preview) ? tab.preview : []).slice(0, 2).map((item: any, index: number) => (
+                    <div key={index} className="mt-1 text-[10.5px] leading-relaxed text-[#6b5c7f]">{String(item)}</div>
+                  ))}
+                </div>
+              ))}
+            </div>
+          </details>
+        ) : null}
+      </div>
+    );
+  }
+
   const fileMessages = projectUnifiedChat
     .filter((message) => message.finalPrompt || message.status === "RESULT_GENERATED")
     .slice(-4)
@@ -8598,6 +8753,7 @@ function buildToolHrefWithActiveProject(slug: string, projectId?: string) {
             {projectUnifiedChat.map((message) => {
               const isUser = message.role === "user";
               const src = getImageSrc(message.imageUrl);
+              const planningUiAdapter = getPlanningUiAdapterFromMessage(message);
 
               return (
                 <div key={message.id} className={isUser ? "bsu-msg-row user" : "bsu-msg-row assistant"}>
@@ -8609,6 +8765,8 @@ function buildToolHrefWithActiveProject(slug: string, projectId?: string) {
                     ) : null}
 
                     <p>{message.content}</p>
+
+                    {!isUser ? renderPlanningUiAdapterCards(planningUiAdapter) : null}
 
                     {src ? (
                       <div className="bsu-inline-image">
