@@ -7,8 +7,11 @@ export const runtime = "nodejs";
 
 type JsonObject = Record<string, any>;
 
+type DraftQaStatus = "extraction_pending" | "qa_pending" | "qa_failed" | "qa_ready";
+
 const QUEUE_RELATIVE_PATH = "data/buildsetu-source-review-queue/queue.json";
 const DRAFT_RELATIVE_PATH = "data/buildsetu-source-extraction-drafts/drafts.json";
+const DRAFT_QA_STATUSES: DraftQaStatus[] = ["extraction_pending", "qa_pending", "qa_failed", "qa_ready"];
 
 function projectPath(...parts: string[]) {
   return path.join(process.cwd(), ...parts);
@@ -45,6 +48,10 @@ function safeId(value: unknown, fallback: string) {
 
 function nowIso() {
   return new Date().toISOString();
+}
+
+function isDraftQaStatus(value: unknown): value is DraftQaStatus {
+  return DRAFT_QA_STATUSES.includes(value as DraftQaStatus);
 }
 
 async function requireUser(req: NextRequest) {
@@ -129,17 +136,152 @@ function buildDraftFromQueueItem(item: JsonObject, existing: JsonObject | undefi
     ],
     extractedDraft: existing?.extractedDraft || {
       summary: "",
+      jurisdiction: "",
+      applicability: "",
+      versionDate: "",
       claims: [],
+      citationChecks: {
+        sourceUrlPresent: Boolean(item?.url),
+        sourceCitationPresent: Boolean(sourceCitationForItem(item)),
+        jurisdictionMarked: false,
+        applicabilityMarked: false,
+        versionDateMarked: false,
+        allClaimsHaveCitation: false,
+      },
       cautions: [
         "Draft only. Not trusted knowledge.",
         "Professional/local authority verification required before use.",
       ],
+    },
+    qa: existing?.qa || {
+      status: "extraction_pending",
+      notes: "",
+      reviewer: "",
+      checkedAt: "",
+      checkedBy: "",
+      trustedMergeApproved: false,
+      trustedMergeExecuted: false,
     },
     createdAt,
     updatedAt: nowIso(),
     createdBy: existing?.createdBy || userId,
     updatedBy: userId,
     sourceReviewItem: item,
+  };
+}
+
+function normalizeClaims(value: unknown) {
+  const rawClaims = Array.isArray(value) ? value.slice(0, 60) : [];
+
+  return rawClaims.map((claim, index) => {
+    if (typeof claim === "string") {
+      return {
+        id: `claim_${index + 1}`,
+        text: cleanText(claim, 2000),
+        citation: "",
+        sourceUrl: "",
+        note: "",
+      };
+    }
+
+    return {
+      id: cleanText(claim?.id || `claim_${index + 1}`, 120),
+      text: cleanText(claim?.text || claim?.claim || "", 2000),
+      citation: cleanText(claim?.citation || "", 1200),
+      sourceUrl: cleanText(claim?.sourceUrl || claim?.url || "", 1200),
+      note: cleanText(claim?.note || "", 1200),
+    };
+  }).filter((claim) => claim.text);
+}
+
+function buildCitationChecks(args: {
+  summary: string;
+  jurisdiction: string;
+  applicability: string;
+  versionDate: string;
+  claims: JsonObject[];
+  existingChecks?: JsonObject;
+  sourceCitation?: string;
+  sourceUrl?: string;
+}) {
+  const allClaimsHaveCitation = args.claims.length > 0 && args.claims.every((claim) => Boolean(claim.citation || claim.sourceUrl));
+
+  return {
+    ...(args.existingChecks || {}),
+    sourceUrlPresent: Boolean(args.sourceUrl),
+    sourceCitationPresent: Boolean(args.sourceCitation),
+    jurisdictionMarked: Boolean(args.jurisdiction),
+    applicabilityMarked: Boolean(args.applicability),
+    versionDateMarked: Boolean(args.versionDate),
+    allClaimsHaveCitation,
+    summaryPresent: Boolean(args.summary),
+    checkedAt: nowIso(),
+  };
+}
+
+function updateDraftQa(item: JsonObject, body: JsonObject, userId: string) {
+  // BUILDSETU_OFFICIAL_SOURCE_EXTRACTION_DRAFT_QA_UPDATE_V1
+  const existingDraft = item.extractedDraft || {};
+  const existingQa = item.qa || {};
+
+  const summary = cleanText(body?.summary ?? existingDraft.summary ?? "", 8000);
+  const jurisdiction = cleanText(body?.jurisdiction ?? existingDraft.jurisdiction ?? "", 2000);
+  const applicability = cleanText(body?.applicability ?? existingDraft.applicability ?? "", 4000);
+  const versionDate = cleanText(body?.versionDate ?? body?.version ?? existingDraft.versionDate ?? "", 1000);
+  const qaNotes = cleanText(body?.qaNotes ?? body?.notes ?? existingQa.notes ?? "", 6000);
+  const reviewer = cleanText(body?.reviewer ?? existingQa.reviewer ?? "", 240);
+  const claims = Array.isArray(body?.claims) ? normalizeClaims(body.claims) : normalizeClaims(existingDraft.claims || []);
+
+  const requestedStatus = cleanText(body?.qaStatus || body?.status || "qa_pending", 80);
+  const qaStatus: DraftQaStatus = isDraftQaStatus(requestedStatus) ? requestedStatus : "qa_pending";
+
+  const citationChecks = buildCitationChecks({
+    summary,
+    jurisdiction,
+    applicability,
+    versionDate,
+    claims,
+    existingChecks: existingDraft.citationChecks || {},
+    sourceCitation: item.sourceCitation,
+    sourceUrl: item.url,
+  });
+
+  return {
+    ...item,
+    status: qaStatus,
+    extractionPolicy: "draft_only_manual_review_required",
+    mergePolicy: "manual_review_required",
+    autoMerge: false,
+    trustedKnowledgeWrite: false,
+    trustedKnowledgeChanged: false,
+    trustedMergeExecuted: false,
+    extractedDraft: {
+      ...existingDraft,
+      summary,
+      jurisdiction,
+      applicability,
+      versionDate,
+      claims,
+      citationChecks,
+      cautions: Array.isArray(existingDraft.cautions) && existingDraft.cautions.length
+        ? existingDraft.cautions
+        : [
+            "Draft only. Not trusted knowledge.",
+            "Professional/local authority verification required before use.",
+          ],
+    },
+    qa: {
+      ...existingQa,
+      status: qaStatus,
+      notes: qaNotes,
+      reviewer,
+      checkedAt: nowIso(),
+      checkedBy: userId,
+      trustedMergeApproved: false,
+      trustedMergeExecuted: false,
+    },
+    updatedAt: nowIso(),
+    updatedBy: userId,
   };
 }
 
@@ -226,11 +368,69 @@ export async function POST(req: NextRequest) {
     const body = await req.json().catch(() => ({}));
     const action = cleanText(body?.action || "create_from_review_queue", 80);
 
-    if (action !== "create_from_review_queue") {
+    if (!["create_from_review_queue", "update_draft"].includes(action)) {
       return NextResponse.json(
-        { ok: false, error: "UNSUPPORTED_ACTION", supportedActions: ["create_from_review_queue"] },
+        { ok: false, error: "UNSUPPORTED_ACTION", supportedActions: ["create_from_review_queue", "update_draft"] },
         { status: 400 },
       );
+    }
+
+    if (action === "update_draft") {
+      const draftId = cleanText(body?.draftId || body?.id || "", 260);
+
+      if (!draftId) {
+        return NextResponse.json(
+          { ok: false, error: "DRAFT_ID_REQUIRED", required: ["draftId"] },
+          { status: 400 },
+        );
+      }
+
+      const drafts = await loadDrafts();
+      const existingItems = Array.isArray(drafts.items) ? drafts.items : [];
+      const index = existingItems.findIndex((item: JsonObject) => cleanText(item?.id || "", 260) === draftId);
+
+      if (index < 0) {
+        return NextResponse.json(
+          { ok: false, error: "EXTRACTION_DRAFT_NOT_FOUND", draftId },
+          { status: 404 },
+        );
+      }
+
+      const nextItems = existingItems.map((item: JsonObject, itemIndex: number) =>
+        itemIndex === index ? updateDraftQa(item, body, user.id) : item,
+      );
+
+      const updatedDrafts = {
+        ...drafts,
+        version: Number(drafts.version || 1),
+        description: "BuildSetu reviewed source extraction drafts. No trusted merge.",
+        extractionPolicy: "draft_only_manual_review_required",
+        mergePolicy: "manual_review_required",
+        autoMerge: false,
+        trustedKnowledgeWrite: false,
+        trustedKnowledgeChanged: false,
+        trustedMergeExecuted: false,
+        items: nextItems,
+        updatedAt: nowIso(),
+        updatedBy: user.id,
+      };
+
+      await writeJson(projectPath(DRAFT_RELATIVE_PATH), updatedDrafts);
+
+      return NextResponse.json({
+        ok: true,
+        code: "BUILDSETU_OFFICIAL_SOURCE_EXTRACTION_DRAFT_UPDATED",
+        draftPath: DRAFT_RELATIVE_PATH,
+        item: nextItems[index],
+        summary: summarizeDrafts(nextItems),
+        extractionPolicy: "draft_only_manual_review_required",
+        mergePolicy: "manual_review_required",
+        autoMerge: false,
+        trustedKnowledgeWrite: false,
+        trustedKnowledgeChanged: false,
+        trustedMergeExecuted: false,
+        userId: user.id,
+      });
     }
 
     const queue = await loadQueue();
