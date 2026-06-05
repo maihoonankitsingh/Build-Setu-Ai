@@ -22,6 +22,7 @@ type UniversalPlanningAgentInput = {
   prompt?: string;
   message?: string;
   userText?: string;
+  // BUILDSETU_PHASE_47C_PROJECT_ID_INPUT_TYPE
   projectId?: string;
   projectTitle?: string;
   projectName?: string;

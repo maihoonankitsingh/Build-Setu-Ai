@@ -60,6 +60,12 @@ function pushUnique(list: string[], value: string) {
   }
 }
 
+
+function hasExplicitReferenceIntent(text: string): boolean {
+  // BUILDSETU_PHASE_47C_STRICT_REFERENCE_INTENT
+  return /\b(reference|sample|upload|uploaded|file|attachment|attach|image|photo|picture|screenshot|pdf|cad|dwg|dxf|sketch|scan|same style|same like|similar to|inspired by|copy this|jaisa|aisa)\b/i.test(text);
+}
+
 function detectReferenceTypes(text: string): BuildSetuReferenceType[] {
   const types: BuildSetuReferenceType[] = [];
 
@@ -108,8 +114,8 @@ export function buildPlanningReferenceIntelligenceEngine(input: {
   const planningMode = cleanText(input.buildingTypeClassification?.planningMode || input.planningCategoryIntelligence?.planningMode || "unknown");
 
   const detectedReferenceTypes = detectReferenceTypes(text);
-  const hasReferenceIntent = detectedReferenceTypes.length > 0 || has(/\b(reference|sample|upload|same like|similar|inspired|copy this|jaisa|aisa)\b/i, text);
-  const referenceUseMode = decideUseMode(detectedReferenceTypes, text);
+  const hasReferenceIntent = hasExplicitReferenceIntent(text);
+  const referenceUseMode = hasReferenceIntent ? decideUseMode(detectedReferenceTypes, text) : "no_reference";
 
   const extractionChecklist: string[] = [];
   const referencePlanningImpact: string[] = [];

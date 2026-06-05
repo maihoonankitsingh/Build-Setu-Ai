@@ -96,6 +96,7 @@ export function buildPlanningProjectMemoryEngine(input: {
   planningReferenceIntelligence?: PlanningReferenceIntelligenceLike;
   humanPlanningResponse?: HumanPlanningResponseLike;
 }): BuildSetuPlanningMemoryVersioningResult {
+  // BUILDSETU_PHASE_47C_PROJECT_ID_MEMORY_NORMALIZE
   const projectId = cleanText(input.projectId) || null;
   const hasProjectContext = Boolean(projectId);
   const memoryLockCandidates: BuildSetuMemoryLockItem[] = [];

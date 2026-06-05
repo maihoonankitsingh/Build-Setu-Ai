@@ -147,6 +147,8 @@ export async function POST(req: NextRequest) {
     const rawUserText = getUniversalAgentRawUserTextV47A4(body);
 
     const result = await runUniversalPlanningAgent({
+      // BUILDSETU_PHASE_47C_PROJECT_ID_PASS_THROUGH
+      projectId: String(body?.projectId || body?.id || body?.project?.id || body?.projectContext?.id || ""),
       prompt: attachUniversalAgentQualityBrainV5B(body),
       message: rawUserText,
       userText: rawUserText,
