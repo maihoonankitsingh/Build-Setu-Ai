@@ -113,6 +113,70 @@ function isStateUtAuthorityIndex(source: JsonObject) {
 }
 
 
+
+function manualVerificationCompletionSummary(manualRoot: JsonObject, recordsRoot: JsonObject) {
+  const manualItems = asArray(manualRoot?.items);
+  const records = asArray(recordsRoot?.records);
+
+  const requiredSourceIds = manualItems
+    .filter((item) => item?.manualBrowserVerificationRequired === true)
+    .map((item) => cleanText(item?.id || item?.sourceId || "", 260))
+    .filter(Boolean);
+
+  const verifiedRecords = records.filter(
+    (record) => cleanText(record?.decision || "", 160) === "verified_manual_browser_source"
+  );
+
+  const verifiedSourceIds = verifiedRecords
+    .map((record) => cleanText(record?.sourceId || "", 260))
+    .filter(Boolean);
+
+  const missingManualRecords = requiredSourceIds.filter(
+    (sourceId) => !verifiedSourceIds.includes(sourceId)
+  );
+
+  const unexpectedManualRecords = verifiedSourceIds.filter(
+    (sourceId) => !requiredSourceIds.includes(sourceId)
+  );
+
+  const duplicateManualRecords = verifiedSourceIds.filter(
+    (sourceId, index) => verifiedSourceIds.indexOf(sourceId) !== index
+  );
+
+  const unsafeRecords = records.filter((record) => {
+    const safety = (record?.safety || {}) as JsonObject;
+    return (
+      safety?.sourceRegistryChanged === true ||
+      safety?.extractionAllowedChanged === true ||
+      safety?.qaReadyAllowedChanged === true ||
+      safety?.trustedMergeCandidateAllowedChanged === true ||
+      safety?.trustedKnowledgeWrite === true ||
+      safety?.trustedMergeExecuted === true
+    );
+  });
+
+  return {
+    requiredManualBrowserVerification: requiredSourceIds.length,
+    verifiedManualBrowserRecords: verifiedRecords.length,
+    coveredManualBrowserVerification: requiredSourceIds.length - missingManualRecords.length,
+    remainingManualBrowserVerificationRecords: missingManualRecords.length,
+    unexpectedManualRecords: unexpectedManualRecords.length,
+    duplicateManualRecords: duplicateManualRecords.length,
+    unsafeRecords: unsafeRecords.length,
+    manualVerificationRecordPass:
+      requiredSourceIds.length > 0 &&
+      missingManualRecords.length === 0 &&
+      unexpectedManualRecords.length === 0 &&
+      duplicateManualRecords.length === 0 &&
+      unsafeRecords.length === 0,
+    requiredSourceIds,
+    verifiedSourceIds,
+    missingManualRecordSourceIds: missingManualRecords,
+    unexpectedManualRecordSourceIds: unexpectedManualRecords,
+    duplicateManualRecordSourceIds: duplicateManualRecords,
+  };
+}
+
 function manualVerificationRecordsSummary(recordsRoot: JsonObject) {
   const records = asArray(recordsRoot?.records).map((record) => ({
     id: cleanText(record?.id || "", 320),
@@ -352,6 +416,10 @@ export async function GET() {
       stateUtVerificationTracker: stateUtTrackerSummary(allPackSources),
       manualVerification: manualVerificationSummary(allPackSources),
       manualVerificationRecords: manualVerificationRecordsSummary(
+        await readJson(projectPath(MANUAL_RECORDS_RELATIVE_PATH), { records: [] })
+      ),
+      manualVerificationCompletion: manualVerificationCompletionSummary(
+        manualVerificationSummary(allPackSources),
         await readJson(projectPath(MANUAL_RECORDS_RELATIVE_PATH), { records: [] })
       ),
     },
