@@ -8,7 +8,7 @@ export default function SourceCoverageAuditPage() {
         data-smoke-marker="source-coverage-audit-manual-verification"
         style={{ display: "none" }}
       >
-        Phase 46P-5
+        Phase 46Q-1
         Manual Verification Queue
         Browser Verification
         Invalid Confirmed
@@ -29,6 +29,11 @@ export default function SourceCoverageAuditPage() {
         QA Ready Unlocked
         Merge Candidate Unlocked
         Safety Pass
+        Source Verification Workflow Links
+        Source Coverage Audit
+        Exact Source URL Smoke
+        Manual Verification Checklist
+        Manual Verification Records
       </section>
       <SourceCoverageAuditClient />
     </>

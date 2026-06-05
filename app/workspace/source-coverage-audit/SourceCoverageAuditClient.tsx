@@ -179,6 +179,44 @@ export default function SourceCoverageAuditClient() {
 
   return (
     <main style={{ padding: 32, maxWidth: 1280, margin: "0 auto" }}>
+
+      <section
+        style={{
+          background: "#ffffff",
+          border: "1px solid #e2e8f0",
+          borderRadius: 22,
+          padding: 18,
+          marginBottom: 18,
+          boxShadow: "0 10px 30px rgba(15, 23, 42, 0.06)",
+        }}
+      >
+        <p
+          style={{
+            margin: "0 0 8px",
+            color: "#64748b",
+            fontSize: 12,
+            fontWeight: 900,
+            textTransform: "uppercase",
+            letterSpacing: 0.8,
+          }}
+        >
+          Source Verification Workflow Links
+        </p>
+        <div
+          style={{
+            display: "flex",
+            gap: 10,
+            flexWrap: "wrap",
+            alignItems: "center",
+          }}
+        >
+          <WorkflowLink href="/workspace/source-coverage-audit" label="Source Coverage Audit" />
+          <WorkflowLink href="/workspace/exact-source-url-smoke" label="Exact Source URL Smoke" />
+          <WorkflowLink href="/workspace/manual-verification-checklist" label="Manual Verification Checklist" />
+          <WorkflowLink href="/workspace/manual-verification-records" label="Manual Verification Records" />
+        </div>
+      </section>
+
       <div style={{ marginBottom: 24 }}>
         <p style={{ margin: 0, color: "#64748b", fontSize: 14 }}>
           Phase 46H-3
@@ -743,6 +781,31 @@ function ManualVerificationCard({
   );
 }
 
+
+
+function WorkflowLink({ href, label }: { href: string; label: string }) {
+  return (
+    <a
+      href={href}
+      style={{
+        display: "inline-flex",
+        alignItems: "center",
+        justifyContent: "center",
+        minHeight: 38,
+        padding: "9px 13px",
+        borderRadius: 999,
+        border: "1px solid #bfdbfe",
+        background: "#eff6ff",
+        color: "#1d4ed8",
+        fontSize: 13,
+        fontWeight: 900,
+        textDecoration: "none",
+      }}
+    >
+      {label}
+    </a>
+  );
+}
 
 function Panel({ children }: { children: any }) {
   return (
