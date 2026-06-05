@@ -170,7 +170,24 @@
       ],
       "priority": "high",
       "status": "framework_ready",
-      "sources": [],
+      "sources": [
+        {
+          "id": "cpwd-works-manual-2024",
+          "title": "CPWD Works Manual 2024",
+          "url": "https://cpwd.gov.in/Publication/CPWD_Works_Manual_2024.pdf",
+          "domains": [
+            "execution_planning",
+            "civil_construction",
+            "quality_check",
+            "boq"
+          ],
+          "authorityType": "official_primary",
+          "publisher": "Central Public Works Department, Government of India",
+          "watch": true,
+          "reviewRequired": true,
+          "mergePolicy": "manual_review_required"
+        }
+      ],
       "plannedTopics": [
         "cement and concrete checks",
         "steel and reinforcement checks",
@@ -217,6 +234,6 @@
       "disclaimer": "Vastu guidance is advisory and must not override safety, bylaws, structure, ventilation or client functional needs."
     }
   ],
-  "updatedAt": "2026-06-05T05:08:31.731Z",
-  "updatedBy": "phase_46a1_verified_mohua_planning_sources"
+  "updatedAt": "2026-06-05T05:12:55.943Z",
+  "updatedBy": "phase_46b1_cpwd_works_manual_candidate"
 }

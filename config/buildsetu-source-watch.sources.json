@@ -143,6 +143,24 @@
       "watch": true,
       "reviewRequired": true,
       "mergePolicy": "manual_review_required"
+    },
+    {
+      "id": "cpwd-works-manual-2024",
+      "title": "CPWD Works Manual 2024",
+      "url": "https://cpwd.gov.in/Publication/CPWD_Works_Manual_2024.pdf",
+      "domains": [
+        "execution_planning",
+        "civil_construction",
+        "quality_check",
+        "boq"
+      ],
+      "authorityType": "official_primary",
+      "publisher": "Central Public Works Department, Government of India",
+      "sourcePackId": "construction_materials_execution_pack",
+      "sourcePackTitle": "Construction Materials and Execution Pack",
+      "watch": true,
+      "reviewRequired": true,
+      "mergePolicy": "manual_review_required"
     }
   ],
   "sourcePackSync": {
@@ -151,6 +169,6 @@
     "autoMerge": false,
     "reviewRequired": true
   },
-  "updatedAt": "2026-06-05T05:08:31.732Z",
-  "updatedBy": "phase_46a1_verified_mohua_planning_sources"
+  "updatedAt": "2026-06-05T05:12:55.943Z",
+  "updatedBy": "phase_46b1_cpwd_works_manual_candidate"
 }
