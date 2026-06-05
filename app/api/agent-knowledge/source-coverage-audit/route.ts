@@ -1,0 +1,179 @@
+import { promises as fs } from "node:fs";
+import path from "node:path";
+import { NextResponse } from "next/server";
+
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
+
+type JsonObject = Record<string, any>;
+
+const PACKS_RELATIVE_PATH = "config/buildsetu-source-packs.json";
+const WATCH_RELATIVE_PATH = "config/buildsetu-source-watch.sources.json";
+
+const EXPECTED_STATE_COUNT = 28;
+const EXPECTED_UT_COUNT = 8;
+
+function projectPath(...parts: string[]) {
+  return path.join(process.cwd(), ...parts);
+}
+
+async function readJson(filePath: string, fallback: any) {
+  try {
+    const raw = await fs.readFile(filePath, "utf8");
+    return JSON.parse(raw);
+  } catch {
+    return fallback;
+  }
+}
+
+function asArray(value: any): any[] {
+  return Array.isArray(value) ? value : [];
+}
+
+function cleanText(value: unknown, max = 2000) {
+  return String(value || "")
+    .replace(/\s+/g, " ")
+    .trim()
+    .slice(0, max);
+}
+
+function sourceKey(source: JsonObject) {
+  return `${cleanText(source?.id || source?.sourceId || "", 200)}|${cleanText(source?.url || source?.sourceUrl || "", 1400)}`;
+}
+
+function getAllPackSources(packs: JsonObject[]) {
+  return packs.flatMap((pack) =>
+    asArray(pack?.sources).map((source) => ({
+      packId: cleanText(pack?.id || "", 200),
+      packTitle: cleanText(pack?.title || "", 300),
+      id: cleanText(source?.id || source?.sourceId || "", 240),
+      title: cleanText(source?.title || source?.name || "", 300),
+      url: cleanText(source?.url || source?.sourceUrl || "", 1400),
+      domains: asArray(source?.domains || pack?.domains).map((domain) => cleanText(domain, 120)).filter(Boolean),
+      authorityType: cleanText(source?.authorityType || "", 120),
+      publisher: cleanText(source?.publisher || "", 300),
+      jurisdiction: source?.jurisdiction || null,
+      watch: source?.watch === true,
+      reviewRequired: source?.reviewRequired !== false,
+      mergePolicy: cleanText(source?.mergePolicy || "manual_review_required", 120),
+      notes: cleanText(source?.notes || "", 1000),
+    }))
+  );
+}
+
+function byDomain(sources: JsonObject[]) {
+  const out: Record<string, number> = {};
+  for (const source of sources) {
+    for (const domain of asArray(source.domains)) {
+      out[domain] = (out[domain] || 0) + 1;
+    }
+  }
+  return out;
+}
+
+function duplicateKeys(sources: JsonObject[]) {
+  const counts = new Map<string, number>();
+  for (const source of sources) {
+    const key = sourceKey(source);
+    if (!key || key === "|") continue;
+    counts.set(key, (counts.get(key) || 0) + 1);
+  }
+
+  return Array.from(counts.entries())
+    .filter(([, count]) => count > 1)
+    .map(([key, count]) => ({ key, count }));
+}
+
+export async function GET() {
+  const packsData = await readJson(projectPath(PACKS_RELATIVE_PATH), { packs: [] });
+  const watchData = await readJson(projectPath(WATCH_RELATIVE_PATH), { sources: [] });
+
+  const packs = asArray(packsData?.packs);
+  const watchSources = asArray(watchData?.sources);
+
+  const allPackSources = getAllPackSources(packs);
+  const allIndiaPack = packs.find((pack) => pack?.id === "all_india_state_ut_authority_index_pack");
+  const allIndiaSources = getAllPackSources(allIndiaPack ? [allIndiaPack] : []);
+
+  const states = allIndiaSources.filter((source) => source?.jurisdiction?.jurisdictionType === "state");
+  const unionTerritories = allIndiaSources.filter((source) => source?.jurisdiction?.jurisdictionType === "union_territory");
+
+  const exactSourceCandidates = allPackSources.filter((source) => !String(source.id || "").includes("approval-authority-index"));
+  const authorityIndexCandidates = allPackSources.filter((source) => String(source.id || "").includes("approval-authority-index"));
+
+  const unsafeSources = allPackSources.filter((source) =>
+    source.mergePolicy !== "manual_review_required" ||
+    source.reviewRequired === false
+  );
+
+  return NextResponse.json({
+    ok: true,
+    phase: "46D-1",
+    auditPolicy: "read_only_source_coverage_audit_no_runtime_queue_no_merge_no_write",
+    trustedMergeEnabled: false,
+    trustedKnowledgeWrite: false,
+    trustedKnowledgeChanged: false,
+    trustedMergeExecuted: false,
+    mergeActionAvailable: false,
+    files: {
+      sourcePacks: PACKS_RELATIVE_PATH,
+      sourceWatch: WATCH_RELATIVE_PATH,
+    },
+    summary: {
+      packCount: packs.length,
+      totalPackSources: allPackSources.length,
+      watchSourceCount: watchSources.length,
+      exactSourceCandidates: exactSourceCandidates.length,
+      authorityIndexCandidates: authorityIndexCandidates.length,
+      allIndiaAuthorityIndex: {
+        exists: Boolean(allIndiaPack),
+        sourceCount: allIndiaSources.length,
+        states: states.length,
+        unionTerritories: unionTerritories.length,
+        expectedStates: EXPECTED_STATE_COUNT,
+        expectedUnionTerritories: EXPECTED_UT_COUNT,
+        coveragePass:
+          Boolean(allIndiaPack) &&
+          states.length === EXPECTED_STATE_COUNT &&
+          unionTerritories.length === EXPECTED_UT_COUNT &&
+          allIndiaSources.length === EXPECTED_STATE_COUNT + EXPECTED_UT_COUNT,
+      },
+      safety: {
+        unsafeSources: unsafeSources.length,
+        duplicatePackSourceKeys: duplicateKeys(allPackSources).length,
+        duplicateWatchSourceKeys: duplicateKeys(watchSources).length,
+      },
+    },
+    domainCoverage: byDomain(allPackSources),
+    packs: packs.map((pack) => ({
+      id: cleanText(pack?.id || "", 200),
+      title: cleanText(pack?.title || "", 300),
+      domains: asArray(pack?.domains).map((domain) => cleanText(domain, 120)).filter(Boolean),
+      sourceCount: asArray(pack?.sources).length,
+    })),
+    allIndiaCoverage: {
+      states: states.map((source) => ({
+        id: source.id,
+        name: source.jurisdiction?.stateOrUnionTerritory,
+        watch: source.watch,
+        reviewRequired: source.reviewRequired,
+        mergePolicy: source.mergePolicy,
+      })),
+      unionTerritories: unionTerritories.map((source) => ({
+        id: source.id,
+        name: source.jurisdiction?.stateOrUnionTerritory,
+        watch: source.watch,
+        reviewRequired: source.reviewRequired,
+        mergePolicy: source.mergePolicy,
+      })),
+    },
+    safetyBoundary: {
+      mode: "read_only_source_coverage_audit",
+      trustedMergeEnabled: false,
+      trustedKnowledgeWrite: false,
+      trustedKnowledgeChanged: false,
+      trustedMergeExecuted: false,
+      mergeActionAvailable: false,
+    },
+  });
+}
