@@ -1,4 +1,5 @@
 // BUILDSETU_PHASE_47B1_MISSING_QUESTION_ENGINE
+// BUILDSETU_PHASE_47B3_INTERIOR_ONLY_MISSING_QUESTION_TUNING
 
 type DimensionContextLike = {
   summary?: {
@@ -64,6 +65,12 @@ export type BuildSetuMissingQuestionEngineResult = {
     hasVastuPreference: boolean;
     hasFamilyOrUsage: boolean;
     hasReference: boolean;
+    hasInteriorOutput: boolean;
+    isInteriorOnlyRequest: boolean;
+    hasDoorWindowInfo: boolean;
+    hasFurnitureIntent: boolean;
+    hasInteriorStyle: boolean;
+    hasElectricalLightingIntent: boolean;
   };
 };
 
@@ -142,24 +149,62 @@ export function buildPlanningMissingQuestionEngine(input: {
     text
   );
 
+  const hasInteriorOutput = has(
+    /\b(interior|room layout|bedroom|kitchen layout|living layout|furniture|wardrobe|queen bed|king bed|sofa|tv unit|false ceiling|ceiling|lighting|modular kitchen|toilet layout|washroom layout)\b/i,
+    text
+  );
+
+  const hasPlotPlanningOutput = has(
+    /\b(floor plan|building plan|house plan|naksha|site plan|working drawing|elevation|facade|3d|render|boq|estimate)\b/i,
+    text
+  );
+
+  const hasStructureMepOutput = has(
+    /\b(structure|structural|column|beam|slab|footing|foundation|mep|electrical load|plumbing|drainage|fire)\b/i,
+    text
+  );
+
+  const hasDoorWindowInfo = has(/\b(door|window|opening|ventilator|balcony door|main door|entry)\b/i, text);
+  const hasFurnitureIntent = has(/\b(bed|queen|king|single bed|wardrobe|dresser|study|sofa|tv unit|table|chair|counter|island|furniture)\b/i, text);
+  const hasInteriorStyle = has(/\b(modern|minimal|luxury|premium|classic|contemporary|traditional|wooden|laminate|veneer|paint|theme|style|palette|material)\b/i, text);
+  const hasElectricalLightingIntent = has(/\b(light|lighting|electrical|switch|socket|fan|ac point|tv point|false ceiling|cove|spotlight)\b/i, text);
+
   const hasParking = has(/\b(parking|car|bike|garage|stilt|driveway)\b/i, text);
   const hasBudget = has(/\b(budget|cost|estimate|lakh|lac|crore|cr|rs\.?|₹|per sqft|economy|standard|premium|luxury)\b/i, text);
   const hasVastuPreference = has(/\b(vastu|vaastu|vastu compliant|strict vastu)\b/i, text);
   const hasFamilyOrUsage = has(/\b(family|member|parents|kids|rental|tenant|self use|own use|investment|bhk|bedroom|users|staff|customers)\b/i, text);
   const hasReference = has(/\b(reference|image|photo|pdf|cad|dwg|sketch|upload|sample|same like|inspired)\b/i, text);
 
+  const isInteriorOnlyRequest = Boolean(
+    hasInteriorOutput &&
+      hasRoomDimension &&
+      !hasPlotDimension &&
+      !hasPlotPlanningOutput &&
+      !hasStructureMepOutput
+  );
+
   const criticalQuestions: BuildSetuPlanningQuestion[] = [];
   const recommendedQuestions: BuildSetuPlanningQuestion[] = [];
   const optionalQuestions: BuildSetuPlanningQuestion[] = [];
 
   if (!hasLocation) {
-    addQuestion(criticalQuestions, {
-      id: "state-city-local-authority",
-      priority: "critical",
-      category: "location_bylaw",
-      question: "Project kis state/city/local authority ke under aata hai?",
-      reason: "Setback, FAR/FSI, height, parking and approval rules local authority ke hisaab se change hote hain.",
-    });
+    if (isInteriorOnlyRequest) {
+      addQuestion(recommendedQuestions, {
+        id: "interior-location-context",
+        priority: "recommended",
+        category: "interior",
+        question: "Project city/state bata do, taaki climate, material availability aur local execution preference better align ho sake.",
+        reason: "Interior-only work me location useful hai, but concept furniture/layout start karne ke liye hard blocker nahi hai.",
+      });
+    } else {
+      addQuestion(criticalQuestions, {
+        id: "state-city-local-authority",
+        priority: "critical",
+        category: "location_bylaw",
+        question: "Project kis state/city/local authority ke under aata hai?",
+        reason: "Setback, FAR/FSI, height, parking and approval rules local authority ke hisaab se change hote hain.",
+      });
+    }
   }
 
   if (!hasPlotDimension && !hasRoomDimension) {
@@ -172,7 +217,7 @@ export function buildPlanningMissingQuestionEngine(input: {
     });
   }
 
-  if (hasPlotDimension && !hasFacing) {
+  if (hasPlotDimension && !hasFacing && !isInteriorOnlyRequest) {
     addQuestion(criticalQuestions, {
       id: "plot-facing",
       priority: "critical",
@@ -182,7 +227,7 @@ export function buildPlanningMissingQuestionEngine(input: {
     });
   }
 
-  if (hasPlotDimension && !hasRoadWidth) {
+  if (hasPlotDimension && !hasRoadWidth && !isInteriorOnlyRequest) {
     addQuestion(criticalQuestions, {
       id: "road-width",
       priority: "critical",
@@ -193,13 +238,23 @@ export function buildPlanningMissingQuestionEngine(input: {
   }
 
   if (!hasBuildingType) {
-    addQuestion(criticalQuestions, {
-      id: "building-type",
-      priority: "critical",
-      category: "building_type",
-      question: "Building type kya hai: residential, commercial, mixed-use, office, shop, clinic, school, warehouse etc.?",
-      reason: "Occupancy ke hisaab se planning, fire, toilet, parking, accessibility and MEP requirements badalte hain.",
-    });
+    if (isInteriorOnlyRequest) {
+      addQuestion(recommendedQuestions, {
+        id: "interior-room-building-context",
+        priority: "recommended",
+        category: "interior",
+        question: "Ye room residential bedroom/living/kitchen/office/clinic/shop me se kis use ke liye hai?",
+        reason: "Interior layout me storage, circulation, lighting and furniture selection room use ke hisaab se optimize hota hai.",
+      });
+    } else {
+      addQuestion(criticalQuestions, {
+        id: "building-type",
+        priority: "critical",
+        category: "building_type",
+        question: "Building type kya hai: residential, commercial, mixed-use, office, shop, clinic, school, warehouse etc.?",
+        reason: "Occupancy ke hisaab se planning, fire, toilet, parking, accessibility and MEP requirements badalte hain.",
+      });
+    }
   }
 
   if (!hasOutputType) {
@@ -212,7 +267,7 @@ export function buildPlanningMissingQuestionEngine(input: {
     });
   }
 
-  if (!hasFloors) {
+  if (!hasFloors && !isInteriorOnlyRequest) {
     addQuestion(recommendedQuestions, {
       id: "floor-count",
       priority: "recommended",
@@ -222,7 +277,7 @@ export function buildPlanningMissingQuestionEngine(input: {
     });
   }
 
-  if (!hasParking) {
+  if (!hasParking && !isInteriorOnlyRequest) {
     addQuestion(recommendedQuestions, {
       id: "parking-need",
       priority: "recommended",
@@ -232,7 +287,7 @@ export function buildPlanningMissingQuestionEngine(input: {
     });
   }
 
-  if (!hasFamilyOrUsage) {
+  if (!hasFamilyOrUsage && !isInteriorOnlyRequest) {
     addQuestion(recommendedQuestions, {
       id: "family-usage",
       priority: "recommended",
@@ -242,7 +297,49 @@ export function buildPlanningMissingQuestionEngine(input: {
     });
   }
 
-  if (!hasBudget) {
+  if (isInteriorOnlyRequest) {
+    if (!hasDoorWindowInfo) {
+      addQuestion(recommendedQuestions, {
+        id: "interior-door-window-position",
+        priority: "recommended",
+        category: "interior",
+        question: "Room me door, window, balcony opening aur AC point ki position/size kya hai?",
+        reason: "Bed, wardrobe, TV unit, circulation and lighting layout openings ke bina final nahi ho sakta.",
+      });
+    }
+
+    if (!hasFurnitureIntent) {
+      addQuestion(recommendedQuestions, {
+        id: "interior-furniture-list",
+        priority: "recommended",
+        category: "interior",
+        question: "Required furniture list batao: bed size, wardrobe, study, dresser, TV unit, sofa, storage etc.",
+        reason: "Furniture footprint ke bina practical interior layout incomplete rahega.",
+      });
+    }
+
+    if (!hasInteriorStyle || !hasBudget) {
+      addQuestion(recommendedQuestions, {
+        id: "interior-style-budget",
+        priority: "recommended",
+        category: "interior",
+        question: "Interior style aur budget/finish level kya chahiye: economy, standard, premium, luxury, modern, minimal, wooden etc.?",
+        reason: "Material palette, false ceiling, lighting and furniture detail style/budget se decide hota hai.",
+      });
+    }
+
+    if (!hasElectricalLightingIntent) {
+      addQuestion(recommendedQuestions, {
+        id: "interior-electrical-lighting",
+        priority: "recommended",
+        category: "interior",
+        question: "Lighting/electrical needs batao: fan, AC, TV point, study light, bedside switches, wardrobe light, false ceiling etc.",
+        reason: "Interior working layout me electrical and lighting coordination important hota hai.",
+      });
+    }
+  }
+
+  if (!hasBudget && !isInteriorOnlyRequest) {
     addQuestion(optionalQuestions, {
       id: "budget-finish-level",
       priority: "optional",
@@ -252,7 +349,7 @@ export function buildPlanningMissingQuestionEngine(input: {
     });
   }
 
-  if (!hasVastuPreference) {
+  if (!hasVastuPreference && !isInteriorOnlyRequest) {
     addQuestion(optionalQuestions, {
       id: "vastu-strictness",
       priority: "optional",
@@ -274,20 +371,24 @@ export function buildPlanningMissingQuestionEngine(input: {
 
   const riskFlags: string[] = [];
 
-  if (!hasLocation) {
+  if (!hasLocation && !isInteriorOnlyRequest) {
     riskFlags.push("Local bylaw authority unknown: FAR/FSI, setbacks, height, parking and approval rules cannot be finalized.");
   }
 
-  if (hasPlotDimension && !hasRoadWidth) {
+  if (hasPlotDimension && !hasRoadWidth && !isInteriorOnlyRequest) {
     riskFlags.push("Road width unknown: height, fire access, parking and approval feasibility may be affected.");
   }
 
-  if (hasPlotDimension && !hasFacing) {
+  if (hasPlotDimension && !hasFacing && !isInteriorOnlyRequest) {
     riskFlags.push("Plot facing unknown: entry, vastu, daylight and elevation assumptions may be wrong.");
   }
 
   if (!hasBudget) {
     riskFlags.push("Budget/finish level unknown: material and elevation/interior specification should remain assumption-based.");
+  }
+
+  if (isInteriorOnlyRequest && !hasDoorWindowInfo) {
+    riskFlags.push("Door/window/opening positions unknown: interior layout can be conceptual, not final working layout.");
   }
 
   const assumptionsAllowed: string[] = [];
@@ -300,11 +401,15 @@ export function buildPlanningMissingQuestionEngine(input: {
     assumptionsAllowed.push("Room/interior fit analysis can start using detected room dimensions.");
   }
 
-  if (!hasLocation) {
+  if (!hasLocation && !isInteriorOnlyRequest) {
     assumptionsAllowed.push("Use generic India planning assumptions only; do not claim final local compliance.");
   }
 
-  if (!hasVastuPreference) {
+  if (isInteriorOnlyRequest) {
+    assumptionsAllowed.push("Interior concept can start using detected room dimensions, with door/window positions treated as assumptions if missing.");
+  }
+
+  if (!hasVastuPreference && !isInteriorOnlyRequest) {
     assumptionsAllowed.push("Use functional planning first; add vastu only if user requests it.");
   }
 
@@ -318,7 +423,7 @@ export function buildPlanningMissingQuestionEngine(input: {
   const readiness =
     criticalQuestions.length > 2
       ? "needs_critical_details"
-      : criticalQuestions.length > 0
+      : criticalQuestions.length > 0 || recommendedQuestions.length > 0
         ? "can_start_concept"
         : "ready_for_detailed_plan";
 
@@ -344,6 +449,12 @@ export function buildPlanningMissingQuestionEngine(input: {
       hasVastuPreference,
       hasFamilyOrUsage,
       hasReference,
+      hasInteriorOutput,
+      isInteriorOnlyRequest,
+      hasDoorWindowInfo,
+      hasFurnitureIntent,
+      hasInteriorStyle,
+      hasElectricalLightingIntent,
     },
   };
 }
