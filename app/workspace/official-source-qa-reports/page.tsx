@@ -99,6 +99,54 @@ export default function OfficialSourceQaReportsPage() {
         </span>
       </section>
 
+      {/* PHASE_45F_EXPORT_LINKS */}
+      <section
+        style={{
+          border: "1px solid #e2e8f0",
+          borderRadius: 16,
+          padding: 16,
+          marginBottom: 24,
+          background: "#ffffff",
+        }}
+      >
+        <h2 style={{ margin: "0 0 8px", fontSize: 18 }}>Export QA Report</h2>
+        <p style={{ margin: "0 0 12px", color: "#475569" }}>
+          Download read-only QA report export. No edit, no merge, no trusted knowledge write.
+        </p>
+        <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
+          <a
+            href="/api/agent-knowledge/official-source-qa-report/export?format=json"
+            style={{
+              display: "inline-flex",
+              border: "1px solid #cbd5e1",
+              borderRadius: 10,
+              padding: "10px 14px",
+              textDecoration: "none",
+              color: "#0f172a",
+              background: "#f8fafc",
+              fontWeight: 600,
+            }}
+          >
+            Download JSON
+          </a>
+          <a
+            href="/api/agent-knowledge/official-source-qa-report/export?format=markdown"
+            style={{
+              display: "inline-flex",
+              border: "1px solid #cbd5e1",
+              borderRadius: 10,
+              padding: "10px 14px",
+              textDecoration: "none",
+              color: "#0f172a",
+              background: "#f8fafc",
+              fontWeight: 600,
+            }}
+          >
+            Download Markdown
+          </a>
+        </div>
+      </section>
+
       {loading && <p>Loading QA reports...</p>}
 
       {error && (
