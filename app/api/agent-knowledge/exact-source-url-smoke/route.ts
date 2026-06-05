@@ -78,70 +78,110 @@ async function fetchSmoke(url: string) {
     };
   }
 
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 15000);
+  async function attempt(
+    method: "HEAD" | "GET",
+    options?: { range?: boolean; timeoutMs?: number; label?: string }
+  ) {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), options?.timeoutMs || 25000);
 
-  async function attempt(method: "HEAD" | "GET") {
-    const res = await fetch(url, {
-      method,
-      redirect: "follow",
-      signal: controller.signal,
-      headers:
-        method === "GET"
-          ? {
-              Range: "bytes=0-0",
-              "User-Agent": "BuildSetu-Source-Smoke-Validator/1.0",
-            }
-          : {
-              "User-Agent": "BuildSetu-Source-Smoke-Validator/1.0",
-            },
-    });
-
-    return {
-      ok: res.ok,
-      status: res.status,
-      statusText: res.statusText,
-      method,
-      finalUrl: res.url,
-      contentType: res.headers.get("content-type") || "",
-      contentLength: res.headers.get("content-length") || "",
-      elapsedMs: Date.now() - startedAt,
-      error: "",
+    const headers: Record<string, string> = {
+      "User-Agent":
+        "Mozilla/5.0 (compatible; BuildSetu-Source-Smoke-Validator/1.1; +https://build.sikhadenge.in)",
+      Accept:
+        "application/pdf,text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+      "Accept-Language": "en-IN,en;q=0.9",
+      "Cache-Control": "no-cache",
     };
-  }
 
-  try {
-    const head = await attempt("HEAD");
-
-    if (
-      head.status === 405 ||
-      head.status === 403 ||
-      head.status === 400 ||
-      head.status === 0
-    ) {
-      return await attempt("GET");
+    if (method === "GET" && options?.range) {
+      headers.Range = "bytes=0-2048";
     }
 
-    return head;
-  } catch (error: any) {
     try {
-      return await attempt("GET");
-    } catch (fallbackError: any) {
+      const res = await fetch(url, {
+        method,
+        redirect: "follow",
+        signal: controller.signal,
+        headers,
+      });
+
       return {
+        ok: res.ok,
+        status: res.status,
+        statusText: res.statusText,
+        method: options?.label || method,
+        finalUrl: res.url,
+        contentType: res.headers.get("content-type") || "",
+        contentLength: res.headers.get("content-length") || "",
+        elapsedMs: Date.now() - startedAt,
+        error: "",
+      };
+    } finally {
+      clearTimeout(timeout);
+    }
+  }
+
+  const attempts: Array<{
+    method: "HEAD" | "GET";
+    range?: boolean;
+    timeoutMs: number;
+    label: string;
+  }> = [
+    { method: "HEAD", timeoutMs: 20000, label: "HEAD" },
+    { method: "GET", range: true, timeoutMs: 25000, label: "GET_RANGE" },
+    { method: "GET", range: false, timeoutMs: 25000, label: "GET" },
+  ];
+
+  let lastFailure: any = null;
+
+  for (const item of attempts) {
+    try {
+      const result = await attempt(item.method, {
+        range: item.range,
+        timeoutMs: item.timeoutMs,
+        label: item.label,
+      });
+
+      if (result.ok) return result;
+
+      lastFailure = result;
+
+      if (result.status === 401 || result.status === 403 || result.status === 429) {
+        continue;
+      }
+
+      if (item.method === "HEAD") {
+        continue;
+      }
+    } catch (error: any) {
+      lastFailure = {
         ok: false,
         status: 0,
         statusText: "request_failed",
-        method: "HEAD_GET",
+        method: item.label,
         finalUrl: url,
         contentType: "",
         contentLength: "",
         elapsedMs: Date.now() - startedAt,
-        error: cleanText(fallbackError?.message || error?.message || "Request failed.", 500),
+        error: cleanText(error?.message || "Request failed.", 500),
       };
     }
-  } finally {
-    clearTimeout(timeout);
   }
+
+  return (
+    lastFailure || {
+      ok: false,
+      status: 0,
+      statusText: "request_failed",
+      method: "HEAD_GET",
+      finalUrl: url,
+      contentType: "",
+      contentLength: "",
+      elapsedMs: Date.now() - startedAt,
+      error: "All smoke attempts failed.",
+    }
+  );
 }
 
 export async function GET() {
