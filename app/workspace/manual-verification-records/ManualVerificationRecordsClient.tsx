@@ -82,6 +82,7 @@ export default function ManualVerificationRecordsClient() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
+  const [deletingRecordId, setDeletingRecordId] = useState("");
 
   const [sourceId, setSourceId] = useState(SOURCE_OPTIONS[0].id);
   const [decision, setDecision] = useState("needs_more_review");
@@ -137,6 +138,52 @@ export default function ManualVerificationRecordsClient() {
       summary.mergeCandidateUnlocked === 0
     );
   }, [data, summary]);
+
+  async function deleteRecord(recordId: string) {
+    const confirmed = window.confirm(
+      "Delete this separate manual verification record? Source registry, extraction, QA-ready, and merge flags will not be changed."
+    );
+
+    if (!confirmed) return;
+
+    try {
+      setDeletingRecordId(recordId);
+      setError("");
+      setNotice("");
+
+      const response = await fetch(
+        `/api/agent-knowledge/manual-verification-records?recordId=${encodeURIComponent(recordId)}`,
+        {
+          method: "DELETE",
+        }
+      );
+
+      const payload = await response.json();
+
+      if (!response.ok || payload?.ok !== true) {
+        throw new Error(payload?.error || `Delete failed with HTTP ${response.status}`);
+      }
+
+      if (
+        payload.sourceRegistryChanged !== false ||
+        payload.extractionAllowedChanged !== false ||
+        payload.qaReadyAllowedChanged !== false ||
+        payload.trustedMergeCandidateAllowedChanged !== false ||
+        payload.trustedKnowledgeWrite !== false ||
+        payload.trustedMergeExecuted !== false ||
+        payload.mergeActionAvailable !== false
+      ) {
+        throw new Error("Delete response failed safety check.");
+      }
+
+      setNotice("Manual verification record deleted separately. Source registry was not changed.");
+      await loadRecords();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to delete record.");
+    } finally {
+      setDeletingRecordId("");
+    }
+  }
 
   async function submitRecord(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -400,7 +447,14 @@ export default function ManualVerificationRecordsClient() {
                 {data.records.length === 0 ? (
                   <Panel>No manual verification records saved yet.</Panel>
                 ) : (
-                  data.records.map((record) => <RecordCard key={record.id} record={record} />)
+                  data.records.map((record) => (
+                    <RecordCard
+                      key={record.id}
+                      record={record}
+                      onDelete={deleteRecord}
+                      deleting={deletingRecordId === record.id}
+                    />
+                  ))
                 )}
               </section>
             </section>
@@ -536,7 +590,15 @@ function Breakdown({ title, data }: { title: string; data: Record<string, number
   );
 }
 
-function RecordCard({ record }: { record: RecordItem }) {
+function RecordCard({
+  record,
+  onDelete,
+  deleting,
+}: {
+  record: RecordItem;
+  onDelete: (recordId: string) => void;
+  deleting: boolean;
+}) {
   return (
     <article
       style={{
@@ -585,12 +647,29 @@ function RecordCard({ record }: { record: RecordItem }) {
         {record.reviewNotes}
       </div>
 
-      <div style={{ color: "#64748b", fontSize: 13 }}>
+      <div style={{ color: "#64748b", fontSize: 13, marginBottom: 12 }}>
         Source registry changed: {String(record.safety.sourceRegistryChanged)} ·
         Extraction changed: {String(record.safety.extractionAllowedChanged)} ·
         QA changed: {String(record.safety.qaReadyAllowedChanged)} ·
         Merge changed: {String(record.safety.trustedMergeCandidateAllowedChanged)}
       </div>
+
+      <button
+        type="button"
+        onClick={() => onDelete(record.id)}
+        disabled={deleting}
+        style={{
+          border: "1px solid #fecaca",
+          background: deleting ? "#f1f5f9" : "#fef2f2",
+          color: deleting ? "#64748b" : "#991b1b",
+          borderRadius: 12,
+          padding: "10px 13px",
+          fontWeight: 800,
+          cursor: deleting ? "not-allowed" : "pointer",
+        }}
+      >
+        {deleting ? "Deleting..." : "Delete Separate Record"}
+      </button>
     </article>
   );
 }
