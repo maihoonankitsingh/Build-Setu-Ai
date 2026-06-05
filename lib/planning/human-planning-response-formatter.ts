@@ -131,6 +131,30 @@ type RoomSpaceStandardsEngineLike = {
   standardsDisclaimer?: string[];
 };
 
+// BUILDSETU_PHASE_47IJKL_HUMAN_MERGE
+type PlanningCategoryIntelligenceLike = {
+  engineVersion?: string;
+  category?: string;
+  planningMode?: string;
+  riskLevel?: string;
+  detectedFacing?: string | null;
+  detectedPlotAreaSqFt?: number | null;
+  layoutPatternSuggestions?: Array<{
+    id?: string;
+    category?: string;
+    title?: string;
+    applicableWhen?: string;
+    zoningLogic?: string[];
+    advantages?: string[];
+    risks?: string[];
+  }>;
+  vastuFacingGuidance?: string[];
+  bylawPlanningGuard?: string[];
+  mepStructureCoordination?: string[];
+  categoryNextActions?: string[];
+  safetyNotes?: string[];
+};
+
 export type BuildSetuHumanPlanningResponse = {
   responseVersion: "47E-1";
   title: string;
@@ -158,6 +182,11 @@ export type BuildSetuHumanPlanningResponse = {
     standardsTargetRanges: string[];
     standardsRecommendations: string[];
     standardsDisclaimer: string[];
+    layoutPatternSuggestions: string[];
+    vastuFacingGuidance: string[];
+    bylawPlanningGuard: string[];
+    mepStructureCoordination: string[];
+    categoryNextActions: string[];
     riskAndVerification: string[];
     nextBestActions: string[];
   };
@@ -254,8 +283,13 @@ function buildMarkdown(title: string, sections: BuildSetuHumanPlanningResponse["
     ["19. Recommended target ranges", sections.standardsTargetRanges],
     ["20. Standards recommendations", sections.standardsRecommendations],
     ["21. Standards disclaimer", sections.standardsDisclaimer],
-    ["22. Risks / professional verification", sections.riskAndVerification],
-    ["23. Next best action", sections.nextBestActions],
+    ["22. Layout pattern suggestions", sections.layoutPatternSuggestions],
+    ["23. Vastu / facing guidance", sections.vastuFacingGuidance],
+    ["24. Bylaw planning guard", sections.bylawPlanningGuard],
+    ["25. MEP / structure coordination", sections.mepStructureCoordination],
+    ["26. Category next actions", sections.categoryNextActions],
+    ["27. Risks / professional verification", sections.riskAndVerification],
+    ["28. Next best action", sections.nextBestActions],
   ];
 
   for (const [heading, lines] of ordered) {
@@ -284,6 +318,7 @@ export function buildHumanPlanningResponse(input: {
   conceptPlanningActionEngine?: ConceptPlanningActionEngineLike;
   roomFurnitureFitEngine?: RoomFurnitureFitEngineLike;
   roomSpaceStandardsEngine?: RoomSpaceStandardsEngineLike;
+  planningCategoryIntelligence?: PlanningCategoryIntelligenceLike;
 }): BuildSetuHumanPlanningResponse {
   const inputText = cleanText(input.inputText);
   const dim = input.dimensionUnderstanding;
@@ -293,6 +328,7 @@ export function buildHumanPlanningResponse(input: {
   const concept = input.conceptPlanningActionEngine;
   const roomFit = input.roomFurnitureFitEngine;
   const standards = input.roomSpaceStandardsEngine;
+  const categoryIntel = input.planningCategoryIntelligence;
 
   const category = normalizeLabel(building?.category);
   const subType = normalizeLabel(building?.subType);
@@ -332,6 +368,11 @@ export function buildHumanPlanningResponse(input: {
     standardsTargetRanges: [],
     standardsRecommendations: [],
     standardsDisclaimer: [],
+    layoutPatternSuggestions: [],
+    vastuFacingGuidance: [],
+    bylawPlanningGuard: [],
+    mepStructureCoordination: [],
+    categoryNextActions: [],
     riskAndVerification: [],
     nextBestActions: [],
   };
@@ -562,6 +603,63 @@ export function buildHumanPlanningResponse(input: {
 
   if (!sections.standardsDisclaimer.length) {
     pushUnique(sections.standardsDisclaimer, "Room standards are preliminary planning heuristics, not final legal/code values.");
+  }
+
+  if (categoryIntel?.layoutPatternSuggestions?.length) {
+    for (const pattern of categoryIntel.layoutPatternSuggestions.slice(0, 8)) {
+      pushUnique(sections.layoutPatternSuggestions, `${cleanText(pattern.title)}: ${cleanText(pattern.applicableWhen)}`);
+      for (const item of pattern.zoningLogic || []) {
+        pushUnique(sections.layoutPatternSuggestions, `${cleanText(pattern.title)} zoning: ${item}`);
+      }
+      for (const item of pattern.advantages || []) {
+        pushUnique(sections.layoutPatternSuggestions, `${cleanText(pattern.title)} advantage: ${item}`);
+      }
+      for (const item of pattern.risks || []) {
+        pushUnique(sections.riskAndVerification, `${cleanText(pattern.title)} risk: ${item}`);
+      }
+    }
+  }
+
+  for (const item of categoryIntel?.vastuFacingGuidance || []) {
+    pushUnique(sections.vastuFacingGuidance, item);
+  }
+
+  for (const item of categoryIntel?.bylawPlanningGuard || []) {
+    pushUnique(sections.bylawPlanningGuard, item);
+    pushUnique(sections.riskAndVerification, item);
+  }
+
+  for (const item of categoryIntel?.mepStructureCoordination || []) {
+    pushUnique(sections.mepStructureCoordination, item);
+  }
+
+  for (const item of categoryIntel?.categoryNextActions || []) {
+    pushUnique(sections.categoryNextActions, item);
+    pushUnique(sections.nextBestActions, item);
+  }
+
+  for (const item of categoryIntel?.safetyNotes || []) {
+    pushUnique(sections.riskAndVerification, item);
+  }
+
+  if (!sections.layoutPatternSuggestions.length) {
+    pushUnique(sections.layoutPatternSuggestions, "No category-specific layout pattern selected yet. Confirm use, dimensions and output type.");
+  }
+
+  if (!sections.vastuFacingGuidance.length) {
+    pushUnique(sections.vastuFacingGuidance, "Facing/vastu guidance will be generated after plot facing is confirmed.");
+  }
+
+  if (!sections.bylawPlanningGuard.length) {
+    pushUnique(sections.bylawPlanningGuard, "Final compliance requires local authority, setbacks, FAR/FSI, height, road width and parking verification.");
+  }
+
+  if (!sections.mepStructureCoordination.length) {
+    pushUnique(sections.mepStructureCoordination, "MEP/structure coordination will be refined after room zoning and floor count are confirmed.");
+  }
+
+  if (!sections.categoryNextActions.length) {
+    pushUnique(sections.categoryNextActions, "Confirm missing planning inputs, then generate concept zoning.");
   }
 
   for (const risk of mq?.riskFlags || []) {
