@@ -5,6 +5,7 @@ import { buildZoningStrategy } from "./space-program-engine";
 import { runVastuEngine } from "./vastu-engine";
 import { buildWorkingDrawings } from "./working-drawing-engine";
 import { buildDimensionUnderstandingPromptBlock, understandBuildSetuDimensions } from "./dimension-understanding-engine";
+import { buildPlanningMissingQuestionEngine, buildPlanningMissingQuestionPromptBlock } from "./missing-question-engine";
 
 type UniversalPlanningAgentInput = {
   prompt?: string;
@@ -49,18 +50,25 @@ function buildUniversalPlanningDimensionContext(inputText: string) {
   };
 }
 
-export async function runUniversalPlanningAgent(input: UniversalPlanningAgentInput): Promise<UniversalPlanningResult & { dimensionUnderstanding: ReturnType<typeof buildUniversalPlanningDimensionContext> }> {
+export async function runUniversalPlanningAgent(input: UniversalPlanningAgentInput): Promise<UniversalPlanningResult & { dimensionUnderstanding: ReturnType<typeof buildUniversalPlanningDimensionContext>; planningMissingQuestionEngine: ReturnType<typeof buildPlanningMissingQuestionEngine> }> {
   const inputText = getPlanningInputText(input);
   const dimensionUnderstanding = buildUniversalPlanningDimensionContext(inputText);
 
-  const { requirement, missingQuestions } = parseUniversalRequirement(input);
+  const { requirement, missingQuestions: parsedMissingQuestions } = parseUniversalRequirement(input);
+  const planningMissingQuestionEngine = buildPlanningMissingQuestionEngine({
+    inputText,
+    parsedMissingQuestions,
+    dimensionUnderstanding,
+  });
+  const missingQuestions = planningMissingQuestionEngine.mergedMissingQuestions;
+  const missingQuestionPromptBlock = buildPlanningMissingQuestionPromptBlock(planningMissingQuestionEngine);
   const spaceProgram = getSpaceProgram(requirement);
   const vastuReport = runVastuEngine(requirement, spaceProgram);
   const buildingRules = getBuildingRules(requirement);
   const zoningStrategy = buildZoningStrategy(requirement, spaceProgram);
   const workingPlans = buildWorkingDrawings(requirement);
 
-  const status = missingQuestions.length > 0 ? "need_more_details" : "ready_to_plan";
+  const status = planningMissingQuestionEngine.criticalQuestions.length > 0 ? "need_more_details" : "ready_to_plan";
 
   const assistantMessage =
     status === "need_more_details"
@@ -69,6 +77,12 @@ export async function runUniversalPlanningAgent(input: UniversalPlanningAgentInp
           "",
           "Dimension Understanding",
           dimensionUnderstanding.promptBlock,
+          "",
+          "Planning Missing Questions",
+          missingQuestionPromptBlock,
+          "",
+          "Planning Missing Questions",
+          missingQuestionPromptBlock,
         ].join("\n")
       : [
           `${requirement.projectType} / ${requirement.subType} ke liye universal planning package ready hai. Vastu, zoning, space program aur requested working plans prepare ho gaye.`,
@@ -85,6 +99,7 @@ export async function runUniversalPlanningAgent(input: UniversalPlanningAgentInp
     missingQuestions,
     requirement,
     dimensionUnderstanding,
+    planningMissingQuestionEngine,
     buildingRules,
     vastuReport,
     spaceProgram,
