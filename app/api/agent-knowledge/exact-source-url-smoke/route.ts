@@ -61,6 +61,71 @@ function getAllPackSources(packs: JsonObject[]) {
   );
 }
 
+function classifySmokeDiagnostic(smoke: JsonObject) {
+  const status = Number(smoke?.status || 0);
+  const error = cleanText(smoke?.error || "", 500).toLowerCase();
+  const statusText = cleanText(smoke?.statusText || "", 200).toLowerCase();
+
+  if (smoke?.ok === true) {
+    return {
+      status: "reachable",
+      severity: "pass",
+      manualVerificationRequired: false,
+      sourceInvalidConfirmed: false,
+      message: "URL reachable from server-side smoke check.",
+    };
+  }
+
+  if (status === 401 || status === 403 || status === 429) {
+    return {
+      status: "http_blocked",
+      severity: "warning",
+      manualVerificationRequired: true,
+      sourceInvalidConfirmed: false,
+      message: "Government server returned auth/blocked/rate-limited response. Manual browser verification required before extraction.",
+    };
+  }
+
+  if (
+    error.includes("abort") ||
+    error.includes("timeout") ||
+    error.includes("timed out") ||
+    error.includes("fetch failed") ||
+    statusText.includes("request_failed")
+  ) {
+    return {
+      status: "timeout_or_network_blocked",
+      severity: "warning",
+      manualVerificationRequired: true,
+      sourceInvalidConfirmed: false,
+      message: "Server-side smoke check could not reach this URL. This may be network, DNS, firewall, bot protection, or government server availability issue.",
+    };
+  }
+
+  if (
+    error.includes("ssl") ||
+    error.includes("tls") ||
+    error.includes("certificate") ||
+    error.includes("renegotiation")
+  ) {
+    return {
+      status: "ssl_or_tls_issue",
+      severity: "warning",
+      manualVerificationRequired: true,
+      sourceInvalidConfirmed: false,
+      message: "TLS/SSL compatibility issue detected. Manual browser or alternate curl/OpenSSL verification required.",
+    };
+  }
+
+  return {
+    status: "unknown_failure",
+    severity: "warning",
+    manualVerificationRequired: true,
+    sourceInvalidConfirmed: false,
+    message: "URL smoke failed for an unclassified reason. Manual verification required.",
+  };
+}
+
 async function fetchSmoke(url: string) {
   const startedAt = Date.now();
 
@@ -216,12 +281,24 @@ export async function GET() {
         trustedKnowledgeWrite: false,
         trustedMergeExecuted: false,
         smoke,
+        diagnostic: classifySmokeDiagnostic(smoke),
       };
     })
   );
 
   const reachable = results.filter((item) => item.smoke.ok).length;
   const failed = results.length - reachable;
+  const manualVerificationRequired = results.filter(
+    (item) => item.diagnostic.manualVerificationRequired
+  ).length;
+  const sourceInvalidConfirmed = results.filter(
+    (item) => item.diagnostic.sourceInvalidConfirmed
+  ).length;
+  const diagnosticBreakdown = results.reduce((acc: Record<string, number>, item) => {
+    const key = item.diagnostic.status || "unknown";
+    acc[key] = (acc[key] || 0) + 1;
+    return acc;
+  }, {});
   const pdfLike = results.filter((item) =>
     item.smoke.contentType.toLowerCase().includes("pdf") ||
     item.smoke.finalUrl.toLowerCase().includes(".pdf") ||
@@ -247,10 +324,15 @@ export async function GET() {
       verifiedExactSourceUrls: results.length,
       reachable,
       failed,
+      manualVerificationRequired,
+      sourceInvalidConfirmed,
+      diagnosticBreakdown,
       pdfLike,
       htmlLike,
       expectedVerifiedHighPriorityExactSources: 11,
       smokePass: results.length === 11 && failed === 0,
+      sourceRegistryPassWithManualReview:
+        results.length === 11 && sourceInvalidConfirmed === 0,
     },
     results,
     safetyBoundary: {
