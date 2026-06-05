@@ -21,6 +21,7 @@ import { buildPlanningUiConsumptionAdapter, buildPlanningUiConsumptionPromptBloc
 import { buildStructuralGridIntelligenceEngine, buildStructuralGridIntelligencePromptBlock } from "./structural-grid-intelligence-engine";
 import { buildFoundationSoilRiskEngine, buildFoundationSoilRiskPromptBlock } from "./foundation-soil-risk-engine";
 import { buildSeismicWindRiskEngine, buildSeismicWindRiskPromptBlock } from "./seismic-wind-risk-engine";
+import { buildStructuralResponseMergeEngine, buildStructuralResponseMergePromptBlock, buildStructuralResponseMarkdown } from "./structural-response-merge-engine";
 
 type UniversalPlanningAgentInput = {
   prompt?: string;
@@ -66,7 +67,7 @@ function buildUniversalPlanningDimensionContext(inputText: string) {
   };
 }
 
-export async function runUniversalPlanningAgent(input: UniversalPlanningAgentInput): Promise<UniversalPlanningResult & { dimensionUnderstanding: ReturnType<typeof buildUniversalPlanningDimensionContext>; planningMissingQuestionEngine: ReturnType<typeof buildPlanningMissingQuestionEngine>; buildingTypeClassification: ReturnType<typeof classifyBuildSetuBuildingType>; planningModeQuestionTuning: ReturnType<typeof buildPlanningModeQuestionTuning>; humanPlanningResponse: ReturnType<typeof buildHumanPlanningResponse>; conceptPlanningActionEngine: ReturnType<typeof buildConceptPlanningActionEngine>; roomFurnitureFitEngine: ReturnType<typeof buildRoomFurnitureFitEngine>; roomSpaceStandardsEngine: ReturnType<typeof buildRoomSpaceStandardsEngine>; planningCategoryIntelligence: ReturnType<typeof buildPlanningCategoryIntelligenceEngine>; planningReferenceIntelligence: ReturnType<typeof buildPlanningReferenceIntelligenceEngine>; planningProjectMemoryEngine: ReturnType<typeof buildPlanningProjectMemoryEngine>; planningOutputRoutingEngine: ReturnType<typeof buildPlanningOutputRoutingEngine>; planningRegressionQaEngine: ReturnType<typeof buildPlanningRegressionQaEngine>; planningUiConsumptionAdapter: ReturnType<typeof buildPlanningUiConsumptionAdapter>; structuralGridIntelligence: ReturnType<typeof buildStructuralGridIntelligenceEngine>; foundationSoilRiskEngine: ReturnType<typeof buildFoundationSoilRiskEngine>; seismicWindRiskEngine: ReturnType<typeof buildSeismicWindRiskEngine> }> {
+export async function runUniversalPlanningAgent(input: UniversalPlanningAgentInput): Promise<UniversalPlanningResult & { dimensionUnderstanding: ReturnType<typeof buildUniversalPlanningDimensionContext>; planningMissingQuestionEngine: ReturnType<typeof buildPlanningMissingQuestionEngine>; buildingTypeClassification: ReturnType<typeof classifyBuildSetuBuildingType>; planningModeQuestionTuning: ReturnType<typeof buildPlanningModeQuestionTuning>; humanPlanningResponse: ReturnType<typeof buildHumanPlanningResponse>; conceptPlanningActionEngine: ReturnType<typeof buildConceptPlanningActionEngine>; roomFurnitureFitEngine: ReturnType<typeof buildRoomFurnitureFitEngine>; roomSpaceStandardsEngine: ReturnType<typeof buildRoomSpaceStandardsEngine>; planningCategoryIntelligence: ReturnType<typeof buildPlanningCategoryIntelligenceEngine>; planningReferenceIntelligence: ReturnType<typeof buildPlanningReferenceIntelligenceEngine>; planningProjectMemoryEngine: ReturnType<typeof buildPlanningProjectMemoryEngine>; planningOutputRoutingEngine: ReturnType<typeof buildPlanningOutputRoutingEngine>; planningRegressionQaEngine: ReturnType<typeof buildPlanningRegressionQaEngine>; planningUiConsumptionAdapter: ReturnType<typeof buildPlanningUiConsumptionAdapter>; structuralGridIntelligence: ReturnType<typeof buildStructuralGridIntelligenceEngine>; foundationSoilRiskEngine: ReturnType<typeof buildFoundationSoilRiskEngine>; seismicWindRiskEngine: ReturnType<typeof buildSeismicWindRiskEngine>; structuralResponseMergeEngine: ReturnType<typeof buildStructuralResponseMergeEngine> }> {
   const inputText = getPlanningInputText(input);
   const dimensionUnderstanding = buildUniversalPlanningDimensionContext(inputText);
 
@@ -142,6 +143,12 @@ export async function runUniversalPlanningAgent(input: UniversalPlanningAgentInp
     buildingTypeClassification,
   });
   const seismicWindRiskPromptBlock = buildSeismicWindRiskPromptBlock(seismicWindRiskEngine);
+  const structuralResponseMergeEngine = buildStructuralResponseMergeEngine({
+    structuralGridIntelligence,
+    foundationSoilRiskEngine,
+    seismicWindRiskEngine,
+  });
+  const structuralResponseMergePromptBlock = buildStructuralResponseMergePromptBlock(structuralResponseMergeEngine);
 
   const planningReferenceIntelligence = buildPlanningReferenceIntelligenceEngine({
     inputText,
@@ -181,6 +188,18 @@ export async function runUniversalPlanningAgent(input: UniversalPlanningAgentInp
     planningOutputRoutingEngine,
   });
   const humanPlanningResponsePromptBlock = buildHumanPlanningResponsePromptBlock(humanPlanningResponse);
+  // BUILDSETU_PHASE_G4_FIX3_STRUCTURAL_RESPONSE_AFTER_HUMAN_RESPONSE
+  const humanPlanningResponseForStructuralMerge: any = humanPlanningResponse as any;
+  humanPlanningResponseForStructuralMerge.sections = {
+    ...(humanPlanningResponseForStructuralMerge.sections || {}),
+    structuralCoordination: structuralResponseMergeEngine.sectionItems,
+    structuralNextActions: structuralResponseMergeEngine.nextActions,
+  };
+  humanPlanningResponseForStructuralMerge.markdown = [
+    String(humanPlanningResponseForStructuralMerge.markdown || "").trim(),
+    buildStructuralResponseMarkdown(structuralResponseMergeEngine),
+  ].filter(Boolean).join("\n\n");
+
   const planningRegressionQaEngine = buildPlanningRegressionQaEngine({
     dimensionUnderstanding,
     planningMissingQuestionEngine,
@@ -259,6 +278,9 @@ export async function runUniversalPlanningAgent(input: UniversalPlanningAgentInp
           "Seismic Wind Risk Intelligence",
           seismicWindRiskPromptBlock,
           "",
+          "Structural Response Merge",
+          structuralResponseMergePromptBlock,
+          "",
           "Planning UI Consumption Adapter",
           planningUiConsumptionPromptBlock,
           "",
@@ -270,6 +292,9 @@ export async function runUniversalPlanningAgent(input: UniversalPlanningAgentInp
           "",
           "Seismic Wind Risk Intelligence",
           seismicWindRiskPromptBlock,
+          "",
+          "Structural Response Merge",
+          structuralResponseMergePromptBlock,
           "",
           "Planning UI Consumption Adapter",
           planningUiConsumptionPromptBlock,
@@ -347,6 +372,7 @@ export async function runUniversalPlanningAgent(input: UniversalPlanningAgentInp
     structuralGridIntelligence,
     foundationSoilRiskEngine,
     seismicWindRiskEngine,
+    structuralResponseMergeEngine,
     buildingRules,
     vastuReport,
     spaceProgram,
