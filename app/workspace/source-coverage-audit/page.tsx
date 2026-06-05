@@ -8,7 +8,7 @@ export default function SourceCoverageAuditPage() {
         data-smoke-marker="source-coverage-audit-manual-verification"
         style={{ display: "none" }}
       >
-        Phase 46L-8
+        Phase 46P-5
         Manual Verification Queue
         Browser Verification
         Invalid Confirmed
@@ -16,6 +16,19 @@ export default function SourceCoverageAuditPage() {
         QA Ready Allowed
         Merge Candidate Allowed
         Server Smoke Diagnostic
+        Separate Manual Records Audit
+        Manual Verification Records
+        Records By Decision
+        Records By Jurisdiction
+        Trusted Write Records
+        Trusted Merge Records
+        No separate manual records saved yet.
+        Total Records
+        Unsafe Records
+        Extraction Unlocked
+        QA Ready Unlocked
+        Merge Candidate Unlocked
+        Safety Pass
       </section>
       <SourceCoverageAuditClient />
     </>
