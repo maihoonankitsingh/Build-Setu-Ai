@@ -428,6 +428,15 @@ export function buildHumanPlanningResponse(input: {
     pushUnique(sections.nextBestActions, "Prepare separate residential/commercial access and service-separation options.");
   }
 
+  // BUILDSETU_PHASE_47F3_RESPONSE_POLISH
+  if (planningMode === "commercial_building") {
+    pushUnique(sections.nextBestActions, "Prepare commercial front/back zoning with customer flow, staff/service area and accessibility notes.");
+  }
+
+  if (planningMode === "industrial_storage") {
+    pushUnique(sections.nextBestActions, "Prepare loading/unloading, racking/storage, clear-height, service and fire-safety concept zoning.");
+  }
+
   if (planningMode === "public_or_special_building" || riskLevel === "high") {
     pushUnique(sections.nextBestActions, "Keep output concept-level and escalate fire/accessibility/MEP/local norms verification.");
   }
@@ -437,11 +446,15 @@ export function buildHumanPlanningResponse(input: {
       ? "BuildSetu Interior Planning Response"
       : planningMode === "residential_building"
         ? "BuildSetu Residential Planning Response"
-        : planningMode === "mixed_use_building"
-          ? "BuildSetu Mixed-use Planning Response"
-          : planningMode === "public_or_special_building"
-            ? "BuildSetu Public/Special-use Planning Response"
-            : "BuildSetu Human-like Planning Response";
+        : planningMode === "commercial_building"
+          ? "BuildSetu Commercial Planning Response"
+          : planningMode === "mixed_use_building"
+            ? "BuildSetu Mixed-use Planning Response"
+            : planningMode === "public_or_special_building"
+              ? "BuildSetu Public/Special-use Planning Response"
+              : planningMode === "industrial_storage"
+                ? "BuildSetu Industrial/Storage Planning Response"
+                : "BuildSetu Human-like Planning Response";
 
   const markdown = buildMarkdown(title, sections);
 
