@@ -2,6 +2,27 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 
+type QaStatus = "extraction_pending" | "qa_pending" | "qa_failed" | "qa_ready";
+
+type DraftClaim = {
+  id?: string;
+  text?: string;
+  citation?: string;
+  sourceUrl?: string;
+  note?: string;
+};
+
+type CitationChecks = {
+  sourceUrlPresent?: boolean;
+  sourceCitationPresent?: boolean;
+  jurisdictionMarked?: boolean;
+  applicabilityMarked?: boolean;
+  versionDateMarked?: boolean;
+  allClaimsHaveCitation?: boolean;
+  summaryPresent?: boolean;
+  checkedAt?: string;
+};
+
 type DraftItem = {
   id: string;
   status: string;
@@ -27,8 +48,21 @@ type DraftItem = {
   extractionChecklist?: string[];
   extractedDraft?: {
     summary?: string;
-    claims?: unknown[];
+    jurisdiction?: string;
+    applicability?: string;
+    versionDate?: string;
+    claims?: DraftClaim[];
+    citationChecks?: CitationChecks;
     cautions?: string[];
+  };
+  qa?: {
+    status?: string;
+    notes?: string;
+    reviewer?: string;
+    checkedAt?: string;
+    checkedBy?: string;
+    trustedMergeApproved?: boolean;
+    trustedMergeExecuted?: boolean;
   };
 };
 
@@ -59,7 +93,21 @@ type DraftResponse = {
   created?: number;
   preserved?: number;
   updatedAt?: string;
+  item?: DraftItem;
 };
+
+type QaFormState = {
+  qaStatus: QaStatus;
+  reviewer: string;
+  qaNotes: string;
+  summary: string;
+  jurisdiction: string;
+  applicability: string;
+  versionDate: string;
+  claimsText: string;
+};
+
+const QA_STATUSES: QaStatus[] = ["extraction_pending", "qa_pending", "qa_failed", "qa_ready"];
 
 function formatCountMap(value?: Record<string, number>) {
   const entries = Object.entries(value || {}).sort((a, b) => b[1] - a[1]);
@@ -67,12 +115,73 @@ function formatCountMap(value?: Record<string, number>) {
   return entries.map(([key, count]) => `${key}: ${count}`).join(" · ");
 }
 
+function claimsToText(claims?: DraftClaim[]) {
+  return (claims || [])
+    .map((claim) => {
+      const text = claim.text || "";
+      const citation = claim.citation || "";
+      const sourceUrl = claim.sourceUrl || "";
+      const note = claim.note || "";
+      return [text, citation, sourceUrl, note].filter(Boolean).join(" | ");
+    })
+    .filter(Boolean)
+    .join("\n");
+}
+
+function textToClaims(value: string) {
+  return String(value || "")
+    .split("\n")
+    .map((line, index) => {
+      const [text, citation = "", sourceUrl = "", note = ""] = line.split("|").map((part) => part.trim());
+      return {
+        id: `claim_${index + 1}`,
+        text,
+        citation,
+        sourceUrl,
+        note,
+      };
+    })
+    .filter((claim) => claim.text);
+}
+
+function initialQaForm(item: DraftItem): QaFormState {
+  const draft = item.extractedDraft || {};
+  const qa = item.qa || {};
+
+  return {
+    qaStatus: QA_STATUSES.includes((qa.status || item.status) as QaStatus)
+      ? ((qa.status || item.status) as QaStatus)
+      : "qa_pending",
+    reviewer: qa.reviewer || "workspace-qa",
+    qaNotes: qa.notes || "",
+    summary: draft.summary || "",
+    jurisdiction: draft.jurisdiction || "",
+    applicability: draft.applicability || "",
+    versionDate: draft.versionDate || "",
+    claimsText: claimsToText(draft.claims),
+  };
+}
+
+function checkLabel(value: boolean | undefined) {
+  return value ? "yes" : "no";
+}
+
 export default function OfficialSourceExtractionDraftsPage() {
   const [data, setData] = useState<DraftResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [creating, setCreating] = useState(false);
+  const [savingId, setSavingId] = useState("");
   const [error, setError] = useState("");
   const [lastAction, setLastAction] = useState("");
+  const [qaForms, setQaForms] = useState<Record<string, QaFormState>>({});
+
+  const hydrateForms = useCallback((items: DraftItem[]) => {
+    const nextForms: Record<string, QaFormState> = {};
+    for (const item of items) {
+      nextForms[item.id] = initialQaForm(item);
+    }
+    setQaForms(nextForms);
+  }, []);
 
   const loadDrafts = useCallback(async () => {
     setLoading(true);
@@ -92,12 +201,13 @@ export default function OfficialSourceExtractionDraftsPage() {
       }
 
       setData(json);
+      hydrateForms(json.items || []);
     } catch (err: any) {
       setError(err?.message || "Failed to load extraction drafts.");
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [hydrateForms]);
 
   const createDrafts = useCallback(async () => {
     setCreating(true);
@@ -120,6 +230,8 @@ export default function OfficialSourceExtractionDraftsPage() {
       }
 
       setData(json);
+      hydrateForms(json.items || []);
+
       setLastAction(
         `Draft creation complete. Created ${json.created ?? 0}, preserved ${json.preserved ?? 0}. Trusted knowledge changed: ${
           json.trustedKnowledgeChanged ? "yes" : "no"
@@ -130,7 +242,84 @@ export default function OfficialSourceExtractionDraftsPage() {
     } finally {
       setCreating(false);
     }
+  }, [hydrateForms]);
+
+  const updateQaForm = useCallback((draftId: string, patch: Partial<QaFormState>) => {
+    setQaForms((current) => ({
+      ...current,
+      [draftId]: {
+        qaStatus: current[draftId]?.qaStatus || "qa_pending",
+        reviewer: current[draftId]?.reviewer || "workspace-qa",
+        qaNotes: current[draftId]?.qaNotes || "",
+        summary: current[draftId]?.summary || "",
+        jurisdiction: current[draftId]?.jurisdiction || "",
+        applicability: current[draftId]?.applicability || "",
+        versionDate: current[draftId]?.versionDate || "",
+        claimsText: current[draftId]?.claimsText || "",
+        ...patch,
+      },
+    }));
   }, []);
+
+  const saveQaDraft = useCallback(
+    async (item: DraftItem) => {
+      setSavingId(item.id);
+      setError("");
+      setLastAction("");
+
+      const form = qaForms[item.id] || initialQaForm(item);
+
+      try {
+        const res = await fetch("/api/agent-knowledge/official-source-extraction-drafts", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          cache: "no-store",
+          credentials: "same-origin",
+          body: JSON.stringify({
+            action: "update_draft",
+            draftId: item.id,
+            qaStatus: form.qaStatus,
+            reviewer: form.reviewer,
+            qaNotes: form.qaNotes,
+            summary: form.summary,
+            jurisdiction: form.jurisdiction,
+            applicability: form.applicability,
+            versionDate: form.versionDate,
+            claims: textToClaims(form.claimsText),
+          }),
+        });
+
+        const json = (await res.json().catch(() => null)) as DraftResponse | null;
+
+        if (!res.ok || !json?.ok || !json.item) {
+          throw new Error(json?.error || `QA save failed with ${res.status}`);
+        }
+
+        setData((current) => {
+          if (!current) return json;
+          const currentItems = current.items || [];
+          return {
+            ...current,
+            summary: json.summary || current.summary,
+            items: currentItems.map((existing) => (existing.id === json.item?.id ? json.item : existing)),
+          };
+        });
+
+        updateQaForm(json.item.id, initialQaForm(json.item));
+
+        setLastAction(
+          `QA draft saved as ${json.item.status}. Trusted knowledge changed: ${
+            json.trustedKnowledgeChanged ? "yes" : "no"
+          }. Trusted merge executed: ${json.trustedMergeExecuted ? "yes" : "no"}.`,
+        );
+      } catch (err: any) {
+        setError(err?.message || "Failed to save QA draft.");
+      } finally {
+        setSavingId("");
+      }
+    },
+    [qaForms, updateQaForm],
+  );
 
   useEffect(() => {
     loadDrafts();
@@ -152,8 +341,8 @@ export default function OfficialSourceExtractionDraftsPage() {
                 Official Source Extraction Drafts
               </h1>
               <p className="mt-3 max-w-3xl text-sm leading-6 text-slate-300">
-                Create extraction drafts from approved and merge-ready review queue items. This page
-                creates draft records only. It does not merge or write trusted knowledge.
+                QA Editor for extraction drafts. Edit summary, claims, jurisdiction, applicability,
+                version/date and citation checks. This page still does not merge or write trusted knowledge.
               </p>
             </div>
 
@@ -173,7 +362,7 @@ export default function OfficialSourceExtractionDraftsPage() {
               <button
                 type="button"
                 onClick={loadDrafts}
-                disabled={loading || creating}
+                disabled={loading || creating || Boolean(savingId)}
                 className="rounded-2xl border border-slate-700 px-4 py-2 text-sm font-semibold text-slate-200 hover:border-cyan-400 hover:text-cyan-200 disabled:opacity-50"
               >
                 Refresh
@@ -181,7 +370,7 @@ export default function OfficialSourceExtractionDraftsPage() {
               <button
                 type="button"
                 onClick={createDrafts}
-                disabled={loading || creating}
+                disabled={loading || creating || Boolean(savingId)}
                 className="rounded-2xl bg-cyan-400 px-4 py-2 text-sm font-bold text-slate-950 hover:bg-cyan-300 disabled:opacity-50"
               >
                 {creating ? "Creating..." : "Create drafts from approved review items"}
@@ -191,11 +380,11 @@ export default function OfficialSourceExtractionDraftsPage() {
         </header>
 
         <section
-          data-buildsetu-marker="BUILDSETU_OFFICIAL_SOURCE_EXTRACTION_DRAFTS_UI_V1"
+          data-buildsetu-marker="BUILDSETU_OFFICIAL_SOURCE_EXTRACTION_DRAFT_QA_EDITOR_UI_V1"
           className="rounded-2xl border border-amber-400/30 bg-amber-950/20 p-4 text-sm text-amber-100"
         >
-          No trusted merge button is present. Extraction drafts are draft-only. Trusted knowledge
-          write is disabled and merge remains a separate future phase.
+          QA Editor active: Save QA draft only. No trusted merge button is present. Trusted knowledge
+          write remains disabled and merge remains a separate future phase.
         </section>
 
         {error ? (
@@ -270,13 +459,6 @@ export default function OfficialSourceExtractionDraftsPage() {
                   >
                     {candidate.url}
                   </a>
-                  <div className="mt-3 flex flex-wrap gap-2">
-                    {(candidate.domains || []).map((domain) => (
-                      <span key={`${candidate.id}-${domain}`} className="rounded-full border border-slate-700 px-3 py-1 text-xs text-slate-300">
-                        {domain}
-                      </span>
-                    ))}
-                  </div>
                 </article>
               ))}
             </div>
@@ -288,42 +470,203 @@ export default function OfficialSourceExtractionDraftsPage() {
         </section>
 
         <section className="rounded-2xl border border-slate-800 bg-slate-900/70 p-5">
-          <h2 className="text-lg font-bold text-white">Extraction draft items</h2>
+          <h2 className="text-lg font-bold text-white">Extraction draft QA editor</h2>
 
           {items.length ? (
-            <div className="mt-4 space-y-4">
-              {items.map((item) => (
-                <article key={item.id} className="rounded-2xl border border-slate-800 bg-slate-950/70 p-4">
-                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-cyan-300">
-                    {item.status || "extraction_pending"}
-                  </p>
-                  <h3 className="mt-2 text-lg font-bold text-white">{item.title}</h3>
-                  <a
-                    href={item.url}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="mt-1 block break-all text-sm text-cyan-300 hover:text-cyan-200"
-                  >
-                    {item.url}
-                  </a>
-                  <p className="mt-3 text-xs text-slate-400">Citation: {item.sourceCitation || "Missing"}</p>
+            <div className="mt-4 space-y-5">
+              {items.map((item) => {
+                const form = qaForms[item.id] || initialQaForm(item);
+                const checks = item.extractedDraft?.citationChecks || {};
+                const isSaving = savingId === item.id;
 
-                  <div className="mt-4 grid gap-3 text-xs text-slate-400 md:grid-cols-3">
-                    <p>Policy: {item.extractionPolicy || "draft_only_manual_review_required"}</p>
-                    <p>Trusted write: {item.trustedKnowledgeWrite ? "true" : "false"}</p>
-                    <p>Trusted merge executed: {item.trustedMergeExecuted ? "true" : "false"}</p>
-                  </div>
+                return (
+                  <article key={item.id} className="rounded-2xl border border-slate-800 bg-slate-950/70 p-4">
+                    <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
+                      <div>
+                        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-cyan-300">
+                          {item.status || "extraction_pending"}
+                        </p>
+                        <h3 className="mt-2 text-lg font-bold text-white">{item.title}</h3>
+                        <a
+                          href={item.url}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="mt-1 block break-all text-sm text-cyan-300 hover:text-cyan-200"
+                        >
+                          {item.url}
+                        </a>
+                        <p className="mt-2 text-xs text-slate-400">Citation: {item.sourceCitation || "Missing"}</p>
+                      </div>
+                      <div className="rounded-xl border border-amber-400/30 bg-amber-950/30 px-3 py-2 text-xs font-semibold text-amber-100">
+                        Draft-only QA. No trusted merge.
+                      </div>
+                    </div>
 
-                  <div className="mt-4">
-                    <p className="text-sm font-semibold text-slate-100">Extraction checklist</p>
-                    <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-slate-300">
-                      {(item.extractionChecklist || []).map((step) => (
-                        <li key={`${item.id}-${step}`}>{step}</li>
-                      ))}
-                    </ul>
-                  </div>
-                </article>
-              ))}
+                    <div className="mt-4 grid gap-3 text-xs text-slate-400 md:grid-cols-3">
+                      <p>Policy: {item.extractionPolicy || "draft_only_manual_review_required"}</p>
+                      <p>Trusted write: {item.trustedKnowledgeWrite ? "true" : "false"}</p>
+                      <p>Trusted merge executed: {item.trustedMergeExecuted ? "true" : "false"}</p>
+                    </div>
+
+                    <div className="mt-5 grid gap-4 md:grid-cols-3">
+                      <label className="block">
+                        <span className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
+                          QA status
+                        </span>
+                        <select
+                          value={form.qaStatus}
+                          onChange={(event) => updateQaForm(item.id, { qaStatus: event.target.value as QaStatus })}
+                          className="mt-2 w-full rounded-xl border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-white outline-none focus:border-cyan-400"
+                        >
+                          {QA_STATUSES.map((status) => (
+                            <option key={status} value={status}>
+                              {status}
+                            </option>
+                          ))}
+                        </select>
+                      </label>
+
+                      <label className="block">
+                        <span className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
+                          QA reviewer
+                        </span>
+                        <input
+                          value={form.reviewer}
+                          onChange={(event) => updateQaForm(item.id, { reviewer: event.target.value })}
+                          className="mt-2 w-full rounded-xl border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-white outline-none focus:border-cyan-400"
+                          placeholder="reviewer name"
+                        />
+                      </label>
+
+                      <label className="block">
+                        <span className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
+                          Version/date
+                        </span>
+                        <input
+                          value={form.versionDate}
+                          onChange={(event) => updateQaForm(item.id, { versionDate: event.target.value })}
+                          className="mt-2 w-full rounded-xl border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-white outline-none focus:border-cyan-400"
+                          placeholder="source version/date"
+                        />
+                      </label>
+                    </div>
+
+                    <div className="mt-4 grid gap-4 md:grid-cols-2">
+                      <label className="block">
+                        <span className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
+                          Jurisdiction
+                        </span>
+                        <textarea
+                          value={form.jurisdiction}
+                          onChange={(event) => updateQaForm(item.id, { jurisdiction: event.target.value })}
+                          className="mt-2 min-h-24 w-full rounded-xl border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-white outline-none focus:border-cyan-400"
+                          placeholder="country/state/city/authority applicability"
+                        />
+                      </label>
+
+                      <label className="block">
+                        <span className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
+                          Applicability
+                        </span>
+                        <textarea
+                          value={form.applicability}
+                          onChange={(event) => updateQaForm(item.id, { applicability: event.target.value })}
+                          className="mt-2 min-h-24 w-full rounded-xl border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-white outline-none focus:border-cyan-400"
+                          placeholder="where/when this source applies"
+                        />
+                      </label>
+                    </div>
+
+                    <label className="mt-4 block">
+                      <span className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
+                        Summary
+                      </span>
+                      <textarea
+                        value={form.summary}
+                        onChange={(event) => updateQaForm(item.id, { summary: event.target.value })}
+                        className="mt-2 min-h-28 w-full rounded-xl border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-white outline-none focus:border-cyan-400"
+                        placeholder="factual extraction summary"
+                      />
+                    </label>
+
+                    <label className="mt-4 block">
+                      <span className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
+                        Claims
+                      </span>
+                      <textarea
+                        value={form.claimsText}
+                        onChange={(event) => updateQaForm(item.id, { claimsText: event.target.value })}
+                        className="mt-2 min-h-32 w-full rounded-xl border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-white outline-none focus:border-cyan-400"
+                        placeholder="One claim per line: claim text | citation | sourceUrl | note"
+                      />
+                      <p className="mt-2 text-xs text-slate-500">
+                        Format: claim text | citation | sourceUrl | note
+                      </p>
+                    </label>
+
+                    <label className="mt-4 block">
+                      <span className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
+                        QA notes
+                      </span>
+                      <textarea
+                        value={form.qaNotes}
+                        onChange={(event) => updateQaForm(item.id, { qaNotes: event.target.value })}
+                        className="mt-2 min-h-24 w-full rounded-xl border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-white outline-none focus:border-cyan-400"
+                        placeholder="QA notes. No trusted merge happens here."
+                      />
+                    </label>
+
+                    <div className="mt-4 rounded-2xl border border-slate-800 bg-slate-900/70 p-4">
+                      <p className="text-sm font-semibold text-white">Citation checks</p>
+                      <div className="mt-3 grid gap-2 text-xs text-slate-300 md:grid-cols-3">
+                        <p>Source URL present: {checkLabel(checks.sourceUrlPresent)}</p>
+                        <p>Source citation present: {checkLabel(checks.sourceCitationPresent)}</p>
+                        <p>Summary present: {checkLabel(checks.summaryPresent)}</p>
+                        <p>Jurisdiction marked: {checkLabel(checks.jurisdictionMarked)}</p>
+                        <p>Applicability marked: {checkLabel(checks.applicabilityMarked)}</p>
+                        <p>Version/date marked: {checkLabel(checks.versionDateMarked)}</p>
+                        <p>All claims have citation: {checkLabel(checks.allClaimsHaveCitation)}</p>
+                        <p>Checked at: {checks.checkedAt || "not checked"}</p>
+                      </div>
+                    </div>
+
+                    <div className="mt-4 flex flex-wrap gap-3">
+                      <button
+                        type="button"
+                        disabled={Boolean(savingId) || creating || loading}
+                        onClick={() => saveQaDraft(item)}
+                        className="rounded-xl bg-cyan-400 px-4 py-2 text-sm font-bold text-slate-950 hover:bg-cyan-300 disabled:opacity-50"
+                      >
+                        {isSaving ? "Saving..." : "Save QA draft only"}
+                      </button>
+                      <button
+                        type="button"
+                        disabled={Boolean(savingId) || creating || loading}
+                        onClick={() => updateQaForm(item.id, { qaStatus: "qa_failed" })}
+                        className="rounded-xl border border-red-400/60 px-4 py-2 text-sm font-bold text-red-100 hover:bg-red-950/40 disabled:opacity-50"
+                      >
+                        Mark QA failed locally
+                      </button>
+                      <button
+                        type="button"
+                        disabled={Boolean(savingId) || creating || loading}
+                        onClick={() => updateQaForm(item.id, { qaStatus: "qa_ready" })}
+                        className="rounded-xl border border-emerald-400/60 px-4 py-2 text-sm font-bold text-emerald-100 hover:bg-emerald-950/40 disabled:opacity-50"
+                      >
+                        Mark QA ready locally
+                      </button>
+                    </div>
+
+                    {item.qa?.checkedAt ? (
+                      <div className="mt-4 rounded-xl border border-slate-800 bg-slate-900/70 p-3 text-xs text-slate-300">
+                        Last QA: {item.qa.checkedAt} · Reviewer: {item.qa.reviewer || item.qa.checkedBy || "unknown"} ·
+                        Trusted merge approved: {item.qa.trustedMergeApproved ? "yes" : "no"} · Trusted merge executed:{" "}
+                        {item.qa.trustedMergeExecuted ? "yes" : "no"}
+                      </div>
+                    ) : null}
+                  </article>
+                );
+              })}
             </div>
           ) : (
             <div className="mt-4 rounded-2xl border border-dashed border-slate-700 p-5 text-sm text-slate-400">
