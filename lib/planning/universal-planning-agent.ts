@@ -10,6 +10,7 @@ import { buildBuildingTypeClassifierPromptBlock, classifyBuildSetuBuildingType }
 import { buildPlanningModeQuestionPromptBlock, buildPlanningModeQuestionTuning } from "./planning-mode-question-tuner";
 import { buildHumanPlanningResponse, buildHumanPlanningResponsePromptBlock } from "./human-planning-response-formatter";
 import { buildConceptPlanningActionEngine, buildConceptPlanningActionPromptBlock } from "./concept-planning-action-engine";
+import { buildRoomFurnitureFitEngine, buildRoomFurnitureFitPromptBlock } from "./room-furniture-fit-engine";
 
 type UniversalPlanningAgentInput = {
   prompt?: string;
@@ -54,7 +55,7 @@ function buildUniversalPlanningDimensionContext(inputText: string) {
   };
 }
 
-export async function runUniversalPlanningAgent(input: UniversalPlanningAgentInput): Promise<UniversalPlanningResult & { dimensionUnderstanding: ReturnType<typeof buildUniversalPlanningDimensionContext>; planningMissingQuestionEngine: ReturnType<typeof buildPlanningMissingQuestionEngine>; buildingTypeClassification: ReturnType<typeof classifyBuildSetuBuildingType>; planningModeQuestionTuning: ReturnType<typeof buildPlanningModeQuestionTuning>; humanPlanningResponse: ReturnType<typeof buildHumanPlanningResponse>; conceptPlanningActionEngine: ReturnType<typeof buildConceptPlanningActionEngine> }> {
+export async function runUniversalPlanningAgent(input: UniversalPlanningAgentInput): Promise<UniversalPlanningResult & { dimensionUnderstanding: ReturnType<typeof buildUniversalPlanningDimensionContext>; planningMissingQuestionEngine: ReturnType<typeof buildPlanningMissingQuestionEngine>; buildingTypeClassification: ReturnType<typeof classifyBuildSetuBuildingType>; planningModeQuestionTuning: ReturnType<typeof buildPlanningModeQuestionTuning>; humanPlanningResponse: ReturnType<typeof buildHumanPlanningResponse>; conceptPlanningActionEngine: ReturnType<typeof buildConceptPlanningActionEngine>; roomFurnitureFitEngine: ReturnType<typeof buildRoomFurnitureFitEngine> }> {
   const inputText = getPlanningInputText(input);
   const dimensionUnderstanding = buildUniversalPlanningDimensionContext(inputText);
 
@@ -87,6 +88,12 @@ export async function runUniversalPlanningAgent(input: UniversalPlanningAgentInp
     planningModeQuestionTuning,
   });
   const conceptPlanningActionPromptBlock = buildConceptPlanningActionPromptBlock(conceptPlanningActionEngine);
+  const roomFurnitureFitEngine = buildRoomFurnitureFitEngine({
+    inputText,
+    dimensionUnderstanding,
+    buildingTypeClassification,
+  });
+  const roomFurnitureFitPromptBlock = buildRoomFurnitureFitPromptBlock(roomFurnitureFitEngine);
   const humanPlanningResponse = buildHumanPlanningResponse({
     inputText,
     dimensionUnderstanding,
@@ -120,6 +127,12 @@ export async function runUniversalPlanningAgent(input: UniversalPlanningAgentInp
           "",
           "Concept Planning Action Engine",
           conceptPlanningActionPromptBlock,
+          "",
+          "Room Furniture Fit Engine",
+          roomFurnitureFitPromptBlock,
+          "",
+          "Room Furniture Fit Engine",
+          roomFurnitureFitPromptBlock,
           "",
           "Concept Planning Action Engine",
           conceptPlanningActionPromptBlock,
@@ -162,6 +175,7 @@ export async function runUniversalPlanningAgent(input: UniversalPlanningAgentInp
     planningModeQuestionTuning,
     humanPlanningResponse,
     conceptPlanningActionEngine,
+    roomFurnitureFitEngine,
     buildingRules,
     vastuReport,
     spaceProgram,
