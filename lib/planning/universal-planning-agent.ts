@@ -6,6 +6,7 @@ import { runVastuEngine } from "./vastu-engine";
 import { buildWorkingDrawings } from "./working-drawing-engine";
 import { buildDimensionUnderstandingPromptBlock, understandBuildSetuDimensions } from "./dimension-understanding-engine";
 import { buildPlanningMissingQuestionEngine, buildPlanningMissingQuestionPromptBlock } from "./missing-question-engine";
+import { buildBuildingTypeClassifierPromptBlock, classifyBuildSetuBuildingType } from "./building-type-classifier";
 
 type UniversalPlanningAgentInput = {
   prompt?: string;
@@ -50,7 +51,7 @@ function buildUniversalPlanningDimensionContext(inputText: string) {
   };
 }
 
-export async function runUniversalPlanningAgent(input: UniversalPlanningAgentInput): Promise<UniversalPlanningResult & { dimensionUnderstanding: ReturnType<typeof buildUniversalPlanningDimensionContext>; planningMissingQuestionEngine: ReturnType<typeof buildPlanningMissingQuestionEngine> }> {
+export async function runUniversalPlanningAgent(input: UniversalPlanningAgentInput): Promise<UniversalPlanningResult & { dimensionUnderstanding: ReturnType<typeof buildUniversalPlanningDimensionContext>; planningMissingQuestionEngine: ReturnType<typeof buildPlanningMissingQuestionEngine>; buildingTypeClassification: ReturnType<typeof classifyBuildSetuBuildingType> }> {
   const inputText = getPlanningInputText(input);
   const dimensionUnderstanding = buildUniversalPlanningDimensionContext(inputText);
 
@@ -62,6 +63,12 @@ export async function runUniversalPlanningAgent(input: UniversalPlanningAgentInp
   });
   const missingQuestions = planningMissingQuestionEngine.mergedMissingQuestions;
   const missingQuestionPromptBlock = buildPlanningMissingQuestionPromptBlock(planningMissingQuestionEngine);
+  const buildingTypeClassification = classifyBuildSetuBuildingType({
+    inputText,
+    dimensionUnderstanding,
+    missingQuestionEngine: planningMissingQuestionEngine,
+  });
+  const buildingTypePromptBlock = buildBuildingTypeClassifierPromptBlock(buildingTypeClassification);
   const spaceProgram = getSpaceProgram(requirement);
   const vastuReport = runVastuEngine(requirement, spaceProgram);
   const buildingRules = getBuildingRules(requirement);
@@ -77,6 +84,12 @@ export async function runUniversalPlanningAgent(input: UniversalPlanningAgentInp
           "",
           "Dimension Understanding",
           dimensionUnderstanding.promptBlock,
+          "",
+          "Building Type Classification",
+          buildingTypePromptBlock,
+          "",
+          "Building Type Classification",
+          buildingTypePromptBlock,
           "",
           "Planning Missing Questions",
           missingQuestionPromptBlock,
@@ -100,6 +113,7 @@ export async function runUniversalPlanningAgent(input: UniversalPlanningAgentInp
     requirement,
     dimensionUnderstanding,
     planningMissingQuestionEngine,
+    buildingTypeClassification,
     buildingRules,
     vastuReport,
     spaceProgram,
