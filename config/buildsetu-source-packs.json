@@ -321,8 +321,812 @@
           "mergePolicy": "manual_review_required"
         }
       ]
+    },
+    {
+      "id": "all_india_state_ut_authority_index_pack",
+      "title": "All India State and Union Territory Authority Index Pack",
+      "domains": [
+        "approvals_bylaws",
+        "architecture_planning",
+        "units_dimensions",
+        "civil_construction"
+      ],
+      "sources": [
+        {
+          "id": "india-andhra-pradesh-approval-authority-index",
+          "title": "Andhra Pradesh approval authority and building bye-laws index candidate",
+          "url": "https://igod.gov.in/sg/states",
+          "domains": [
+            "approvals_bylaws",
+            "architecture_planning",
+            "units_dimensions",
+            "civil_construction"
+          ],
+          "authorityType": "official_primary_directory",
+          "publisher": "Integrated Government Online Directory / National Portal of India",
+          "jurisdiction": {
+            "country": "IN",
+            "stateOrUnionTerritory": "Andhra Pradesh",
+            "jurisdictionType": "state"
+          },
+          "watch": false,
+          "reviewRequired": true,
+          "mergePolicy": "manual_review_required",
+          "notes": "Authority index candidate only. Exact building bye-laws PDF/portal must be verified before extraction or trusted merge."
+        },
+        {
+          "id": "india-arunachal-pradesh-approval-authority-index",
+          "title": "Arunachal Pradesh approval authority and building bye-laws index candidate",
+          "url": "https://igod.gov.in/sg/states",
+          "domains": [
+            "approvals_bylaws",
+            "architecture_planning",
+            "units_dimensions",
+            "civil_construction"
+          ],
+          "authorityType": "official_primary_directory",
+          "publisher": "Integrated Government Online Directory / National Portal of India",
+          "jurisdiction": {
+            "country": "IN",
+            "stateOrUnionTerritory": "Arunachal Pradesh",
+            "jurisdictionType": "state"
+          },
+          "watch": false,
+          "reviewRequired": true,
+          "mergePolicy": "manual_review_required",
+          "notes": "Authority index candidate only. Exact building bye-laws PDF/portal must be verified before extraction or trusted merge."
+        },
+        {
+          "id": "india-assam-approval-authority-index",
+          "title": "Assam approval authority and building bye-laws index candidate",
+          "url": "https://igod.gov.in/sg/states",
+          "domains": [
+            "approvals_bylaws",
+            "architecture_planning",
+            "units_dimensions",
+            "civil_construction"
+          ],
+          "authorityType": "official_primary_directory",
+          "publisher": "Integrated Government Online Directory / National Portal of India",
+          "jurisdiction": {
+            "country": "IN",
+            "stateOrUnionTerritory": "Assam",
+            "jurisdictionType": "state"
+          },
+          "watch": false,
+          "reviewRequired": true,
+          "mergePolicy": "manual_review_required",
+          "notes": "Authority index candidate only. Exact building bye-laws PDF/portal must be verified before extraction or trusted merge."
+        },
+        {
+          "id": "india-bihar-approval-authority-index",
+          "title": "Bihar approval authority and building bye-laws index candidate",
+          "url": "https://igod.gov.in/sg/states",
+          "domains": [
+            "approvals_bylaws",
+            "architecture_planning",
+            "units_dimensions",
+            "civil_construction"
+          ],
+          "authorityType": "official_primary_directory",
+          "publisher": "Integrated Government Online Directory / National Portal of India",
+          "jurisdiction": {
+            "country": "IN",
+            "stateOrUnionTerritory": "Bihar",
+            "jurisdictionType": "state"
+          },
+          "watch": false,
+          "reviewRequired": true,
+          "mergePolicy": "manual_review_required",
+          "notes": "Authority index candidate only. Exact building bye-laws PDF/portal must be verified before extraction or trusted merge."
+        },
+        {
+          "id": "india-chhattisgarh-approval-authority-index",
+          "title": "Chhattisgarh approval authority and building bye-laws index candidate",
+          "url": "https://igod.gov.in/sg/states",
+          "domains": [
+            "approvals_bylaws",
+            "architecture_planning",
+            "units_dimensions",
+            "civil_construction"
+          ],
+          "authorityType": "official_primary_directory",
+          "publisher": "Integrated Government Online Directory / National Portal of India",
+          "jurisdiction": {
+            "country": "IN",
+            "stateOrUnionTerritory": "Chhattisgarh",
+            "jurisdictionType": "state"
+          },
+          "watch": false,
+          "reviewRequired": true,
+          "mergePolicy": "manual_review_required",
+          "notes": "Authority index candidate only. Exact building bye-laws PDF/portal must be verified before extraction or trusted merge."
+        },
+        {
+          "id": "india-goa-approval-authority-index",
+          "title": "Goa approval authority and building bye-laws index candidate",
+          "url": "https://igod.gov.in/sg/states",
+          "domains": [
+            "approvals_bylaws",
+            "architecture_planning",
+            "units_dimensions",
+            "civil_construction"
+          ],
+          "authorityType": "official_primary_directory",
+          "publisher": "Integrated Government Online Directory / National Portal of India",
+          "jurisdiction": {
+            "country": "IN",
+            "stateOrUnionTerritory": "Goa",
+            "jurisdictionType": "state"
+          },
+          "watch": false,
+          "reviewRequired": true,
+          "mergePolicy": "manual_review_required",
+          "notes": "Authority index candidate only. Exact building bye-laws PDF/portal must be verified before extraction or trusted merge."
+        },
+        {
+          "id": "india-gujarat-approval-authority-index",
+          "title": "Gujarat approval authority and building bye-laws index candidate",
+          "url": "https://igod.gov.in/sg/states",
+          "domains": [
+            "approvals_bylaws",
+            "architecture_planning",
+            "units_dimensions",
+            "civil_construction"
+          ],
+          "authorityType": "official_primary_directory",
+          "publisher": "Integrated Government Online Directory / National Portal of India",
+          "jurisdiction": {
+            "country": "IN",
+            "stateOrUnionTerritory": "Gujarat",
+            "jurisdictionType": "state"
+          },
+          "watch": false,
+          "reviewRequired": true,
+          "mergePolicy": "manual_review_required",
+          "notes": "Authority index candidate only. Exact building bye-laws PDF/portal must be verified before extraction or trusted merge."
+        },
+        {
+          "id": "india-haryana-approval-authority-index",
+          "title": "Haryana approval authority and building bye-laws index candidate",
+          "url": "https://igod.gov.in/sg/states",
+          "domains": [
+            "approvals_bylaws",
+            "architecture_planning",
+            "units_dimensions",
+            "civil_construction"
+          ],
+          "authorityType": "official_primary_directory",
+          "publisher": "Integrated Government Online Directory / National Portal of India",
+          "jurisdiction": {
+            "country": "IN",
+            "stateOrUnionTerritory": "Haryana",
+            "jurisdictionType": "state"
+          },
+          "watch": false,
+          "reviewRequired": true,
+          "mergePolicy": "manual_review_required",
+          "notes": "Authority index candidate only. Exact building bye-laws PDF/portal must be verified before extraction or trusted merge."
+        },
+        {
+          "id": "india-himachal-pradesh-approval-authority-index",
+          "title": "Himachal Pradesh approval authority and building bye-laws index candidate",
+          "url": "https://igod.gov.in/sg/states",
+          "domains": [
+            "approvals_bylaws",
+            "architecture_planning",
+            "units_dimensions",
+            "civil_construction"
+          ],
+          "authorityType": "official_primary_directory",
+          "publisher": "Integrated Government Online Directory / National Portal of India",
+          "jurisdiction": {
+            "country": "IN",
+            "stateOrUnionTerritory": "Himachal Pradesh",
+            "jurisdictionType": "state"
+          },
+          "watch": false,
+          "reviewRequired": true,
+          "mergePolicy": "manual_review_required",
+          "notes": "Authority index candidate only. Exact building bye-laws PDF/portal must be verified before extraction or trusted merge."
+        },
+        {
+          "id": "india-jharkhand-approval-authority-index",
+          "title": "Jharkhand approval authority and building bye-laws index candidate",
+          "url": "https://igod.gov.in/sg/states",
+          "domains": [
+            "approvals_bylaws",
+            "architecture_planning",
+            "units_dimensions",
+            "civil_construction"
+          ],
+          "authorityType": "official_primary_directory",
+          "publisher": "Integrated Government Online Directory / National Portal of India",
+          "jurisdiction": {
+            "country": "IN",
+            "stateOrUnionTerritory": "Jharkhand",
+            "jurisdictionType": "state"
+          },
+          "watch": false,
+          "reviewRequired": true,
+          "mergePolicy": "manual_review_required",
+          "notes": "Authority index candidate only. Exact building bye-laws PDF/portal must be verified before extraction or trusted merge."
+        },
+        {
+          "id": "india-karnataka-approval-authority-index",
+          "title": "Karnataka approval authority and building bye-laws index candidate",
+          "url": "https://igod.gov.in/sg/states",
+          "domains": [
+            "approvals_bylaws",
+            "architecture_planning",
+            "units_dimensions",
+            "civil_construction"
+          ],
+          "authorityType": "official_primary_directory",
+          "publisher": "Integrated Government Online Directory / National Portal of India",
+          "jurisdiction": {
+            "country": "IN",
+            "stateOrUnionTerritory": "Karnataka",
+            "jurisdictionType": "state"
+          },
+          "watch": false,
+          "reviewRequired": true,
+          "mergePolicy": "manual_review_required",
+          "notes": "Authority index candidate only. Exact building bye-laws PDF/portal must be verified before extraction or trusted merge."
+        },
+        {
+          "id": "india-kerala-approval-authority-index",
+          "title": "Kerala approval authority and building bye-laws index candidate",
+          "url": "https://igod.gov.in/sg/states",
+          "domains": [
+            "approvals_bylaws",
+            "architecture_planning",
+            "units_dimensions",
+            "civil_construction"
+          ],
+          "authorityType": "official_primary_directory",
+          "publisher": "Integrated Government Online Directory / National Portal of India",
+          "jurisdiction": {
+            "country": "IN",
+            "stateOrUnionTerritory": "Kerala",
+            "jurisdictionType": "state"
+          },
+          "watch": false,
+          "reviewRequired": true,
+          "mergePolicy": "manual_review_required",
+          "notes": "Authority index candidate only. Exact building bye-laws PDF/portal must be verified before extraction or trusted merge."
+        },
+        {
+          "id": "india-madhya-pradesh-approval-authority-index",
+          "title": "Madhya Pradesh approval authority and building bye-laws index candidate",
+          "url": "https://igod.gov.in/sg/states",
+          "domains": [
+            "approvals_bylaws",
+            "architecture_planning",
+            "units_dimensions",
+            "civil_construction"
+          ],
+          "authorityType": "official_primary_directory",
+          "publisher": "Integrated Government Online Directory / National Portal of India",
+          "jurisdiction": {
+            "country": "IN",
+            "stateOrUnionTerritory": "Madhya Pradesh",
+            "jurisdictionType": "state"
+          },
+          "watch": false,
+          "reviewRequired": true,
+          "mergePolicy": "manual_review_required",
+          "notes": "Authority index candidate only. Exact building bye-laws PDF/portal must be verified before extraction or trusted merge."
+        },
+        {
+          "id": "india-maharashtra-approval-authority-index",
+          "title": "Maharashtra approval authority and building bye-laws index candidate",
+          "url": "https://igod.gov.in/sg/states",
+          "domains": [
+            "approvals_bylaws",
+            "architecture_planning",
+            "units_dimensions",
+            "civil_construction"
+          ],
+          "authorityType": "official_primary_directory",
+          "publisher": "Integrated Government Online Directory / National Portal of India",
+          "jurisdiction": {
+            "country": "IN",
+            "stateOrUnionTerritory": "Maharashtra",
+            "jurisdictionType": "state"
+          },
+          "watch": false,
+          "reviewRequired": true,
+          "mergePolicy": "manual_review_required",
+          "notes": "Authority index candidate only. Exact building bye-laws PDF/portal must be verified before extraction or trusted merge."
+        },
+        {
+          "id": "india-manipur-approval-authority-index",
+          "title": "Manipur approval authority and building bye-laws index candidate",
+          "url": "https://igod.gov.in/sg/states",
+          "domains": [
+            "approvals_bylaws",
+            "architecture_planning",
+            "units_dimensions",
+            "civil_construction"
+          ],
+          "authorityType": "official_primary_directory",
+          "publisher": "Integrated Government Online Directory / National Portal of India",
+          "jurisdiction": {
+            "country": "IN",
+            "stateOrUnionTerritory": "Manipur",
+            "jurisdictionType": "state"
+          },
+          "watch": false,
+          "reviewRequired": true,
+          "mergePolicy": "manual_review_required",
+          "notes": "Authority index candidate only. Exact building bye-laws PDF/portal must be verified before extraction or trusted merge."
+        },
+        {
+          "id": "india-meghalaya-approval-authority-index",
+          "title": "Meghalaya approval authority and building bye-laws index candidate",
+          "url": "https://igod.gov.in/sg/states",
+          "domains": [
+            "approvals_bylaws",
+            "architecture_planning",
+            "units_dimensions",
+            "civil_construction"
+          ],
+          "authorityType": "official_primary_directory",
+          "publisher": "Integrated Government Online Directory / National Portal of India",
+          "jurisdiction": {
+            "country": "IN",
+            "stateOrUnionTerritory": "Meghalaya",
+            "jurisdictionType": "state"
+          },
+          "watch": false,
+          "reviewRequired": true,
+          "mergePolicy": "manual_review_required",
+          "notes": "Authority index candidate only. Exact building bye-laws PDF/portal must be verified before extraction or trusted merge."
+        },
+        {
+          "id": "india-mizoram-approval-authority-index",
+          "title": "Mizoram approval authority and building bye-laws index candidate",
+          "url": "https://igod.gov.in/sg/states",
+          "domains": [
+            "approvals_bylaws",
+            "architecture_planning",
+            "units_dimensions",
+            "civil_construction"
+          ],
+          "authorityType": "official_primary_directory",
+          "publisher": "Integrated Government Online Directory / National Portal of India",
+          "jurisdiction": {
+            "country": "IN",
+            "stateOrUnionTerritory": "Mizoram",
+            "jurisdictionType": "state"
+          },
+          "watch": false,
+          "reviewRequired": true,
+          "mergePolicy": "manual_review_required",
+          "notes": "Authority index candidate only. Exact building bye-laws PDF/portal must be verified before extraction or trusted merge."
+        },
+        {
+          "id": "india-nagaland-approval-authority-index",
+          "title": "Nagaland approval authority and building bye-laws index candidate",
+          "url": "https://igod.gov.in/sg/states",
+          "domains": [
+            "approvals_bylaws",
+            "architecture_planning",
+            "units_dimensions",
+            "civil_construction"
+          ],
+          "authorityType": "official_primary_directory",
+          "publisher": "Integrated Government Online Directory / National Portal of India",
+          "jurisdiction": {
+            "country": "IN",
+            "stateOrUnionTerritory": "Nagaland",
+            "jurisdictionType": "state"
+          },
+          "watch": false,
+          "reviewRequired": true,
+          "mergePolicy": "manual_review_required",
+          "notes": "Authority index candidate only. Exact building bye-laws PDF/portal must be verified before extraction or trusted merge."
+        },
+        {
+          "id": "india-odisha-approval-authority-index",
+          "title": "Odisha approval authority and building bye-laws index candidate",
+          "url": "https://igod.gov.in/sg/states",
+          "domains": [
+            "approvals_bylaws",
+            "architecture_planning",
+            "units_dimensions",
+            "civil_construction"
+          ],
+          "authorityType": "official_primary_directory",
+          "publisher": "Integrated Government Online Directory / National Portal of India",
+          "jurisdiction": {
+            "country": "IN",
+            "stateOrUnionTerritory": "Odisha",
+            "jurisdictionType": "state"
+          },
+          "watch": false,
+          "reviewRequired": true,
+          "mergePolicy": "manual_review_required",
+          "notes": "Authority index candidate only. Exact building bye-laws PDF/portal must be verified before extraction or trusted merge."
+        },
+        {
+          "id": "india-punjab-approval-authority-index",
+          "title": "Punjab approval authority and building bye-laws index candidate",
+          "url": "https://igod.gov.in/sg/states",
+          "domains": [
+            "approvals_bylaws",
+            "architecture_planning",
+            "units_dimensions",
+            "civil_construction"
+          ],
+          "authorityType": "official_primary_directory",
+          "publisher": "Integrated Government Online Directory / National Portal of India",
+          "jurisdiction": {
+            "country": "IN",
+            "stateOrUnionTerritory": "Punjab",
+            "jurisdictionType": "state"
+          },
+          "watch": false,
+          "reviewRequired": true,
+          "mergePolicy": "manual_review_required",
+          "notes": "Authority index candidate only. Exact building bye-laws PDF/portal must be verified before extraction or trusted merge."
+        },
+        {
+          "id": "india-rajasthan-approval-authority-index",
+          "title": "Rajasthan approval authority and building bye-laws index candidate",
+          "url": "https://igod.gov.in/sg/states",
+          "domains": [
+            "approvals_bylaws",
+            "architecture_planning",
+            "units_dimensions",
+            "civil_construction"
+          ],
+          "authorityType": "official_primary_directory",
+          "publisher": "Integrated Government Online Directory / National Portal of India",
+          "jurisdiction": {
+            "country": "IN",
+            "stateOrUnionTerritory": "Rajasthan",
+            "jurisdictionType": "state"
+          },
+          "watch": false,
+          "reviewRequired": true,
+          "mergePolicy": "manual_review_required",
+          "notes": "Authority index candidate only. Exact building bye-laws PDF/portal must be verified before extraction or trusted merge."
+        },
+        {
+          "id": "india-sikkim-approval-authority-index",
+          "title": "Sikkim approval authority and building bye-laws index candidate",
+          "url": "https://igod.gov.in/sg/states",
+          "domains": [
+            "approvals_bylaws",
+            "architecture_planning",
+            "units_dimensions",
+            "civil_construction"
+          ],
+          "authorityType": "official_primary_directory",
+          "publisher": "Integrated Government Online Directory / National Portal of India",
+          "jurisdiction": {
+            "country": "IN",
+            "stateOrUnionTerritory": "Sikkim",
+            "jurisdictionType": "state"
+          },
+          "watch": false,
+          "reviewRequired": true,
+          "mergePolicy": "manual_review_required",
+          "notes": "Authority index candidate only. Exact building bye-laws PDF/portal must be verified before extraction or trusted merge."
+        },
+        {
+          "id": "india-tamil-nadu-approval-authority-index",
+          "title": "Tamil Nadu approval authority and building bye-laws index candidate",
+          "url": "https://igod.gov.in/sg/states",
+          "domains": [
+            "approvals_bylaws",
+            "architecture_planning",
+            "units_dimensions",
+            "civil_construction"
+          ],
+          "authorityType": "official_primary_directory",
+          "publisher": "Integrated Government Online Directory / National Portal of India",
+          "jurisdiction": {
+            "country": "IN",
+            "stateOrUnionTerritory": "Tamil Nadu",
+            "jurisdictionType": "state"
+          },
+          "watch": false,
+          "reviewRequired": true,
+          "mergePolicy": "manual_review_required",
+          "notes": "Authority index candidate only. Exact building bye-laws PDF/portal must be verified before extraction or trusted merge."
+        },
+        {
+          "id": "india-telangana-approval-authority-index",
+          "title": "Telangana approval authority and building bye-laws index candidate",
+          "url": "https://igod.gov.in/sg/states",
+          "domains": [
+            "approvals_bylaws",
+            "architecture_planning",
+            "units_dimensions",
+            "civil_construction"
+          ],
+          "authorityType": "official_primary_directory",
+          "publisher": "Integrated Government Online Directory / National Portal of India",
+          "jurisdiction": {
+            "country": "IN",
+            "stateOrUnionTerritory": "Telangana",
+            "jurisdictionType": "state"
+          },
+          "watch": false,
+          "reviewRequired": true,
+          "mergePolicy": "manual_review_required",
+          "notes": "Authority index candidate only. Exact building bye-laws PDF/portal must be verified before extraction or trusted merge."
+        },
+        {
+          "id": "india-tripura-approval-authority-index",
+          "title": "Tripura approval authority and building bye-laws index candidate",
+          "url": "https://igod.gov.in/sg/states",
+          "domains": [
+            "approvals_bylaws",
+            "architecture_planning",
+            "units_dimensions",
+            "civil_construction"
+          ],
+          "authorityType": "official_primary_directory",
+          "publisher": "Integrated Government Online Directory / National Portal of India",
+          "jurisdiction": {
+            "country": "IN",
+            "stateOrUnionTerritory": "Tripura",
+            "jurisdictionType": "state"
+          },
+          "watch": false,
+          "reviewRequired": true,
+          "mergePolicy": "manual_review_required",
+          "notes": "Authority index candidate only. Exact building bye-laws PDF/portal must be verified before extraction or trusted merge."
+        },
+        {
+          "id": "india-uttar-pradesh-approval-authority-index",
+          "title": "Uttar Pradesh approval authority and building bye-laws index candidate",
+          "url": "https://igod.gov.in/sg/states",
+          "domains": [
+            "approvals_bylaws",
+            "architecture_planning",
+            "units_dimensions",
+            "civil_construction"
+          ],
+          "authorityType": "official_primary_directory",
+          "publisher": "Integrated Government Online Directory / National Portal of India",
+          "jurisdiction": {
+            "country": "IN",
+            "stateOrUnionTerritory": "Uttar Pradesh",
+            "jurisdictionType": "state"
+          },
+          "watch": false,
+          "reviewRequired": true,
+          "mergePolicy": "manual_review_required",
+          "notes": "Authority index candidate only. Exact building bye-laws PDF/portal must be verified before extraction or trusted merge."
+        },
+        {
+          "id": "india-uttarakhand-approval-authority-index",
+          "title": "Uttarakhand approval authority and building bye-laws index candidate",
+          "url": "https://igod.gov.in/sg/states",
+          "domains": [
+            "approvals_bylaws",
+            "architecture_planning",
+            "units_dimensions",
+            "civil_construction"
+          ],
+          "authorityType": "official_primary_directory",
+          "publisher": "Integrated Government Online Directory / National Portal of India",
+          "jurisdiction": {
+            "country": "IN",
+            "stateOrUnionTerritory": "Uttarakhand",
+            "jurisdictionType": "state"
+          },
+          "watch": false,
+          "reviewRequired": true,
+          "mergePolicy": "manual_review_required",
+          "notes": "Authority index candidate only. Exact building bye-laws PDF/portal must be verified before extraction or trusted merge."
+        },
+        {
+          "id": "india-west-bengal-approval-authority-index",
+          "title": "West Bengal approval authority and building bye-laws index candidate",
+          "url": "https://igod.gov.in/sg/states",
+          "domains": [
+            "approvals_bylaws",
+            "architecture_planning",
+            "units_dimensions",
+            "civil_construction"
+          ],
+          "authorityType": "official_primary_directory",
+          "publisher": "Integrated Government Online Directory / National Portal of India",
+          "jurisdiction": {
+            "country": "IN",
+            "stateOrUnionTerritory": "West Bengal",
+            "jurisdictionType": "state"
+          },
+          "watch": false,
+          "reviewRequired": true,
+          "mergePolicy": "manual_review_required",
+          "notes": "Authority index candidate only. Exact building bye-laws PDF/portal must be verified before extraction or trusted merge."
+        },
+        {
+          "id": "india-andaman-nicobar-islands-approval-authority-index",
+          "title": "Andaman and Nicobar Islands approval authority and building bye-laws index candidate",
+          "url": "https://igod.gov.in/sg/states",
+          "domains": [
+            "approvals_bylaws",
+            "architecture_planning",
+            "units_dimensions",
+            "civil_construction"
+          ],
+          "authorityType": "official_primary_directory",
+          "publisher": "Integrated Government Online Directory / National Portal of India",
+          "jurisdiction": {
+            "country": "IN",
+            "stateOrUnionTerritory": "Andaman and Nicobar Islands",
+            "jurisdictionType": "union_territory"
+          },
+          "watch": false,
+          "reviewRequired": true,
+          "mergePolicy": "manual_review_required",
+          "notes": "Authority index candidate only. Exact building bye-laws PDF/portal must be verified before extraction or trusted merge."
+        },
+        {
+          "id": "india-chandigarh-approval-authority-index",
+          "title": "Chandigarh approval authority and building bye-laws index candidate",
+          "url": "https://igod.gov.in/sg/states",
+          "domains": [
+            "approvals_bylaws",
+            "architecture_planning",
+            "units_dimensions",
+            "civil_construction"
+          ],
+          "authorityType": "official_primary_directory",
+          "publisher": "Integrated Government Online Directory / National Portal of India",
+          "jurisdiction": {
+            "country": "IN",
+            "stateOrUnionTerritory": "Chandigarh",
+            "jurisdictionType": "union_territory"
+          },
+          "watch": false,
+          "reviewRequired": true,
+          "mergePolicy": "manual_review_required",
+          "notes": "Authority index candidate only. Exact building bye-laws PDF/portal must be verified before extraction or trusted merge."
+        },
+        {
+          "id": "india-dadra-nagar-haveli-daman-diu-approval-authority-index",
+          "title": "Dadra and Nagar Haveli and Daman and Diu approval authority and building bye-laws index candidate",
+          "url": "https://igod.gov.in/sg/states",
+          "domains": [
+            "approvals_bylaws",
+            "architecture_planning",
+            "units_dimensions",
+            "civil_construction"
+          ],
+          "authorityType": "official_primary_directory",
+          "publisher": "Integrated Government Online Directory / National Portal of India",
+          "jurisdiction": {
+            "country": "IN",
+            "stateOrUnionTerritory": "Dadra and Nagar Haveli and Daman and Diu",
+            "jurisdictionType": "union_territory"
+          },
+          "watch": false,
+          "reviewRequired": true,
+          "mergePolicy": "manual_review_required",
+          "notes": "Authority index candidate only. Exact building bye-laws PDF/portal must be verified before extraction or trusted merge."
+        },
+        {
+          "id": "india-delhi-approval-authority-index",
+          "title": "Delhi approval authority and building bye-laws index candidate",
+          "url": "https://igod.gov.in/sg/states",
+          "domains": [
+            "approvals_bylaws",
+            "architecture_planning",
+            "units_dimensions",
+            "civil_construction"
+          ],
+          "authorityType": "official_primary_directory",
+          "publisher": "Integrated Government Online Directory / National Portal of India",
+          "jurisdiction": {
+            "country": "IN",
+            "stateOrUnionTerritory": "Delhi",
+            "jurisdictionType": "union_territory"
+          },
+          "watch": false,
+          "reviewRequired": true,
+          "mergePolicy": "manual_review_required",
+          "notes": "Authority index candidate only. Exact building bye-laws PDF/portal must be verified before extraction or trusted merge."
+        },
+        {
+          "id": "india-jammu-kashmir-approval-authority-index",
+          "title": "Jammu and Kashmir approval authority and building bye-laws index candidate",
+          "url": "https://igod.gov.in/sg/states",
+          "domains": [
+            "approvals_bylaws",
+            "architecture_planning",
+            "units_dimensions",
+            "civil_construction"
+          ],
+          "authorityType": "official_primary_directory",
+          "publisher": "Integrated Government Online Directory / National Portal of India",
+          "jurisdiction": {
+            "country": "IN",
+            "stateOrUnionTerritory": "Jammu and Kashmir",
+            "jurisdictionType": "union_territory"
+          },
+          "watch": false,
+          "reviewRequired": true,
+          "mergePolicy": "manual_review_required",
+          "notes": "Authority index candidate only. Exact building bye-laws PDF/portal must be verified before extraction or trusted merge."
+        },
+        {
+          "id": "india-ladakh-approval-authority-index",
+          "title": "Ladakh approval authority and building bye-laws index candidate",
+          "url": "https://igod.gov.in/sg/states",
+          "domains": [
+            "approvals_bylaws",
+            "architecture_planning",
+            "units_dimensions",
+            "civil_construction"
+          ],
+          "authorityType": "official_primary_directory",
+          "publisher": "Integrated Government Online Directory / National Portal of India",
+          "jurisdiction": {
+            "country": "IN",
+            "stateOrUnionTerritory": "Ladakh",
+            "jurisdictionType": "union_territory"
+          },
+          "watch": false,
+          "reviewRequired": true,
+          "mergePolicy": "manual_review_required",
+          "notes": "Authority index candidate only. Exact building bye-laws PDF/portal must be verified before extraction or trusted merge."
+        },
+        {
+          "id": "india-lakshadweep-approval-authority-index",
+          "title": "Lakshadweep approval authority and building bye-laws index candidate",
+          "url": "https://igod.gov.in/sg/states",
+          "domains": [
+            "approvals_bylaws",
+            "architecture_planning",
+            "units_dimensions",
+            "civil_construction"
+          ],
+          "authorityType": "official_primary_directory",
+          "publisher": "Integrated Government Online Directory / National Portal of India",
+          "jurisdiction": {
+            "country": "IN",
+            "stateOrUnionTerritory": "Lakshadweep",
+            "jurisdictionType": "union_territory"
+          },
+          "watch": false,
+          "reviewRequired": true,
+          "mergePolicy": "manual_review_required",
+          "notes": "Authority index candidate only. Exact building bye-laws PDF/portal must be verified before extraction or trusted merge."
+        },
+        {
+          "id": "india-puducherry-approval-authority-index",
+          "title": "Puducherry approval authority and building bye-laws index candidate",
+          "url": "https://igod.gov.in/sg/states",
+          "domains": [
+            "approvals_bylaws",
+            "architecture_planning",
+            "units_dimensions",
+            "civil_construction"
+          ],
+          "authorityType": "official_primary_directory",
+          "publisher": "Integrated Government Online Directory / National Portal of India",
+          "jurisdiction": {
+            "country": "IN",
+            "stateOrUnionTerritory": "Puducherry",
+            "jurisdictionType": "union_territory"
+          },
+          "watch": false,
+          "reviewRequired": true,
+          "mergePolicy": "manual_review_required",
+          "notes": "Authority index candidate only. Exact building bye-laws PDF/portal must be verified before extraction or trusted merge."
+        }
+      ]
     }
   ],
-  "updatedAt": "2026-06-05T05:16:49.799Z",
-  "updatedBy": "phase_46c1_state_local_approval_sources"
+  "updatedAt": "2026-06-05T05:19:03.022Z",
+  "updatedBy": "phase_46c1b_all_india_state_ut_authority_index"
 }
