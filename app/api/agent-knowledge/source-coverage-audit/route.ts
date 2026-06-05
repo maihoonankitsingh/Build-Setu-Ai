@@ -57,6 +57,16 @@ function getAllPackSources(packs: JsonObject[]) {
       reviewRequired: source?.reviewRequired !== false,
       mergePolicy: cleanText(source?.mergePolicy || "manual_review_required", 120),
       notes: cleanText(source?.notes || "", 1000),
+      exactSourceStatus: cleanText(source?.exactSourceStatus || "", 160),
+      exactSourceUrl: cleanText(source?.exactSourceUrl || "", 1400),
+      exactSourceTitle: cleanText(source?.exactSourceTitle || "", 300),
+      exactSourcePublisher: cleanText(source?.exactSourcePublisher || "", 300),
+      exactSourceAuthorityType: cleanText(source?.exactSourceAuthorityType || "", 160),
+      verificationStatus: cleanText(source?.verificationStatus || "", 160),
+      verificationPriority: cleanText(source?.verificationPriority || "", 80),
+      verificationNotes: cleanText(source?.verificationNotes || "", 1200),
+      lastVerifiedAt: cleanText(source?.lastVerifiedAt || "", 120),
+      verifiedBy: cleanText(source?.verifiedBy || "", 160),
     }))
   );
 }
@@ -82,6 +92,66 @@ function duplicateKeys(sources: JsonObject[]) {
   return Array.from(counts.entries())
     .filter(([, count]) => count > 1)
     .map(([key, count]) => ({ key, count }));
+}
+
+function isStateUtAuthorityIndex(source: JsonObject) {
+  const id = cleanText(source?.id || "", 260);
+  return id.startsWith("india-") && id.endsWith("-approval-authority-index");
+}
+
+function stateUtTrackerSummary(sources: JsonObject[]) {
+  const items = sources.filter(isStateUtAuthorityIndex);
+
+  const byVerificationStatus = items.reduce((acc: Record<string, number>, source) => {
+    const key = cleanText(source?.verificationStatus || "missing", 160) || "missing";
+    acc[key] = (acc[key] || 0) + 1;
+    return acc;
+  }, {});
+
+  const byExactSourceStatus = items.reduce((acc: Record<string, number>, source) => {
+    const key = cleanText(source?.exactSourceStatus || "missing", 160) || "missing";
+    acc[key] = (acc[key] || 0) + 1;
+    return acc;
+  }, {});
+
+  const byPriority = items.reduce((acc: Record<string, number>, source) => {
+    const key = cleanText(source?.verificationPriority || "missing", 80) || "missing";
+    acc[key] = (acc[key] || 0) + 1;
+    return acc;
+  }, {});
+
+  const missingTracker = items.filter((source) =>
+    !cleanText(source?.exactSourceStatus || "", 160) ||
+    !cleanText(source?.verificationStatus || "", 160) ||
+    source?.reviewRequired !== true ||
+    source?.mergePolicy !== "manual_review_required" ||
+    source?.trustedKnowledgeWrite !== false ||
+    source?.trustedMergeExecuted !== false
+  );
+
+  const pendingExactSource = items.filter((source) =>
+    source?.exactSourceStatus === "pending_exact_building_bye_law_source"
+  );
+
+  const verifiedExactSource = items.filter((source) =>
+    source?.verificationStatus === "verified_exact_source"
+  );
+
+  const highPriorityPending = items.filter((source) =>
+    source?.verificationPriority === "high" &&
+    source?.verificationStatus !== "verified_exact_source"
+  );
+
+  return {
+    totalStateUtAuthorityIndexSources: items.length,
+    pendingExactSource: pendingExactSource.length,
+    verifiedExactSource: verifiedExactSource.length,
+    highPriorityPending: highPriorityPending.length,
+    missingTracker: missingTracker.length,
+    byVerificationStatus,
+    byExactSourceStatus,
+    byPriority,
+  };
 }
 
 export async function GET() {
@@ -143,6 +213,7 @@ export async function GET() {
         duplicatePackSourceKeys: duplicateKeys(allPackSources).length,
         duplicateWatchSourceKeys: duplicateKeys(watchSources).length,
       },
+      stateUtVerificationTracker: stateUtTrackerSummary(allPackSources),
     },
     domainCoverage: byDomain(allPackSources),
     packs: packs.map((pack) => ({
