@@ -701,7 +701,7 @@
         "reviewer": "",
         "reviewedBy": "phase_46z6_sample_extraction",
         "reviewedAt": "2026-06-05T20:09:18.466734+00:00",
-        "reviewNotes": "Delhi sample extraction draft filled for QA review only. Not approved for trusted merge.",
+        "reviewNotes": "Validator-compatible extraction fields added. Source remains QA pending and not approved for trusted merge.",
         "mergeReady": false,
         "trustedMergeExecuted": false
       },
@@ -788,23 +788,65 @@
             "publisher": "Delhi Development Authority",
             "domain": "dda.gov.in"
           }
-        ]
+        ],
+        "versionDate": "Unified Building Bye-Laws for Delhi 2016 Compendium",
+        "claims": [
+          {
+            "claim": "The source is the DDA Unified Building Bye-Laws for Delhi 2016 Compendium used as an official building bye-laws reference for Delhi building approval and development control review.",
+            "citation": "DDA Unified Building Bye-Laws for Delhi 2016 Compendium — https://dda.gov.in/sites/default/files/public-notice/COMPENDIUM_OF_UBBL_201605082020_0.pdf",
+            "sourceUrl": "https://dda.gov.in/sites/default/files/public-notice/COMPENDIUM_OF_UBBL_201605082020_0.pdf",
+            "sourceTitle": "DDA Unified Building Bye-Laws for Delhi 2016 Compendium",
+            "status": "draft_extraction_qa_required"
+          }
+        ],
+        "citationChecks": {
+          "sourceUrlPresent": true,
+          "sourceCitationPresent": true,
+          "versionDateMarked": true,
+          "allClaimsHaveCitations": true
+        }
       },
       "qa": {
         "status": "qa_pending",
-        "notes": "Sample extraction filled. Needs human QA before qa_ready. Trusted merge candidate remains false.",
+        "notes": "Validator-compatible fields added. Still QA pending; not approved for trusted merge.",
         "checkedBy": "",
         "checkedAt": "",
         "issues": [
           "Clause-level extraction still required for setbacks, FAR, height, parking, fire safety and submission checklist.",
           "QA reviewer must verify against official PDF before marking qa_ready."
         ],
-        "trustedMergeCandidate": false
+        "trustedMergeCandidate": false,
+        "claims": [
+          {
+            "claim": "The source is the DDA Unified Building Bye-Laws for Delhi 2016 Compendium used as an official building bye-laws reference for Delhi building approval and development control review.",
+            "citation": "DDA Unified Building Bye-Laws for Delhi 2016 Compendium — https://dda.gov.in/sites/default/files/public-notice/COMPENDIUM_OF_UBBL_201605082020_0.pdf",
+            "sourceUrl": "https://dda.gov.in/sites/default/files/public-notice/COMPENDIUM_OF_UBBL_201605082020_0.pdf",
+            "sourceTitle": "DDA Unified Building Bye-Laws for Delhi 2016 Compendium",
+            "status": "draft_extraction_qa_required"
+          }
+        ],
+        "citationChecks": {
+          "sourceUrlPresent": true,
+          "sourceCitationPresent": true,
+          "versionDateMarked": true,
+          "allClaimsHaveCitations": true
+        }
       },
       "createdAt": "2026-06-05T19:55:45.191686+00:00",
       "createdBy": "phase_46z2_local_generator",
-      "updatedAt": "2026-06-05T20:09:18.466734+00:00",
-      "updatedBy": "phase_46z6_sample_extraction"
+      "updatedAt": "2026-06-05T20:17:35.146425+00:00",
+      "updatedBy": "phase_46z9_validator_field_alignment",
+      "qaStatus": "qa_pending",
+      "versionDate": "Unified Building Bye-Laws for Delhi 2016 Compendium",
+      "claims": [
+        {
+          "claim": "The source is the DDA Unified Building Bye-Laws for Delhi 2016 Compendium used as an official building bye-laws reference for Delhi building approval and development control review.",
+          "citation": "DDA Unified Building Bye-Laws for Delhi 2016 Compendium — https://dda.gov.in/sites/default/files/public-notice/COMPENDIUM_OF_UBBL_201605082020_0.pdf",
+          "sourceUrl": "https://dda.gov.in/sites/default/files/public-notice/COMPENDIUM_OF_UBBL_201605082020_0.pdf",
+          "sourceTitle": "DDA Unified Building Bye-Laws for Delhi 2016 Compendium",
+          "status": "draft_extraction_qa_required"
+        }
+      ]
     },
     {
       "id": "official_source_extraction_draft_india-goa-approval-authority-index",
@@ -3021,6 +3063,6 @@
       "updatedBy": "phase_46z2_local_generator"
     }
   ],
-  "updatedAt": "2026-06-05T20:09:18.466734+00:00",
-  "updatedBy": "phase_46z6_sample_extraction"
+  "updatedAt": "2026-06-05T20:17:35.146425+00:00",
+  "updatedBy": "phase_46z9_validator_field_alignment"
 }
