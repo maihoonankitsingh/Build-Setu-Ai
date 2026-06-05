@@ -1,0 +1,41 @@
+{
+  "id": "BUILDSETU_PHASE_47A1_DIMENSION_UNDERSTANDING_CONTROLLER",
+  "title": "BuildSetu Dimension Understanding Controller",
+  "version": "47A-1",
+  "purpose": "Ensure BuildSetu planning agent can interpret architectural, interior, structural, MEP, elevation and working drawing dimensions before generating plans or prompts.",
+  "dimensionFormatsToUnderstand": [
+    "30x40",
+    "30 x 40 ft",
+    "30 by 40 feet",
+    "41*51",
+    "10'-6\" x 12'-0\"",
+    "10 ft 6 in",
+    "10.5 ft",
+    "3200 mm",
+    "3.2 m",
+    "10 by 12 room",
+    "plot 30 front 40 depth"
+  ],
+  "normalizationRules": [
+    "Convert every dimension to feet, inches, millimetres and metres where possible.",
+    "For Indian residential planning prompts without explicit unit, default plot and room dimensions to feet.",
+    "For CAD/detail/interior/shop drawing prompts with mm/meter units, preserve metric intent and also provide feet conversion.",
+    "Detect width x depth pairs and calculate approximate area in sq ft and sq m.",
+    "Classify nearby context as plot, room, parking, setback, floor_height, door, window, staircase, corridor, wall, furniture, site or unknown.",
+    "Never treat an unclear dimension as final; ask confirmation if plot or room intent is ambiguous."
+  ],
+  "planningUseRules": [
+    "Before floor plan output, identify plot width, plot depth, area, facing, road side and missing dimensions.",
+    "Before interior output, identify room width, room depth, clear wall lengths, furniture dimensions and circulation clearance.",
+    "Before structure output, identify spans, grid assumptions, column/beam coordination dimensions and require engineer verification.",
+    "Before MEP output, identify shaft, wet wall, plumbing route, slope, equipment and service access dimensions.",
+    "Before elevation/3D output, identify frontage width, floor count, floor height, balcony projection, window rhythm and material scale.",
+    "Before working drawing output, preserve exact dimensions and state assumptions separately from verified measurements."
+  ],
+  "safetyBoundary": [
+    "Dimension understanding is planning assistance only.",
+    "Final architectural drawings require local bylaw verification.",
+    "Final structural sizes and reinforcement require licensed structural engineer verification.",
+    "Final MEP sizing, pipe sizes, electrical load and fire safety require qualified professional verification."
+  ]
+}
