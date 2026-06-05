@@ -157,6 +157,20 @@ export default function SourceCoverageAuditClient() {
     byServerSmokeDiagnosticStatus: {},
     items: [],
   };
+
+  const manualRecords =
+    (audit?.summary as any)?.manualVerificationRecords || {
+      totalRecords: 0,
+      byDecision: {},
+      byJurisdiction: {},
+      unsafeRecords: 0,
+      trustedKnowledgeWrite: 0,
+      trustedMergeExecuted: 0,
+      extractionUnlocked: 0,
+      qaReadyUnlocked: 0,
+      mergeCandidateUnlocked: 0,
+      latestRecords: [],
+    };
   const safety = audit?.summary?.safety || {
     unsafeSources: 0,
     duplicatePackSourceKeys: 0,
@@ -375,6 +389,127 @@ export default function SourceCoverageAuditClient() {
                 data={manualVerification.byServerSmokeDiagnosticStatus}
               />
             </div>
+
+            <Panel>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  gap: 12,
+                  flexWrap: "wrap",
+                  alignItems: "flex-start",
+                }}
+              >
+                <div>
+                  <p
+                    style={{
+                      margin: "0 0 6px",
+                      color: "#64748b",
+                      fontSize: 12,
+                      fontWeight: 800,
+                      textTransform: "uppercase",
+                      letterSpacing: 0.8,
+                    }}
+                  >
+                    Manual Verification Records
+                  </p>
+                  <h2 style={{ margin: 0, color: "#0f172a" }}>
+                    Separate Manual Records Audit
+                  </h2>
+                  <p style={{ margin: "8px 0 0", color: "#475569", lineHeight: 1.7 }}>
+                    Manual records separate file me save hote hain. Ye source registry,
+                    extraction, QA-ready, ya trusted merge ko unlock nahi karte.
+                  </p>
+                </div>
+                <span
+                  style={{
+                    padding: "8px 12px",
+                    borderRadius: 999,
+                    background: manualRecords.unsafeRecords === 0 ? "#f0fdf4" : "#fef2f2",
+                    color: manualRecords.unsafeRecords === 0 ? "#166534" : "#991b1b",
+                    fontSize: 12,
+                    fontWeight: 900,
+                    border: `1px solid ${
+                      manualRecords.unsafeRecords === 0 ? "#bbf7d0" : "#fecaca"
+                    }`,
+                  }}
+                >
+                  {manualRecords.unsafeRecords === 0 ? "Safety Pass" : "Unsafe Records Found"}
+                </span>
+              </div>
+
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "repeat(auto-fit, minmax(170px, 1fr))",
+                  gap: 12,
+                  marginTop: 18,
+                }}
+              >
+                <Metric label="Total Records" value={manualRecords.totalRecords} />
+                <Metric label="Unsafe Records" value={manualRecords.unsafeRecords} />
+                <Metric label="Extraction Unlocked" value={manualRecords.extractionUnlocked} />
+                <Metric label="QA Ready Unlocked" value={manualRecords.qaReadyUnlocked} />
+                <Metric label="Merge Candidate Unlocked" value={manualRecords.mergeCandidateUnlocked} />
+                <Metric label="Trusted Write Records" value={manualRecords.trustedKnowledgeWrite} />
+                <Metric label="Trusted Merge Records" value={manualRecords.trustedMergeExecuted} />
+              </div>
+
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
+                  gap: 12,
+                  marginTop: 18,
+                }}
+              >
+                <SmallBreakdown title="Records By Decision" data={manualRecords.byDecision} />
+                <SmallBreakdown title="Records By Jurisdiction" data={manualRecords.byJurisdiction} />
+              </div>
+
+              {(manualRecords.latestRecords || []).length === 0 ? (
+                <p style={{ margin: "18px 0 0", color: "#64748b" }}>
+                  No separate manual records saved yet.
+                </p>
+              ) : (
+                <div style={{ display: "grid", gap: 10, marginTop: 18 }}>
+                  {(manualRecords.latestRecords || []).map((record: any) => (
+                    <div
+                      key={record.id}
+                      style={{
+                        border: "1px solid #e2e8f0",
+                        borderRadius: 16,
+                        padding: 14,
+                        background: "#ffffff",
+                      }}
+                    >
+                      <div
+                        style={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                          gap: 10,
+                          flexWrap: "wrap",
+                        }}
+                      >
+                        <strong style={{ color: "#0f172a" }}>
+                          {record.jurisdiction || "Unknown Jurisdiction"}
+                        </strong>
+                        <span style={{ color: "#475569", fontSize: 12, fontWeight: 800 }}>
+                          {record.decision || "unknown_decision"}
+                        </span>
+                      </div>
+                      <p style={{ margin: "8px 0 0", color: "#475569", lineHeight: 1.6 }}>
+                        {record.exactSourceTitle || "No title"}
+                      </p>
+                      <p style={{ margin: "8px 0 0", color: "#64748b", fontSize: 12 }}>
+                        Reviewer: {record.reviewerName || "Not provided"} · Role:{" "}
+                        {record.reviewerRole || "Not provided"}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </Panel>
 
             {manualVerification.items.length === 0 ? (
               <p style={{ margin: 0, color: "#166534" }}>
