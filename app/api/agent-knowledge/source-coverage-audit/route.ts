@@ -67,6 +67,8 @@ function getAllPackSources(packs: JsonObject[]) {
       verificationNotes: cleanText(source?.verificationNotes || "", 1200),
       lastVerifiedAt: cleanText(source?.lastVerifiedAt || "", 120),
       verifiedBy: cleanText(source?.verifiedBy || "", 160),
+      trustedKnowledgeWrite: source?.trustedKnowledgeWrite === true,
+      trustedMergeExecuted: source?.trustedMergeExecuted === true,
     }))
   );
 }
