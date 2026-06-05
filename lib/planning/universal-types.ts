@@ -88,3 +88,31 @@ export type UniversalPlanningResult = {
   workingPlans: WorkingDrawingSheet[];
   safetyNotes: string[];
 };
+
+// BUILDSETU_PHASE_47A2_DIMENSION_CONTEXT_TYPES
+export type BuildSetuPlanningDimensionContext = {
+  promptBlock: string;
+  summary: {
+    totalPairs: number;
+    totalSingles: number;
+    hasPlotDimension: boolean;
+    hasRoomDimension: boolean;
+    primaryPlotAreaSqFt: number | null;
+  };
+  pairs: Array<{
+    raw: string;
+    intent: string;
+    widthFeet: number | null;
+    depthFeet: number | null;
+    areaSqFt: number | null;
+    confidence: string;
+  }>;
+  singles: Array<{
+    raw: string;
+    intent: string;
+    feet: number | null;
+    mm: number | null;
+    confidence: string;
+  }>;
+  warnings: string[];
+};

@@ -4,12 +4,55 @@ import { getBuildingRules, getSpaceProgram } from "./building-type-rules";
 import { buildZoningStrategy } from "./space-program-engine";
 import { runVastuEngine } from "./vastu-engine";
 import { buildWorkingDrawings } from "./working-drawing-engine";
+import { buildDimensionUnderstandingPromptBlock, understandBuildSetuDimensions } from "./dimension-understanding-engine";
 
-export async function runUniversalPlanningAgent(input: {
+type UniversalPlanningAgentInput = {
   prompt?: string;
+  message?: string;
+  userText?: string;
+  projectId?: string;
   projectTitle?: string;
-  project?: any;
-}): Promise<UniversalPlanningResult> {
+  projectName?: string;
+  project?: unknown;
+  projectContext?: unknown;
+  [key: string]: unknown;
+};
+
+// BUILDSETU_PHASE_47A2_DIMENSION_CONTEXT_INJECTION
+function getPlanningInputText(input: UniversalPlanningAgentInput) {
+  return String(input.userText || input.message || input.prompt || input.projectTitle || input.projectName || "").trim();
+}
+
+function buildUniversalPlanningDimensionContext(inputText: string) {
+  const dimensionResult = understandBuildSetuDimensions(inputText);
+  const promptBlock = buildDimensionUnderstandingPromptBlock(inputText);
+
+  return {
+    promptBlock,
+    summary: dimensionResult.summary,
+    pairs: dimensionResult.pairs.slice(0, 20).map((item) => ({
+      raw: item.raw,
+      intent: item.intent,
+      widthFeet: item.width.feet,
+      depthFeet: item.depth.feet,
+      areaSqFt: item.areaSqFt,
+      confidence: item.confidence,
+    })),
+    singles: dimensionResult.singles.slice(0, 20).map((item) => ({
+      raw: item.raw,
+      intent: item.intent,
+      feet: item.length.feet,
+      mm: item.length.mm,
+      confidence: item.confidence,
+    })),
+    warnings: dimensionResult.warnings,
+  };
+}
+
+export async function runUniversalPlanningAgent(input: UniversalPlanningAgentInput): Promise<UniversalPlanningResult & { dimensionUnderstanding: ReturnType<typeof buildUniversalPlanningDimensionContext> }> {
+  const inputText = getPlanningInputText(input);
+  const dimensionUnderstanding = buildUniversalPlanningDimensionContext(inputText);
+
   const { requirement, missingQuestions } = parseUniversalRequirement(input);
   const spaceProgram = getSpaceProgram(requirement);
   const vastuReport = runVastuEngine(requirement, spaceProgram);
@@ -21,8 +64,18 @@ export async function runUniversalPlanningAgent(input: {
 
   const assistantMessage =
     status === "need_more_details"
-      ? "Planning package banane ke liye kuch required details missing hain."
-      : `${requirement.projectType} / ${requirement.subType} ke liye universal planning package ready hai. Vastu, zoning, space program aur requested working plans prepare ho gaye.`;
+      ? [
+          "Planning package banane ke liye kuch required details missing hain.",
+          "",
+          "Dimension Understanding",
+          dimensionUnderstanding.promptBlock,
+        ].join("\n")
+      : [
+          `${requirement.projectType} / ${requirement.subType} ke liye universal planning package ready hai. Vastu, zoning, space program aur requested working plans prepare ho gaye.`,
+          "",
+          "Dimension Understanding",
+          dimensionUnderstanding.promptBlock,
+        ].join("\n");
 
   return {
     ok: true,
@@ -31,6 +84,7 @@ export async function runUniversalPlanningAgent(input: {
     assistantMessage,
     missingQuestions,
     requirement,
+    dimensionUnderstanding,
     buildingRules,
     vastuReport,
     spaceProgram,
