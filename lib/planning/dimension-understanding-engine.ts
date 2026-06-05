@@ -171,6 +171,41 @@ function detectIntent(nearbyText: string): BuildSetuDimensionIntent {
   return best?.intent || "unknown";
 }
 
+// BUILDSETU_PHASE_47A7_PAIR_LOCAL_INTENT
+function detectIntentForPair(nearbyText: string, rawPair: string): BuildSetuDimensionIntent {
+  const t = nearbyText.toLowerCase();
+  const raw = rawPair.toLowerCase().trim();
+  const idx = t.indexOf(raw);
+
+  const before = idx >= 0 ? t.slice(0, idx) : t;
+  const after = idx >= 0 ? t.slice(idx + raw.length) : "";
+
+  const immediateBefore = before.slice(-42);
+  const immediateAfter = after.slice(0, 55);
+
+  if (/(plot|site|land|lot|frontage|corner plot)\b/i.test(immediateBefore)) {
+    return "plot";
+  }
+
+  if (/\b(east|west|north|south|facing|corner)\b/i.test(immediateAfter) &&
+      /(plot|site|land|lot|frontage|corner plot)\b/i.test(immediateBefore)) {
+    return "plot";
+  }
+
+  if (/(bedroom|master|living|drawing|dining|kitchen|toilet|bath|washroom|pooja|puja|store|utility|balcony|terrace|office|cabin|shop|showroom|hall|room)\b/i.test(immediateBefore)) {
+    return "room";
+  }
+
+  if (/(parking|car|garage|stilt|driveway)\b/i.test(immediateBefore)) return "parking";
+  if (/(setback|margin|open space|side open|front open|rear open)\b/i.test(immediateBefore)) return "setback";
+  if (/(door|main door|shutter)\b/i.test(immediateBefore)) return "door";
+  if (/(window|ventilator|opening)\b/i.test(immediateBefore)) return "window";
+  if (/(stair|staircase|steps|riser|tread|landing)\b/i.test(immediateBefore)) return "staircase";
+
+  return detectIntent(nearbyText);
+}
+
+
 function inferUnit(unitText: string | undefined, fallback: BuildSetuDimensionUnit = "ft"): BuildSetuDimensionUnit {
   const u = String(unitText || "").toLowerCase().trim();
 
@@ -259,7 +294,7 @@ function makePair(raw: string, leftRaw: string, rightRaw: string, fallbackUnit: 
 
   const areaSqFt = round(width.feet * depth.feet, 2);
   const areaSqM = round(areaSqFt * 0.092903, 2);
-  const intent = detectIntent(nearbyText);
+  const intent = detectIntentForPair(nearbyText, raw);
 
   return {
     raw,
