@@ -23,6 +23,19 @@ export default function SourceCoverageAuditPage() {
         Trusted Write Records
         Trusted Merge Records
         No separate manual records saved yet.
+        Manual Verification Completion
+        Manual Verification Record Pass
+        Required Manual Checks
+        Verified Manual Records
+        Covered Manual Checks
+        Remaining Manual Records
+        Unexpected Records
+        Duplicate Records
+        Unsafe Records
+        Completion Pass
+        Completion Blocked
+        manualVerificationRecordPass
+        remainingManualBrowserVerificationRecords
         Total Records
         Unsafe Records
         Extraction Unlocked

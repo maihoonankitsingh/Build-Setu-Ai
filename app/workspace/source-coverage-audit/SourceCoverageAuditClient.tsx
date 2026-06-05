@@ -177,6 +177,22 @@ export default function SourceCoverageAuditClient() {
     duplicateWatchSourceKeys: 0,
   };
 
+  const manualCompletion =
+    (audit?.summary as any)?.manualVerificationCompletion || {
+      requiredManualBrowserVerification: 0,
+      verifiedManualBrowserRecords: 0,
+      coveredManualBrowserVerification: 0,
+      remainingManualBrowserVerificationRecords: 0,
+      unexpectedManualRecords: 0,
+      duplicateManualRecords: 0,
+      unsafeRecords: 0,
+      manualVerificationRecordPass: false,
+      missingManualRecordSourceIds: [],
+      unexpectedManualRecordSourceIds: [],
+      duplicateManualRecordSourceIds: [],
+    };
+
+
   return (
     <main style={{ padding: 32, maxWidth: 1280, margin: "0 auto" }}>
 
@@ -427,6 +443,94 @@ export default function SourceCoverageAuditClient() {
                 data={manualVerification.byServerSmokeDiagnosticStatus}
               />
             </div>
+
+            <Panel>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  gap: 16,
+                  alignItems: "flex-start",
+                  flexWrap: "wrap",
+                }}
+              >
+                <div>
+                  <p style={{ margin: "0 0 6px", color: "#64748b", fontSize: 13, fontWeight: 700 }}>
+                    Manual Verification Completion
+                  </p>
+                  <h2 style={{ margin: 0, color: "#0f172a", fontSize: 22 }}>
+                    Manual Verification Record Pass
+                  </h2>
+                  <p style={{ margin: "8px 0 0", color: "#64748b", lineHeight: 1.6 }}>
+                    Read-only completion summary. Manual records are checked against the browser verification queue.
+                  </p>
+                </div>
+
+                <span
+                  style={{
+                    borderRadius: 999,
+                    padding: "8px 12px",
+                    fontSize: 12,
+                    fontWeight: 800,
+                    background: manualCompletion.manualVerificationRecordPass ? "#f0fdf4" : "#fef2f2",
+                    color: manualCompletion.manualVerificationRecordPass ? "#166534" : "#991b1b",
+                    border: `1px solid ${
+                      manualCompletion.manualVerificationRecordPass ? "#bbf7d0" : "#fecaca"
+                    }`,
+                  }}
+                >
+                  {manualCompletion.manualVerificationRecordPass ? "Completion Pass" : "Completion Blocked"}
+                </span>
+              </div>
+
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))",
+                  gap: 12,
+                  marginTop: 18,
+                }}
+              >
+                <Metric
+                  label="Required Manual Checks"
+                  value={manualCompletion.requiredManualBrowserVerification}
+                />
+                <Metric
+                  label="Verified Manual Records"
+                  value={manualCompletion.verifiedManualBrowserRecords}
+                />
+                <Metric
+                  label="Covered Manual Checks"
+                  value={manualCompletion.coveredManualBrowserVerification}
+                />
+                <Metric
+                  label="Remaining Manual Records"
+                  value={manualCompletion.remainingManualBrowserVerificationRecords}
+                />
+                <Metric label="Unexpected Records" value={manualCompletion.unexpectedManualRecords} />
+                <Metric label="Duplicate Records" value={manualCompletion.duplicateManualRecords} />
+                <Metric label="Unsafe Records" value={manualCompletion.unsafeRecords} />
+              </div>
+
+              {manualCompletion.manualVerificationRecordPass ? (
+                <p style={{ margin: "16px 0 0", color: "#166534", fontSize: 14, fontWeight: 700 }}>
+                  All required manual browser verification records are present and safe.
+                </p>
+              ) : (
+                <div style={{ marginTop: 16, color: "#991b1b", fontSize: 13, lineHeight: 1.7 }}>
+                  <p style={{ margin: 0, fontWeight: 800 }}>Completion issues found.</p>
+                  <p style={{ margin: "6px 0 0" }}>
+                    Missing: {(manualCompletion.missingManualRecordSourceIds || []).join(", ") || "None"}
+                  </p>
+                  <p style={{ margin: "6px 0 0" }}>
+                    Unexpected: {(manualCompletion.unexpectedManualRecordSourceIds || []).join(", ") || "None"}
+                  </p>
+                  <p style={{ margin: "6px 0 0" }}>
+                    Duplicate: {(manualCompletion.duplicateManualRecordSourceIds || []).join(", ") || "None"}
+                  </p>
+                </div>
+              )}
+            </Panel>
 
             <Panel>
               <div
