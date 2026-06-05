@@ -1,0 +1,372 @@
+{
+  "id": "BUILDSETU_PHASE_47H1_ROOM_SPACE_DIMENSION_STANDARDS",
+  "version": "47H-1",
+  "scope": "preliminary architectural/interior planning standards for Indian residential/commercial concept planning",
+  "importantNote": "These are planning heuristics, not final legal/code values. Final drawings must be verified by licensed professionals and local authority rules.",
+  "units": {
+    "primary": "feet",
+    "area": "sqft"
+  },
+  "spaces": {
+    "bedroom": {
+      "label": "Bedroom",
+      "grades": {
+        "compact": {
+          "minWidthFt": 9,
+          "minDepthFt": 10,
+          "minAreaSqFt": 90,
+          "notes": ["Compact bedroom; queen bed possible only with tight wardrobe/circulation planning."]
+        },
+        "standard": {
+          "minWidthFt": 10,
+          "minDepthFt": 12,
+          "minAreaSqFt": 120,
+          "notes": ["Standard bedroom; queen bed, wardrobe and basic circulation can be planned."]
+        },
+        "premium": {
+          "minWidthFt": 12,
+          "minDepthFt": 14,
+          "minAreaSqFt": 160,
+          "notes": ["Premium bedroom; better for king bed, dresser, study or seating."]
+        }
+      },
+      "fitRules": ["bed", "wardrobe", "door-window-clearance"]
+    },
+    "master_bedroom": {
+      "label": "Master Bedroom",
+      "grades": {
+        "compact": {
+          "minWidthFt": 10,
+          "minDepthFt": 12,
+          "minAreaSqFt": 120,
+          "notes": ["Compact master bedroom; wardrobe and attached toilet planning needs careful opening positions."]
+        },
+        "standard": {
+          "minWidthFt": 12,
+          "minDepthFt": 14,
+          "minAreaSqFt": 165,
+          "notes": ["Standard master bedroom; queen/king bed, wardrobe and circulation can be planned."]
+        },
+        "premium": {
+          "minWidthFt": 14,
+          "minDepthFt": 16,
+          "minAreaSqFt": 220,
+          "notes": ["Premium master suite; suitable for seating, dresser and larger wardrobe zones."]
+        }
+      },
+      "fitRules": ["king-bed", "wardrobe", "dresser", "attached-toilet"]
+    },
+    "kitchen": {
+      "label": "Kitchen",
+      "grades": {
+        "compact": {
+          "minWidthFt": 7,
+          "minDepthFt": 9,
+          "minAreaSqFt": 63,
+          "notes": ["Compact kitchen; straight or compact L-shape layout preferred."]
+        },
+        "standard": {
+          "minWidthFt": 8.5,
+          "minDepthFt": 10,
+          "minAreaSqFt": 90,
+          "notes": ["Standard kitchen; L-shape or compact parallel kitchen can be considered."]
+        },
+        "premium": {
+          "minWidthFt": 10,
+          "minDepthFt": 12,
+          "minAreaSqFt": 120,
+          "notes": ["Premium kitchen; better for parallel, island-like prep or larger appliance planning."]
+        }
+      },
+      "fitRules": ["counter-depth", "work-triangle", "appliance-clearance"]
+    },
+    "toilet": {
+      "label": "Toilet / Washroom",
+      "grades": {
+        "compact": {
+          "minWidthFt": 4,
+          "minDepthFt": 7,
+          "minAreaSqFt": 25,
+          "notes": ["Compact toilet; WC, basin and shower fit needs careful door swing and wet/dry separation."]
+        },
+        "standard": {
+          "minWidthFt": 5,
+          "minDepthFt": 7,
+          "minAreaSqFt": 35,
+          "notes": ["Standard toilet; WC, basin and shower zoning is workable."]
+        },
+        "premium": {
+          "minWidthFt": 6,
+          "minDepthFt": 8,
+          "minAreaSqFt": 48,
+          "notes": ["Premium toilet; better for wet/dry partition, larger vanity and comfort clearance."]
+        }
+      },
+      "fitRules": ["wc", "basin", "shower", "ventilation"]
+    },
+    "living": {
+      "label": "Living Room",
+      "grades": {
+        "compact": {
+          "minWidthFt": 9,
+          "minDepthFt": 12,
+          "minAreaSqFt": 110,
+          "notes": ["Compact living; use smaller sofa and wall-mounted TV unit."]
+        },
+        "standard": {
+          "minWidthFt": 10,
+          "minDepthFt": 15,
+          "minAreaSqFt": 150,
+          "notes": ["Standard living; sofa, TV unit and circulation are workable."]
+        },
+        "premium": {
+          "minWidthFt": 12,
+          "minDepthFt": 18,
+          "minAreaSqFt": 220,
+          "notes": ["Premium living; suitable for larger seating, display wall and better circulation."]
+        }
+      },
+      "fitRules": ["sofa", "tv-unit", "circulation"]
+    },
+    "dining": {
+      "label": "Dining",
+      "grades": {
+        "compact": {
+          "minWidthFt": 7,
+          "minDepthFt": 8,
+          "minAreaSqFt": 56,
+          "notes": ["Compact dining; 4-seater planning possible with tight circulation."]
+        },
+        "standard": {
+          "minWidthFt": 8,
+          "minDepthFt": 10,
+          "minAreaSqFt": 80,
+          "notes": ["Standard dining; 4/6-seater can be planned depending on circulation."]
+        },
+        "premium": {
+          "minWidthFt": 10,
+          "minDepthFt": 12,
+          "minAreaSqFt": 120,
+          "notes": ["Premium dining; 6-seater and crockery/storage wall possible."]
+        }
+      },
+      "fitRules": ["table", "chair-clearance", "kitchen-adjacency"]
+    },
+    "pooja": {
+      "label": "Pooja Room",
+      "grades": {
+        "compact": {
+          "minWidthFt": 3,
+          "minDepthFt": 4,
+          "minAreaSqFt": 12,
+          "notes": ["Compact pooja niche/room; suitable for small mandir unit."]
+        },
+        "standard": {
+          "minWidthFt": 4,
+          "minDepthFt": 5,
+          "minAreaSqFt": 20,
+          "notes": ["Standard pooja; better for sitting/standing use and storage."]
+        },
+        "premium": {
+          "minWidthFt": 5,
+          "minDepthFt": 7,
+          "minAreaSqFt": 35,
+          "notes": ["Premium pooja; better for dedicated prayer space and ornamentation."]
+        }
+      },
+      "fitRules": ["mandir", "storage", "ventilation"]
+    },
+    "utility": {
+      "label": "Utility",
+      "grades": {
+        "compact": {
+          "minWidthFt": 3,
+          "minDepthFt": 6,
+          "minAreaSqFt": 18,
+          "notes": ["Compact utility; washing machine and sink need careful layout."]
+        },
+        "standard": {
+          "minWidthFt": 4,
+          "minDepthFt": 7,
+          "minAreaSqFt": 28,
+          "notes": ["Standard utility; washing, sink and storage can be planned."]
+        },
+        "premium": {
+          "minWidthFt": 5,
+          "minDepthFt": 8,
+          "minAreaSqFt": 40,
+          "notes": ["Premium utility; better for laundry, drying and storage."]
+        }
+      },
+      "fitRules": ["washing-machine", "sink", "drainage"]
+    },
+    "balcony": {
+      "label": "Balcony",
+      "grades": {
+        "compact": {
+          "minWidthFt": 3,
+          "minDepthFt": 6,
+          "minAreaSqFt": 18,
+          "notes": ["Compact balcony; standing/planter use only."]
+        },
+        "standard": {
+          "minWidthFt": 4,
+          "minDepthFt": 8,
+          "minAreaSqFt": 32,
+          "notes": ["Standard balcony; small seating possible."]
+        },
+        "premium": {
+          "minWidthFt": 5,
+          "minDepthFt": 10,
+          "minAreaSqFt": 50,
+          "notes": ["Premium balcony; seating and facade element possible."]
+        }
+      },
+      "fitRules": ["railing", "seating", "drainage"]
+    },
+    "parking": {
+      "label": "Car Parking Bay",
+      "grades": {
+        "compact": {
+          "minWidthFt": 8,
+          "minDepthFt": 14,
+          "minAreaSqFt": 112,
+          "notes": ["Compact car parking; suitable only with careful column/gate planning."]
+        },
+        "standard": {
+          "minWidthFt": 8.5,
+          "minDepthFt": 16,
+          "minAreaSqFt": 136,
+          "notes": ["Standard one-car parking bay planning assumption."]
+        },
+        "premium": {
+          "minWidthFt": 10,
+          "minDepthFt": 18,
+          "minAreaSqFt": 180,
+          "notes": ["Premium parking; better for larger car, door opening and movement."]
+        }
+      },
+      "fitRules": ["car-bay", "gate", "turning", "column-clearance"]
+    },
+    "staircase": {
+      "label": "Staircase",
+      "grades": {
+        "compact": {
+          "minWidthFt": 3,
+          "minDepthFt": 10,
+          "minAreaSqFt": 30,
+          "notes": ["Compact staircase; usable but tight."]
+        },
+        "standard": {
+          "minWidthFt": 3.5,
+          "minDepthFt": 12,
+          "minAreaSqFt": 42,
+          "notes": ["Standard residential staircase planning width assumption."]
+        },
+        "premium": {
+          "minWidthFt": 4.5,
+          "minDepthFt": 14,
+          "minAreaSqFt": 63,
+          "notes": ["Premium staircase; better movement and furniture shifting."]
+        }
+      },
+      "fitRules": ["width", "landing", "riser-tread", "headroom"]
+    },
+    "office_cabin": {
+      "label": "Office Cabin",
+      "grades": {
+        "compact": {
+          "minWidthFt": 7,
+          "minDepthFt": 10,
+          "minAreaSqFt": 70,
+          "notes": ["Compact cabin; single workstation and limited visitor seating."]
+        },
+        "standard": {
+          "minWidthFt": 9,
+          "minDepthFt": 11,
+          "minAreaSqFt": 100,
+          "notes": ["Standard cabin; desk, visitor chairs and storage can fit."]
+        },
+        "premium": {
+          "minWidthFt": 10.5,
+          "minDepthFt": 14,
+          "minAreaSqFt": 140,
+          "notes": ["Premium cabin; suitable for larger desk, meeting seating and storage."]
+        }
+      },
+      "fitRules": ["desk", "visitor-chair", "storage", "circulation"]
+    },
+    "clinic_consultation": {
+      "label": "Clinic Consultation Room",
+      "grades": {
+        "compact": {
+          "minWidthFt": 8,
+          "minDepthFt": 10,
+          "minAreaSqFt": 80,
+          "notes": ["Compact consultation room; desk, chairs and examination couch may be tight."]
+        },
+        "standard": {
+          "minWidthFt": 10,
+          "minDepthFt": 12,
+          "minAreaSqFt": 120,
+          "notes": ["Standard consultation; desk, visitor chairs, examination couch and handwash can be planned."]
+        },
+        "premium": {
+          "minWidthFt": 12,
+          "minDepthFt": 14,
+          "minAreaSqFt": 165,
+          "notes": ["Premium consultation; better privacy, couch clearance and storage."]
+        }
+      },
+      "fitRules": ["doctor-desk", "patient-chair", "examination-couch", "handwash"]
+    },
+    "classroom": {
+      "label": "Classroom",
+      "grades": {
+        "compact": {
+          "minWidthFt": 12,
+          "minDepthFt": 15,
+          "minAreaSqFt": 180,
+          "notes": ["Compact classroom; student capacity must be restricted."]
+        },
+        "standard": {
+          "minWidthFt": 15,
+          "minDepthFt": 20,
+          "minAreaSqFt": 300,
+          "notes": ["Standard classroom; capacity planning required."]
+        },
+        "premium": {
+          "minWidthFt": 20,
+          "minDepthFt": 25,
+          "minAreaSqFt": 500,
+          "notes": ["Premium classroom/training room; suitable for flexible seating."]
+        }
+      },
+      "fitRules": ["student-capacity", "aisle", "board-visibility", "exit"]
+    },
+    "warehouse_aisle": {
+      "label": "Warehouse Aisle / Rack Zone",
+      "grades": {
+        "compact": {
+          "minWidthFt": 4,
+          "minDepthFt": 20,
+          "minAreaSqFt": 80,
+          "notes": ["Compact aisle; manual movement only, confirm storage system."]
+        },
+        "standard": {
+          "minWidthFt": 6,
+          "minDepthFt": 30,
+          "minAreaSqFt": 180,
+          "notes": ["Standard aisle/rack zone; loading equipment must be confirmed."]
+        },
+        "premium": {
+          "minWidthFt": 8,
+          "minDepthFt": 40,
+          "minAreaSqFt": 320,
+          "notes": ["Premium aisle/rack zone; better for larger material movement."]
+        }
+      },
+      "fitRules": ["racking", "aisle", "loading", "fire-access"]
+    }
+  }
+}
