@@ -12,7 +12,12 @@
     {
       "id": "official_core_building_codes_india",
       "title": "Official Core Building Codes India",
-      "domains": ["architecture_planning", "civil_construction", "approvals_bylaws", "units_dimensions"],
+      "domains": [
+        "architecture_planning",
+        "civil_construction",
+        "approvals_bylaws",
+        "units_dimensions"
+      ],
       "priority": "high",
       "status": "active",
       "sources": [
@@ -25,7 +30,13 @@
           "sourceType": "official_primary",
           "url": "https://www.bis.gov.in/standards/technical-department/national-building-code/",
           "watch": true,
-          "tags": ["bis", "nbc", "construction", "building_code", "planning"]
+          "tags": [
+            "bis",
+            "nbc",
+            "construction",
+            "building_code",
+            "planning"
+          ]
         },
         {
           "id": "bis-sp73-building-regulations-2023",
@@ -36,7 +47,13 @@
           "sourceType": "official_primary",
           "url": "https://www.bis.gov.in/wp-content/uploads/2024/02/SP-732023-Standardized-Development-and-Building-Regulations-2023.pdf",
           "watch": true,
-          "tags": ["bis", "planning", "bylaws", "regulations", "dimensions"]
+          "tags": [
+            "bis",
+            "planning",
+            "bylaws",
+            "regulations",
+            "dimensions"
+          ]
         },
         {
           "id": "mohua-model-building-bye-laws",
@@ -47,17 +64,74 @@
           "sourceType": "official_primary",
           "url": "https://mohua.gov.in/",
           "watch": true,
-          "tags": ["mohua", "byelaws", "setback", "far", "approval"]
+          "tags": [
+            "mohua",
+            "byelaws",
+            "setback",
+            "far",
+            "approval"
+          ]
         }
       ]
     },
     {
       "id": "planning_dimensions_pack",
       "title": "Planning, Units and Dimensions Pack",
-      "domains": ["units_dimensions", "architecture_planning", "approvals_bylaws"],
+      "domains": [
+        "units_dimensions",
+        "architecture_planning",
+        "approvals_bylaws"
+      ],
       "priority": "high",
       "status": "framework_ready",
-      "sources": [],
+      "sources": [
+        {
+          "id": "mohua-urdpfi-guidelines-page",
+          "title": "MoHUA URDPFI Guidelines official page",
+          "url": "https://mohua.gov.in/link/urdpfi-guidelines.php",
+          "domains": [
+            "architecture_planning",
+            "approvals_bylaws",
+            "units_dimensions"
+          ],
+          "authorityType": "official_primary",
+          "publisher": "Ministry of Housing and Urban Affairs, Government of India",
+          "watch": true,
+          "reviewRequired": true,
+          "mergePolicy": "manual_review_required"
+        },
+        {
+          "id": "mohua-urdpfi-guidelines-vol-1",
+          "title": "MoHUA URDPFI Guidelines Volume I",
+          "url": "https://mohua.gov.in/upload/uploadfiles/files/URDPFI%20Guidelines%20Vol%20I%283%29.pdf",
+          "domains": [
+            "architecture_planning",
+            "approvals_bylaws",
+            "units_dimensions"
+          ],
+          "authorityType": "official_primary",
+          "publisher": "Ministry of Housing and Urban Affairs, Government of India",
+          "watch": true,
+          "reviewRequired": true,
+          "mergePolicy": "manual_review_required"
+        },
+        {
+          "id": "mohua-tod-guidance-document",
+          "title": "MoHUA Transit Oriented Development Guidance Document",
+          "url": "https://mohua.gov.in/upload/uploadfiles/files/TOD-Guidance-Document.pdf",
+          "domains": [
+            "architecture_planning",
+            "approvals_bylaws",
+            "units_dimensions",
+            "execution_planning"
+          ],
+          "authorityType": "official_primary",
+          "publisher": "Ministry of Housing and Urban Affairs, Government of India",
+          "watch": true,
+          "reviewRequired": true,
+          "mergePolicy": "manual_review_required"
+        }
+      ],
       "plannedTopics": [
         "standard room dimensions",
         "door/window planning dimensions",
@@ -69,7 +143,11 @@
     {
       "id": "interior_exterior_design_pack",
       "title": "Interior and Exterior Design Pack",
-      "domains": ["interior_design", "exterior_design", "construction_materials"],
+      "domains": [
+        "interior_design",
+        "exterior_design",
+        "construction_materials"
+      ],
       "priority": "medium",
       "status": "framework_ready",
       "sources": [],
@@ -84,7 +162,12 @@
     {
       "id": "construction_materials_execution_pack",
       "title": "Construction Materials and Execution Pack",
-      "domains": ["construction_materials", "civil_construction", "quality_check", "execution_planning"],
+      "domains": [
+        "construction_materials",
+        "civil_construction",
+        "quality_check",
+        "execution_planning"
+      ],
       "priority": "high",
       "status": "framework_ready",
       "sources": [],
@@ -99,7 +182,11 @@
     {
       "id": "boq_bbs_mep_pack",
       "title": "BOQ, BBS and MEP Coordination Pack",
-      "domains": ["boq", "bbs", "mep_basics"],
+      "domains": [
+        "boq",
+        "bbs",
+        "mep_basics"
+      ],
       "priority": "high",
       "status": "framework_ready",
       "sources": [],
@@ -114,7 +201,10 @@
     {
       "id": "vastu_advisory_pack",
       "title": "Vastu Advisory Pack",
-      "domains": ["vastu_guidance", "architecture_planning"],
+      "domains": [
+        "vastu_guidance",
+        "architecture_planning"
+      ],
       "priority": "medium",
       "status": "framework_ready",
       "sources": [],
@@ -126,5 +216,7 @@
       ],
       "disclaimer": "Vastu guidance is advisory and must not override safety, bylaws, structure, ventilation or client functional needs."
     }
-  ]
+  ],
+  "updatedAt": "2026-06-05T05:08:31.731Z",
+  "updatedBy": "phase_46a1_verified_mohua_planning_sources"
 }

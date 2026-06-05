@@ -91,6 +91,58 @@
         "approvals_bylaws",
         "units_dimensions"
       ]
+    },
+    {
+      "id": "mohua-urdpfi-guidelines-page",
+      "title": "MoHUA URDPFI Guidelines official page",
+      "url": "https://mohua.gov.in/link/urdpfi-guidelines.php",
+      "domains": [
+        "architecture_planning",
+        "approvals_bylaws",
+        "units_dimensions"
+      ],
+      "authorityType": "official_primary",
+      "publisher": "Ministry of Housing and Urban Affairs, Government of India",
+      "sourcePackId": "planning_dimensions_pack",
+      "sourcePackTitle": "Planning, Units and Dimensions Pack",
+      "watch": true,
+      "reviewRequired": true,
+      "mergePolicy": "manual_review_required"
+    },
+    {
+      "id": "mohua-urdpfi-guidelines-vol-1",
+      "title": "MoHUA URDPFI Guidelines Volume I",
+      "url": "https://mohua.gov.in/upload/uploadfiles/files/URDPFI%20Guidelines%20Vol%20I%283%29.pdf",
+      "domains": [
+        "architecture_planning",
+        "approvals_bylaws",
+        "units_dimensions"
+      ],
+      "authorityType": "official_primary",
+      "publisher": "Ministry of Housing and Urban Affairs, Government of India",
+      "sourcePackId": "planning_dimensions_pack",
+      "sourcePackTitle": "Planning, Units and Dimensions Pack",
+      "watch": true,
+      "reviewRequired": true,
+      "mergePolicy": "manual_review_required"
+    },
+    {
+      "id": "mohua-tod-guidance-document",
+      "title": "MoHUA Transit Oriented Development Guidance Document",
+      "url": "https://mohua.gov.in/upload/uploadfiles/files/TOD-Guidance-Document.pdf",
+      "domains": [
+        "architecture_planning",
+        "approvals_bylaws",
+        "units_dimensions",
+        "execution_planning"
+      ],
+      "authorityType": "official_primary",
+      "publisher": "Ministry of Housing and Urban Affairs, Government of India",
+      "sourcePackId": "planning_dimensions_pack",
+      "sourcePackTitle": "Planning, Units and Dimensions Pack",
+      "watch": true,
+      "reviewRequired": true,
+      "mergePolicy": "manual_review_required"
     }
   ],
   "sourcePackSync": {
@@ -98,5 +150,7 @@
     "lastSyncedAt": "2026-06-04T12:09:04.732Z",
     "autoMerge": false,
     "reviewRequired": true
-  }
+  },
+  "updatedAt": "2026-06-05T05:08:31.732Z",
+  "updatedBy": "phase_46a1_verified_mohua_planning_sources"
 }
