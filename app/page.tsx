@@ -8598,6 +8598,7 @@ function buildToolHrefWithActiveProject(slug: string, projectId?: string) {
   }
 
   function renderPlanningUiAdapterCards(adapter: any) {
+    // BUILDSETU_PHASE_47S1_CHATGPT_STYLE_PLANNING_UI
     if (!adapter || adapter.engineVersion !== "47Q-1") return null;
 
     const qa = adapter.qaBadge || {};
@@ -8605,99 +8606,88 @@ function buildToolHrefWithActiveProject(slug: string, projectId?: string) {
     const decisionCards = Array.isArray(adapter.decisionCards) ? adapter.decisionCards : [];
     const blockedCards = Array.isArray(adapter.blockedCards) ? adapter.blockedCards : [];
     const sectionTabs = Array.isArray(adapter.sectionTabs) ? adapter.sectionTabs : [];
+    const totalQa = (qa.pass || 0) + (qa.warn || 0) + (qa.fail || 0);
 
     return (
-      <div className="mt-3 space-y-3 rounded-[20px] border border-[#e8ddf8] bg-[#fbf8ff] p-3">
-        <div className="flex flex-wrap items-center justify-between gap-2">
-          <div>
-            <div className="text-[11px] font-black uppercase tracking-[0.14em] text-[#7c3aed]">Planning package</div>
-            <div className="mt-0.5 text-[13px] font-black text-[#21133f]">{adapter.title || "BuildSetu Planning Response"}</div>
-          </div>
-          <div className="rounded-full border border-[#d8c8f2] bg-white px-3 py-1 text-[11px] font-black text-[#21133f]">
-            QA: {qa.status || "unknown"} · {qa.pass || 0}/{(qa.pass || 0) + (qa.warn || 0) + (qa.fail || 0)}
-          </div>
+      <div className="mt-3 border-t border-[#eee7f8] pt-3">
+        <div className="flex flex-wrap items-center gap-2 text-[11px] text-[#817397]">
+          <span className="rounded-full bg-[#f6f0ff] px-2.5 py-1 font-bold text-[#6d28d9]">
+            Planning ready
+          </span>
+          <span>QA: {qa.status || "unknown"} {totalQa ? `${qa.pass || 0}/${totalQa}` : ""}</span>
+          {adapter.primaryCta ? <span>• {adapter.primaryCta}</span> : null}
         </div>
 
-        {adapter.primaryCta ? (
-          <div className="rounded-2xl border border-[#d8c8f2] bg-white p-3">
-            <div className="text-[11px] font-bold uppercase tracking-[0.12em] text-[#817397]">Primary next action</div>
-            <div className="mt-1 text-[13px] font-black text-[#21133f]">{adapter.primaryCta}</div>
-          </div>
-        ) : null}
-
         {actionCards.length ? (
-          <div className="grid gap-2 md:grid-cols-2">
-            {actionCards.slice(0, 6).map((card: any) => (
+          <div className="mt-2 flex flex-wrap gap-2">
+            {actionCards.slice(0, 5).map((card: any) => (
               <button
                 key={card.id || card.title}
                 type="button"
-                className="rounded-2xl border border-[#e8ddf8] bg-white p-3 text-left transition hover:border-[#7c3aed]"
-                title={card.targetWorkflow || ""}
+                className="rounded-full border border-[#e8ddf8] bg-white px-3 py-1.5 text-[11px] font-bold text-[#2b164f] transition hover:border-[#7c3aed] hover:bg-[#fbf8ff]"
+                title={card.description || card.targetWorkflow || ""}
               >
-                <div className="flex items-center justify-between gap-2">
-                  <span className="text-[12px] font-black text-[#21133f]">{card.title || "Planning action"}</span>
-                  <span className="rounded-full bg-[#f1ecff] px-2 py-0.5 text-[10px] font-bold text-[#6d28d9]">
-                    {card.priority || "action"}
-                  </span>
-                </div>
-                <p className="mt-1 text-[11px] leading-relaxed text-[#6b5c7f]">{card.description || "Ready for planning workflow."}</p>
+                {card.title || "Planning action"}
               </button>
             ))}
           </div>
         ) : null}
 
-        {decisionCards.length ? (
-          <details className="rounded-2xl border border-[#e8ddf8] bg-white p-3">
-            <summary className="cursor-pointer text-[12px] font-black text-[#21133f]">
-              Lock decisions ({decisionCards.length})
-            </summary>
-            <div className="mt-2 space-y-2">
-              {decisionCards.slice(0, 8).map((card: any) => (
-                <div key={card.id || card.title} className="rounded-xl bg-[#fbf8ff] p-2">
-                  <div className="text-[11px] font-black text-[#21133f]">{card.title || "Decision"}</div>
-                  <div className="mt-0.5 text-[11px] leading-relaxed text-[#6b5c7f]">{card.description || ""}</div>
-                </div>
-              ))}
-            </div>
-          </details>
-        ) : null}
+        <details className="mt-2 rounded-2xl border border-[#eee7f8] bg-white/70 px-3 py-2">
+          <summary className="cursor-pointer text-[12px] font-bold text-[#6d28d9]">
+            View planning details
+          </summary>
 
-        {blockedCards.length ? (
-          <details className="rounded-2xl border border-[#fecaca] bg-[#fff7f7] p-3">
-            <summary className="cursor-pointer text-[12px] font-black text-[#991b1b]">
-              Blocked outputs ({blockedCards.length})
-            </summary>
-            <div className="mt-2 space-y-2">
-              {blockedCards.slice(0, 6).map((card: any) => (
-                <div key={card.id || card.title} className="rounded-xl bg-white p-2">
-                  <div className="text-[11px] font-black text-[#991b1b]">{card.title || "Blocked output"}</div>
-                  <div className="mt-0.5 text-[11px] leading-relaxed text-[#7f1d1d]">{card.description || ""}</div>
-                </div>
-              ))}
-            </div>
-          </details>
-        ) : null}
-
-        {sectionTabs.length ? (
-          <details className="rounded-2xl border border-[#e8ddf8] bg-white p-3">
-            <summary className="cursor-pointer text-[12px] font-black text-[#21133f]">
-              Planning sections ({sectionTabs.length})
-            </summary>
-            <div className="mt-2 grid gap-2 md:grid-cols-2">
-              {sectionTabs.slice(0, 12).map((tab: any) => (
-                <div key={tab.id || tab.title} className="rounded-xl bg-[#fbf8ff] p-2">
-                  <div className="text-[11px] font-black text-[#21133f]">{tab.title || "Section"} · {tab.itemCount || 0}</div>
-                  {(Array.isArray(tab.preview) ? tab.preview : []).slice(0, 2).map((item: any, index: number) => (
-                    <div key={index} className="mt-1 text-[10.5px] leading-relaxed text-[#6b5c7f]">{String(item)}</div>
+          <div className="mt-3 space-y-3 text-[12px] text-[#2b164f]">
+            {blockedCards.length ? (
+              <div>
+                <div className="font-black text-[#991b1b]">Blocked outputs</div>
+                <div className="mt-1 space-y-1">
+                  {blockedCards.slice(0, 5).map((card: any) => (
+                    <div key={card.id || card.title} className="rounded-xl bg-[#fff7f7] px-3 py-2 text-[#7f1d1d]">
+                      <div className="font-bold">{card.title || "Blocked output"}</div>
+                      <div className="mt-0.5 text-[11px]">{card.description || ""}</div>
+                    </div>
                   ))}
                 </div>
-              ))}
-            </div>
-          </details>
-        ) : null}
+              </div>
+            ) : null}
+
+            {decisionCards.length ? (
+              <div>
+                <div className="font-black">Decisions to confirm</div>
+                <div className="mt-1 space-y-1">
+                  {decisionCards.slice(0, 6).map((card: any) => (
+                    <div key={card.id || card.title} className="rounded-xl bg-[#fbf8ff] px-3 py-2">
+                      <div className="font-bold">{card.title || "Decision"}</div>
+                      <div className="mt-0.5 text-[11px] text-[#6b5c7f]">{card.description || ""}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ) : null}
+
+            {sectionTabs.length ? (
+              <div>
+                <div className="font-black">Planning sections</div>
+                <div className="mt-1 grid gap-1.5 md:grid-cols-2">
+                  {sectionTabs.slice(0, 10).map((tab: any) => (
+                    <div key={tab.id || tab.title} className="rounded-xl bg-[#fbf8ff] px-3 py-2">
+                      <div className="font-bold">{tab.title || "Section"} · {tab.itemCount || 0}</div>
+                      {(Array.isArray(tab.preview) ? tab.preview : []).slice(0, 1).map((item: any, index: number) => (
+                        <div key={index} className="mt-0.5 text-[11px] text-[#6b5c7f]">{String(item)}</div>
+                      ))}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ) : null}
+          </div>
+        </details>
       </div>
     );
   }
+
 
   const fileMessages = projectUnifiedChat
     .filter((message) => message.finalPrompt || message.status === "RESULT_GENERATED")
