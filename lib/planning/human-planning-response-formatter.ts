@@ -103,6 +103,34 @@ type RoomFurnitureFitEngineLike = {
   professionalNotes?: string[];
 };
 
+// BUILDSETU_PHASE_47H2_STANDARDS_HUMAN_MERGE
+type RoomSpaceStandardsEngineLike = {
+  standardsId?: string;
+  standardsVersion?: string;
+  hasStandardsContext?: boolean;
+  checks?: Array<{
+    id?: string;
+    sourceDimension?: string;
+    detectedRoomType?: string;
+    standardsKey?: string;
+    standardsLabel?: string;
+    widthFeet?: number | null;
+    depthFeet?: number | null;
+    areaSqFt?: number | null;
+    shortSideFt?: number | null;
+    longSideFt?: number | null;
+    grade?: string;
+    matchedGrade?: string | null;
+    recommendation?: string;
+    targetRanges?: string[];
+    standardsNotes?: string[];
+    fitRules?: string[];
+    warnings?: string[];
+  }>;
+  globalRecommendations?: string[];
+  standardsDisclaimer?: string[];
+};
+
 export type BuildSetuHumanPlanningResponse = {
   responseVersion: "47E-1";
   title: string;
@@ -126,6 +154,10 @@ export type BuildSetuHumanPlanningResponse = {
     clearanceNotes: string[];
     furnitureFixtureWarnings: string[];
     dataNeededForFinalLayout: string[];
+    roomSpaceStandards: string[];
+    standardsTargetRanges: string[];
+    standardsRecommendations: string[];
+    standardsDisclaimer: string[];
     riskAndVerification: string[];
     nextBestActions: string[];
   };
@@ -218,8 +250,12 @@ function buildMarkdown(title: string, sections: BuildSetuHumanPlanningResponse["
     ["15. Clearance notes", sections.clearanceNotes],
     ["16. Furniture / fixture warnings", sections.furnitureFixtureWarnings],
     ["17. Data needed for final layout", sections.dataNeededForFinalLayout],
-    ["18. Risks / professional verification", sections.riskAndVerification],
-    ["19. Next best action", sections.nextBestActions],
+    ["18. Room / space standards", sections.roomSpaceStandards],
+    ["19. Recommended target ranges", sections.standardsTargetRanges],
+    ["20. Standards recommendations", sections.standardsRecommendations],
+    ["21. Standards disclaimer", sections.standardsDisclaimer],
+    ["22. Risks / professional verification", sections.riskAndVerification],
+    ["23. Next best action", sections.nextBestActions],
   ];
 
   for (const [heading, lines] of ordered) {
@@ -247,6 +283,7 @@ export function buildHumanPlanningResponse(input: {
   planningModeQuestionTuning?: PlanningModeQuestionTuningLike;
   conceptPlanningActionEngine?: ConceptPlanningActionEngineLike;
   roomFurnitureFitEngine?: RoomFurnitureFitEngineLike;
+  roomSpaceStandardsEngine?: RoomSpaceStandardsEngineLike;
 }): BuildSetuHumanPlanningResponse {
   const inputText = cleanText(input.inputText);
   const dim = input.dimensionUnderstanding;
@@ -255,6 +292,7 @@ export function buildHumanPlanningResponse(input: {
   const mode = input.planningModeQuestionTuning;
   const concept = input.conceptPlanningActionEngine;
   const roomFit = input.roomFurnitureFitEngine;
+  const standards = input.roomSpaceStandardsEngine;
 
   const category = normalizeLabel(building?.category);
   const subType = normalizeLabel(building?.subType);
@@ -290,6 +328,10 @@ export function buildHumanPlanningResponse(input: {
     clearanceNotes: [],
     furnitureFixtureWarnings: [],
     dataNeededForFinalLayout: [],
+    roomSpaceStandards: [],
+    standardsTargetRanges: [],
+    standardsRecommendations: [],
+    standardsDisclaimer: [],
     riskAndVerification: [],
     nextBestActions: [],
   };
@@ -468,6 +510,58 @@ export function buildHumanPlanningResponse(input: {
 
   if (!sections.dataNeededForFinalLayout.length) {
     pushUnique(sections.dataNeededForFinalLayout, "Confirm site measurement, wall thickness, doors, windows, columns and service points before final layout.");
+  }
+
+  if (standards?.checks?.length) {
+    for (const check of standards.checks.slice(0, 10)) {
+      const label = cleanText(check.standardsLabel || "Space");
+      const source = cleanText(check.sourceDimension || "dimension");
+      const grade = cleanText(check.grade || "unknown");
+      const recommendation = cleanText(check.recommendation || "Standards recommendation unavailable.");
+
+      pushUnique(sections.roomSpaceStandards, `${label} ${source}: ${grade} — ${recommendation}`);
+
+      for (const range of check.targetRanges || []) {
+        pushUnique(sections.standardsTargetRanges, `${label}: ${range}`);
+      }
+
+      for (const note of check.standardsNotes || []) {
+        pushUnique(sections.standardsRecommendations, `${label}: ${note}`);
+      }
+
+      for (const rule of check.fitRules || []) {
+        pushUnique(sections.standardsRecommendations, `${label} fit rule: ${rule}`);
+      }
+
+      for (const warning of check.warnings || []) {
+        pushUnique(sections.furnitureFixtureWarnings, `${label}: ${warning}`);
+      }
+    }
+  }
+
+  for (const item of standards?.globalRecommendations || []) {
+    pushUnique(sections.standardsRecommendations, item);
+  }
+
+  for (const item of standards?.standardsDisclaimer || []) {
+    pushUnique(sections.standardsDisclaimer, item);
+    pushUnique(sections.riskAndVerification, item);
+  }
+
+  if (!sections.roomSpaceStandards.length) {
+    pushUnique(sections.roomSpaceStandards, "No room/space standards grading available yet. Add room dimensions to compare against planning benchmarks.");
+  }
+
+  if (!sections.standardsTargetRanges.length) {
+    pushUnique(sections.standardsTargetRanges, "Target ranges will be shown after a detected room type and dimensions are available.");
+  }
+
+  if (!sections.standardsRecommendations.length) {
+    pushUnique(sections.standardsRecommendations, "No standards recommendation generated yet.");
+  }
+
+  if (!sections.standardsDisclaimer.length) {
+    pushUnique(sections.standardsDisclaimer, "Room standards are preliminary planning heuristics, not final legal/code values.");
   }
 
   for (const risk of mq?.riskFlags || []) {

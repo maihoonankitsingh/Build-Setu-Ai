@@ -110,6 +110,7 @@ export async function runUniversalPlanningAgent(input: UniversalPlanningAgentInp
     planningModeQuestionTuning,
     conceptPlanningActionEngine,
     roomFurnitureFitEngine,
+    roomSpaceStandardsEngine,
   });
   const humanPlanningResponsePromptBlock = buildHumanPlanningResponsePromptBlock(humanPlanningResponse);
   const spaceProgram = getSpaceProgram(requirement);
