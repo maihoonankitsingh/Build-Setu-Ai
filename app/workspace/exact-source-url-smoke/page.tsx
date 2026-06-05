@@ -92,6 +92,7 @@ export default function ExactSourceUrlSmokePage() {
   }, []);
 
   const summary = data?.summary;
+  const isDataReady = Boolean(data && !loading && !error);
   const failedItems = data?.results?.filter((item) => !item.smoke.ok) || [];
   const reachableItems = data?.results?.filter((item) => item.smoke.ok) || [];
 
@@ -129,20 +130,20 @@ export default function ExactSourceUrlSmokePage() {
             marginBottom: 24,
           }}
         >
-          <Metric label="Verified URLs" value={summary?.verifiedExactSourceUrls ?? 0} />
-          <Metric label="Reachable" value={summary?.reachable ?? 0} />
-          <Metric label="Failed Smoke" value={summary?.failed ?? 0} />
+          <Metric label="Verified URLs" value={isDataReady ? summary?.verifiedExactSourceUrls ?? 0 : "Loading"} />
+          <Metric label="Reachable" value={isDataReady ? summary?.reachable ?? 0 : "Loading"} />
+          <Metric label="Failed Smoke" value={isDataReady ? summary?.failed ?? 0 : "Loading"} />
           <Metric
             label="Manual Review"
-            value={summary?.manualVerificationRequired ?? 0}
+            value={isDataReady ? summary?.manualVerificationRequired ?? 0 : "Loading"}
           />
           <Metric
             label="Invalid Confirmed"
-            value={summary?.sourceInvalidConfirmed ?? 0}
+            value={isDataReady ? summary?.sourceInvalidConfirmed ?? 0 : "Loading"}
           />
           <Metric
             label="Registry Pass"
-            value={summary?.sourceRegistryPassWithManualReview ? "Yes" : "No"}
+            value={isDataReady ? summary?.sourceRegistryPassWithManualReview ? "Yes" : "No" : "Loading"}
           />
         </section>
 
@@ -288,6 +289,7 @@ function StatusLine({
   label: string;
   value: boolean | undefined;
 }) {
+  const isLoading = value === undefined;
   const safe = value === false;
 
   return (
@@ -299,12 +301,12 @@ function StatusLine({
         border: "1px solid #e2e8f0",
         borderRadius: 10,
         padding: "10px 12px",
-        background: safe ? "#f0fdf4" : "#fef2f2",
+        background: isLoading ? "#f8fafc" : safe ? "#f0fdf4" : "#fef2f2",
       }}
     >
       <span>{label}</span>
-      <strong style={{ color: safe ? "#166534" : "#991b1b" }}>
-        {String(value)}
+      <strong style={{ color: isLoading ? "#64748b" : safe ? "#166534" : "#991b1b" }}>
+        {isLoading ? "Loading" : String(value)}
       </strong>
     </div>
   );
