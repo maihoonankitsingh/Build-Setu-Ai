@@ -195,8 +195,16 @@ function detectIntentForPair(nearbyText: string, rawPair: string): BuildSetuDime
     return "plot";
   }
 
+  // BUILDSETU_PHASE_47B2_AFTER_DIMENSION_PLOT_WORD
+  // Handles prompts like: "30x40 ft east facing plot" where the word plot
+  // appears after the dimension rather than before it.
+  if (/\b(plot|site|land|lot|frontage|corner plot)\b/i.test(immediateAfter)) {
+    return "plot";
+  }
+
   if (/\b(east|west|north|south|facing|corner)\b/i.test(immediateAfter) &&
-      /(plot|site|land|lot|frontage|corner plot)\b/i.test(immediateBefore)) {
+      (/(plot|site|land|lot|frontage|corner plot)\b/i.test(immediateBefore) ||
+       /\b(plot|site|land|lot|frontage|corner plot)\b/i.test(after.slice(0, 90)))) {
     return "plot";
   }
 
