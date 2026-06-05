@@ -170,6 +170,59 @@ type PlanningReferenceIntelligenceLike = {
   nextActions?: string[];
 };
 
+// BUILDSETU_PHASE_47NOP_HUMAN_MERGE
+type PlanningProjectMemoryEngineLike = {
+  engineVersion?: string;
+  projectId?: string | null;
+  hasProjectContext?: boolean;
+  memoryLockCandidates?: Array<{
+    key?: string;
+    label?: string;
+    value?: string;
+    lockStatus?: string;
+    reason?: string;
+  }>;
+  versioningNotes?: string[];
+  changeControlQuestions?: string[];
+  persistenceSafetyRules?: string[];
+  nextActions?: string[];
+};
+
+type PlanningOutputRoutingEngineLike = {
+  engineVersion?: string;
+  requestedOutputs?: string[];
+  routePlan?: Array<{
+    route?: string;
+    priority?: string;
+    reason?: string;
+    prerequisites?: string[];
+    targetApiOrWorkflow?: string;
+  }>;
+  blockedOutputs?: Array<{
+    route?: string;
+    priority?: string;
+    reason?: string;
+    prerequisites?: string[];
+    targetApiOrWorkflow?: string;
+  }>;
+  nextActionOrder?: string[];
+};
+
+type PlanningRegressionQaEngineLike = {
+  engineVersion?: string;
+  overallStatus?: string;
+  summary?: {
+    pass?: number;
+    warn?: number;
+    fail?: number;
+  };
+  checks?: Array<{
+    id?: string;
+    status?: string;
+    message?: string;
+  }>;
+};
+
 export type BuildSetuHumanPlanningResponse = {
   responseVersion: "47E-1";
   title: string;
@@ -206,6 +259,9 @@ export type BuildSetuHumanPlanningResponse = {
     referenceExtractionChecklist: string[];
     referencePlanningImpact: string[];
     referenceConfirmations: string[];
+    projectMemoryVersioning: string[];
+    outputTaskRouting: string[];
+    qaRegressionMatrix: string[];
     riskAndVerification: string[];
     nextBestActions: string[];
   };
@@ -311,8 +367,11 @@ function buildMarkdown(title: string, sections: BuildSetuHumanPlanningResponse["
     ["28. Reference extraction checklist", sections.referenceExtractionChecklist],
     ["29. Reference planning impact", sections.referencePlanningImpact],
     ["30. Reference confirmations", sections.referenceConfirmations],
-    ["31. Risks / professional verification", sections.riskAndVerification],
-    ["32. Next best action", sections.nextBestActions],
+    ["31. Project memory / versioning", sections.projectMemoryVersioning],
+    ["32. Output task routing", sections.outputTaskRouting],
+    ["33. QA regression matrix", sections.qaRegressionMatrix],
+    ["34. Risks / professional verification", sections.riskAndVerification],
+    ["35. Next best action", sections.nextBestActions],
   ];
 
   for (const [heading, lines] of ordered) {
@@ -343,6 +402,9 @@ export function buildHumanPlanningResponse(input: {
   roomSpaceStandardsEngine?: RoomSpaceStandardsEngineLike;
   planningCategoryIntelligence?: PlanningCategoryIntelligenceLike;
   planningReferenceIntelligence?: PlanningReferenceIntelligenceLike;
+  planningProjectMemoryEngine?: PlanningProjectMemoryEngineLike;
+  planningOutputRoutingEngine?: PlanningOutputRoutingEngineLike;
+  planningRegressionQaEngine?: PlanningRegressionQaEngineLike;
 }): BuildSetuHumanPlanningResponse {
   const inputText = cleanText(input.inputText);
   const dim = input.dimensionUnderstanding;
@@ -354,6 +416,9 @@ export function buildHumanPlanningResponse(input: {
   const standards = input.roomSpaceStandardsEngine;
   const categoryIntel = input.planningCategoryIntelligence;
   const referenceIntel = input.planningReferenceIntelligence;
+  const projectMemory = input.planningProjectMemoryEngine;
+  const outputRouting = input.planningOutputRoutingEngine;
+  const regressionQa = input.planningRegressionQaEngine;
 
   const category = normalizeLabel(building?.category);
   const subType = normalizeLabel(building?.subType);
@@ -402,6 +467,9 @@ export function buildHumanPlanningResponse(input: {
     referenceExtractionChecklist: [],
     referencePlanningImpact: [],
     referenceConfirmations: [],
+    projectMemoryVersioning: [],
+    outputTaskRouting: [],
+    qaRegressionMatrix: [],
     riskAndVerification: [],
     nextBestActions: [],
   };
@@ -740,6 +808,76 @@ export function buildHumanPlanningResponse(input: {
 
   if (!sections.referenceConfirmations.length) {
     pushUnique(sections.referenceConfirmations, "Confirm whether any uploaded reference should be matched exactly, inspired by, or used only for partial ideas.");
+  }
+
+  if (projectMemory?.memoryLockCandidates?.length) {
+    for (const item of projectMemory.memoryLockCandidates.slice(0, 10)) {
+      pushUnique(
+        sections.projectMemoryVersioning,
+        `${cleanText(item.label)}: ${cleanText(item.value)} [${cleanText(item.lockStatus)}] — ${cleanText(item.reason)}`
+      );
+    }
+  }
+
+  for (const item of projectMemory?.versioningNotes || []) {
+    pushUnique(sections.projectMemoryVersioning, item);
+  }
+
+  for (const item of projectMemory?.changeControlQuestions || []) {
+    pushUnique(sections.projectMemoryVersioning, `Question: ${item}`);
+  }
+
+  for (const item of projectMemory?.persistenceSafetyRules || []) {
+    pushUnique(sections.riskAndVerification, item);
+  }
+
+  for (const item of projectMemory?.nextActions || []) {
+    pushUnique(sections.nextBestActions, item);
+  }
+
+  if (outputRouting?.routePlan?.length) {
+    for (const item of outputRouting.routePlan.slice(0, 12)) {
+      pushUnique(
+        sections.outputTaskRouting,
+        `${cleanText(item.route)} [${cleanText(item.priority)}]: ${cleanText(item.reason)}`
+      );
+      for (const prerequisite of item.prerequisites || []) {
+        pushUnique(sections.outputTaskRouting, `${cleanText(item.route)} prerequisite: ${prerequisite}`);
+      }
+    }
+  }
+
+  for (const item of outputRouting?.blockedOutputs || []) {
+    pushUnique(sections.outputTaskRouting, `Blocked ${cleanText(item.route)}: ${cleanText(item.reason)}`);
+  }
+
+  for (const item of outputRouting?.nextActionOrder || []) {
+    pushUnique(sections.nextBestActions, item);
+  }
+
+  if (regressionQa) {
+    pushUnique(
+      sections.qaRegressionMatrix,
+      `Overall QA status: ${cleanText(regressionQa.overallStatus)} / pass ${regressionQa.summary?.pass ?? 0}, warn ${regressionQa.summary?.warn ?? 0}, fail ${regressionQa.summary?.fail ?? 0}`
+    );
+    for (const check of regressionQa.checks || []) {
+      pushUnique(
+        sections.qaRegressionMatrix,
+        `${cleanText(check.id)}: ${cleanText(check.status)} — ${cleanText(check.message)}`
+      );
+    }
+  }
+
+  if (!sections.projectMemoryVersioning.length) {
+    pushUnique(sections.projectMemoryVersioning, "No project memory lock candidates generated yet.");
+  }
+
+  if (!sections.outputTaskRouting.length) {
+    pushUnique(sections.outputTaskRouting, "No output route detected yet; default to concept planning.");
+  }
+
+  if (!sections.qaRegressionMatrix.length) {
+    pushUnique(sections.qaRegressionMatrix, "QA regression matrix not available for this response.");
   }
 
   for (const risk of mq?.riskFlags || []) {
