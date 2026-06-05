@@ -18,7 +18,7 @@ function detectUniversalAgentDomainV5B(body: any) {
 }
 
 function attachUniversalAgentQualityBrainV5B(body: any) {
-  const basePrompt = String(body?.prompt || body?.userPrompt || body?.requirement || "");
+  const basePrompt = String(body?.prompt || body?.userPrompt || body?.requirement || body?.message || body?.userText || body?.text || "");
   return attachUniversalQualityBrainToPrompt({
     basePrompt,
     projectId: body?.projectId || body?.projectContext?.projectId || body?.project?.id || "global",
@@ -32,6 +32,21 @@ function attachUniversalAgentQualityBrainV5B(body: any) {
 function safeUniversalAgentText(value: unknown, fallback = "") {
   const text = String(value ?? "").trim();
   return text || fallback;
+}
+
+
+
+// BUILDSETU_PHASE_47A4_RAW_USER_TEXT_FOR_DIMENSIONS
+function getUniversalAgentRawUserTextV47A4(body: any) {
+  return safeUniversalAgentText(
+    body?.userText ||
+    body?.message ||
+    body?.prompt ||
+    body?.userPrompt ||
+    body?.requirement ||
+    body?.text ||
+    ""
+  );
 }
 
 function isReadOnlySavedKnowledgeUniversalAgentRequest(body: any) {
@@ -129,8 +144,12 @@ export async function POST(req: NextRequest) {
       });
     }
 
+    const rawUserText = getUniversalAgentRawUserTextV47A4(body);
+
     const result = await runUniversalPlanningAgent({
       prompt: attachUniversalAgentQualityBrainV5B(body),
+      message: rawUserText,
+      userText: rawUserText,
       projectTitle: body?.projectTitle || body?.projectName || "",
       project: body?.project || body?.projectContext || {},
     });
