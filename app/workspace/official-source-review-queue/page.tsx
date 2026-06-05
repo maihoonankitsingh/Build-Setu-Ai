@@ -274,6 +274,13 @@ export default function OfficialSourceReviewQueuePage() {
               >
                 Knowledge Inbox
               </a>
+              <a
+                href="/workspace/official-source-extraction-drafts"
+                data-buildsetu-marker="BUILDSETU_OFFICIAL_SOURCE_EXTRACTION_DRAFTS_NAV_LINK_V1"
+                className="rounded-2xl border border-slate-700 px-4 py-2 text-sm font-semibold text-slate-200 hover:border-cyan-400 hover:text-cyan-200"
+              >
+                Extraction Drafts
+              </a>
               <button
                 type="button"
                 onClick={loadQueue}
