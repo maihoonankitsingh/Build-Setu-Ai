@@ -31,6 +31,16 @@ type AuditData = {
       duplicatePackSourceKeys: number;
       duplicateWatchSourceKeys: number;
     };
+    stateUtVerificationTracker?: {
+      totalStateUtAuthorityIndexSources: number;
+      pendingExactSource: number;
+      verifiedExactSource: number;
+      highPriorityPending: number;
+      missingTracker: number;
+      byVerificationStatus: Record<string, number>;
+      byExactSourceStatus: Record<string, number>;
+      byPriority: Record<string, number>;
+    };
   };
   domainCoverage: Record<string, number>;
   packs: Array<{
@@ -93,6 +103,16 @@ export default function SourceCoverageAuditPage() {
   }, []);
 
   const allIndia = audit?.summary?.allIndiaAuthorityIndex;
+  const tracker = audit?.summary?.stateUtVerificationTracker || {
+    totalStateUtAuthorityIndexSources: 0,
+    pendingExactSource: 0,
+    verifiedExactSource: 0,
+    highPriorityPending: 0,
+    missingTracker: 0,
+    byVerificationStatus: {},
+    byExactSourceStatus: {},
+    byPriority: {},
+  };
   const safety = audit?.summary?.safety || {
     unsafeSources: 0,
     duplicatePackSourceKeys: 0,
@@ -189,6 +209,41 @@ export default function SourceCoverageAuditPage() {
               <Metric label="States" value={`${allIndia?.states || 0}/${allIndia?.expectedStates || 28}`} />
               <Metric label="Union Territories" value={`${allIndia?.unionTerritories || 0}/${allIndia?.expectedUnionTerritories || 8}`} />
               <Metric label="Index Sources" value={allIndia?.sourceCount || 0} />
+            </div>
+          </section>
+
+          <section
+            style={{
+              border: "1px solid #e2e8f0",
+              borderRadius: 16,
+              padding: 20,
+              marginBottom: 24,
+              background: "#ffffff",
+            }}
+          >
+            <h2 style={{ margin: "0 0 12px", fontSize: 22 }}>
+              Exact Source Verification Tracker
+            </h2>
+
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+                gap: 12,
+                marginBottom: 16,
+              }}
+            >
+              <Metric label="State/UT Trackers" value={tracker.totalStateUtAuthorityIndexSources} />
+              <Metric label="Pending Exact Source" value={tracker.pendingExactSource} />
+              <Metric label="Verified Exact Source" value={tracker.verifiedExactSource} />
+              <Metric label="High Priority Pending" value={tracker.highPriorityPending} />
+              <Metric label="Missing Tracker" value={tracker.missingTracker} />
+            </div>
+
+            <div style={{ display: "grid", gap: 8 }}>
+              <SmallBreakdown title="Verification Status" data={tracker.byVerificationStatus} />
+              <SmallBreakdown title="Exact Source Status" data={tracker.byExactSourceStatus} />
+              <SmallBreakdown title="Priority" data={tracker.byPriority} />
             </div>
           </section>
 
@@ -332,6 +387,53 @@ function Td({ children }: { children: React.ReactNode }) {
     >
       {children}
     </td>
+  );
+}
+
+function SmallBreakdown({
+  title,
+  data,
+}: {
+  title: string;
+  data: Record<string, number>;
+}) {
+  const entries = Object.entries(data || {});
+
+  return (
+    <div
+      style={{
+        border: "1px solid #e2e8f0",
+        borderRadius: 12,
+        padding: 12,
+        background: "#f8fafc",
+      }}
+    >
+      <strong style={{ display: "block", marginBottom: 8 }}>{title}</strong>
+      {entries.length === 0 ? (
+        <span style={{ color: "#64748b" }}>No data</span>
+      ) : (
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+          {entries.map(([key, value]) => (
+            <span
+              key={key}
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 6,
+                border: "1px solid #cbd5e1",
+                borderRadius: 999,
+                padding: "6px 10px",
+                background: "#ffffff",
+                color: "#334155",
+                fontSize: 13,
+              }}
+            >
+              {key}: <strong>{value}</strong>
+            </span>
+          ))}
+        </div>
+      )}
+    </div>
   );
 }
 
