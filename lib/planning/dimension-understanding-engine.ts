@@ -101,6 +101,39 @@ function normalizeWhitespace(text: string): string {
 function detectIntent(nearbyText: string): BuildSetuDimensionIntent {
   const t = nearbyText.toLowerCase();
 
+  // BUILDSETU_PHASE_47A6_SEQUENCE_AWARE_INTENT
+  // If the dimension itself is introduced by plot/site terms or followed by facing terms,
+  // lock it as plot before room labels later in the sentence can override it.
+  const lastPairLike = Math.max(
+    t.lastIndexOf("x"),
+    t.lastIndexOf(" by "),
+    t.lastIndexOf("*")
+  );
+
+  const beforeDimension = lastPairLike >= 0 ? t.slice(0, lastPairLike) : t;
+  const afterDimension = lastPairLike >= 0 ? t.slice(lastPairLike) : "";
+
+  const immediateBefore = beforeDimension.slice(-55);
+  const immediateAfter = afterDimension.slice(0, 90);
+
+  if (/(plot|site|land|lot|frontage|corner plot)\b/i.test(immediateBefore)) {
+    return "plot";
+  }
+
+  if (/\b(east|west|north|south|north east|north west|south east|south west|facing|corner)\b/i.test(immediateAfter) &&
+      /(plot|site|land|lot|frontage|corner plot)\b/i.test(beforeDimension)) {
+    return "plot";
+  }
+
+  if (/\b(plot|site|land|lot)\b.{0,45}\b(east|west|north|south|facing|corner)\b/i.test(t)) {
+    return "plot";
+  }
+
+  const roomImmediateBefore = immediateBefore;
+  if (/(bedroom|master|living|drawing|dining|kitchen|toilet|bath|washroom|pooja|puja|store|utility|balcony|terrace|office|cabin|shop|showroom|hall|room)\b/i.test(roomImmediateBefore)) {
+    return "room";
+  }
+
   type IntentRule = {
     intent: BuildSetuDimensionIntent;
     pattern: RegExp;
@@ -108,8 +141,6 @@ function detectIntent(nearbyText: string): BuildSetuDimensionIntent {
   };
 
   const rules: IntentRule[] = [
-    // Room labels should win when they are near the actual dimension,
-    // even if the sentence also contains an earlier plot dimension.
     { intent: "room", pattern: /(bedroom|master|living|drawing|dining|kitchen|toilet|bath|washroom|pooja|puja|store|utility|balcony|terrace|office|cabin|shop|showroom|hall|room)/i, weight: 120 },
     { intent: "parking", pattern: /(parking|car|garage|stilt|driveway)/i, weight: 110 },
     { intent: "setback", pattern: /(setback|margin|open space|side open|front open|rear open)/i, weight: 105 },
@@ -129,8 +160,6 @@ function detectIntent(nearbyText: string): BuildSetuDimensionIntent {
     const match = rule.pattern.exec(t);
     if (!match || match.index == null) continue;
 
-    // Prefer labels closer to the dimension. contextWindow keeps nearby text,
-    // and in normal prompts the relevant label is usually closest before pair.
     const distanceFromEnd = Math.max(0, t.length - (match.index + match[0].length));
     const score = rule.weight - Math.min(70, distanceFromEnd);
 
