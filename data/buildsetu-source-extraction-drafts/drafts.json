@@ -670,7 +670,7 @@
     },
     {
       "id": "official_source_extraction_draft_india-delhi-approval-authority-index",
-      "status": "extraction_pending",
+      "status": "qa_pending",
       "sourceReviewItemId": "",
       "sourceId": "india-delhi-approval-authority-index",
       "jurisdiction": "{'country': 'IN', 'stateOrUnionTerritory': 'Delhi', 'jurisdictionType': 'union_territory'}",
@@ -699,9 +699,9 @@
       "reviewStatusAtDraftCreation": "verified_exact_source",
       "review": {
         "reviewer": "",
-        "reviewedBy": "phase_46z2_local_generator",
-        "reviewedAt": "2026-06-05T19:55:45.191686+00:00",
-        "reviewNotes": "Local extraction draft created from verified exact official source. Manual extraction and QA required before any trusted merge.",
+        "reviewedBy": "phase_46z6_sample_extraction",
+        "reviewedAt": "2026-06-05T20:09:18.466734+00:00",
+        "reviewNotes": "Delhi sample extraction draft filled for QA review only. Not approved for trusted merge.",
         "mergeReady": false,
         "trustedMergeExecuted": false
       },
@@ -714,20 +714,73 @@
         "Professional/local authority verification required before use."
       ],
       "extractedDraft": {
-        "summary": "",
-        "jurisdiction": "{'country': 'IN', 'stateOrUnionTerritory': 'Delhi', 'jurisdictionType': 'union_territory'}",
-        "applicability": "",
-        "sourceDateOrVersion": "",
-        "buildingApprovalAuthority": "",
-        "rulesOrByelaws": [],
-        "keyDefinitions": [],
-        "setbacks": [],
-        "heightAndFAR": [],
-        "parking": [],
-        "fireSafety": [],
-        "accessibility": [],
-        "submissionChecklist": [],
-        "limitations": [],
+        "summary": "Delhi Unified Building Bye-Laws draft extraction based on the DDA Unified Building Bye-Laws for Delhi 2016 Compendium. This draft is prepared only for QA review and is not trusted knowledge.",
+        "jurisdiction": "Delhi",
+        "applicability": "Applies to building approval and development control context for Delhi, subject to competent authority interpretation and current amendments.",
+        "sourceDateOrVersion": "Unified Building Bye-Laws for Delhi 2016 Compendium",
+        "buildingApprovalAuthority": "Delhi Development Authority / competent local building sanctioning authorities as applicable.",
+        "rulesOrByelaws": [
+          {
+            "claim": "The source is the Unified Building Bye-Laws for Delhi 2016 compendium used for building regulation and approval reference in Delhi.",
+            "citation": "DDA Unified Building Bye-Laws for Delhi 2016 Compendium — https://dda.gov.in/sites/default/files/public-notice/COMPENDIUM_OF_UBBL_201605082020_0.pdf",
+            "confidence": "draft_review_required"
+          }
+        ],
+        "keyDefinitions": [
+          {
+            "term": "Building Bye-Laws",
+            "draftMeaning": "Rules and regulatory provisions used for building design, approval, construction and related compliance checks.",
+            "citation": "DDA Unified Building Bye-Laws for Delhi 2016 Compendium — https://dda.gov.in/sites/default/files/public-notice/COMPENDIUM_OF_UBBL_201605082020_0.pdf"
+          }
+        ],
+        "setbacks": [
+          {
+            "claim": "Setback rules should be extracted only after clause-level review of the official source.",
+            "status": "needs_clause_level_extraction",
+            "citation": "DDA Unified Building Bye-Laws for Delhi 2016 Compendium — https://dda.gov.in/sites/default/files/public-notice/COMPENDIUM_OF_UBBL_201605082020_0.pdf"
+          }
+        ],
+        "heightAndFAR": [
+          {
+            "claim": "Height, FAR and coverage rules require clause-level extraction from the official compendium before use.",
+            "status": "needs_clause_level_extraction",
+            "citation": "DDA Unified Building Bye-Laws for Delhi 2016 Compendium — https://dda.gov.in/sites/default/files/public-notice/COMPENDIUM_OF_UBBL_201605082020_0.pdf"
+          }
+        ],
+        "parking": [
+          {
+            "claim": "Parking requirements require clause-level extraction and QA before use.",
+            "status": "needs_clause_level_extraction",
+            "citation": "DDA Unified Building Bye-Laws for Delhi 2016 Compendium — https://dda.gov.in/sites/default/files/public-notice/COMPENDIUM_OF_UBBL_201605082020_0.pdf"
+          }
+        ],
+        "fireSafety": [
+          {
+            "claim": "Fire and life safety provisions require clause-level extraction and cross-check with applicable codes/authority requirements.",
+            "status": "needs_clause_level_extraction",
+            "citation": "DDA Unified Building Bye-Laws for Delhi 2016 Compendium — https://dda.gov.in/sites/default/files/public-notice/COMPENDIUM_OF_UBBL_201605082020_0.pdf"
+          }
+        ],
+        "accessibility": [
+          {
+            "claim": "Accessibility provisions require clause-level extraction and QA before use.",
+            "status": "needs_clause_level_extraction",
+            "citation": "DDA Unified Building Bye-Laws for Delhi 2016 Compendium — https://dda.gov.in/sites/default/files/public-notice/COMPENDIUM_OF_UBBL_201605082020_0.pdf"
+          }
+        ],
+        "submissionChecklist": [
+          {
+            "claim": "Submission and approval checklist items must be extracted from relevant official clauses and verified by QA.",
+            "status": "needs_clause_level_extraction",
+            "citation": "DDA Unified Building Bye-Laws for Delhi 2016 Compendium — https://dda.gov.in/sites/default/files/public-notice/COMPENDIUM_OF_UBBL_201605082020_0.pdf"
+          }
+        ],
+        "limitations": [
+          "This is a sample extraction draft, not trusted knowledge.",
+          "Clause-level values such as FAR, setbacks, height limits, parking ratios and occupancy-specific rules are not finalized in this draft.",
+          "Professional/local authority verification is required before use in real projects.",
+          "Trusted merge remains disabled."
+        ],
         "citations": [
           {
             "title": "DDA Unified Building Bye-Laws for Delhi 2016 Compendium",
@@ -738,17 +791,20 @@
         ]
       },
       "qa": {
-        "status": "extraction_pending",
-        "notes": "",
+        "status": "qa_pending",
+        "notes": "Sample extraction filled. Needs human QA before qa_ready. Trusted merge candidate remains false.",
         "checkedBy": "",
         "checkedAt": "",
-        "issues": [],
+        "issues": [
+          "Clause-level extraction still required for setbacks, FAR, height, parking, fire safety and submission checklist.",
+          "QA reviewer must verify against official PDF before marking qa_ready."
+        ],
         "trustedMergeCandidate": false
       },
       "createdAt": "2026-06-05T19:55:45.191686+00:00",
       "createdBy": "phase_46z2_local_generator",
-      "updatedAt": "2026-06-05T19:55:45.191686+00:00",
-      "updatedBy": "phase_46z2_local_generator"
+      "updatedAt": "2026-06-05T20:09:18.466734+00:00",
+      "updatedBy": "phase_46z6_sample_extraction"
     },
     {
       "id": "official_source_extraction_draft_india-goa-approval-authority-index",
@@ -2965,6 +3021,6 @@
       "updatedBy": "phase_46z2_local_generator"
     }
   ],
-  "updatedAt": "2026-06-05T19:55:45.191686+00:00",
-  "updatedBy": "phase_46z2_local_generator"
+  "updatedAt": "2026-06-05T20:09:18.466734+00:00",
+  "updatedBy": "phase_46z6_sample_extraction"
 }
