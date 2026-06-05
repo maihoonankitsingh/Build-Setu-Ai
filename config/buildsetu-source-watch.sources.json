@@ -646,7 +646,18 @@
       "verifiedBy": "phase_46i1_existing_source_mapping",
       "trustedKnowledgeWrite": false,
       "trustedMergeExecuted": false,
-      "matchedExactSourceId": "karnataka-model-building-bye-laws-2017"
+      "matchedExactSourceId": "karnataka-model-building-bye-laws-2017",
+      "serverSmokeStatus": "manual_verification_required",
+      "serverSmokeDiagnosticStatus": "timeout_or_network_blocked",
+      "manualBrowserVerificationRequired": true,
+      "sourceInvalidConfirmed": false,
+      "manualVerificationStatus": "pending_manual_browser_verification",
+      "manualVerificationNotes": "Server-side curl/fetch timeout from VPS for DTCP Karnataka exact source URL. Manual browser verification required before extraction.",
+      "extractionAllowed": false,
+      "qaReadyAllowed": false,
+      "trustedMergeCandidateAllowed": false,
+      "lastSmokeDiagnosticAt": "2026-06-05T06:19:09.704Z",
+      "reviewedForExtraction": false
     },
     {
       "id": "india-kerala-approval-authority-index",
@@ -756,7 +767,18 @@
       "verifiedBy": "phase_46i1_existing_source_mapping",
       "trustedKnowledgeWrite": false,
       "trustedMergeExecuted": false,
-      "matchedExactSourceId": "maharashtra-udcpr-official-pdf"
+      "matchedExactSourceId": "maharashtra-udcpr-official-pdf",
+      "serverSmokeStatus": "manual_verification_required",
+      "serverSmokeDiagnosticStatus": "ssl_or_tls_issue",
+      "manualBrowserVerificationRequired": true,
+      "sourceInvalidConfirmed": false,
+      "manualVerificationStatus": "pending_manual_browser_verification",
+      "manualVerificationNotes": "Server-side curl reported SSL certificate chain verification issue for MMRDA UDCPR PDF. Manual browser/curl alternate verification required before extraction.",
+      "extractionAllowed": false,
+      "qaReadyAllowed": false,
+      "trustedMergeCandidateAllowed": false,
+      "lastSmokeDiagnosticAt": "2026-06-05T06:19:09.704Z",
+      "reviewedForExtraction": false
     },
     {
       "id": "india-manipur-approval-authority-index",
@@ -1192,7 +1214,18 @@
       "verifiedBy": "phase_46i4_remaining_high_priority_source_mapping",
       "trustedKnowledgeWrite": false,
       "trustedMergeExecuted": false,
-      "matchedExactSourceId": "uttar-pradesh-bye-laws-official-page"
+      "matchedExactSourceId": "uttar-pradesh-bye-laws-official-page",
+      "serverSmokeStatus": "manual_verification_required",
+      "serverSmokeDiagnosticStatus": "timeout_or_network_blocked",
+      "manualBrowserVerificationRequired": true,
+      "sourceInvalidConfirmed": false,
+      "manualVerificationStatus": "pending_manual_browser_verification",
+      "manualVerificationNotes": "Server-side curl/fetch timeout from VPS for Uttar Pradesh bye-laws page. Manual browser verification required before extraction.",
+      "extractionAllowed": false,
+      "qaReadyAllowed": false,
+      "trustedMergeCandidateAllowed": false,
+      "lastSmokeDiagnosticAt": "2026-06-05T06:19:09.704Z",
+      "reviewedForExtraction": false
     },
     {
       "id": "india-uttarakhand-approval-authority-index",
@@ -1265,7 +1298,18 @@
       "verifiedBy": "phase_46i4_remaining_high_priority_source_mapping",
       "trustedKnowledgeWrite": false,
       "trustedMergeExecuted": false,
-      "matchedExactSourceId": "west-bengal-municipal-building-rules-2007"
+      "matchedExactSourceId": "west-bengal-municipal-building-rules-2007",
+      "serverSmokeStatus": "manual_verification_required",
+      "serverSmokeDiagnosticStatus": "ssl_or_tls_issue",
+      "manualBrowserVerificationRequired": true,
+      "sourceInvalidConfirmed": false,
+      "manualVerificationStatus": "pending_manual_browser_verification",
+      "manualVerificationNotes": "Server-side curl reported unsafe legacy TLS renegotiation for West Bengal UDMA Act and Rules page. Manual browser/alternate TLS verification required before extraction.",
+      "extractionAllowed": false,
+      "qaReadyAllowed": false,
+      "trustedMergeCandidateAllowed": false,
+      "lastSmokeDiagnosticAt": "2026-06-05T06:19:09.704Z",
+      "reviewedForExtraction": false
     },
     {
       "id": "india-andaman-nicobar-islands-approval-authority-index",
@@ -1563,6 +1607,6 @@
     "autoMerge": false,
     "reviewRequired": true
   },
-  "updatedAt": "2026-06-05T05:50:44.644Z",
-  "updatedBy": "phase_46i4_remaining_high_priority_exact_source_tracker_mapping"
+  "updatedAt": "2026-06-05T06:19:09.704Z",
+  "updatedBy": "phase_46l1_manual_verification_required_for_blocked_exact_sources"
 }
