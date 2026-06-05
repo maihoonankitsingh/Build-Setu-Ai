@@ -180,8 +180,16 @@ function detectIntentForPair(nearbyText: string, rawPair: string): BuildSetuDime
   const before = idx >= 0 ? t.slice(0, idx) : t;
   const after = idx >= 0 ? t.slice(idx + raw.length) : "";
 
-  const immediateBefore = before.slice(-42);
+  // BUILDSETU_PHASE_47A8_SENTENCE_LOCAL_INTENT
+  const sentenceBefore = before.split(/[.!?।]/).pop() || before;
+  const phraseBefore = sentenceBefore.split(/\b(?:aur|and|,|;|with|sath|ke sath|hai)\b/i).pop() || sentenceBefore;
+
+  const immediateBefore = phraseBefore.slice(-42);
   const immediateAfter = after.slice(0, 55);
+
+  if (/(bedroom|master|living|drawing|dining|kitchen|toilet|bath|washroom|pooja|puja|store|utility|balcony|terrace|office|cabin|shop|showroom|hall|room)\b/i.test(immediateBefore)) {
+    return "room";
+  }
 
   if (/(plot|site|land|lot|frontage|corner plot)\b/i.test(immediateBefore)) {
     return "plot";
