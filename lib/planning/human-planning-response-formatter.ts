@@ -155,6 +155,21 @@ type PlanningCategoryIntelligenceLike = {
   safetyNotes?: string[];
 };
 
+// BUILDSETU_PHASE_47M1_REFERENCE_HUMAN_MERGE
+type PlanningReferenceIntelligenceLike = {
+  engineVersion?: string;
+  hasReferenceIntent?: boolean;
+  detectedReferenceTypes?: string[];
+  referenceUseMode?: string;
+  category?: string;
+  planningMode?: string;
+  extractionChecklist?: string[];
+  referencePlanningImpact?: string[];
+  requiredUserConfirmations?: string[];
+  safeHandlingRules?: string[];
+  nextActions?: string[];
+};
+
 export type BuildSetuHumanPlanningResponse = {
   responseVersion: "47E-1";
   title: string;
@@ -187,6 +202,10 @@ export type BuildSetuHumanPlanningResponse = {
     bylawPlanningGuard: string[];
     mepStructureCoordination: string[];
     categoryNextActions: string[];
+    referenceUnderstanding: string[];
+    referenceExtractionChecklist: string[];
+    referencePlanningImpact: string[];
+    referenceConfirmations: string[];
     riskAndVerification: string[];
     nextBestActions: string[];
   };
@@ -288,8 +307,12 @@ function buildMarkdown(title: string, sections: BuildSetuHumanPlanningResponse["
     ["24. Bylaw planning guard", sections.bylawPlanningGuard],
     ["25. MEP / structure coordination", sections.mepStructureCoordination],
     ["26. Category next actions", sections.categoryNextActions],
-    ["27. Risks / professional verification", sections.riskAndVerification],
-    ["28. Next best action", sections.nextBestActions],
+    ["27. Reference understanding", sections.referenceUnderstanding],
+    ["28. Reference extraction checklist", sections.referenceExtractionChecklist],
+    ["29. Reference planning impact", sections.referencePlanningImpact],
+    ["30. Reference confirmations", sections.referenceConfirmations],
+    ["31. Risks / professional verification", sections.riskAndVerification],
+    ["32. Next best action", sections.nextBestActions],
   ];
 
   for (const [heading, lines] of ordered) {
@@ -319,6 +342,7 @@ export function buildHumanPlanningResponse(input: {
   roomFurnitureFitEngine?: RoomFurnitureFitEngineLike;
   roomSpaceStandardsEngine?: RoomSpaceStandardsEngineLike;
   planningCategoryIntelligence?: PlanningCategoryIntelligenceLike;
+  planningReferenceIntelligence?: PlanningReferenceIntelligenceLike;
 }): BuildSetuHumanPlanningResponse {
   const inputText = cleanText(input.inputText);
   const dim = input.dimensionUnderstanding;
@@ -329,6 +353,7 @@ export function buildHumanPlanningResponse(input: {
   const roomFit = input.roomFurnitureFitEngine;
   const standards = input.roomSpaceStandardsEngine;
   const categoryIntel = input.planningCategoryIntelligence;
+  const referenceIntel = input.planningReferenceIntelligence;
 
   const category = normalizeLabel(building?.category);
   const subType = normalizeLabel(building?.subType);
@@ -373,6 +398,10 @@ export function buildHumanPlanningResponse(input: {
     bylawPlanningGuard: [],
     mepStructureCoordination: [],
     categoryNextActions: [],
+    referenceUnderstanding: [],
+    referenceExtractionChecklist: [],
+    referencePlanningImpact: [],
+    referenceConfirmations: [],
     riskAndVerification: [],
     nextBestActions: [],
   };
@@ -660,6 +689,57 @@ export function buildHumanPlanningResponse(input: {
 
   if (!sections.categoryNextActions.length) {
     pushUnique(sections.categoryNextActions, "Confirm missing planning inputs, then generate concept zoning.");
+  }
+
+  if (referenceIntel) {
+    pushUnique(
+      sections.referenceUnderstanding,
+      `Reference intent: ${referenceIntel.hasReferenceIntent ? "detected" : "not detected"}.`
+    );
+    pushUnique(
+      sections.referenceUnderstanding,
+      `Reference mode: ${cleanText(referenceIntel.referenceUseMode || "no_reference")}.`
+    );
+    pushUnique(
+      sections.referenceUnderstanding,
+      `Reference types: ${(referenceIntel.detectedReferenceTypes || []).join(", ") || "none"}.`
+    );
+
+    for (const item of referenceIntel.extractionChecklist || []) {
+      pushUnique(sections.referenceExtractionChecklist, item);
+    }
+
+    for (const item of referenceIntel.referencePlanningImpact || []) {
+      pushUnique(sections.referencePlanningImpact, item);
+    }
+
+    for (const item of referenceIntel.requiredUserConfirmations || []) {
+      pushUnique(sections.referenceConfirmations, item);
+    }
+
+    for (const item of referenceIntel.safeHandlingRules || []) {
+      pushUnique(sections.riskAndVerification, item);
+    }
+
+    for (const item of referenceIntel.nextActions || []) {
+      pushUnique(sections.nextBestActions, item);
+    }
+  }
+
+  if (!sections.referenceUnderstanding.length) {
+    pushUnique(sections.referenceUnderstanding, "No reference upload/use intent detected.");
+  }
+
+  if (!sections.referenceExtractionChecklist.length) {
+    pushUnique(sections.referenceExtractionChecklist, "Reference extraction checklist will be shown when image/PDF/sketch/CAD/reference intent is detected.");
+  }
+
+  if (!sections.referencePlanningImpact.length) {
+    pushUnique(sections.referencePlanningImpact, "Reference planning impact will be mapped after the uploaded/reference content is interpreted.");
+  }
+
+  if (!sections.referenceConfirmations.length) {
+    pushUnique(sections.referenceConfirmations, "Confirm whether any uploaded reference should be matched exactly, inspired by, or used only for partial ideas.");
   }
 
   for (const risk of mq?.riskFlags || []) {

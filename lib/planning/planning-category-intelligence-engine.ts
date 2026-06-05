@@ -104,14 +104,38 @@ function addPattern(list: BuildSetuLayoutPatternSuggestion[], item: BuildSetuLay
 }
 
 function detectFacing(text: string): string | null {
-  if (has(/\bnorth\s*east|ne\b/i, text)) return "north-east";
-  if (has(/\bnorth\s*west|nw\b/i, text)) return "north-west";
-  if (has(/\bsouth\s*east|se\b/i, text)) return "south-east";
-  if (has(/\bsouth\s*west|sw\b/i, text)) return "south-west";
-  if (has(/\beast\b/i, text)) return "east";
-  if (has(/\bnorth\b/i, text)) return "north";
-  if (has(/\bwest\b/i, text)) return "west";
-  if (has(/\bsouth\b/i, text)) return "south";
+  // BUILDSETU_PHASE_47IJKL_FIX_STRICT_FACING_DETECTOR
+  // Avoid short-token false positives like "se" inside Hindi/English words.
+  const normalized = ` ${cleanText(text).toLowerCase().replace(/[-_/]+/g, " ")} `;
+  const hasCornerSignal = /\b(corner|two side|two-side|dual frontage|double road|do side|2 side)\b/i.test(normalized);
+
+  const hasNorth = /\bnorth\b/i.test(normalized);
+  const hasSouth = /\bsouth\b/i.test(normalized);
+  const hasEast = /\beast\b/i.test(normalized);
+  const hasWest = /\bwest\b/i.test(normalized);
+
+  if (hasCornerSignal) {
+    if (hasNorth && hasEast) return "north-east";
+    if (hasNorth && hasWest) return "north-west";
+    if (hasSouth && hasEast) return "south-east";
+    if (hasSouth && hasWest) return "south-west";
+  }
+
+  if (/\b(north east|northeast)\b/i.test(normalized)) return "north-east";
+  if (/\b(north west|northwest)\b/i.test(normalized)) return "north-west";
+  if (/\b(south east|southeast)\b/i.test(normalized)) return "south-east";
+  if (/\b(south west|southwest)\b/i.test(normalized)) return "south-west";
+
+  if (/\bne\s*(facing|corner|plot|road|side|entry)\b/i.test(normalized)) return "north-east";
+  if (/\bnw\s*(facing|corner|plot|road|side|entry)\b/i.test(normalized)) return "north-west";
+  if (/\bse\s*(facing|corner|plot|road|side|entry)\b/i.test(normalized)) return "south-east";
+  if (/\bsw\s*(facing|corner|plot|road|side|entry)\b/i.test(normalized)) return "south-west";
+
+  if (/\beast\s*(facing|face|plot|road|side|entry)?\b/i.test(normalized)) return "east";
+  if (/\bnorth\s*(facing|face|plot|road|side|entry)?\b/i.test(normalized)) return "north";
+  if (/\bwest\s*(facing|face|plot|road|side|entry)?\b/i.test(normalized)) return "west";
+  if (/\bsouth\s*(facing|face|plot|road|side|entry)?\b/i.test(normalized)) return "south";
+
   return null;
 }
 
