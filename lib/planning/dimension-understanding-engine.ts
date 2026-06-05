@@ -90,6 +90,10 @@ function normalizeWhitespace(text: string): string {
   return String(text || "")
     .replace(/[×✕]/g, "x")
     .replace(/[–—]/g, "-")
+    // BUILDSETU_PHASE_47A5_DIMENSION_INTENT_ACCURACY
+    // Normalize common Indian architectural feet-inch typing:
+    // 10'-6" x 12'-0" => 10' 6" x 12' 0"
+    .replace(/(\d+(?:\.\d+)?)'\s*-\s*(\d+(?:\.\d+)?)/g, "$1' $2")
     .replace(/\s+/g, " ")
     .trim();
 }
@@ -97,19 +101,45 @@ function normalizeWhitespace(text: string): string {
 function detectIntent(nearbyText: string): BuildSetuDimensionIntent {
   const t = nearbyText.toLowerCase();
 
-  if (/(plot|site|land|lot|frontage|front|depth|width|road side|corner plot|east facing|north facing|south facing|west facing)/i.test(t)) return "plot";
-  if (/(bedroom|master|living|drawing|dining|kitchen|toilet|bath|washroom|pooja|puja|store|utility|balcony|terrace|office|cabin|shop|showroom|hall|room)/i.test(t)) return "room";
-  if (/(parking|car|garage|stilt|driveway)/i.test(t)) return "parking";
-  if (/(setback|margin|open space|side open|front open|rear open)/i.test(t)) return "setback";
-  if (/(floor height|clear height|floor to floor|floor-to-floor|ceiling height|plinth height)/i.test(t)) return "floor_height";
-  if (/(door|main door|shutter)/i.test(t)) return "door";
-  if (/(window|ventilator|opening)/i.test(t)) return "window";
-  if (/(stair|staircase|steps|riser|tread|landing)/i.test(t)) return "staircase";
-  if (/(corridor|passage|lobby|circulation)/i.test(t)) return "corridor";
-  if (/(wall|partition|thickness)/i.test(t)) return "wall";
-  if (/(bed|wardrobe|sofa|table|counter|island|furniture|tv unit)/i.test(t)) return "furniture";
+  type IntentRule = {
+    intent: BuildSetuDimensionIntent;
+    pattern: RegExp;
+    weight: number;
+  };
 
-  return "unknown";
+  const rules: IntentRule[] = [
+    // Room labels should win when they are near the actual dimension,
+    // even if the sentence also contains an earlier plot dimension.
+    { intent: "room", pattern: /(bedroom|master|living|drawing|dining|kitchen|toilet|bath|washroom|pooja|puja|store|utility|balcony|terrace|office|cabin|shop|showroom|hall|room)/i, weight: 120 },
+    { intent: "parking", pattern: /(parking|car|garage|stilt|driveway)/i, weight: 110 },
+    { intent: "setback", pattern: /(setback|margin|open space|side open|front open|rear open)/i, weight: 105 },
+    { intent: "floor_height", pattern: /(floor height|clear height|floor to floor|floor-to-floor|ceiling height|plinth height)/i, weight: 105 },
+    { intent: "door", pattern: /(door|main door|shutter)/i, weight: 100 },
+    { intent: "window", pattern: /(window|ventilator|opening)/i, weight: 100 },
+    { intent: "staircase", pattern: /(stair|staircase|steps|riser|tread|landing)/i, weight: 100 },
+    { intent: "corridor", pattern: /(corridor|passage|lobby|circulation)/i, weight: 95 },
+    { intent: "wall", pattern: /(wall|partition|thickness)/i, weight: 90 },
+    { intent: "furniture", pattern: /(bed|wardrobe|sofa|table|counter|island|furniture|tv unit)/i, weight: 90 },
+    { intent: "plot", pattern: /(plot|site|land|lot|frontage|road side|corner plot|east facing|north facing|south facing|west facing)/i, weight: 80 },
+  ];
+
+  let best: { intent: BuildSetuDimensionIntent; score: number } | null = null;
+
+  for (const rule of rules) {
+    const match = rule.pattern.exec(t);
+    if (!match || match.index == null) continue;
+
+    // Prefer labels closer to the dimension. contextWindow keeps nearby text,
+    // and in normal prompts the relevant label is usually closest before pair.
+    const distanceFromEnd = Math.max(0, t.length - (match.index + match[0].length));
+    const score = rule.weight - Math.min(70, distanceFromEnd);
+
+    if (!best || score > best.score) {
+      best = { intent: rule.intent, score };
+    }
+  }
+
+  return best?.intent || "unknown";
 }
 
 function inferUnit(unitText: string | undefined, fallback: BuildSetuDimensionUnit = "ft"): BuildSetuDimensionUnit {
