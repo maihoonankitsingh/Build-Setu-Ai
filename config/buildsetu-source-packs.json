@@ -232,8 +232,97 @@
         "conflict handling with bylaws and site constraints"
       ],
       "disclaimer": "Vastu guidance is advisory and must not override safety, bylaws, structure, ventilation or client functional needs."
+    },
+    {
+      "id": "state_local_approval_bylaws_pack",
+      "title": "State and Local Approval Bye-Laws Pack",
+      "domains": [
+        "approvals_bylaws",
+        "architecture_planning",
+        "units_dimensions",
+        "civil_construction"
+      ],
+      "sources": [
+        {
+          "id": "dda-ubbl-2016-page",
+          "title": "DDA UBBL 2016 and Amendments official page",
+          "url": "https://ddaservices.dda.org.in/ddaweb/ubbl.aspx",
+          "domains": [
+            "approvals_bylaws",
+            "architecture_planning",
+            "units_dimensions"
+          ],
+          "authorityType": "official_primary",
+          "publisher": "Delhi Development Authority",
+          "watch": true,
+          "reviewRequired": true,
+          "mergePolicy": "manual_review_required"
+        },
+        {
+          "id": "dda-ubbl-2016-compendium",
+          "title": "DDA Unified Building Bye-Laws for Delhi 2016 Compendium",
+          "url": "https://dda.gov.in/sites/default/files/public-notice/COMPENDIUM_OF_UBBL_201605082020_0.pdf",
+          "domains": [
+            "approvals_bylaws",
+            "architecture_planning",
+            "units_dimensions"
+          ],
+          "authorityType": "official_primary",
+          "publisher": "Delhi Development Authority",
+          "watch": true,
+          "reviewRequired": true,
+          "mergePolicy": "manual_review_required"
+        },
+        {
+          "id": "haryana-building-code-2017-amended-2023",
+          "title": "Haryana Building Code 2017 with amendments up to 25.05.2023",
+          "url": "https://tcpharyana.gov.in/Haryana%20Building%20Code/Haryana%20Building%20Code-2017%20with%20amendments%20upto%2025.05.2023%20%281%29.pdf",
+          "domains": [
+            "approvals_bylaws",
+            "architecture_planning",
+            "units_dimensions",
+            "civil_construction"
+          ],
+          "authorityType": "official_primary",
+          "publisher": "Town and Country Planning Department, Haryana",
+          "watch": true,
+          "reviewRequired": true,
+          "mergePolicy": "manual_review_required"
+        },
+        {
+          "id": "karnataka-model-building-bye-laws-2017",
+          "title": "Karnataka Municipalities Model Building Bye-Laws 2017",
+          "url": "https://www.dtcp.gov.in/sites/dtcp.gov.in/files/PDF/notificationsOrdersCirculars/notifications/model_building_bye_law.pdf",
+          "domains": [
+            "approvals_bylaws",
+            "architecture_planning",
+            "units_dimensions"
+          ],
+          "authorityType": "official_primary",
+          "publisher": "Department of Town and Country Planning, Karnataka",
+          "watch": true,
+          "reviewRequired": true,
+          "mergePolicy": "manual_review_required"
+        },
+        {
+          "id": "maharashtra-udcpr-official-pdf",
+          "title": "Maharashtra Unified Development Control and Promotion Regulations",
+          "url": "https://www.mmrda.maharashtra.gov.in/sites/default/files/2023-10/UDCPR_compressed_2.pdf",
+          "domains": [
+            "approvals_bylaws",
+            "architecture_planning",
+            "units_dimensions",
+            "civil_construction"
+          ],
+          "authorityType": "official_primary",
+          "publisher": "MMRDA / Government of Maharashtra reference",
+          "watch": true,
+          "reviewRequired": true,
+          "mergePolicy": "manual_review_required"
+        }
+      ]
     }
   ],
-  "updatedAt": "2026-06-05T05:12:55.943Z",
-  "updatedBy": "phase_46b1_cpwd_works_manual_candidate"
+  "updatedAt": "2026-06-05T05:16:49.799Z",
+  "updatedBy": "phase_46c1_state_local_approval_sources"
 }
