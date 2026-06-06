@@ -7496,6 +7496,10 @@ function ProjectTaskChatInterfaceShell({
   const [loadingRenders, setLoadingRenders] = useState(false);
   const [renderError, setRenderError] = useState("");
   const [sending, setSending] = useState(false);
+  // BUILDSETU_PHASE_M8L_WEB_UPDATE_RUNTIME_SOURCE_STATE
+  const [webUpdateRuntimeSourceRows, setWebUpdateRuntimeSourceRows] = useState<any[]>([]);
+  const [webUpdateRuntimeStatus, setWebUpdateRuntimeStatus] = useState("");
+
   const [executingPromptId, setExecutingPromptId] = useState("");
   const chatStreamRef = useRef<HTMLDivElement | null>(null);
 
@@ -8585,6 +8589,78 @@ function buildToolHrefWithActiveProject(slug: string, projectId?: string) {
     );
   }
 
+  // BUILDSETU_PHASE_M8L_WEB_UPDATE_SOURCE_NORMALIZER
+  function getBuildSetuWebSearchItems(data: any): any[] {
+    if (Array.isArray(data?.items)) return data.items;
+    if (Array.isArray(data?.results)) return data.results;
+    if (Array.isArray(data?.sources)) return data.sources;
+    if (Array.isArray(data?.data)) return data.data;
+    if (Array.isArray(data?.sourceCitations)) return data.sourceCitations;
+    return [];
+  }
+
+  function normalizeBuildSetuWebSearchItems(input: {
+    card: any;
+    call: any;
+    query: string;
+    data: any;
+  }) {
+    const now = new Date().toISOString();
+    const items = getBuildSetuWebSearchItems(input.data);
+    const actionType = String(input.card?.actionType || input.call?.actionType || "");
+    const topicId = String(input.call?.topicId || "");
+    const topicGroup =
+      actionType.includes("bylaw") ? "bylaw_norm" :
+      actionType.includes("code") ? "building_code" :
+      actionType.includes("product") ? "product_catalog" :
+      actionType.includes("boq") ? "boq_rate" :
+      "material_rate";
+
+    if (!items.length) {
+      return [{
+        id: `runtime_empty_${Date.now()}_${Math.random().toString(36).slice(2)}`,
+        query: input.query,
+        sourceTitle: "No source result returned",
+        sourceUrl: "",
+        snippet: "",
+        topicId,
+        topicGroup,
+        executionStatus: "executed_no_results",
+        reviewStatus: "pending_review",
+        freshnessStatus: "unknown",
+        confidence: "low",
+        sourceLayer: "public_web_search",
+        fetchedAt: now,
+        boqAttachReady: false,
+      }];
+    }
+
+    return items.slice(0, 8).map((item: any, index: number) => {
+      const sourceUrl = String(item?.sourceUrl || item?.url || item?.link || item?.href || "");
+      const sourceTitle = String(item?.sourceTitle || item?.title || item?.name || sourceUrl || "Source result");
+      const snippet = String(item?.snippet || item?.textPreview || item?.description || item?.content || "");
+      const confidence = sourceUrl ? "medium" : "low";
+
+      return {
+        id: `runtime_${Date.now()}_${index}_${Math.random().toString(36).slice(2)}`,
+        query: input.query,
+        sourceTitle,
+        sourceUrl,
+        snippet,
+        topicId,
+        topicGroup,
+        executionStatus: "executed_has_results",
+        reviewStatus: "pending_review",
+        freshnessStatus: "fresh",
+        confidence,
+        sourceLayer: topicGroup === "bylaw_norm" || topicGroup === "building_code" ? "official_source" : "public_web_search",
+        fetchedAt: String(item?.fetchedAt || item?.observedDate || now),
+        boqAttachReady: false,
+        raw: item,
+      };
+    });
+  }
+
   // BUILDSETU_PHASE_M8J_WEB_UPDATE_UI_RUNTIME_WIRING
   async function runBuildSetuWebUpdateCard(adapter: any, card: any) {
     const actionId = String(card?.id || card?.title || "");
@@ -8617,6 +8693,9 @@ function buildToolHrefWithActiveProject(slug: string, projectId?: string) {
       "/api/agent-tools/web-search";
 
     const summaries: string[] = [];
+    // BUILDSETU_PHASE_M8L_COLLECT_HYDRATED_SOURCE_ROWS
+    const hydratedRows: any[] = [];
+    setWebUpdateRuntimeStatus("Running live web update...");
 
     try {
       for (const call of fetchCalls) {
@@ -8647,7 +8726,20 @@ function buildToolHrefWithActiveProject(slug: string, projectId?: string) {
           (Array.isArray(data?.sources) ? data.sources.length : null) ??
           0;
 
+        // BUILDSETU_PHASE_M8L_NORMALIZE_FETCH_RESPONSE
+        hydratedRows.push(...normalizeBuildSetuWebSearchItems({ card, call, query, data }));
         summaries.push(`${query} → ${count} source signal(s)`);
+      }
+
+      // BUILDSETU_PHASE_M8L_APPLY_HYDRATED_SOURCE_ROWS
+      if (hydratedRows.length) {
+        setWebUpdateRuntimeSourceRows((existing: any[]) => [
+          ...hydratedRows,
+          ...existing,
+        ].slice(0, 60));
+        setWebUpdateRuntimeStatus(`Hydrated ${hydratedRows.length} source signal row(s) from live web update.`);
+      } else {
+        setWebUpdateRuntimeStatus("Web update completed, but no source signal rows were hydrated.");
       }
 
       window.alert(
@@ -8656,6 +8748,8 @@ function buildToolHrefWithActiveProject(slug: string, projectId?: string) {
           : "Web update completed, but no source signals were returned."
       );
     } catch (error: any) {
+      // BUILDSETU_PHASE_M8L_ERROR_STATUS
+      setWebUpdateRuntimeStatus(error?.message || "Web update failed.");
       window.alert(error?.message || "Web update failed.");
     }
   }
@@ -8689,6 +8783,8 @@ function buildToolHrefWithActiveProject(slug: string, projectId?: string) {
     const webUpdateSourceRows = Array.isArray(adapter.webUpdateSourceSignalReviewRows)
       ? adapter.webUpdateSourceSignalReviewRows
       : [];
+    // BUILDSETU_PHASE_M8L_HYDRATED_SOURCE_ROW_BINDING
+    const hydratedWebUpdateSourceRows = webUpdateRuntimeSourceRows.length ? webUpdateRuntimeSourceRows : webUpdateSourceRows;
     const boqSourceAttachActions = Array.isArray(adapter.boqSourceAttachActions) ? adapter.boqSourceAttachActions : [];
     const boqFinalRateApprovalRows = Array.isArray(adapter.boqFinalRateApprovalRows) ? adapter.boqFinalRateApprovalRows : [];
     const finalRateLockedByDefault = Boolean(adapter.finalRateApprovalLockedByDefault);
@@ -8760,19 +8856,32 @@ function buildToolHrefWithActiveProject(slug: string, projectId?: string) {
           </div>
         ) : null}
 
-        {webUpdateSourceRows.length ? (
+        {hydratedWebUpdateSourceRows.length ? (
           <div className="mt-3 rounded-2xl border border-[#e8ddf8] bg-white p-3">
             <div className="flex flex-wrap items-center justify-between gap-2">
               <div className="text-[12px] font-black text-[#2b164f]">Source signal review</div>
-              <span className="text-[10px] font-bold text-[#7b6f8d]">{webUpdateSourceRows.length} rows</span>
+              <span className="text-[10px] font-bold text-[#7b6f8d]">{hydratedWebUpdateSourceRows.length} rows</span>
             </div>
+            {/* BUILDSETU_PHASE_M8L_RUNTIME_STATUS_RENDER */}
+            {webUpdateRuntimeStatus ? (
+              <div className="mt-2 rounded-xl bg-[#fff7ed] px-3 py-2 text-[11px] font-bold text-[#9a3412]">
+                {webUpdateRuntimeStatus}
+              </div>
+            ) : null}
             <div className="mt-2 grid gap-1.5">
-              {webUpdateSourceRows.slice(0, 4).map((row: any) => (
+              {hydratedWebUpdateSourceRows.slice(0, 6).map((row: any) => (
                 <div key={row.id || row.query} className="rounded-xl bg-[#fbf8ff] px-3 py-2 text-[11px]">
-                  <div className="font-bold text-[#2b164f]">{row.query || row.id || "Source signal"}</div>
+                  {/* BUILDSETU_PHASE_M8L_SOURCE_ROW_TITLE_URL_RENDER */}
+                  <div className="font-bold text-[#2b164f]">{row.sourceTitle || row.query || row.id || "Source signal"}</div>
+                  {row.sourceUrl ? (
+                    <div className="mt-0.5 truncate text-[#7c3aed]">{row.sourceUrl}</div>
+                  ) : null}
                   <div className="mt-0.5 text-[#6b5c7f]">
-                    {row.topicGroup || "general"} · {row.executionStatus || "pending"} · {row.reviewStatus || "pending"}
+                    {row.topicGroup || "general"} · {row.executionStatus || "pending"} · {row.reviewStatus || "pending"} · {row.confidence || "pending"}
                   </div>
+                  {row.snippet ? (
+                    <div className="mt-1 line-clamp-2 text-[#6b5c7f]">{row.snippet}</div>
+                  ) : null}
                 </div>
               ))}
             </div>
