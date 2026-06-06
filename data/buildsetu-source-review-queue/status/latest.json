@@ -1,6 +1,6 @@
 {
   "ok": true,
-  "generatedAt": "2026-06-06T07:02:39.166Z",
+  "generatedAt": "2026-06-06T07:27:31.213Z",
   "phase": "47B-2R",
   "title": "BuildSetu source watch, web-search candidate capture, and review queue pipeline status",
   "routes": {
@@ -34,13 +34,13 @@
     "trustedKnowledgeAutoMerge": false
   },
   "candidateQueue": {
-    "totalCandidates": 26,
+    "totalCandidates": 27,
     "byDecision": {
-      "web_search_candidate_saved_needs_review": 1,
+      "web_search_candidate_saved_needs_review": 2,
       "candidate_saved_needs_review": 25
     },
     "byJurisdiction": {
-      "India": 1,
+      "India": 2,
       "Uttarakhand": 1,
       "Tripura": 1,
       "Sikkim": 1,
@@ -68,34 +68,34 @@
       "Andaman and Nicobar Islands": 1
     },
     "latestCandidate": {
-      "sourceId": "smoke-test-web-search-ui_bis.gov.in_bis-national-building-code",
-      "title": "BIS National Building Code",
-      "url": "https://www.bis.gov.in/standards/technical-department/national-building-code/",
+      "sourceId": "failed-source-recovery_cpwd.gov.in_cpwd-works-manual-2024",
+      "title": "CPWD Works Manual 2024",
+      "url": "https://cpwd.gov.in/Publication/CPWD_Works_Manual_2024.pdf",
       "decision": "web_search_candidate_saved_needs_review",
-      "confidence": "medium_official_domain_needs_review"
+      "confidence": "official_url_fetch_issue_needs_manual_review"
     }
   },
   "reviewQueue": {
-    "updatedAt": "2026-06-06T07:02:39.035Z",
-    "sourceCandidateCount": 78,
-    "itemCount": 78,
+    "updatedAt": "2026-06-06T07:27:31.159Z",
+    "sourceCandidateCount": 82,
+    "itemCount": 82,
     "byStatus": {
-      "pending_review": 76,
+      "pending_review": 80,
       "approved": 1,
       "rejected": 1
     },
     "bySourcePackId": {
-      "official_core_building_codes_india": 3,
+      "official_core_building_codes_india": 6,
       "planning_dimensions_pack": 3,
       "construction_materials_execution_pack": 2,
       "state_local_approval_bylaws_pack": 8,
-      "pending_exact_source_candidates": 51,
-      "all_india_state_ut_authority_index_pack": 11
+      "all_india_state_ut_authority_index_pack": 36,
+      "pending_exact_source_candidates": 27
     },
-    "pendingExactSourceCandidateItems": 51,
+    "pendingExactSourceCandidateItems": 27,
     "rejectedItems": 1,
     "approvedItems": 1,
-    "pendingReviewItems": 76
+    "pendingReviewItems": 80
   },
   "safety": {
     "sourceRegistryChanged": false,
