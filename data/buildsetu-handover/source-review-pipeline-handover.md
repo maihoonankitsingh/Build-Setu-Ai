@@ -1,18 +1,15 @@
 # BuildSetu Source Review Pipeline Handover
 
-Generated: 2026-06-06T06:51:43Z
+Generated: 2026-06-06T06:54:47Z
 
-## Current Git State
-
-Latest commit:
-
+## Latest Commit
 ```text
-96598c0 Record source watch sync and review queue generated state
+f6e3f12 Add source review pipeline handover report
 ```
 
-Recent commits:
-
+## Recent Commits
 ```text
+f6e3f12 Add source review pipeline handover report
 96598c0 Record source watch sync and review queue generated state
 64730da Add debug audit for official source review actions
 aecc622 Auto refresh source review pipeline status
@@ -27,46 +24,19 @@ bf448be Show web source candidates in official review queue
 eb2abd3 Polish web update source review UI states
 230735a Add web search save as source candidate UI
 5ea2e5b Load persisted source reviews in project chat UI
-4157d39 Add web search candidate capture endpoint
 ```
 
 ## Live URLs
-
 - Knowledge Inbox: https://build.sikhadenge.in/workspace/knowledge-inbox
 - Official Source Review Queue: https://build.sikhadenge.in/workspace/official-source-review-queue
-- Web Search Candidate Capture API: https://build.sikhadenge.in/api/agent-knowledge/web-search-candidate-capture
-- Source Coverage Audit: https://build.sikhadenge.in/workspace/source-coverage-audit
-
-## Completed Pipeline
-
-- Source-watch cron monitors registered official/trusted URLs.
-- Fetch recovery attempts recovery for failed official source fetches.
-- Quality gate quarantines weak/false-positive updates.
-- Inbox regeneration creates latest source-watch inbox.
-- Web-search results can be saved as source candidates.
-- Pending exact source candidates sync into official source review queue.
-- Review queue has filters/search and pending exact candidate badges.
-- Review action safety test completed.
-- Knowledge Inbox has source-review pipeline status card.
-- Pipeline status auto-refresh script is wired into cron.
+- Candidate Capture API: https://build.sikhadenge.in/api/agent-knowledge/web-search-candidate-capture
 
 ## Cron
-
 ```text
 17 */6 * * * cd /var/www/build.sikhadenge.in/sikhadenge-build && /usr/bin/flock -n /tmp/buildsetu-source-watch.lock /bin/bash -lc '/usr/bin/node scripts/buildsetu-source-pack-sync.mjs >> /tmp/buildsetu-source-watch-cron.log 2>&1; /usr/bin/node scripts/buildsetu-source-watch-check.mjs >> /tmp/buildsetu-source-watch-cron.log 2>&1 || true; /usr/bin/node scripts/buildsetu-source-watch-fetch-recover.mjs >> /tmp/buildsetu-source-watch-cron.log 2>&1; /usr/bin/node scripts/buildsetu-source-watch-quality-gate.mjs >> /tmp/buildsetu-source-watch-cron.log 2>&1; /usr/bin/node scripts/buildsetu-source-watch-inbox.mjs >> /tmp/buildsetu-source-watch-cron.log 2>&1; /usr/bin/node scripts/buildsetu-source-review-pipeline-status.mjs >> /tmp/buildsetu-source-watch-cron.log 2>&1' # BUILDSETU_SOURCE_WATCH_CRON
 ```
 
-## Cron Order
-
-- scripts/buildsetu-source-pack-sync.mjs
-- scripts/buildsetu-source-watch-check.mjs
-- scripts/buildsetu-source-watch-fetch-recover.mjs
-- scripts/buildsetu-source-watch-quality-gate.mjs
-- scripts/buildsetu-source-watch-inbox.mjs
-- scripts/buildsetu-source-review-pipeline-status.mjs
-
-## Current Status Snapshot
-
+## Pipeline Status
 ```json
 {
   "ok": true,
@@ -183,49 +153,7 @@ eb2abd3 Polish web update source review UI states
 }
 ```
 
-## Important Data Files
-
-- `data/buildsetu-source-watch/inbox/latest.json`
-- `data/buildsetu-source-watch/inbox/latest.md`
-- `data/buildsetu-source-watch/recovery/latest.json`
-- `data/buildsetu-source-watch/quality-gate/latest.json`
-- `data/buildsetu-pending-exact-source-candidates/candidates.json`
-- `data/buildsetu-source-review-queue/queue.json`
-- `data/buildsetu-source-review-queue/status/latest.json`
-- `data/buildsetu-web-discovery/status.json`
-
-## Important Scripts
-
-- `scripts/buildsetu-source-watch-check.mjs`
-- `scripts/buildsetu-source-watch-fetch-recover.mjs`
-- `scripts/buildsetu-source-watch-quality-gate.mjs`
-- `scripts/buildsetu-source-watch-inbox.mjs`
-- `scripts/buildsetu-source-review-queue-sync.mjs`
-- `scripts/buildsetu-source-review-pipeline-status.mjs`
-
-## Important Routes
-
-- `/api/agent-tools/web-search`
-- `/api/agent-knowledge/web-search-candidate-capture`
-- `/api/agent-knowledge/pending-exact-source-candidates`
-- `/api/agent-knowledge/official-source-review-queue`
-- `/workspace/knowledge-inbox`
-- `/workspace/official-source-review-queue`
-
-## Safety Policy
-
-- Registered source auto-watch is enabled.
-- Open web-search does not auto-run from cron.
-- Web-search results are saved as candidates only.
-- Source registry is not changed automatically.
-- Extraction is not unlocked automatically.
-- QA-ready state is not unlocked automatically.
-- Trusted knowledge write is blocked.
-- Trusted merge is blocked.
-- Merge policy remains `manual_review_required`.
-
 ## Current Counts
-
 - Candidate queue total: 26
 - Review queue total: 78
 - Pending exact candidates: 51
@@ -233,37 +161,7 @@ eb2abd3 Polish web update source review UI states
 - Approved items: 1
 - Rejected items: 1
 
-## Next Recommended Phases
-
-### 47B-2T — Review Queue Browser QA
-
-- Knowledge Inbox card visible.
-- Review Queue filters work.
-- Search `BIS National Building Code`.
-- `Pending exact` filter shows pending exact candidates.
-- `Rejected` filter shows the smoke-test BIS candidate.
-- Safety labels remain visible.
-
-### 47B-2U — Source Candidate Approval Workflow
-
-- Approve source candidate.
-- Generate extraction draft.
-- QA validation.
-- Trusted merge candidate creation.
-- Final trusted merge only after explicit approval.
-
-### 47B-2V — Failed Source URL Replacement
-
-- DDA UBBL
-- CPWD Works Manual
-- MoHUA PDFs/pages
-- Karnataka model bye-laws
-- Failed TLS/timeout official sources
-
-Do not replace sources without official source verification.
-
-## Current Final Safety
-
+## Safety
 ```json
 {
   "sourceRegistryChanged": false,
@@ -278,3 +176,15 @@ Do not replace sources without official source verification.
   "mergePolicy": "manual_review_required"
 }
 ```
+
+## Completed
+- Source-watch cron active
+- Fetch recovery active
+- Quality gate active
+- Inbox regeneration active
+- Web-search candidate capture active
+- Review queue sync active
+- Review queue filter/search UI active
+- Knowledge Inbox status card active
+- Pipeline status auto-refresh active
+- Trusted merge/write blocked
