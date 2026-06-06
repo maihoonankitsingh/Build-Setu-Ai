@@ -264,6 +264,50 @@ export default function OfficialSourceReviewQueuePage() {
     [reviewForms, updateReviewForm],
   );
 
+
+  const runM8YDirectBisRejectTest = useCallback(async () => {
+    // BUILDSETU_PHASE_M8Y_FIX2_DIRECT_REJECT_HANDLER
+    if (typeof window !== "undefined") {
+      const ok = window.confirm(
+        "BUILDSETU_PHASE_M8Y_FIX2_DIRECT_REJECT_CONFIRM\nThis will DIRECTLY save BIS status: REJECTED\n\nContinue?"
+      );
+      if (!ok) return;
+    }
+
+    setReviewingId("official_source_review_bis-national-building-code");
+    setError("");
+
+    try {
+      const res = await fetch("/api/agent-knowledge/official-source-review-queue", {
+        method: "POST",
+        credentials: "include",
+        cache: "no-store",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "review",
+          itemId: "official_source_review_bis-national-building-code",
+          status: "rejected",
+          reviewer: "m8y-fix2-direct-test",
+          notes: "M8Y Fix2 direct reject test",
+          mergeReady: false,
+        }),
+      });
+
+      const json = await res.json().catch(() => ({}));
+      if (!res.ok || !json?.ok) {
+        throw new Error(json?.error || `Direct BIS reject failed with HTTP ${res.status}`);
+      }
+
+      // M8Y Fix2 direct action completed; queue reload below confirms persisted state.
+      await loadQueue();
+    } catch (err: any) {
+      setError(err?.message || "M8Y Fix2 direct BIS reject failed.");
+    } finally {
+      setReviewingId("");
+    }
+  }, [loadQueue]);
+
+
   useEffect(() => {
     loadQueue();
   }, [loadQueue]);
@@ -397,6 +441,15 @@ export default function OfficialSourceReviewQueuePage() {
             data-buildsetu-marker="BUILDSETU_PHASE_M8Y_FIX1_EXPLICIT_STATUS_LEGEND"
           >
             M8Y status actions: Approve reference (approved) · Reject source (rejected) · Back to pending (pending_review)
+          <button
+            type="button"
+            data-buildsetu-marker="BUILDSETU_PHASE_M8Y_FIX2_DIRECT_REJECT_BUTTON"
+            onClick={runM8YDirectBisRejectTest}
+            disabled={Boolean(reviewingId)}
+            className="mt-3 rounded-xl border border-red-400/50 bg-red-950/40 px-4 py-2 text-xs font-bold text-red-100 hover:bg-red-900/50 disabled:cursor-not-allowed disabled:opacity-60"
+          >
+            M8Y Test Reject BIS (direct rejected payload)
+          </button>
           </p>
           Review controls available after sync: Approve notes only, Reject source, Back to pending.
           No trusted merge button is present. Trusted knowledge remains unchanged until a separate
