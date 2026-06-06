@@ -1,7 +1,7 @@
 {
   "ok": true,
-  "generatedAt": "2026-06-06T06:22:03.511Z",
-  "phase": "47B-2P",
+  "generatedAt": "2026-06-06T06:33:29.120Z",
+  "phase": "47B-2R",
   "title": "BuildSetu source watch, web-search candidate capture, and review queue pipeline status",
   "routes": {
     "webSearch": "/api/agent-tools/web-search",
@@ -109,5 +109,5 @@
     "autoMerge": false,
     "mergePolicy": "manual_review_required"
   },
-  "nextRecommendedPhase": "47B-2Q: dashboard/knowledge-inbox link and compact status card for source-review pipeline"
+  "nextRecommendedPhase": "47B-2S: add quick refresh action/status card update on Knowledge Inbox if needed"
 }
