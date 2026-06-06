@@ -19,6 +19,7 @@ type QueueItem = {
   autoMerge?: boolean;
   nextAction?: string;
   reviewChecklist?: string[];
+  source?: Record<string, any>;
   review?: {
     reviewer?: string;
     reviewedBy?: string;
@@ -393,6 +394,38 @@ export default function OfficialSourceReviewQueuePage() {
                         >
                           {item.url}
                         </a>
+
+                        {item.sourcePackId === "pending_exact_source_candidates" ? (
+                          <div
+                            data-buildsetu-marker="BUILDSETU_PENDING_EXACT_SOURCE_CANDIDATE_BADGE_V1"
+                            className="mt-3 rounded-2xl border border-cyan-400/30 bg-cyan-950/30 p-3 text-xs text-cyan-100"
+                          >
+                            <p className="font-black uppercase tracking-[0.2em] text-cyan-200">
+                              Pending exact source candidate
+                            </p>
+                            <div className="mt-2 grid gap-2 sm:grid-cols-2">
+                              <p>
+                                <span className="font-semibold text-slate-300">Jurisdiction:</span>{" "}
+                                {item.source?.jurisdiction || "Needs review"}
+                              </p>
+                              <p>
+                                <span className="font-semibold text-slate-300">Confidence:</span>{" "}
+                                {item.source?.confidence || "Needs review"}
+                              </p>
+                              <p>
+                                <span className="font-semibold text-slate-300">Decision:</span>{" "}
+                                {item.source?.decision || "candidate_saved_needs_review"}
+                              </p>
+                              <p>
+                                <span className="font-semibold text-slate-300">Registry:</span>{" "}
+                                Source registry unchanged
+                              </p>
+                            </div>
+                            <p className="mt-2 text-amber-100">
+                              Trusted merge is blocked until manual review and separate merge phase approval.
+                            </p>
+                          </div>
+                        ) : null}
                       </div>
                       <div className="rounded-xl border border-amber-400/30 bg-amber-950/30 px-3 py-2 text-xs font-semibold text-amber-100">
                         {item.trustedMergeBlockedUntilApproved
