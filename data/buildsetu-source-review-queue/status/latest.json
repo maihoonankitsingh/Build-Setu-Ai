@@ -1,6 +1,6 @@
 {
   "ok": true,
-  "generatedAt": "2026-06-06T06:51:42.691Z",
+  "generatedAt": "2026-06-06T07:02:39.166Z",
   "phase": "47B-2R",
   "title": "BuildSetu source watch, web-search candidate capture, and review queue pipeline status",
   "routes": {
@@ -76,7 +76,7 @@
     }
   },
   "reviewQueue": {
-    "updatedAt": "2026-06-06T06:46:50.206Z",
+    "updatedAt": "2026-06-06T07:02:39.035Z",
     "sourceCandidateCount": 78,
     "itemCount": 78,
     "byStatus": {

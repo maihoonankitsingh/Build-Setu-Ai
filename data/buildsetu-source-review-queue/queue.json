@@ -36,7 +36,7 @@
       ],
       "nextAction": "manual_review_required",
       "createdAt": "2026-06-06T05:47:40.442Z",
-      "updatedAt": "2026-06-06T06:02:09.079Z",
+      "updatedAt": "2026-06-06T07:02:39.035Z",
       "source": {
         "sourceId": "bis-national-building-code",
         "title": "BIS National Building Code",
@@ -83,7 +83,7 @@
         "notes": "",
         "mergeReady": false,
         "reviewedBy": "usr_1779277411640_8bb5e23ec30cc05b",
-        "status": "approved",
+        "status": "pending_review",
         "trustedMergeExecuted": false
       },
       "trustedKnowledgeChanged": false,
@@ -7942,8 +7942,8 @@
       "trustedKnowledgeChanged": false
     }
   ],
-  "updatedAt": "2026-06-06T06:46:50.206Z",
-  "updatedBy": "usr_1779277411640_8bb5e23ec30cc05b",
+  "updatedAt": "2026-06-06T07:02:39.035Z",
+  "updatedBy": "server-script-review-status-consistency-fix",
   "safety": {
     "sourceRegistryChanged": false,
     "extractionAllowedChanged": false,

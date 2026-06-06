@@ -186,12 +186,22 @@ function buildQueueEntry(source, index, existing) {
     createdAt,
     updatedAt: nowIso(),
     source,
-    review: existing?.review || {
-      reviewer: "",
-      reviewedAt: "",
-      notes: "",
-      mergeReady: false,
-    },
+    review: (() => {
+      // BUILDSETU_REVIEW_STATUS_CONSISTENCY_V1
+      const review = existing?.review || {
+        reviewer: "",
+        reviewedAt: "",
+        notes: "",
+        mergeReady: false,
+      };
+
+      return {
+        ...review,
+        status,
+        trustedMergeExecuted: false,
+        mergeReady: status === "approved" ? Boolean(review.mergeReady) : false,
+      };
+    })(),
   };
 }
 
