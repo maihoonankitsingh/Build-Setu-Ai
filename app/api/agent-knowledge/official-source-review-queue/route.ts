@@ -15,6 +15,49 @@ function projectPath(...parts: string[]) {
   return path.join(process.cwd(), ...parts);
 }
 
+
+// BUILDSETU_PHASE_M8X_REVIEW_ACTION_DEBUG_AUDIT_HELPERS
+const REVIEW_ACTION_DEBUG_DIR = path.join(process.cwd(), "data/buildsetu-source-review-queue/debug-review-actions");
+
+function safeReviewDebugFileName(value: unknown) {
+  return cleanText(value || "unknown", 180)
+    .toLowerCase()
+    .replace(/[^a-z0-9._-]+/g, "-")
+    .replace(/^-+|-+$/g, "") || "unknown";
+}
+
+async function appendReviewActionDebugAudit(event: JsonObject) {
+  try {
+    await fs.mkdir(REVIEW_ACTION_DEBUG_DIR, { recursive: true });
+    const generatedAt = nowIso();
+    const id = `${generatedAt.replace(/[:.]/g, "-")}_${safeReviewDebugFileName(event.stage)}_${safeReviewDebugFileName(event.itemId)}`;
+    const payload = {
+      schema: "buildsetu-review-action-debug-audit-v1",
+      generatedAt,
+      safety: {
+        trustedKnowledgeWrite: false,
+        trustedMergeExecuted: false,
+        autoMerge: false,
+        mergePolicy: "manual_review_required",
+      },
+      ...event,
+    };
+    await fs.writeFile(
+      path.join(REVIEW_ACTION_DEBUG_DIR, `${id}.json`),
+      JSON.stringify(payload, null, 2),
+      "utf8"
+    );
+    await fs.writeFile(
+      path.join(REVIEW_ACTION_DEBUG_DIR, "latest.json"),
+      JSON.stringify(payload, null, 2),
+      "utf8"
+    );
+  } catch (error) {
+    console.error("[BuildSetu M8X] Failed to write review action debug audit", error);
+  }
+}
+
+
 async function readJson(filePath: string, fallback: any) {
   try {
     const raw = await fs.readFile(filePath, "utf8");
@@ -491,6 +534,20 @@ export async function POST(req: NextRequest) {
     const body = await req.json().catch(() => ({}));
     const action = cleanText(body?.action || "sync", 40);
 
+    // BUILDSETU_PHASE_M8X_POST_BODY_AUDIT
+    await appendReviewActionDebugAudit({
+      stage: "post_body_received",
+      action,
+      itemId: cleanText(body?.itemId || body?.id || "", 240),
+      status: cleanText(body?.status || "", 80),
+      reviewer: cleanText(body?.reviewer || body?.reviewedBy || "", 160),
+      mergeReady: Boolean(body?.mergeReady === true),
+      hasNotes: Boolean(cleanText(body?.notes || body?.reviewNotes || "", 4000)),
+      userId: user.id,
+      trustedKnowledgeWrite: false,
+      trustedMergeExecuted: false,
+    });
+
     if (!["sync", "review"].includes(action)) {
       return NextResponse.json(
         { ok: false, error: "UNSUPPORTED_ACTION", supportedActions: ["sync", "review"] },
@@ -500,6 +557,19 @@ export async function POST(req: NextRequest) {
 
     if (action === "review") {
       const reviewInput = normalizeReviewPayload(body);
+
+      // BUILDSETU_PHASE_M8X_REVIEW_BRANCH_AUDIT
+      await appendReviewActionDebugAudit({
+        stage: "review_branch_entered",
+        action,
+        itemId: reviewInput.itemId,
+        status: reviewInput.status,
+        reviewer: reviewInput.reviewer,
+        mergeReady: reviewInput.mergeReady,
+        userId: user.id,
+        trustedKnowledgeWrite: false,
+        trustedMergeExecuted: false,
+      });
 
       if (!reviewInput.itemId || !reviewInput.status) {
         return NextResponse.json(
@@ -543,6 +613,21 @@ export async function POST(req: NextRequest) {
     const preservedQueueForWrite = preserveSourceReviewQueueSyncState(updatedQueue as JsonObject, await readJson(projectPath(QUEUE_RELATIVE_PATH), null));
     await writeJson(projectPath(QUEUE_RELATIVE_PATH), preservedQueueForWrite);
 
+      // BUILDSETU_PHASE_M8X_REVIEW_WRITE_AUDIT
+      await appendReviewActionDebugAudit({
+        stage: "review_queue_written",
+        action,
+        itemId: reviewInput.itemId,
+        status: reviewInput.status,
+        reviewer: reviewInput.reviewer || user.id,
+        mergeReady: reviewInput.mergeReady,
+        userId: user.id,
+        queuePath: QUEUE_RELATIVE_PATH,
+        trustedKnowledgeWrite: false,
+        trustedMergeExecuted: false,
+      });
+
+
       const reviewedItem = nextItems[index];
 
       return NextResponse.json({
@@ -555,6 +640,9 @@ export async function POST(req: NextRequest) {
         mergePolicy: "manual_review_required",
         trustedKnowledgeChanged: false,
         trustedMergeExecuted: false,
+        // BUILDSETU_PHASE_M8X_RESPONSE_DEBUG_FIELDS
+        debugAuditEnabled: true,
+        debugAuditPath: "data/buildsetu-source-review-queue/debug-review-actions/latest.json",
         userId: user.id,
       });
     }

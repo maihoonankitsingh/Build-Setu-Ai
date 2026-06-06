@@ -127,3 +127,6 @@ data/agent-knowledge/source-watch/
 
 # BuildSetu runtime source review persistence
 data/buildsetu-source-reviews/
+
+# BuildSetu runtime review action debug audits
+/data/buildsetu-source-review-queue/debug-review-actions/
