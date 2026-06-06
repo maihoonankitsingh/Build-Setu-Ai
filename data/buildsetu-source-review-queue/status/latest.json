@@ -1,0 +1,113 @@
+{
+  "ok": true,
+  "generatedAt": "2026-06-06T06:22:03.511Z",
+  "phase": "47B-2P",
+  "title": "BuildSetu source watch, web-search candidate capture, and review queue pipeline status",
+  "routes": {
+    "webSearch": "/api/agent-tools/web-search",
+    "webSearchCandidateCapture": "/api/agent-knowledge/web-search-candidate-capture",
+    "pendingExactSourceCandidates": "/api/agent-knowledge/pending-exact-source-candidates",
+    "officialSourceReviewQueue": "/api/agent-knowledge/official-source-review-queue",
+    "reviewQueuePage": "/workspace/official-source-review-queue",
+    "knowledgeInboxPage": "/workspace/knowledge-inbox"
+  },
+  "sourceWatch": {
+    "registeredTrustedSourceAutoWatch": true,
+    "latestInboxGeneratedAt": "2026-06-06T05:00:39.333Z",
+    "watchSourceCount": null,
+    "pendingSourceUpdateDrafts": 0,
+    "latestChangedSources": 1,
+    "latestFailedSources": 7,
+    "fetchRecovery": {
+      "recoveredCount": 1,
+      "unresolvedCount": 7
+    },
+    "qualityGate": {
+      "scannedDrafts": 13,
+      "quarantinedCount": 0,
+      "keptPendingCount": 0
+    }
+  },
+  "webDiscovery": {
+    "openWebSearchAutoRunsInCron": false,
+    "candidateCaptureReady": true,
+    "trustedKnowledgeAutoMerge": false
+  },
+  "candidateQueue": {
+    "totalCandidates": 26,
+    "byDecision": {
+      "web_search_candidate_saved_needs_review": 1,
+      "candidate_saved_needs_review": 25
+    },
+    "byJurisdiction": {
+      "India": 1,
+      "Uttarakhand": 1,
+      "Tripura": 1,
+      "Sikkim": 1,
+      "Punjab": 1,
+      "Puducherry": 1,
+      "Odisha": 1,
+      "Nagaland": 1,
+      "Mizoram": 1,
+      "Meghalaya": 1,
+      "Manipur": 1,
+      "Lakshadweep": 1,
+      "Ladakh": 1,
+      "Kerala": 1,
+      "Jharkhand": 1,
+      "Jammu and Kashmir": 1,
+      "Himachal Pradesh": 1,
+      "Goa": 1,
+      "Dadra and Nagar Haveli and Daman and Diu": 1,
+      "Chhattisgarh": 1,
+      "Chandigarh": 1,
+      "Bihar": 1,
+      "Assam": 1,
+      "Arunachal Pradesh": 1,
+      "Andhra Pradesh": 1,
+      "Andaman and Nicobar Islands": 1
+    },
+    "latestCandidate": {
+      "sourceId": "smoke-test-web-search-ui_bis.gov.in_bis-national-building-code",
+      "title": "BIS National Building Code",
+      "url": "https://www.bis.gov.in/standards/technical-department/national-building-code/",
+      "decision": "web_search_candidate_saved_needs_review",
+      "confidence": "medium_official_domain_needs_review"
+    }
+  },
+  "reviewQueue": {
+    "updatedAt": "2026-06-06T06:18:32.318Z",
+    "sourceCandidateCount": 78,
+    "itemCount": 78,
+    "byStatus": {
+      "pending_review": 76,
+      "approved": 1,
+      "rejected": 1
+    },
+    "bySourcePackId": {
+      "official_core_building_codes_india": 3,
+      "planning_dimensions_pack": 3,
+      "construction_materials_execution_pack": 2,
+      "state_local_approval_bylaws_pack": 8,
+      "all_india_state_ut_authority_index_pack": 36,
+      "pending_exact_source_candidates": 26
+    },
+    "pendingExactSourceCandidateItems": 26,
+    "rejectedItems": 1,
+    "approvedItems": 1,
+    "pendingReviewItems": 76
+  },
+  "safety": {
+    "sourceRegistryChanged": false,
+    "extractionAllowedChanged": false,
+    "qaReadyAllowedChanged": false,
+    "trustedMergeCandidateAllowedChanged": false,
+    "trustedKnowledgeWrite": false,
+    "trustedKnowledgeChanged": false,
+    "trustedMergeExecuted": false,
+    "mergeActionAvailable": false,
+    "autoMerge": false,
+    "mergePolicy": "manual_review_required"
+  },
+  "nextRecommendedPhase": "47B-2Q: dashboard/knowledge-inbox link and compact status card for source-review pipeline"
+}
