@@ -7499,6 +7499,8 @@ function ProjectTaskChatInterfaceShell({
   // BUILDSETU_PHASE_M8L_WEB_UPDATE_RUNTIME_SOURCE_STATE
   const [webUpdateRuntimeSourceRows, setWebUpdateRuntimeSourceRows] = useState<any[]>([]);
   const [webUpdateRuntimeStatus, setWebUpdateRuntimeStatus] = useState("");
+  // BUILDSETU_PHASE_M8M_SOURCE_REVIEW_OVERRIDE_STATE
+  const [webUpdateRuntimeReviewOverrides, setWebUpdateRuntimeReviewOverrides] = useState<Record<string, any>>({});
 
   const [executingPromptId, setExecutingPromptId] = useState("");
   const chatStreamRef = useRef<HTMLDivElement | null>(null);
@@ -8661,6 +8663,47 @@ function buildToolHrefWithActiveProject(slug: string, projectId?: string) {
     });
   }
 
+  // BUILDSETU_PHASE_M8M_SOURCE_REVIEW_HELPERS
+  function getBuildSetuSourceRowId(row: any) {
+    return String(row?.id || row?.sourceUrl || row?.query || "").trim();
+  }
+
+  function setBuildSetuSourceReviewStatus(row: any, reviewStatus: string) {
+    const rowId = getBuildSetuSourceRowId(row);
+    if (!rowId) {
+      window.alert("Source row id missing.");
+      return;
+    }
+
+    const next =
+      reviewStatus === "approved_for_reference"
+        ? {
+            reviewStatus: "approved_for_reference",
+            confidence: row?.sourceUrl ? "medium" : "low",
+            reviewedAt: new Date().toISOString(),
+            reviewNote: "Approved locally for reference. BOQ/final rate approval still locked.",
+            boqAttachReady: false,
+          }
+        : {
+            reviewStatus: "rejected",
+            confidence: "reject",
+            reviewedAt: new Date().toISOString(),
+            reviewNote: "Rejected locally by reviewer.",
+            boqAttachReady: false,
+          };
+
+    setWebUpdateRuntimeReviewOverrides((existing: Record<string, any>) => ({
+      ...existing,
+      [rowId]: next,
+    }));
+
+    setWebUpdateRuntimeStatus(
+      reviewStatus === "approved_for_reference"
+        ? "Source approved for reference only. Final BOQ rate remains locked."
+        : "Source rejected locally. It will not be used for BOQ attach."
+    );
+  }
+
   // BUILDSETU_PHASE_M8J_WEB_UPDATE_UI_RUNTIME_WIRING
   async function runBuildSetuWebUpdateCard(adapter: any, card: any) {
     const actionId = String(card?.id || card?.title || "");
@@ -8785,6 +8828,15 @@ function buildToolHrefWithActiveProject(slug: string, projectId?: string) {
       : [];
     // BUILDSETU_PHASE_M8L_HYDRATED_SOURCE_ROW_BINDING
     const hydratedWebUpdateSourceRows = webUpdateRuntimeSourceRows.length ? webUpdateRuntimeSourceRows : webUpdateSourceRows;
+    // BUILDSETU_PHASE_M8M_REVIEWED_SOURCE_ROW_BINDING
+    const reviewedHydratedWebUpdateSourceRows = hydratedWebUpdateSourceRows.map((row: any) => {
+      const rowId = getBuildSetuSourceRowId(row);
+      const override = rowId ? webUpdateRuntimeReviewOverrides[rowId] : null;
+      return override ? { ...row, ...override } : row;
+    });
+    const sourceReviewApprovedCount = reviewedHydratedWebUpdateSourceRows.filter((row: any) => row?.reviewStatus === "approved_for_reference").length;
+    const sourceReviewRejectedCount = reviewedHydratedWebUpdateSourceRows.filter((row: any) => row?.reviewStatus === "rejected").length;
+    const sourceReviewPendingCount = reviewedHydratedWebUpdateSourceRows.filter((row: any) => !["approved_for_reference", "rejected"].includes(String(row?.reviewStatus || ""))).length;
     const boqSourceAttachActions = Array.isArray(adapter.boqSourceAttachActions) ? adapter.boqSourceAttachActions : [];
     const boqFinalRateApprovalRows = Array.isArray(adapter.boqFinalRateApprovalRows) ? adapter.boqFinalRateApprovalRows : [];
     const finalRateLockedByDefault = Boolean(adapter.finalRateApprovalLockedByDefault);
@@ -8856,11 +8908,11 @@ function buildToolHrefWithActiveProject(slug: string, projectId?: string) {
           </div>
         ) : null}
 
-        {hydratedWebUpdateSourceRows.length ? (
+        {reviewedHydratedWebUpdateSourceRows.length ? (
           <div className="mt-3 rounded-2xl border border-[#e8ddf8] bg-white p-3">
             <div className="flex flex-wrap items-center justify-between gap-2">
               <div className="text-[12px] font-black text-[#2b164f]">Source signal review</div>
-              <span className="text-[10px] font-bold text-[#7b6f8d]">{hydratedWebUpdateSourceRows.length} rows</span>
+              <span className="text-[10px] font-bold text-[#7b6f8d]">{reviewedHydratedWebUpdateSourceRows.length} rows</span>
             </div>
             {/* BUILDSETU_PHASE_M8L_RUNTIME_STATUS_RENDER */}
             {webUpdateRuntimeStatus ? (
@@ -8868,8 +8920,15 @@ function buildToolHrefWithActiveProject(slug: string, projectId?: string) {
                 {webUpdateRuntimeStatus}
               </div>
             ) : null}
+            {/* BUILDSETU_PHASE_M8M_SOURCE_REVIEW_SUMMARY_RENDER */}
+            <div className="mt-2 flex flex-wrap gap-2 text-[10px] font-black">
+              <span className="rounded-full bg-white px-2.5 py-1 text-[#6b5c7f]">Pending {sourceReviewPendingCount}</span>
+              <span className="rounded-full bg-[#dcfce7] px-2.5 py-1 text-[#166534]">Approved reference {sourceReviewApprovedCount}</span>
+              <span className="rounded-full bg-[#fee2e2] px-2.5 py-1 text-[#991b1b]">Rejected {sourceReviewRejectedCount}</span>
+              <span className="rounded-full bg-[#fff3cd] px-2.5 py-1 text-[#7a4b00]">Final rate locked</span>
+            </div>
             <div className="mt-2 grid gap-1.5">
-              {hydratedWebUpdateSourceRows.slice(0, 6).map((row: any) => (
+              {reviewedHydratedWebUpdateSourceRows.slice(0, 6).map((row: any) => (
                 <div key={row.id || row.query} className="rounded-xl bg-[#fbf8ff] px-3 py-2 text-[11px]">
                   {/* BUILDSETU_PHASE_M8L_SOURCE_ROW_TITLE_URL_RENDER */}
                   <div className="font-bold text-[#2b164f]">{row.sourceTitle || row.query || row.id || "Source signal"}</div>
@@ -8881,6 +8940,34 @@ function buildToolHrefWithActiveProject(slug: string, projectId?: string) {
                   </div>
                   {row.snippet ? (
                     <div className="mt-1 line-clamp-2 text-[#6b5c7f]">{row.snippet}</div>
+                  ) : null}
+                  {/* BUILDSETU_PHASE_M8M_SOURCE_REVIEW_ROW_ACTIONS */}
+                  <div className="mt-2 flex flex-wrap items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setBuildSetuSourceReviewStatus(row, "approved_for_reference")}
+                      disabled={row.reviewStatus === "approved_for_reference"}
+                      className="rounded-full border border-[#bbf7d0] bg-[#f0fdf4] px-2.5 py-1 text-[10px] font-black text-[#166534] disabled:opacity-60"
+                    >
+                      Approve reference
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setBuildSetuSourceReviewStatus(row, "rejected")}
+                      disabled={row.reviewStatus === "rejected"}
+                      className="rounded-full border border-[#fecaca] bg-[#fff1f2] px-2.5 py-1 text-[10px] font-black text-[#991b1b] disabled:opacity-60"
+                    >
+                      Reject
+                    </button>
+                    <span className="rounded-full bg-white px-2.5 py-1 text-[10px] font-black text-[#6b5c7f]">
+                      {row.reviewStatus || "pending_review"}
+                    </span>
+                    <span className="rounded-full bg-white px-2.5 py-1 text-[10px] font-black text-[#6b5c7f]">
+                      {row.freshnessStatus || "pending"} · {row.confidence || "pending"}
+                    </span>
+                  </div>
+                  {row.reviewNote ? (
+                    <div className="mt-1 text-[10px] font-bold text-[#7b6f8d]">{row.reviewNote}</div>
                   ) : null}
                 </div>
               ))}
