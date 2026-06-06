@@ -8585,6 +8585,81 @@ function buildToolHrefWithActiveProject(slug: string, projectId?: string) {
     );
   }
 
+  // BUILDSETU_PHASE_M8J_WEB_UPDATE_UI_RUNTIME_WIRING
+  async function runBuildSetuWebUpdateCard(adapter: any, card: any) {
+    const actionId = String(card?.id || card?.title || "");
+    const actionType = String(card?.actionType || "");
+
+    if (actionType === "review_pending_source_updates" && card?.navigationPath) {
+      window.location.href = String(card.navigationPath);
+      return;
+    }
+
+    const executions = Array.isArray(adapter?.webUpdateBrowserExecutionAdapter?.actionExecutions)
+      ? adapter.webUpdateBrowserExecutionAdapter.actionExecutions
+      : [];
+
+    const execution = executions.find((item: any) =>
+      String(item?.actionCardId || "") === actionId ||
+      String(item?.actionType || "") === actionType
+    );
+
+    const fetchCalls = Array.isArray(execution?.fetchCalls) ? execution.fetchCalls.slice(0, 3) : [];
+
+    if (!fetchCalls.length) {
+      window.alert("No executable web-update query found for this action.");
+      return;
+    }
+
+    const endpoint =
+      String(adapter?.webUpdateExecutionContract?.endpoint || "") ||
+      String(card?.endpoint || "") ||
+      "/api/agent-tools/web-search";
+
+    const summaries: string[] = [];
+
+    try {
+      for (const call of fetchCalls) {
+        const query = String(call?.payload?.query || call?.query || "").trim();
+        if (!query) continue;
+
+        const response = await fetch(String(call?.endpoint || endpoint), {
+          method: "POST",
+          credentials: "include",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ query }),
+        });
+
+        const data = await response.json().catch(() => null);
+
+        if (!response.ok) {
+          const code = String(data?.code || data?.error || response.status || "WEB_UPDATE_FAILED");
+          if (response.status === 401 || code.includes("CREDIT_CHECK_FAILED")) {
+            throw new Error("Login or credits required to run live web research.");
+          }
+          throw new Error(code);
+        }
+
+        const count =
+          data?.count ??
+          (Array.isArray(data?.items) ? data.items.length : null) ??
+          (Array.isArray(data?.results) ? data.results.length : null) ??
+          (Array.isArray(data?.sources) ? data.sources.length : null) ??
+          0;
+
+        summaries.push(`${query} → ${count} source signal(s)`);
+      }
+
+      window.alert(
+        summaries.length
+          ? `Web update completed.\n\n${summaries.join("\n")}`
+          : "Web update completed, but no source signals were returned."
+      );
+    } catch (error: any) {
+      window.alert(error?.message || "Web update failed.");
+    }
+  }
+
   // BUILDSETU_PHASE_47R1_PROJECT_CHAT_PLANNING_UI_RENDERER
   function getPlanningUiAdapterFromMessage(message: ProjectUnifiedChatMessage) {
     const data: any = message?.resultJson || {};
@@ -8606,6 +8681,17 @@ function buildToolHrefWithActiveProject(slug: string, projectId?: string) {
     const decisionCards = Array.isArray(adapter.decisionCards) ? adapter.decisionCards : [];
     const blockedCards = Array.isArray(adapter.blockedCards) ? adapter.blockedCards : [];
     const sectionTabs = Array.isArray(adapter.sectionTabs) ? adapter.sectionTabs : [];
+    // BUILDSETU_PHASE_M8J_WEB_UPDATE_UI_DATA_BINDINGS
+    const webUpdateActionCards = Array.isArray(adapter.webUpdateActionCards) ? adapter.webUpdateActionCards : [];
+    const webUpdateExecutions = Array.isArray(adapter.webUpdateBrowserExecutionAdapter?.actionExecutions)
+      ? adapter.webUpdateBrowserExecutionAdapter.actionExecutions
+      : [];
+    const webUpdateSourceRows = Array.isArray(adapter.webUpdateSourceSignalReviewRows)
+      ? adapter.webUpdateSourceSignalReviewRows
+      : [];
+    const boqSourceAttachActions = Array.isArray(adapter.boqSourceAttachActions) ? adapter.boqSourceAttachActions : [];
+    const boqFinalRateApprovalRows = Array.isArray(adapter.boqFinalRateApprovalRows) ? adapter.boqFinalRateApprovalRows : [];
+    const finalRateLockedByDefault = Boolean(adapter.finalRateApprovalLockedByDefault);
     const totalQa = (qa.pass || 0) + (qa.warn || 0) + (qa.fail || 0);
 
     return (
@@ -8630,6 +8716,116 @@ function buildToolHrefWithActiveProject(slug: string, projectId?: string) {
                 {card.title || "Planning action"}
               </button>
             ))}
+          </div>
+        ) : null}
+
+        {/* BUILDSETU_PHASE_M8J_WEB_UPDATE_UI_RENDER_BLOCK */}
+        {webUpdateActionCards.length ? (
+          <div className="mt-3 rounded-2xl border border-[#e8ddf8] bg-[#fffdf8] p-3">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <div>
+                <div className="text-[12px] font-black text-[#2b164f]">Live web update actions</div>
+                <div className="mt-0.5 text-[11px] text-[#7b6f8d]">
+                  Browser session required · credits/login checked · source signals only
+                </div>
+              </div>
+              <span className="rounded-full bg-[#fff3cd] px-2.5 py-1 text-[10px] font-black text-[#7a4b00]">
+                No final approval
+              </span>
+            </div>
+
+            <div className="mt-2 flex flex-wrap gap-2">
+              {webUpdateActionCards.slice(0, 7).map((card: any) => {
+                const execution = webUpdateExecutions.find((item: any) =>
+                  String(item?.actionCardId || "") === String(card?.id || "") ||
+                  String(item?.actionType || "") === String(card?.actionType || "")
+                );
+                const queryCount = execution?.queryCount ?? card?.queryCount ?? 0;
+                const blocked = card?.status === "blocked" || execution?.status === "blocked";
+
+                return (
+                  <button
+                    key={card.id || card.title}
+                    type="button"
+                    onClick={() => runBuildSetuWebUpdateCard(adapter, card)}
+                    disabled={blocked}
+                    className="rounded-full border border-[#e8ddf8] bg-white px-3 py-1.5 text-[11px] font-bold text-[#2b164f] transition hover:border-[#7c3aed] hover:bg-[#fbf8ff] disabled:cursor-not-allowed disabled:opacity-50"
+                    title={card.description || ""}
+                  >
+                    {card.cta || card.title || "Run web update"} · {queryCount}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        ) : null}
+
+        {webUpdateSourceRows.length ? (
+          <div className="mt-3 rounded-2xl border border-[#e8ddf8] bg-white p-3">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <div className="text-[12px] font-black text-[#2b164f]">Source signal review</div>
+              <span className="text-[10px] font-bold text-[#7b6f8d]">{webUpdateSourceRows.length} rows</span>
+            </div>
+            <div className="mt-2 grid gap-1.5">
+              {webUpdateSourceRows.slice(0, 4).map((row: any) => (
+                <div key={row.id || row.query} className="rounded-xl bg-[#fbf8ff] px-3 py-2 text-[11px]">
+                  <div className="font-bold text-[#2b164f]">{row.query || row.id || "Source signal"}</div>
+                  <div className="mt-0.5 text-[#6b5c7f]">
+                    {row.topicGroup || "general"} · {row.executionStatus || "pending"} · {row.reviewStatus || "pending"}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        ) : null}
+
+        {boqSourceAttachActions.length || boqFinalRateApprovalRows.length ? (
+          <div className="mt-3 rounded-2xl border border-[#e8ddf8] bg-[#fbf8ff] p-3">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <div>
+                <div className="text-[12px] font-black text-[#2b164f]">BOQ source + final rate control</div>
+                <div className="mt-0.5 text-[11px] text-[#7b6f8d]">
+                  Source attach separate · vendor quote required · final rate locked
+                </div>
+              </div>
+              {finalRateLockedByDefault ? (
+                <span className="rounded-full bg-[#fee2e2] px-2.5 py-1 text-[10px] font-black text-[#991b1b]">
+                  Final rate locked
+                </span>
+              ) : null}
+            </div>
+
+            {boqSourceAttachActions.length ? (
+              <div className="mt-2">
+                <div className="text-[11px] font-black text-[#2b164f]">Source attach candidates</div>
+                <div className="mt-1 grid gap-1.5">
+                  {boqSourceAttachActions.slice(0, 3).map((item: any) => (
+                    <div key={item.id || item.boqLineId} className="rounded-xl bg-white px-3 py-2 text-[11px]">
+                      <div className="font-bold text-[#2b164f]">{item.boqItemName || item.boqLineId || "BOQ line"}</div>
+                      <div className="mt-0.5 text-[#6b5c7f]">
+                        {item.attachStatus || "blocked"} · final approval: {item.canApproveFinalRate ? "allowed" : "locked"}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ) : null}
+
+            {boqFinalRateApprovalRows.length ? (
+              <div className="mt-2">
+                <div className="text-[11px] font-black text-[#2b164f]">Final rate approval rows</div>
+                <div className="mt-1 grid gap-1.5">
+                  {boqFinalRateApprovalRows.slice(0, 3).map((row: any) => (
+                    <div key={row.id || row.boqLineId} className="rounded-xl bg-white px-3 py-2 text-[11px]">
+                      <div className="font-bold text-[#2b164f]">{row.boqItemName || row.boqLineId || "BOQ item"}</div>
+                      <div className="mt-0.5 text-[#6b5c7f]">
+                        {row.finalRateStatus || "locked"} · vendor quote: {row.vendorQuoteRequired ? "required" : "not required"}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ) : null}
           </div>
         ) : null}
 
