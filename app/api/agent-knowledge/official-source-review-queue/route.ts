@@ -220,6 +220,130 @@ function buildQueueEntry(source: JsonObject, index: number, existing?: JsonObjec
   };
 }
 
+
+// BUILDSETU_PHASE_M8U_REVIEW_QUEUE_SYNC_PRESERVATION_HELPERS
+function preserveNonEmptyArray(existingValue: unknown, nextValue: unknown): unknown[] {
+  if (Array.isArray(existingValue) && existingValue.length) return existingValue;
+  if (Array.isArray(nextValue)) return nextValue;
+  return [];
+}
+
+function preserveNonEmptyText(existingValue: unknown, nextValue: unknown): string {
+  const existing = cleanText(existingValue || "", 2000);
+  if (existing) return existing;
+  return cleanText(nextValue || "", 2000);
+}
+
+function preserveExistingSourceReviewQueueItem(nextItem: JsonObject, existingItem?: JsonObject): JsonObject {
+  if (!existingItem || typeof existingItem !== "object") return nextItem;
+
+  const existingStatus = isReviewStatus(existingItem.status) ? existingItem.status : undefined;
+  const nextStatus = isReviewStatus(nextItem.status) ? nextItem.status : "pending_review";
+  const preservedStatus = existingStatus || nextStatus;
+
+  const existingReview = existingItem.review && typeof existingItem.review === "object" ? existingItem.review as JsonObject : {};
+  const nextReview = nextItem.review && typeof nextItem.review === "object" ? nextItem.review as JsonObject : {};
+
+  const existingSource = existingItem.source && typeof existingItem.source === "object" ? existingItem.source as JsonObject : {};
+  const nextSource = nextItem.source && typeof nextItem.source === "object" ? nextItem.source as JsonObject : {};
+
+  const preservedReview = {
+    ...nextReview,
+    ...existingReview,
+    mergeReady: Boolean((existingReview as any).mergeReady),
+    trustedMergeExecuted: Boolean((existingReview as any).trustedMergeExecuted === true),
+  };
+
+  const preservedSource = {
+    ...nextSource,
+    ...existingSource,
+    domains: preserveNonEmptyArray((existingSource as any).domains, (nextSource as any).domains),
+    publisher: preserveNonEmptyText((existingSource as any).publisher, (nextSource as any).publisher),
+    decision: preserveNonEmptyText((existingSource as any).decision, (nextSource as any).decision),
+    confidence: preserveNonEmptyText((existingSource as any).confidence, (nextSource as any).confidence),
+    jurisdiction: preserveNonEmptyText((existingSource as any).jurisdiction, (nextSource as any).jurisdiction),
+    trustedKnowledgeWrite: false,
+    trustedMergeExecuted: false,
+  };
+
+  return {
+    ...nextItem,
+    ...existingItem,
+    status: preservedStatus,
+    domains: preserveNonEmptyArray((existingItem as any).domains, (nextItem as any).domains),
+    publisher: preserveNonEmptyText((existingItem as any).publisher, (nextItem as any).publisher),
+    sourceFingerprint: preserveNonEmptyText((existingItem as any).sourceFingerprint, (nextItem as any).sourceFingerprint),
+    reviewRequired: true,
+    mergePolicy: "manual_review_required",
+    autoMerge: false,
+    trustedMergeBlockedUntilApproved:
+      preservedStatus === "approved" ? Boolean(!(preservedReview as any).mergeReady) : true,
+    nextAction:
+      preservedStatus === "approved"
+        ? ((preservedReview as any).mergeReady ? "ready_for_separate_merge_phase" : "approved_but_merge_not_ready")
+        : preservedStatus === "rejected"
+          ? "source_rejected_manual_review"
+          : "manual_review_required",
+    review: preservedReview,
+    source: preservedSource,
+    trustedMergeExecuted: false,
+    trustedKnowledgeChanged: false,
+  };
+}
+
+function preserveSourceReviewQueueSyncState(nextQueue: JsonObject, existingQueue?: JsonObject): JsonObject {
+  if (!existingQueue || typeof existingQueue !== "object") {
+    return {
+      ...nextQueue,
+      autoMerge: false,
+      mergePolicy: "manual_review_required",
+      trustedMergeExecuted: false,
+    };
+  }
+
+  const nextItems = Array.isArray(nextQueue.items) ? nextQueue.items as JsonObject[] : [];
+  const existingItems = Array.isArray(existingQueue.items) ? existingQueue.items as JsonObject[] : [];
+
+  const existingById = new Map<string, JsonObject>();
+  for (const item of existingItems) {
+    const id = cleanText((item as any)?.id || "", 260);
+    if (id) existingById.set(id, item);
+  }
+
+  const preservedNextItems = nextItems.map((item) => {
+    const id = cleanText((item as any)?.id || "", 260);
+    return preserveExistingSourceReviewQueueItem(item, id ? existingById.get(id) : undefined);
+  });
+
+  const nextIds = new Set(preservedNextItems.map((item) => cleanText((item as any)?.id || "", 260)).filter(Boolean));
+  const preservedExistingOnlyItems = existingItems.filter((item) => {
+    const id = cleanText((item as any)?.id || "", 260);
+    if (!id || nextIds.has(id)) return false;
+    return (item as any).status === "approved" || (item as any).status === "rejected";
+  });
+
+  const items = [...preservedNextItems, ...preservedExistingOnlyItems];
+
+  return {
+    ...nextQueue,
+    sourceCandidateCount: items.length,
+    items,
+    autoMerge: false,
+    mergePolicy: "manual_review_required",
+    trustedMergeExecuted: false,
+    syncPreservation: {
+      enabled: true,
+      version: "M8U-1",
+      preservedExistingItems: existingItems.length,
+      nextItems: nextItems.length,
+      finalItems: items.length,
+      preservedReviewedExistingOnlyItems: preservedExistingOnlyItems.length,
+      policy: "Preserve existing review status, publisher/domain/source fingerprint and manual merge boundary during queue sync.",
+    },
+  };
+}
+
+
 async function loadQueue() {
   const queuePath = projectPath(QUEUE_RELATIVE_PATH);
   const data = await readJson(queuePath, {
@@ -415,7 +539,9 @@ export async function POST(req: NextRequest) {
         updatedBy: user.id,
       };
 
-      await writeJson(projectPath(QUEUE_RELATIVE_PATH), updatedQueue);
+      // BUILDSETU_PHASE_M8U_PRESERVED_QUEUE_WRITE
+    const preservedQueueForWrite = preserveSourceReviewQueueSyncState(updatedQueue as JsonObject, await readJson(projectPath(QUEUE_RELATIVE_PATH), null));
+    await writeJson(projectPath(QUEUE_RELATIVE_PATH), preservedQueueForWrite);
 
       const reviewedItem = nextItems[index];
 
