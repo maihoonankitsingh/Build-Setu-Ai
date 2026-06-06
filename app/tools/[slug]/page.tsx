@@ -80,6 +80,79 @@ function buildSetuUiShouldUseDomainAnswerLocal(payload: any) {
   return domainKeywordHit && !explicitGenerationIntent && !imageTool;
 }
 
+
+async function saveWebSearchResultAsSourceCandidateFromToolUi(args: {
+  raw?: any;
+  output?: any;
+  tool?: any;
+  prompt?: string;
+  projectId?: string | null;
+}) {
+  // BUILDSETU_WEB_SEARCH_UI_SAVE_AS_SOURCE_CANDIDATE_V1
+  const raw = args.raw || {};
+  const output = args.output || {};
+  const prompt = String(args.prompt || raw?.query || raw?.prompt || raw?.message || output?.query || "").trim();
+
+  const candidateItemsRaw =
+    Array.isArray(output?.items)
+      ? output.items
+      : Array.isArray(output?.results)
+        ? output.results
+        : Array.isArray(output?.sourceItems)
+          ? output.sourceItems
+          : Array.isArray(raw?.items)
+            ? raw.items
+            : Array.isArray(raw?.results)
+              ? raw.results
+              : output?.sourceUrl || output?.url
+                ? [output]
+                : raw?.sourceUrl || raw?.url
+                  ? [raw]
+                  : [];
+
+  const items = candidateItemsRaw
+    .map((item: any) => ({
+      title: String(item?.title || item?.name || item?.sourceTitle || item?.domain || item?.url || item?.sourceUrl || "Web source candidate").trim(),
+      sourceUrl: String(item?.sourceUrl || item?.url || item?.href || "").trim(),
+      url: String(item?.url || item?.sourceUrl || item?.href || "").trim(),
+      sourceCitation: String(item?.sourceCitation || item?.citation || "").trim(),
+      snippet: String(item?.snippet || item?.summary || item?.description || "").trim(),
+      textPreview: String(item?.textPreview || item?.text || item?.content || "").trim(),
+      domain: String(item?.domain || "").trim(),
+      publisher: String(item?.publisher || item?.source || "").trim(),
+      jurisdiction: String(item?.jurisdiction || "India").trim(),
+      confidence: String(item?.confidence || "").trim(),
+      authorityType: String(item?.authorityType || "").trim(),
+    }))
+    .filter((item: any) => item.sourceUrl || item.url)
+    .slice(0, 12);
+
+  if (!items.length) {
+    throw new Error("No source URLs found in this web-search result.");
+  }
+
+  const res = await fetch("/api/agent-knowledge/web-search-candidate-capture", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+    body: JSON.stringify({
+      query: prompt || "web-search-ui-source-candidate",
+      jurisdiction: "India",
+      sourceIdPrefix: "web-search-ui",
+      projectId: args.projectId || null,
+      items,
+    }),
+  });
+
+  const data = await res.json().catch(() => ({}));
+
+  if (!res.ok || data?.ok === false) {
+    throw new Error(data?.error || data?.message || `Candidate capture failed with HTTP ${res.status}`);
+  }
+
+  return data;
+}
+
 async function buildSetuUiFetchToolChatRun(url: RequestInfo | URL, init?: RequestInit) {
   if (String(url).includes("/api/tool-chat/run")) {
     const payload = buildSetuUiSafeJsonParse(init?.body);
@@ -1093,6 +1166,30 @@ function BuildSetuWebSearchSaveToKnowledgeCard({
           >
             {saving ? "Saving..." : "Save to Knowledge"}
           </button>
+                  <button
+                    type="button"
+                    onClick={async () => {
+                      try {
+                        const data = await saveWebSearchResultAsSourceCandidateFromToolUi({
+                          raw,
+                          output,
+                          tool: undefined,
+                          prompt: String(raw?.query || raw?.prompt || raw?.message || output?.query || output?.sourceUrl || output?.summary || "web-search-ui-source-candidate").trim(),
+                          projectId: typeof projectId === "string" ? projectId : null,
+                        });
+
+                        window.alert(
+                          `Saved ${data?.savedCount ?? 0} source candidate(s). Review queue: ${data?.reviewQueuePath || "/workspace/official-source-review-queue"}`
+                        );
+                      } catch (err) {
+                        window.alert(err instanceof Error ? err.message : "Source candidate save failed.");
+                      }
+                    }}
+                    className="rounded-xl border border-amber-400/40 bg-amber-400/10 px-4 py-2 text-xs font-black text-amber-100 transition hover:bg-amber-400/20"
+                  >
+                    Save as Source Candidate
+                  </button>
+
 
           <a
             href="/workspace/knowledge-inbox"
@@ -2463,7 +2560,7 @@ export default function ToolWorkspacePage() {
           if (ok && tool.slug === "web-search" && rowPreviewSections.length) {
             return [
               ...rowPreviewSections,
-              "Save available: neeche Save to Knowledge button se cited web-search results knowledge me save kar sakte ho.",
+              "Save available: Save to Knowledge stores cited web-search references; Save as Source Candidate sends official/source URLs to the manual review queue before any trusted merge.",
               "Open Knowledge Inbox after save: /workspace/knowledge-inbox",
             ];
           }
