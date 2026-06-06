@@ -8702,6 +8702,44 @@ function buildToolHrefWithActiveProject(slug: string, projectId?: string) {
         ? "Source approved for reference only. Final BOQ rate remains locked."
         : "Source rejected locally. It will not be used for BOQ attach."
     );
+
+    // BUILDSETU_PHASE_M8N_SOURCE_REVIEW_PERSISTENCE_CLIENT
+    const projectKey =
+      typeof window !== "undefined"
+        ? `${window.location.pathname}${window.location.search}`
+        : "project-chat-ui";
+
+    void fetch("/api/planning/source-review", {
+      method: "POST",
+      credentials: "include",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        projectKey,
+        sourceRowId: rowId,
+        reviewStatus,
+        reviewNote: next.reviewNote,
+        row: {
+          ...row,
+          ...next,
+          id: rowId,
+        },
+      }),
+    })
+      .then(async (response) => {
+        const saved = await response.json().catch(() => null);
+        if (!response.ok || !saved?.ok) {
+          throw new Error(saved?.error || saved?.code || "Source review save failed.");
+        }
+
+        setWebUpdateRuntimeStatus(
+          reviewStatus === "approved_for_reference"
+            ? "Source review saved as approved reference. Final rate remains locked."
+            : "Source review saved as rejected. Final rate remains locked."
+        );
+      })
+      .catch((error: any) => {
+        setWebUpdateRuntimeStatus(error?.message || "Source review save failed. Local review state is still visible.");
+      });
   }
 
   // BUILDSETU_PHASE_M8J_WEB_UPDATE_UI_RUNTIME_WIRING
