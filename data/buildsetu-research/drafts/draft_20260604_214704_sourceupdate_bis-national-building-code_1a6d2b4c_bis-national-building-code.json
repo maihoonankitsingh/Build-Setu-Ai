@@ -1,0 +1,102 @@
+{
+  "id": "draft_20260604_214704_sourceupdate_bis-national-building-code_1a6d2b4c",
+  "status": "superseded_duplicate",
+  "category": "sourceUpdate",
+  "riskLevel": "medium",
+  "requiresProfessionalReview": true,
+  "jurisdiction": {
+    "country": "IN",
+    "stateOrProvinceOrEmirate": "unknown",
+    "cityOrAuthority": "unknown"
+  },
+  "source": {
+    "title": "BIS National Building Code",
+    "url": "https://www.bis.gov.in/standards/technical-department/national-building-code/",
+    "sourceUrl": "https://www.bis.gov.in/standards/technical-department/national-building-code/",
+    "sourceType": "official_primary",
+    "sourceCitation": "BIS National Building Code — https://www.bis.gov.in/standards/technical-department/national-building-code/",
+    "tags": [
+      "source_watch",
+      "pending_review",
+      "bis",
+      "nbc",
+      "construction",
+      "building_code",
+      "planning",
+      "source_pack",
+      "official_core_building_codes_india",
+      "architecture_planning",
+      "civil_construction",
+      "approvals_bylaws",
+      "units_dimensions"
+    ],
+    "publisher": "trusted source watch",
+    "dateAccessed": "2026-06-04",
+    "effectiveDate": "unknown",
+    "version": "unknown"
+  },
+  "extracted": {
+    "summary": "Source watcher detected a possible update for BIS National Building Code. Review the source before merging new facts into BuildSetu knowledge.",
+    "checklist": [
+      "Open source URL manually",
+      "Compare updated content with previous known version",
+      "Extract only verified construction/planning/interior/exterior facts",
+      "Create or update reviewed knowledge entry",
+      "Do not use unreviewed changed content for final professional claims"
+    ],
+    "requiredDocuments": [],
+    "processSteps": [
+      "Source watcher checks trusted source",
+      "Change alert draft is created",
+      "Human review validates update",
+      "Reviewed update is merged into agent knowledge"
+    ],
+    "cautions": [
+      "This is an update alert, not automatically trusted knowledge.",
+      "Do not treat detected source change as final regulation until reviewed."
+    ],
+    "blockedClaims": [
+      "Do not claim updated legal/building-code requirements without review."
+    ]
+  },
+  "confidence": "medium",
+  "mergeTarget": "data/buildsetu-knowledge/*.json",
+  "tags": [
+    "source_watch",
+    "pending_review",
+    "construction_code",
+    "bis",
+    "nbc",
+    "construction",
+    "building_code",
+    "planning",
+    "source_pack",
+    "official_core_building_codes_india",
+    "architecture_planning",
+    "civil_construction",
+    "approvals_bylaws",
+    "units_dimensions"
+  ],
+  "smokeTestsRequired": [],
+  "createdBy": "BuildSetu Source Watcher",
+  "notes": "{\n  \"reason\": \"content_hash_changed\",\n  \"previous\": {\n    \"id\": \"bis-national-building-code\",\n    \"title\": \"BIS National Building Code\",\n    \"url\": \"https://www.bis.gov.in/standards/technical-department/national-building-code/\",\n    \"category\": \"construction_code\",\n    \"priority\": \"high\",\n    \"ok\": true,\n    \"status\": 200,\n    \"finalUrl\": \"https://www.bis.gov.in/?lang=hi\",\n    \"contentType\": \"text/html; charset=UTF-8\",\n    \"etag\": \"\",\n    \"lastModified\": \"\",\n    \"contentLengthHeader\": \"\",\n    \"bytes\": 414451,\n    \"hash\": \"323cb93d112969ab250731e12bdb1c6bdffd598a32d0dba54f4ee9a54d6a0259\",\n    \"checkedAt\": \"2026-06-04T11:57:36.074Z\",\n    \"lastChangeReason\": \"content_hash_changed\"\n  },\n  \"current\": {\n    \"ok\": true,\n    \"status\": 200,\n    \"finalUrl\": \"https://www.bis.gov.in/?lang=hi\",\n    \"contentType\": \"text/html; charset=UTF-8\",\n    \"etag\": \"\",\n    \"lastModified\": \"\",\n    \"contentLengthHeader\": \"\",\n    \"bytes\": 414451,\n    \"hash\": \"35e026d6cf5b3d6865fb710d91623a5956b3e1046680e96b0056d62e566b6ba8\",\n    \"checkedAt\": \"2026-06-04T21:47:04.639Z\"\n  }\n}",
+  "createdAt": "2026-06-04T21:47:04.640Z",
+  "updatedAt": "2026-06-06T04:07:18.268050+00:00",
+  "updatedBy": "phase_47b2_duplicate_cleanup",
+  "supersededBy": {
+    "id": "draft_20260606_033941_sourceupdate_bis-national-building-code_235214cb",
+    "file": "data/buildsetu-research/drafts/draft_20260606_033941_sourceupdate_bis-national-building-code_235214cb_bis-national-building-code.json",
+    "reason": "Older duplicate source-watch update draft for same source URL."
+  },
+  "review": {
+    "status": "closed_duplicate",
+    "notes": "Closed as duplicate. Latest source-watch draft remains pending review.",
+    "trustedKnowledgeWrite": false,
+    "trustedMergeExecuted": false,
+    "mergeActionAvailable": false
+  },
+  "trustedKnowledgeWrite": false,
+  "trustedKnowledgeChanged": false,
+  "trustedMergeExecuted": false,
+  "mergeActionAvailable": false
+}

@@ -222,7 +222,7 @@ function main() {
     state: stateSummary(),
     latestReport,
     recentReports: reports,
-    pendingSourceUpdateDrafts: drafts.filter((draft) => draft.status !== "merged" && draft.status !== "approved"),
+    pendingSourceUpdateDrafts: drafts.filter((draft) => draft.status === "pending_review"),
     latestSourceUpdateDrafts: drafts.slice(0, 20),
     agentInstructions: [
       "Read this inbox before answering questions that depend on current building rules, source updates, government byelaws, codes, standards, material rates or official references.",
