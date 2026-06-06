@@ -1,6 +1,6 @@
 {
   "ok": true,
-  "generatedAt": "2026-06-06T06:33:29.120Z",
+  "generatedAt": "2026-06-06T06:51:42.691Z",
   "phase": "47B-2R",
   "title": "BuildSetu source watch, web-search candidate capture, and review queue pipeline status",
   "routes": {
@@ -13,7 +13,7 @@
   },
   "sourceWatch": {
     "registeredTrustedSourceAutoWatch": true,
-    "latestInboxGeneratedAt": "2026-06-06T05:00:39.333Z",
+    "latestInboxGeneratedAt": "2026-06-06T06:51:42.646Z",
     "watchSourceCount": null,
     "pendingSourceUpdateDrafts": 0,
     "latestChangedSources": 1,
@@ -23,8 +23,8 @@
       "unresolvedCount": 7
     },
     "qualityGate": {
-      "scannedDrafts": 13,
-      "quarantinedCount": 0,
+      "scannedDrafts": 15,
+      "quarantinedCount": 1,
       "keptPendingCount": 0
     }
   },
@@ -76,7 +76,7 @@
     }
   },
   "reviewQueue": {
-    "updatedAt": "2026-06-06T06:18:32.318Z",
+    "updatedAt": "2026-06-06T06:46:50.206Z",
     "sourceCandidateCount": 78,
     "itemCount": 78,
     "byStatus": {
@@ -89,10 +89,10 @@
       "planning_dimensions_pack": 3,
       "construction_materials_execution_pack": 2,
       "state_local_approval_bylaws_pack": 8,
-      "all_india_state_ut_authority_index_pack": 36,
-      "pending_exact_source_candidates": 26
+      "pending_exact_source_candidates": 51,
+      "all_india_state_ut_authority_index_pack": 11
     },
-    "pendingExactSourceCandidateItems": 26,
+    "pendingExactSourceCandidateItems": 51,
     "rejectedItems": 1,
     "approvedItems": 1,
     "pendingReviewItems": 76

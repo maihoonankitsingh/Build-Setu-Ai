@@ -1,17 +1,17 @@
 {
   "schema": "buildsetu-source-watch-live-inbox-v1",
-  "generatedAt": "2026-06-06T05:00:39.333Z",
+  "generatedAt": "2026-06-06T06:51:42.646Z",
   "purpose": "Agent-readable source update awareness inbox. This is not trusted knowledge.",
   "summary": {
     "sourceCount": 48,
-    "latestCheckedAt": "2026-06-06T04:56:15.740Z",
+    "latestCheckedAt": "2026-06-06T06:47:19.009Z",
     "pendingSourceUpdateDrafts": 0,
     "latestChangedSources": 1,
     "latestFailedSources": 7
   },
   "latestReport": {
-    "file": "data/buildsetu-source-watch/changes/source-watch-report-20260606_045708.json",
-    "checkedAt": "2026-06-06T04:55:56.741Z",
+    "file": "data/buildsetu-source-watch/changes/source-watch-report-20260606_064811.json",
+    "checkedAt": "2026-06-06T06:47:01.298Z",
     "ok": true,
     "total": 48,
     "changedCount": 1,
@@ -23,8 +23,8 @@
         "title": "BIS National Building Code",
         "url": "https://www.bis.gov.in/standards/technical-department/national-building-code/",
         "reason": "content_hash_changed",
-        "draftId": "draft_20260606_045559_sourceupdate_bis-national-building-code_9c1ed005",
-        "draftFile": "/var/www/build.sikhadenge.in/sikhadenge-build/data/buildsetu-research/drafts/draft_20260606_045559_sourceupdate_bis-national-building-code_9c1ed005_bis-national-building-code.json"
+        "draftId": "draft_20260606_064705_sourceupdate_bis-national-building-code_e433656c",
+        "draftFile": "/var/www/build.sikhadenge.in/sikhadenge-build/data/buildsetu-research/drafts/draft_20260606_064705_sourceupdate_bis-national-building-code_e433656c_bis-national-building-code.json"
       }
     ],
     "failed": [
