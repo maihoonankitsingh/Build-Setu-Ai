@@ -30,6 +30,7 @@ import { buildMaterialWebSearchRateAdapter, buildMaterialWebSearchRateAdapterPro
 import { buildBoqMaterialMappingEngine, buildBoqMaterialMappingPromptBlock } from "./boq-material-mapping-engine";
 import { buildMaterialResponseMergeEngine, buildMaterialResponseMergePromptBlock, buildMaterialResponseMarkdown } from "./material-response-merge-engine";
 import { buildMaterialWebSearchSourceCaptureEngine, buildMaterialWebSearchSourceCapturePromptBlock } from "./material-web-search-source-capture-engine";
+import { buildUniversalWebUpdatePolicyEngine, buildUniversalWebUpdatePolicyPromptBlock } from "./universal-web-update-policy-engine";
 
 type UniversalPlanningAgentInput = {
   prompt?: string;
@@ -75,7 +76,7 @@ function buildUniversalPlanningDimensionContext(inputText: string) {
   };
 }
 
-export async function runUniversalPlanningAgent(input: UniversalPlanningAgentInput): Promise<UniversalPlanningResult & { dimensionUnderstanding: ReturnType<typeof buildUniversalPlanningDimensionContext>; planningMissingQuestionEngine: ReturnType<typeof buildPlanningMissingQuestionEngine>; buildingTypeClassification: ReturnType<typeof classifyBuildSetuBuildingType>; planningModeQuestionTuning: ReturnType<typeof buildPlanningModeQuestionTuning>; humanPlanningResponse: ReturnType<typeof buildHumanPlanningResponse>; conceptPlanningActionEngine: ReturnType<typeof buildConceptPlanningActionEngine>; roomFurnitureFitEngine: ReturnType<typeof buildRoomFurnitureFitEngine>; roomSpaceStandardsEngine: ReturnType<typeof buildRoomSpaceStandardsEngine>; planningCategoryIntelligence: ReturnType<typeof buildPlanningCategoryIntelligenceEngine>; planningReferenceIntelligence: ReturnType<typeof buildPlanningReferenceIntelligenceEngine>; planningProjectMemoryEngine: ReturnType<typeof buildPlanningProjectMemoryEngine>; planningOutputRoutingEngine: ReturnType<typeof buildPlanningOutputRoutingEngine>; planningRegressionQaEngine: ReturnType<typeof buildPlanningRegressionQaEngine>; planningUiConsumptionAdapter: ReturnType<typeof buildPlanningUiConsumptionAdapter>; structuralGridIntelligence: ReturnType<typeof buildStructuralGridIntelligenceEngine>; foundationSoilRiskEngine: ReturnType<typeof buildFoundationSoilRiskEngine>; seismicWindRiskEngine: ReturnType<typeof buildSeismicWindRiskEngine>; structuralResponseMergeEngine: ReturnType<typeof buildStructuralResponseMergeEngine>; materialTaxonomyEngine: ReturnType<typeof buildMaterialTaxonomyEngine>; interiorMaterialSelectorEngine: ReturnType<typeof buildInteriorMaterialSelectorEngine>; furnitureQuantityBasisEngine: ReturnType<typeof buildFurnitureQuantityBasisEngine>; materialPriceSourceFreshnessEngine: ReturnType<typeof buildMaterialPriceSourceFreshnessEngine>; materialWebSearchRateAdapter: ReturnType<typeof buildMaterialWebSearchRateAdapter>; boqMaterialMappingEngine: ReturnType<typeof buildBoqMaterialMappingEngine>; materialResponseMergeEngine: ReturnType<typeof buildMaterialResponseMergeEngine>; materialWebSearchSourceCaptureEngine: ReturnType<typeof buildMaterialWebSearchSourceCaptureEngine> }> {
+export async function runUniversalPlanningAgent(input: UniversalPlanningAgentInput): Promise<UniversalPlanningResult & { dimensionUnderstanding: ReturnType<typeof buildUniversalPlanningDimensionContext>; planningMissingQuestionEngine: ReturnType<typeof buildPlanningMissingQuestionEngine>; buildingTypeClassification: ReturnType<typeof classifyBuildSetuBuildingType>; planningModeQuestionTuning: ReturnType<typeof buildPlanningModeQuestionTuning>; humanPlanningResponse: ReturnType<typeof buildHumanPlanningResponse>; conceptPlanningActionEngine: ReturnType<typeof buildConceptPlanningActionEngine>; roomFurnitureFitEngine: ReturnType<typeof buildRoomFurnitureFitEngine>; roomSpaceStandardsEngine: ReturnType<typeof buildRoomSpaceStandardsEngine>; planningCategoryIntelligence: ReturnType<typeof buildPlanningCategoryIntelligenceEngine>; planningReferenceIntelligence: ReturnType<typeof buildPlanningReferenceIntelligenceEngine>; planningProjectMemoryEngine: ReturnType<typeof buildPlanningProjectMemoryEngine>; planningOutputRoutingEngine: ReturnType<typeof buildPlanningOutputRoutingEngine>; planningRegressionQaEngine: ReturnType<typeof buildPlanningRegressionQaEngine>; planningUiConsumptionAdapter: ReturnType<typeof buildPlanningUiConsumptionAdapter>; structuralGridIntelligence: ReturnType<typeof buildStructuralGridIntelligenceEngine>; foundationSoilRiskEngine: ReturnType<typeof buildFoundationSoilRiskEngine>; seismicWindRiskEngine: ReturnType<typeof buildSeismicWindRiskEngine>; structuralResponseMergeEngine: ReturnType<typeof buildStructuralResponseMergeEngine>; materialTaxonomyEngine: ReturnType<typeof buildMaterialTaxonomyEngine>; interiorMaterialSelectorEngine: ReturnType<typeof buildInteriorMaterialSelectorEngine>; furnitureQuantityBasisEngine: ReturnType<typeof buildFurnitureQuantityBasisEngine>; materialPriceSourceFreshnessEngine: ReturnType<typeof buildMaterialPriceSourceFreshnessEngine>; materialWebSearchRateAdapter: ReturnType<typeof buildMaterialWebSearchRateAdapter>; boqMaterialMappingEngine: ReturnType<typeof buildBoqMaterialMappingEngine>; materialResponseMergeEngine: ReturnType<typeof buildMaterialResponseMergeEngine>; materialWebSearchSourceCaptureEngine: ReturnType<typeof buildMaterialWebSearchSourceCaptureEngine>; universalWebUpdatePolicyEngine: ReturnType<typeof buildUniversalWebUpdatePolicyEngine> }> {
   const inputText = getPlanningInputText(input);
   const dimensionUnderstanding = buildUniversalPlanningDimensionContext(inputText);
 
@@ -210,6 +211,15 @@ export async function runUniversalPlanningAgent(input: UniversalPlanningAgentInp
     materialPriceSourceFreshnessEngine,
   });
   const materialWebSearchSourceCapturePromptBlock = buildMaterialWebSearchSourceCapturePromptBlock(materialWebSearchSourceCaptureEngine);
+  const universalWebUpdatePolicyEngine = buildUniversalWebUpdatePolicyEngine({
+    inputText,
+    materialPriceSourceFreshnessEngine,
+    materialWebSearchSourceCaptureEngine,
+    buildingTypeClassification,
+    planningCategoryIntelligence,
+    structuralResponseMergeEngine,
+  });
+  const universalWebUpdatePolicyPromptBlock = buildUniversalWebUpdatePolicyPromptBlock(universalWebUpdatePolicyEngine);
 
   const planningReferenceIntelligence = buildPlanningReferenceIntelligenceEngine({
     inputText,
@@ -293,6 +303,17 @@ export async function runUniversalPlanningAgent(input: UniversalPlanningAgentInp
     planningOutputRoutingEngine,
   });
   const planningRegressionQaPromptBlock = buildPlanningRegressionQaPromptBlock(planningRegressionQaEngine);
+  // BUILDSETU_PHASE_M8C_WEB_UPDATE_POLICY_AFTER_HUMAN_RESPONSE
+  const humanPlanningResponseForWebPolicy: any = humanPlanningResponse as any;
+  humanPlanningResponseForWebPolicy.sections = {
+    ...(humanPlanningResponseForWebPolicy.sections || {}),
+    webUpdateTopics: universalWebUpdatePolicyEngine.updateTopics.map((topic) => `${topic.label} | ${topic.topicGroup} | freshness ${topic.freshnessWindowDays} days`),
+    webUpdatePriorityQueries: universalWebUpdatePolicyEngine.priorityQueries.map((item) => `${item.label}: ${item.query}`),
+    webUpdateAnswerPolicy: universalWebUpdatePolicyEngine.answerPolicy,
+    webUpdateFreshnessPolicy: universalWebUpdatePolicyEngine.freshnessPolicy,
+    webUpdateConfidencePolicy: universalWebUpdatePolicyEngine.confidencePolicy,
+  };
+
   const planningUiConsumptionAdapter = buildPlanningUiConsumptionAdapter({
     humanPlanningResponse,
     planningOutputRoutingEngine,
@@ -383,6 +404,9 @@ export async function runUniversalPlanningAgent(input: UniversalPlanningAgentInp
           "Material Web Search Source Capture",
           materialWebSearchSourceCapturePromptBlock,
           "",
+          "Universal Web Update Policy",
+          universalWebUpdatePolicyPromptBlock,
+          "",
           "Planning UI Consumption Adapter",
           planningUiConsumptionPromptBlock,
           "",
@@ -421,6 +445,9 @@ export async function runUniversalPlanningAgent(input: UniversalPlanningAgentInp
           "",
           "Material Web Search Source Capture",
           materialWebSearchSourceCapturePromptBlock,
+          "",
+          "Universal Web Update Policy",
+          universalWebUpdatePolicyPromptBlock,
           "",
           "Planning UI Consumption Adapter",
           planningUiConsumptionPromptBlock,
@@ -507,6 +534,7 @@ export async function runUniversalPlanningAgent(input: UniversalPlanningAgentInp
     boqMaterialMappingEngine,
     materialResponseMergeEngine,
     materialWebSearchSourceCaptureEngine,
+    universalWebUpdatePolicyEngine,
     buildingRules,
     vastuReport,
     spaceProgram,
