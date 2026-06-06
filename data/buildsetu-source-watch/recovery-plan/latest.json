@@ -1,0 +1,321 @@
+{
+  "ok": true,
+  "generatedAt": "2026-06-06T07:14:08.283Z",
+  "phase": "47B-2W",
+  "title": "Failed official source recovery candidate plan",
+  "summary": {
+    "failedCount": 7,
+    "recoveredCount": 1,
+    "unresolvedCount": 7,
+    "existingFailedSourceCandidates": 0
+  },
+  "recovered": [
+    {
+      "id": "maharashtra-udcpr-official-pdf",
+      "title": "Maharashtra Unified Development Control and Promotion Regulations",
+      "url": "https://www.mmrda.maharashtra.gov.in/sites/default/files/2023-10/UDCPR_compressed_2.pdf",
+      "method": "curl_get_insecure_tls_fallback",
+      "status": 200,
+      "note": "Recovered fetch signal only; still requires review for trusted knowledge use."
+    }
+  ],
+  "recoveryTargets": [
+    {
+      "id": "cpwd-works-manual-2024",
+      "title": "CPWD Works Manual 2024",
+      "currentUrl": "https://cpwd.gov.in/Publication/CPWD_Works_Manual_2024.pdf",
+      "errorClass": "connection_reset",
+      "category": "construction_manual",
+      "reviewQueueItems": [
+        {
+          "id": "official_source_review_cpwd-works-manual-2024",
+          "status": "pending_review",
+          "sourcePackId": "construction_materials_execution_pack",
+          "mergePolicy": "manual_review_required",
+          "autoMerge": false,
+          "trustedMergeBlockedUntilApproved": true
+        },
+        {
+          "id": "official_source_review_cpwd-works-manual-2024",
+          "status": "pending_review",
+          "sourcePackId": "construction_materials_execution_pack",
+          "mergePolicy": "manual_review_required",
+          "autoMerge": false,
+          "trustedMergeBlockedUntilApproved": true
+        }
+      ],
+      "recoveryPolicy": {
+        "directReplaceAllowed": false,
+        "candidateOnly": true,
+        "officialSourceRequired": true,
+        "manualReviewRequired": true,
+        "trustedKnowledgeWrite": false,
+        "trustedMergeExecuted": false
+      },
+      "nextAction": [
+        "Find an alternate official authority URL or official mirror.",
+        "Save alternate URL through web-search candidate capture.",
+        "Review in official source review queue.",
+        "Only after approval, update source registry in a separate controlled phase.",
+        "Do not treat failed/current URL as final compliance source until verified."
+      ],
+      "suggestedSearchQueries": [
+        "CPWD Works Manual 2024 official PDF",
+        "CPWD Works Manual 2024 site:gov.in",
+        "CPWD Works Manual 2024 official source"
+      ]
+    },
+    {
+      "id": "dda-ubbl-2016-page",
+      "title": "DDA UBBL 2016 and Amendments official page",
+      "currentUrl": "https://ddaservices.dda.org.in/ddaweb/ubbl.aspx",
+      "errorClass": "ssl_handshake",
+      "category": "approval_bylaws",
+      "reviewQueueItems": [
+        {
+          "id": "official_source_review_dda-ubbl-2016-page",
+          "status": "pending_review",
+          "sourcePackId": "state_local_approval_bylaws_pack",
+          "mergePolicy": "manual_review_required",
+          "autoMerge": false,
+          "trustedMergeBlockedUntilApproved": true
+        },
+        {
+          "id": "official_source_review_dda-ubbl-2016-page",
+          "status": "pending_review",
+          "sourcePackId": "state_local_approval_bylaws_pack",
+          "mergePolicy": "manual_review_required",
+          "autoMerge": false,
+          "trustedMergeBlockedUntilApproved": true
+        }
+      ],
+      "recoveryPolicy": {
+        "directReplaceAllowed": false,
+        "candidateOnly": true,
+        "officialSourceRequired": true,
+        "manualReviewRequired": true,
+        "trustedKnowledgeWrite": false,
+        "trustedMergeExecuted": false
+      },
+      "nextAction": [
+        "Find an alternate official authority URL or official mirror.",
+        "Save alternate URL through web-search candidate capture.",
+        "Review in official source review queue.",
+        "Only after approval, update source registry in a separate controlled phase.",
+        "Do not treat failed/current URL as final compliance source until verified."
+      ],
+      "suggestedSearchQueries": [
+        "DDA UBBL 2016 and Amendments official page official PDF",
+        "DDA UBBL 2016 and Amendments official page site:gov.in",
+        "DDA UBBL 2016 and Amendments official page official source"
+      ]
+    },
+    {
+      "id": "karnataka-model-building-bye-laws-2017",
+      "title": "Karnataka Municipalities Model Building Bye-Laws 2017",
+      "currentUrl": "https://www.dtcp.gov.in/sites/dtcp.gov.in/files/PDF/notificationsOrdersCirculars/notifications/model_building_bye_law.pdf",
+      "errorClass": "timeout",
+      "category": "state_bylaws",
+      "reviewQueueItems": [
+        {
+          "id": "official_source_review_karnataka-model-building-bye-laws-2017",
+          "status": "pending_review",
+          "sourcePackId": "state_local_approval_bylaws_pack",
+          "mergePolicy": "manual_review_required",
+          "autoMerge": false,
+          "trustedMergeBlockedUntilApproved": true
+        },
+        {
+          "id": "official_source_review_karnataka-model-building-bye-laws-2017",
+          "status": "pending_review",
+          "sourcePackId": "state_local_approval_bylaws_pack",
+          "mergePolicy": "manual_review_required",
+          "autoMerge": false,
+          "trustedMergeBlockedUntilApproved": true
+        }
+      ],
+      "recoveryPolicy": {
+        "directReplaceAllowed": false,
+        "candidateOnly": true,
+        "officialSourceRequired": true,
+        "manualReviewRequired": true,
+        "trustedKnowledgeWrite": false,
+        "trustedMergeExecuted": false
+      },
+      "nextAction": [
+        "Find an alternate official authority URL or official mirror.",
+        "Save alternate URL through web-search candidate capture.",
+        "Review in official source review queue.",
+        "Only after approval, update source registry in a separate controlled phase.",
+        "Do not treat failed/current URL as final compliance source until verified."
+      ],
+      "suggestedSearchQueries": [
+        "Karnataka Municipalities Model Building Bye-Laws 2017 official PDF",
+        "Karnataka Municipalities Model Building Bye-Laws 2017 site:gov.in",
+        "Karnataka Municipalities Model Building Bye-Laws 2017 official source"
+      ]
+    },
+    {
+      "id": "mohua-model-building-bye-laws",
+      "title": "MoHUA Model Building Bye Laws reference",
+      "currentUrl": "https://mohua.gov.in/",
+      "errorClass": "timeout",
+      "category": "national_planning_guidance",
+      "reviewQueueItems": [
+        {
+          "id": "official_source_review_mohua-model-building-bye-laws",
+          "status": "pending_review",
+          "sourcePackId": "official_core_building_codes_india",
+          "mergePolicy": "manual_review_required",
+          "autoMerge": false,
+          "trustedMergeBlockedUntilApproved": true
+        }
+      ],
+      "recoveryPolicy": {
+        "directReplaceAllowed": false,
+        "candidateOnly": true,
+        "officialSourceRequired": true,
+        "manualReviewRequired": true,
+        "trustedKnowledgeWrite": false,
+        "trustedMergeExecuted": false
+      },
+      "nextAction": [
+        "Find an alternate official authority URL or official mirror.",
+        "Save alternate URL through web-search candidate capture.",
+        "Review in official source review queue.",
+        "Only after approval, update source registry in a separate controlled phase.",
+        "Do not treat failed/current URL as final compliance source until verified."
+      ],
+      "suggestedSearchQueries": [
+        "MoHUA Model Building Bye Laws reference official PDF",
+        "MoHUA Model Building Bye Laws reference site:gov.in",
+        "MoHUA Model Building Bye Laws reference official source"
+      ]
+    },
+    {
+      "id": "mohua-tod-guidance-document",
+      "title": "MoHUA Transit Oriented Development Guidance Document",
+      "currentUrl": "https://mohua.gov.in/upload/uploadfiles/files/TOD-Guidance-Document.pdf",
+      "errorClass": "timeout",
+      "category": "national_planning_guidance",
+      "reviewQueueItems": [
+        {
+          "id": "official_source_review_mohua-tod-guidance-document",
+          "status": "pending_review",
+          "sourcePackId": "planning_dimensions_pack",
+          "mergePolicy": "manual_review_required",
+          "autoMerge": false,
+          "trustedMergeBlockedUntilApproved": true
+        }
+      ],
+      "recoveryPolicy": {
+        "directReplaceAllowed": false,
+        "candidateOnly": true,
+        "officialSourceRequired": true,
+        "manualReviewRequired": true,
+        "trustedKnowledgeWrite": false,
+        "trustedMergeExecuted": false
+      },
+      "nextAction": [
+        "Find an alternate official authority URL or official mirror.",
+        "Save alternate URL through web-search candidate capture.",
+        "Review in official source review queue.",
+        "Only after approval, update source registry in a separate controlled phase.",
+        "Do not treat failed/current URL as final compliance source until verified."
+      ],
+      "suggestedSearchQueries": [
+        "MoHUA Transit Oriented Development Guidance Document official PDF",
+        "MoHUA Transit Oriented Development Guidance Document site:gov.in",
+        "MoHUA Transit Oriented Development Guidance Document official source"
+      ]
+    },
+    {
+      "id": "mohua-urdpfi-guidelines-page",
+      "title": "MoHUA URDPFI Guidelines official page",
+      "currentUrl": "https://mohua.gov.in/link/urdpfi-guidelines.php",
+      "errorClass": "timeout",
+      "category": "national_planning_guidance",
+      "reviewQueueItems": [
+        {
+          "id": "official_source_review_mohua-urdpfi-guidelines-page",
+          "status": "approved",
+          "sourcePackId": "planning_dimensions_pack",
+          "mergePolicy": "manual_review_required",
+          "autoMerge": false,
+          "trustedMergeBlockedUntilApproved": true
+        }
+      ],
+      "recoveryPolicy": {
+        "directReplaceAllowed": false,
+        "candidateOnly": true,
+        "officialSourceRequired": true,
+        "manualReviewRequired": true,
+        "trustedKnowledgeWrite": false,
+        "trustedMergeExecuted": false
+      },
+      "nextAction": [
+        "Find an alternate official authority URL or official mirror.",
+        "Save alternate URL through web-search candidate capture.",
+        "Review in official source review queue.",
+        "Only after approval, update source registry in a separate controlled phase.",
+        "Do not treat failed/current URL as final compliance source until verified."
+      ],
+      "suggestedSearchQueries": [
+        "MoHUA URDPFI Guidelines official page official PDF",
+        "MoHUA URDPFI Guidelines official page site:gov.in",
+        "MoHUA URDPFI Guidelines official page official source"
+      ]
+    },
+    {
+      "id": "mohua-urdpfi-guidelines-vol-1",
+      "title": "MoHUA URDPFI Guidelines Volume I",
+      "currentUrl": "https://mohua.gov.in/upload/uploadfiles/files/URDPFI%20Guidelines%20Vol%20I%283%29.pdf",
+      "errorClass": "timeout",
+      "category": "national_planning_guidance",
+      "reviewQueueItems": [
+        {
+          "id": "official_source_review_mohua-urdpfi-guidelines-vol-1",
+          "status": "pending_review",
+          "sourcePackId": "planning_dimensions_pack",
+          "mergePolicy": "manual_review_required",
+          "autoMerge": false,
+          "trustedMergeBlockedUntilApproved": true
+        }
+      ],
+      "recoveryPolicy": {
+        "directReplaceAllowed": false,
+        "candidateOnly": true,
+        "officialSourceRequired": true,
+        "manualReviewRequired": true,
+        "trustedKnowledgeWrite": false,
+        "trustedMergeExecuted": false
+      },
+      "nextAction": [
+        "Find an alternate official authority URL or official mirror.",
+        "Save alternate URL through web-search candidate capture.",
+        "Review in official source review queue.",
+        "Only after approval, update source registry in a separate controlled phase.",
+        "Do not treat failed/current URL as final compliance source until verified."
+      ],
+      "suggestedSearchQueries": [
+        "MoHUA URDPFI Guidelines Volume I official PDF",
+        "MoHUA URDPFI Guidelines Volume I site:gov.in",
+        "MoHUA URDPFI Guidelines Volume I official source"
+      ]
+    }
+  ],
+  "safety": {
+    "sourceRegistryChanged": false,
+    "extractionAllowedChanged": false,
+    "qaReadyAllowedChanged": false,
+    "trustedMergeCandidateAllowedChanged": false,
+    "trustedKnowledgeWrite": false,
+    "trustedKnowledgeChanged": false,
+    "trustedMergeExecuted": false,
+    "mergeActionAvailable": false,
+    "autoMerge": false,
+    "mergePolicy": "manual_review_required"
+  },
+  "linkedStatusGeneratedAt": "2026-06-06T07:02:39.166Z",
+  "nextRecommendedPhase": "47B-2X: use web search/manual official-source lookup to create candidate records for unresolved failed sources"
+}
