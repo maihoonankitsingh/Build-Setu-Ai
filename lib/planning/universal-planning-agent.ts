@@ -320,6 +320,26 @@ export async function runUniversalPlanningAgent(input: UniversalPlanningAgentInp
   });
   const planningRegressionQaPromptBlock = buildPlanningRegressionQaPromptBlock(planningRegressionQaEngine);
   const sourceWatchAwarenessPromptBlock = buildSourceWatchAwarenessPromptBlock(sourceWatchAwarenessEngine);
+  // BUILDSETU_PHASE_47A7_SURFACE_SOURCE_WATCH_AWARENESS
+  const humanPlanningResponseForSourceWatch: any = humanPlanningResponse as any;
+  humanPlanningResponseForSourceWatch.sections = {
+    ...(humanPlanningResponseForSourceWatch.sections || {}),
+    sourceWatchLiveUpdateAwareness: [
+      `Inbox available: ${sourceWatchAwarenessEngine.available}`,
+      `Triggered: ${sourceWatchAwarenessEngine.triggered}`,
+      `Last checked: ${sourceWatchAwarenessEngine.latestCheckedAt || "unknown"}`,
+      `Pending source update drafts: ${sourceWatchAwarenessEngine.pendingSourceUpdateDrafts}`,
+      `Latest changed sources: ${sourceWatchAwarenessEngine.latestChangedSources}`,
+      `Latest failed source checks: ${sourceWatchAwarenessEngine.latestFailedSources}`,
+      "Policy: source-watch updates are awareness only until reviewed and QA-approved.",
+      "Trusted knowledge write: false",
+      "Trusted merge executed: false",
+      "Merge action available: false",
+    ],
+    sourceWatchLatestChangedSources: sourceWatchAwarenessEngine.latestChanged.map((item) => `${item.title || item.id} | ${item.reason || "changed"} | ${item.url || "URL unavailable"}`),
+    sourceWatchPendingDrafts: sourceWatchAwarenessEngine.pendingDrafts.map((item) => `${item.title || "Untitled source update"} | status=${item.status || "unknown"} | risk=${item.riskLevel || "unknown"}`),
+    sourceWatchFailedChecks: sourceWatchAwarenessEngine.latestFailed.map((item) => `${item.title || item.id} | ${item.error || "fetch failed"}`),
+  };
   // BUILDSETU_PHASE_M8C_WEB_UPDATE_POLICY_AFTER_HUMAN_RESPONSE
   const humanPlanningResponseForWebPolicy: any = humanPlanningResponse as any;
   humanPlanningResponseForWebPolicy.sections = {
