@@ -810,7 +810,7 @@
         "status": "qa_ready",
         "notes": "QA-ready sample candidate. Claims include citation and version date. Trusted merge remains disabled.",
         "checkedBy": "Ankit Singh",
-        "checkedAt": "2026-06-05T20:21:37.236844+00:00",
+        "checkedAt": "2026-06-06T03:17:06.813192+00:00",
         "issues": [],
         "trustedMergeCandidate": true,
         "claims": [
@@ -827,12 +827,13 @@
           "sourceCitationPresent": true,
           "versionDateMarked": true,
           "allClaimsHaveCitations": true
-        }
+        },
+        "reviewer": "Ankit Singh"
       },
       "createdAt": "2026-06-05T19:55:45.191686+00:00",
       "createdBy": "phase_46z2_local_generator",
-      "updatedAt": "2026-06-05T20:21:37.236844+00:00",
-      "updatedBy": "phase_46z11_qa_ready_sample",
+      "updatedAt": "2026-06-06T03:17:06.813192+00:00",
+      "updatedBy": "phase_46z13b_qa_reviewer_warning_fix",
       "qaStatus": "qa_ready",
       "versionDate": "Unified Building Bye-Laws for Delhi 2016 Compendium",
       "claims": [
@@ -844,7 +845,9 @@
           "status": "draft_extraction_qa_required"
         }
       ],
-      "reviewStatus": "approved"
+      "reviewStatus": "approved",
+      "qaReviewer": "Ankit Singh",
+      "qaNotes": "QA-ready sample candidate. Claims include citation and version date. Trusted merge remains disabled."
     },
     {
       "id": "official_source_extraction_draft_india-goa-approval-authority-index",
@@ -3061,6 +3064,6 @@
       "updatedBy": "phase_46z2_local_generator"
     }
   ],
-  "updatedAt": "2026-06-05T20:21:37.236844+00:00",
-  "updatedBy": "phase_46z11_qa_ready_sample"
+  "updatedAt": "2026-06-06T03:17:06.813192+00:00",
+  "updatedBy": "phase_46z13b_qa_reviewer_warning_fix"
 }
