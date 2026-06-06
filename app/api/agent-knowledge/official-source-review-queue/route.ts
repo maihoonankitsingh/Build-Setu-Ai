@@ -608,12 +608,9 @@ export async function POST(req: NextRequest) {
         updatedAt: nowIso(),
         updatedBy: user.id,
       };
-
-      // BUILDSETU_PHASE_M8U_PRESERVED_QUEUE_WRITE
-    const preservedQueueForWrite = preserveSourceReviewQueueSyncState(updatedQueue as JsonObject, await readJson(projectPath(QUEUE_RELATIVE_PATH), null));
-    await writeJson(projectPath(QUEUE_RELATIVE_PATH), preservedQueueForWrite);
-
-      // BUILDSETU_PHASE_M8X_REVIEW_WRITE_AUDIT
+      // BUILDSETU_PHASE_M8Z_REVIEW_WRITE_DIRECT_STATUS_PERSIST
+      await writeJson(projectPath(QUEUE_RELATIVE_PATH), updatedQueue);
+// BUILDSETU_PHASE_M8X_REVIEW_WRITE_AUDIT
       await appendReviewActionDebugAudit({
         stage: "review_queue_written",
         action,
@@ -684,7 +681,12 @@ export async function POST(req: NextRequest) {
       updatedBy: user.id,
     };
 
-    await writeJson(projectPath(QUEUE_RELATIVE_PATH), updatedQueue);
+    // BUILDSETU_PHASE_M8Z_SYNC_WRITE_WITH_PRESERVATION
+    const preservedSyncQueueForWrite = preserveSourceReviewQueueSyncState(
+      updatedQueue as JsonObject,
+      await readJson(projectPath(QUEUE_RELATIVE_PATH), null),
+    );
+    await writeJson(projectPath(QUEUE_RELATIVE_PATH), preservedSyncQueueForWrite);
 
     return NextResponse.json({
       ok: true,
