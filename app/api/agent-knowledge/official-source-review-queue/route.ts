@@ -89,7 +89,56 @@ function normalizeSource(source: JsonObject, index: number, sourcePack: JsonObje
   };
 }
 
-function collectSources(sourcePacks: JsonObject, sourceWatch: JsonObject) {
+
+function normalizePendingExactSourceCandidate(candidate: JsonObject, index: number) {
+  // BUILDSETU_REVIEW_QUEUE_PENDING_EXACT_SOURCE_CANDIDATES_V1
+  const url = cleanText(candidate.exactSourceUrl || candidate.url || candidate.sourceUrl || "", 1200);
+  const domain = cleanText(candidate.exactSourceDomain || "", 120) || (() => {
+    try {
+      return new URL(url).hostname.replace(/^www\./, "").toLowerCase();
+    } catch {
+      return "";
+    }
+  })();
+
+  return {
+    sourceId: safeId(candidate.sourceId || candidate.id || candidate.exactSourceTitle || `pending-candidate-${index}`, `pending-candidate-${index}`),
+    title: cleanText(candidate.exactSourceTitle || candidate.title || candidate.sourceId || `Pending source candidate ${index + 1}`, 240),
+    url,
+    domains: domain ? [domain] : [],
+    sourcePackId: "pending_exact_source_candidates",
+    sourcePackTitle: "Pending exact source candidates",
+    authorityType: cleanText(candidate.exactSourceAuthorityType || candidate.authorityType || "pending_official_source_candidate", 120),
+    publisher: cleanText(candidate.exactSourcePublisher || candidate.publisher || domain || "pending publisher review", 240),
+    watch: false,
+    reviewRequired: true,
+    mergePolicy: "manual_review_required",
+    decision: cleanText(candidate.decision || "candidate_saved_needs_review", 160),
+    confidence: cleanText(candidate.confidence || "needs_review", 120),
+    jurisdiction: cleanText(candidate.jurisdiction || "unknown", 180),
+    source: {
+      ...candidate,
+      sourceLayer: "pending_exact_source_candidates",
+      sourceRegistryChanged: false,
+      trustedKnowledgeWrite: false,
+      trustedMergeExecuted: false,
+    },
+  };
+}
+
+function collectPendingExactSourceCandidates(pendingCandidates: JsonObject) {
+  const out: JsonObject[] = [];
+  const candidates = Array.isArray(pendingCandidates?.candidates) ? pendingCandidates.candidates : [];
+
+  candidates.forEach((candidate: JsonObject, index: number) => {
+    const normalized = normalizePendingExactSourceCandidate(candidate, index);
+    if (normalized.url) out.push(normalized);
+  });
+
+  return out;
+}
+
+function collectSources(sourcePacks: JsonObject, sourceWatch: JsonObject, pendingCandidates: JsonObject = {}) {
   const out: JsonObject[] = [];
   const seen = new Set<string>();
   let index = 0;
@@ -109,6 +158,16 @@ function collectSources(sourcePacks: JsonObject, sourceWatch: JsonObject) {
 
   const watchSources = Array.isArray(sourceWatch?.sources) ? sourceWatch.sources : [];
   for (const source of watchSources as JsonObject[]) {
+    const normalized = normalizeSource(source, index++, null);
+    const fingerprint = sourceFingerprint(normalized);
+    if (!seen.has(fingerprint)) {
+      seen.add(fingerprint);
+      out.push(normalized);
+    }
+  }
+
+  const pendingExactSources = collectPendingExactSourceCandidates(pendingCandidates);
+  for (const source of pendingExactSources as JsonObject[]) {
     const normalized = normalizeSource(source, index++, null);
     const fingerprint = sourceFingerprint(normalized);
     if (!seen.has(fingerprint)) {
@@ -271,8 +330,9 @@ export async function GET(req: NextRequest) {
     const root = process.cwd();
     const sourcePacks = await readJson(path.join(root, "config/buildsetu-source-packs.json"), { packs: [] });
     const sourceWatch = await readJson(path.join(root, "config/buildsetu-source-watch.sources.json"), { sources: [] });
+    const pendingCandidates = await readJson(path.join(root, "data/buildsetu-pending-exact-source-candidates/candidates.json"), { candidates: [] });
     const queue = await loadQueue();
-    const sourceCandidates = collectSources(sourcePacks, sourceWatch);
+    const sourceCandidates = collectSources(sourcePacks, sourceWatch, pendingCandidates);
     const items = Array.isArray(queue.items) ? queue.items : [];
 
     return NextResponse.json({
@@ -376,7 +436,8 @@ export async function POST(req: NextRequest) {
     const root = process.cwd();
     const sourcePacks = await readJson(path.join(root, "config/buildsetu-source-packs.json"), { packs: [] });
     const sourceWatch = await readJson(path.join(root, "config/buildsetu-source-watch.sources.json"), { sources: [] });
-    const sourceCandidates = collectSources(sourcePacks, sourceWatch);
+    const pendingCandidates = await readJson(path.join(root, "data/buildsetu-pending-exact-source-candidates/candidates.json"), { candidates: [] });
+    const sourceCandidates = collectSources(sourcePacks, sourceWatch, pendingCandidates);
 
     const queue = await loadQueue();
     const existingItems = Array.isArray(queue.items) ? queue.items : [];
