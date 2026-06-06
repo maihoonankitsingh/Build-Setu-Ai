@@ -182,6 +182,25 @@ export default function OfficialSourceReviewQueuePage() {
 
   const submitReview = useCallback(
     async (item: QueueItem, status: ReviewStatus) => {
+      // BUILDSETU_PHASE_M8Y_REVIEW_ACTION_CONFIRMATION_GUARD
+      const explicitStatusLabel =
+        status === "approved"
+          ? "APPROVED"
+          : status === "rejected"
+            ? "REJECTED"
+            : "PENDING_REVIEW";
+      const explicitActionLabel =
+        status === "approved"
+          ? "Approve reference"
+          : status === "rejected"
+            ? "Reject source"
+            : "Back to pending";
+      if (typeof window !== "undefined") {
+        const ok = window.confirm(
+          `${explicitActionLabel}\n\nThis will save status: ${explicitStatusLabel}\n\nItem: ${item.title || item.id}\n\nContinue?`
+        );
+        if (!ok) return;
+      }
       setReviewingId(item.id);
       setError("");
       setLastAction("");
@@ -370,6 +389,7 @@ export default function OfficialSourceReviewQueuePage() {
 
         <section
           data-buildsetu-marker="BUILDSETU_OFFICIAL_SOURCE_REVIEW_ACTIONS_UI_V2"
+          data-buildsetu-m8y="BUILDSETU_PHASE_M8Y_EXPLICIT_BUTTON_LABELS"
           className="rounded-2xl border border-amber-400/30 bg-amber-950/20 p-4 text-sm text-amber-100"
         >
           Review controls available after sync: Approve notes only, Reject source, Back to pending.
@@ -617,17 +637,13 @@ export default function OfficialSourceReviewQueuePage() {
                         disabled={Boolean(reviewingId)}
                         onClick={() => submitReview(item, "rejected")}
                         className="rounded-xl bg-red-400 px-4 py-2 text-sm font-bold text-slate-950 hover:bg-red-300 disabled:opacity-50"
-                      >
-                        Reject source
-                      </button>
+                      >Reject source (rejected)</button>
                       <button
                         type="button"
                         disabled={Boolean(reviewingId)}
                         onClick={() => submitReview(item, "pending_review")}
                         className="rounded-xl border border-slate-700 px-4 py-2 text-sm font-bold text-slate-200 hover:border-cyan-400 hover:text-cyan-200 disabled:opacity-50"
-                      >
-                        Back to pending
-                      </button>
+                      >Back to pending (pending_review)</button>
                     </div>
 
                     {item.review?.reviewedAt ? (
