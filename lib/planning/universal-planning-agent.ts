@@ -33,6 +33,7 @@ import { buildMaterialResponseMergeEngine, buildMaterialResponseMergePromptBlock
 import { buildMaterialWebSearchSourceCaptureEngine, buildMaterialWebSearchSourceCapturePromptBlock } from "./material-web-search-source-capture-engine";
 import { buildUniversalWebUpdatePolicyEngine, buildUniversalWebUpdatePolicyPromptBlock } from "./universal-web-update-policy-engine";
 import { buildWebUpdateUiActionEngine, buildWebUpdateUiActionPromptBlock } from "./web-update-ui-action-engine";
+import { buildWebUpdateBrowserExecutionAdapter, buildWebUpdateBrowserExecutionPromptBlock } from "./web-update-browser-execution-adapter";
 
 type UniversalPlanningAgentInput = {
   prompt?: string;
@@ -78,7 +79,7 @@ function buildUniversalPlanningDimensionContext(inputText: string) {
   };
 }
 
-export async function runUniversalPlanningAgent(input: UniversalPlanningAgentInput): Promise<UniversalPlanningResult & { dimensionUnderstanding: ReturnType<typeof buildUniversalPlanningDimensionContext>; planningMissingQuestionEngine: ReturnType<typeof buildPlanningMissingQuestionEngine>; buildingTypeClassification: ReturnType<typeof classifyBuildSetuBuildingType>; planningModeQuestionTuning: ReturnType<typeof buildPlanningModeQuestionTuning>; humanPlanningResponse: ReturnType<typeof buildHumanPlanningResponse>; conceptPlanningActionEngine: ReturnType<typeof buildConceptPlanningActionEngine>; roomFurnitureFitEngine: ReturnType<typeof buildRoomFurnitureFitEngine>; roomSpaceStandardsEngine: ReturnType<typeof buildRoomSpaceStandardsEngine>; planningCategoryIntelligence: ReturnType<typeof buildPlanningCategoryIntelligenceEngine>; planningReferenceIntelligence: ReturnType<typeof buildPlanningReferenceIntelligenceEngine>; planningProjectMemoryEngine: ReturnType<typeof buildPlanningProjectMemoryEngine>; planningOutputRoutingEngine: ReturnType<typeof buildPlanningOutputRoutingEngine>; planningRegressionQaEngine: ReturnType<typeof buildPlanningRegressionQaEngine>; sourceWatchAwarenessEngine: ReturnType<typeof buildSourceWatchAwarenessEngine>; planningUiConsumptionAdapter: ReturnType<typeof buildPlanningUiConsumptionAdapter>; structuralGridIntelligence: ReturnType<typeof buildStructuralGridIntelligenceEngine>; foundationSoilRiskEngine: ReturnType<typeof buildFoundationSoilRiskEngine>; seismicWindRiskEngine: ReturnType<typeof buildSeismicWindRiskEngine>; structuralResponseMergeEngine: ReturnType<typeof buildStructuralResponseMergeEngine>; materialTaxonomyEngine: ReturnType<typeof buildMaterialTaxonomyEngine>; interiorMaterialSelectorEngine: ReturnType<typeof buildInteriorMaterialSelectorEngine>; furnitureQuantityBasisEngine: ReturnType<typeof buildFurnitureQuantityBasisEngine>; materialPriceSourceFreshnessEngine: ReturnType<typeof buildMaterialPriceSourceFreshnessEngine>; materialWebSearchRateAdapter: ReturnType<typeof buildMaterialWebSearchRateAdapter>; boqMaterialMappingEngine: ReturnType<typeof buildBoqMaterialMappingEngine>; materialResponseMergeEngine: ReturnType<typeof buildMaterialResponseMergeEngine>; materialWebSearchSourceCaptureEngine: ReturnType<typeof buildMaterialWebSearchSourceCaptureEngine>; universalWebUpdatePolicyEngine: ReturnType<typeof buildUniversalWebUpdatePolicyEngine>; webUpdateUiActionEngine: ReturnType<typeof buildWebUpdateUiActionEngine> }> {
+export async function runUniversalPlanningAgent(input: UniversalPlanningAgentInput): Promise<UniversalPlanningResult & { dimensionUnderstanding: ReturnType<typeof buildUniversalPlanningDimensionContext>; planningMissingQuestionEngine: ReturnType<typeof buildPlanningMissingQuestionEngine>; buildingTypeClassification: ReturnType<typeof classifyBuildSetuBuildingType>; planningModeQuestionTuning: ReturnType<typeof buildPlanningModeQuestionTuning>; humanPlanningResponse: ReturnType<typeof buildHumanPlanningResponse>; conceptPlanningActionEngine: ReturnType<typeof buildConceptPlanningActionEngine>; roomFurnitureFitEngine: ReturnType<typeof buildRoomFurnitureFitEngine>; roomSpaceStandardsEngine: ReturnType<typeof buildRoomSpaceStandardsEngine>; planningCategoryIntelligence: ReturnType<typeof buildPlanningCategoryIntelligenceEngine>; planningReferenceIntelligence: ReturnType<typeof buildPlanningReferenceIntelligenceEngine>; planningProjectMemoryEngine: ReturnType<typeof buildPlanningProjectMemoryEngine>; planningOutputRoutingEngine: ReturnType<typeof buildPlanningOutputRoutingEngine>; planningRegressionQaEngine: ReturnType<typeof buildPlanningRegressionQaEngine>; sourceWatchAwarenessEngine: ReturnType<typeof buildSourceWatchAwarenessEngine>; planningUiConsumptionAdapter: ReturnType<typeof buildPlanningUiConsumptionAdapter>; structuralGridIntelligence: ReturnType<typeof buildStructuralGridIntelligenceEngine>; foundationSoilRiskEngine: ReturnType<typeof buildFoundationSoilRiskEngine>; seismicWindRiskEngine: ReturnType<typeof buildSeismicWindRiskEngine>; structuralResponseMergeEngine: ReturnType<typeof buildStructuralResponseMergeEngine>; materialTaxonomyEngine: ReturnType<typeof buildMaterialTaxonomyEngine>; interiorMaterialSelectorEngine: ReturnType<typeof buildInteriorMaterialSelectorEngine>; furnitureQuantityBasisEngine: ReturnType<typeof buildFurnitureQuantityBasisEngine>; materialPriceSourceFreshnessEngine: ReturnType<typeof buildMaterialPriceSourceFreshnessEngine>; materialWebSearchRateAdapter: ReturnType<typeof buildMaterialWebSearchRateAdapter>; boqMaterialMappingEngine: ReturnType<typeof buildBoqMaterialMappingEngine>; materialResponseMergeEngine: ReturnType<typeof buildMaterialResponseMergeEngine>; materialWebSearchSourceCaptureEngine: ReturnType<typeof buildMaterialWebSearchSourceCaptureEngine>; universalWebUpdatePolicyEngine: ReturnType<typeof buildUniversalWebUpdatePolicyEngine>; webUpdateUiActionEngine: ReturnType<typeof buildWebUpdateUiActionEngine>; webUpdateBrowserExecutionAdapter: ReturnType<typeof buildWebUpdateBrowserExecutionAdapter> }> {
   const inputText = getPlanningInputText(input);
   const sourceWatchAwarenessEngine = buildSourceWatchAwarenessEngine(inputText);
   const dimensionUnderstanding = buildUniversalPlanningDimensionContext(inputText);
@@ -229,6 +230,12 @@ export async function runUniversalPlanningAgent(input: UniversalPlanningAgentInp
     boqMaterialMappingEngine,
   });
   const webUpdateUiActionPromptBlock = buildWebUpdateUiActionPromptBlock(webUpdateUiActionEngine);
+  const webUpdateBrowserExecutionAdapter = buildWebUpdateBrowserExecutionAdapter({
+    webUpdateUiActionEngine,
+    universalWebUpdatePolicyEngine,
+    materialWebSearchSourceCaptureEngine,
+  });
+  const webUpdateBrowserExecutionPromptBlock = buildWebUpdateBrowserExecutionPromptBlock(webUpdateBrowserExecutionAdapter);
 
   const planningReferenceIntelligence = buildPlanningReferenceIntelligenceEngine({
     inputText,
@@ -334,6 +341,16 @@ export async function runUniversalPlanningAgent(input: UniversalPlanningAgentInp
     webUpdateNextActions: webUpdateUiActionEngine.nextActions,
   };
 
+  // BUILDSETU_PHASE_M8E_BROWSER_EXECUTION_SECTIONS
+  const humanPlanningResponseForBrowserExecution: any = humanPlanningResponse as any;
+  humanPlanningResponseForBrowserExecution.sections = {
+    ...(humanPlanningResponseForBrowserExecution.sections || {}),
+    webUpdateBrowserExecution: webUpdateBrowserExecutionAdapter.actionExecutions.map((item) => `${item.title} | ${item.status} | queries ${item.queryCount}`),
+    webUpdateSourceSignalSchema: webUpdateBrowserExecutionAdapter.sourceSignalSchema,
+    webUpdateErrorHandling: webUpdateBrowserExecutionAdapter.errorHandling.map((item) => `${item.statusOrCode}: ${item.uiMessage}`),
+    webUpdateStorageBoundary: webUpdateBrowserExecutionAdapter.storageBoundary,
+  };
+
   const planningUiConsumptionAdapter = buildPlanningUiConsumptionAdapter({
     humanPlanningResponse,
     planningOutputRoutingEngine,
@@ -380,6 +397,20 @@ export async function runUniversalPlanningAgent(input: UniversalPlanningAgentInp
       : []),
     "UI should render webUpdateActionCards as authenticated browser-session actions.",
     "Do not execute web-search server-side without user session.",
+  ];
+
+  // BUILDSETU_PHASE_M8E_APPEND_BROWSER_EXECUTION_TO_UI_ADAPTER
+  const planningUiConsumptionAdapterForBrowserExecution: any = planningUiConsumptionAdapter as any;
+  planningUiConsumptionAdapterForBrowserExecution.webUpdateBrowserExecutionAdapter = webUpdateBrowserExecutionAdapter;
+  planningUiConsumptionAdapterForBrowserExecution.webUpdateExecutionContract = webUpdateBrowserExecutionAdapter.executionContract;
+  planningUiConsumptionAdapterForBrowserExecution.webUpdateSourceSignalSchema = webUpdateBrowserExecutionAdapter.sourceSignalSchema;
+  planningUiConsumptionAdapterForBrowserExecution.apiContractNotes = [
+    ...(Array.isArray(planningUiConsumptionAdapterForBrowserExecution.apiContractNotes)
+      ? planningUiConsumptionAdapterForBrowserExecution.apiContractNotes
+      : []),
+    "UI should execute webUpdateBrowserExecutionAdapter.actionExecutions from browser with credentials include.",
+    "UI should normalize web-search responses into webUpdateSourceSignalSchema.",
+    "UI should map 401 CREDIT_CHECK_FAILED to login/credits prompt.",
   ];
 
   const planningUiConsumptionPromptBlock = buildPlanningUiConsumptionPromptBlock(planningUiConsumptionAdapter);
@@ -472,6 +503,9 @@ export async function runUniversalPlanningAgent(input: UniversalPlanningAgentInp
           "Web Update UI Action Cards",
           webUpdateUiActionPromptBlock,
           "",
+          "Web Update Browser Execution Adapter",
+          webUpdateBrowserExecutionPromptBlock,
+          "",
           "Planning UI Consumption Adapter",
           planningUiConsumptionPromptBlock,
           "",
@@ -516,6 +550,9 @@ export async function runUniversalPlanningAgent(input: UniversalPlanningAgentInp
           "",
           "Web Update UI Action Cards",
           webUpdateUiActionPromptBlock,
+          "",
+          "Web Update Browser Execution Adapter",
+          webUpdateBrowserExecutionPromptBlock,
           "",
           "Planning UI Consumption Adapter",
           planningUiConsumptionPromptBlock,
@@ -605,6 +642,7 @@ export async function runUniversalPlanningAgent(input: UniversalPlanningAgentInp
     materialWebSearchSourceCaptureEngine,
     universalWebUpdatePolicyEngine,
     webUpdateUiActionEngine,
+    webUpdateBrowserExecutionAdapter,
     buildingRules,
     vastuReport,
     spaceProgram,
