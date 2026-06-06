@@ -7,7 +7,7 @@
   "items": [
     {
       "id": "official_source_review_bis-national-building-code",
-      "status": "pending_review",
+      "status": "rejected",
       "sourceId": "bis-national-building-code",
       "title": "BIS National Building Code",
       "url": "https://www.bis.gov.in/standards/technical-department/national-building-code/",
@@ -31,9 +31,9 @@
         "Mark professional/local authority review boundary.",
         "Approve and set mergeReady=true before any trusted merge."
       ],
-      "nextAction": "manual_review_required",
+      "nextAction": "source_rejected_manual_review",
       "createdAt": "2026-06-06T07:27:31.158Z",
-      "updatedAt": "2026-06-06T07:27:31.158Z",
+      "updatedAt": "2026-06-06T08:21:02.767Z",
       "source": {
         "sourceId": "bis-national-building-code",
         "title": "BIS National Building Code",
@@ -70,13 +70,15 @@
         }
       },
       "review": {
-        "reviewer": "",
-        "reviewedAt": "",
-        "notes": "",
+        "reviewer": "m8y-fix2-direct-test",
+        "reviewedAt": "2026-06-06T08:21:02.767Z",
+        "notes": "M8Y Fix2 direct reject test",
         "mergeReady": false,
-        "status": "pending_review",
-        "trustedMergeExecuted": false
-      }
+        "status": "rejected",
+        "trustedMergeExecuted": false,
+        "reviewedBy": "usr_1779277411640_8bb5e23ec30cc05b"
+      },
+      "trustedKnowledgeChanged": false
     },
     {
       "id": "official_source_review_bis-sp73-building-regulations-2023",
@@ -7938,8 +7940,8 @@
       }
     }
   ],
-  "updatedAt": "2026-06-06T07:27:31.159Z",
-  "updatedBy": "server-script-buildsetu-source-review-queue-sync",
+  "updatedAt": "2026-06-06T08:21:02.767Z",
+  "updatedBy": "usr_1779277411640_8bb5e23ec30cc05b",
   "safety": {
     "sourceRegistryChanged": false,
     "extractionAllowedChanged": false,
