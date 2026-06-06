@@ -35,6 +35,7 @@ import { buildUniversalWebUpdatePolicyEngine, buildUniversalWebUpdatePolicyPromp
 import { buildWebUpdateUiActionEngine, buildWebUpdateUiActionPromptBlock } from "./web-update-ui-action-engine";
 import { buildWebUpdateBrowserExecutionAdapter, buildWebUpdateBrowserExecutionPromptBlock } from "./web-update-browser-execution-adapter";
 import { buildWebUpdateSourceSignalReviewEngine, buildWebUpdateSourceSignalReviewPromptBlock } from "./web-update-source-signal-review-engine";
+import { buildBoqSourceAttachWorkflowEngine, buildBoqSourceAttachWorkflowPromptBlock } from "./boq-source-attach-workflow-engine";
 
 type UniversalPlanningAgentInput = {
   prompt?: string;
@@ -80,7 +81,7 @@ function buildUniversalPlanningDimensionContext(inputText: string) {
   };
 }
 
-export async function runUniversalPlanningAgent(input: UniversalPlanningAgentInput): Promise<UniversalPlanningResult & { dimensionUnderstanding: ReturnType<typeof buildUniversalPlanningDimensionContext>; planningMissingQuestionEngine: ReturnType<typeof buildPlanningMissingQuestionEngine>; buildingTypeClassification: ReturnType<typeof classifyBuildSetuBuildingType>; planningModeQuestionTuning: ReturnType<typeof buildPlanningModeQuestionTuning>; humanPlanningResponse: ReturnType<typeof buildHumanPlanningResponse>; conceptPlanningActionEngine: ReturnType<typeof buildConceptPlanningActionEngine>; roomFurnitureFitEngine: ReturnType<typeof buildRoomFurnitureFitEngine>; roomSpaceStandardsEngine: ReturnType<typeof buildRoomSpaceStandardsEngine>; planningCategoryIntelligence: ReturnType<typeof buildPlanningCategoryIntelligenceEngine>; planningReferenceIntelligence: ReturnType<typeof buildPlanningReferenceIntelligenceEngine>; planningProjectMemoryEngine: ReturnType<typeof buildPlanningProjectMemoryEngine>; planningOutputRoutingEngine: ReturnType<typeof buildPlanningOutputRoutingEngine>; planningRegressionQaEngine: ReturnType<typeof buildPlanningRegressionQaEngine>; sourceWatchAwarenessEngine: ReturnType<typeof buildSourceWatchAwarenessEngine>; planningUiConsumptionAdapter: ReturnType<typeof buildPlanningUiConsumptionAdapter>; structuralGridIntelligence: ReturnType<typeof buildStructuralGridIntelligenceEngine>; foundationSoilRiskEngine: ReturnType<typeof buildFoundationSoilRiskEngine>; seismicWindRiskEngine: ReturnType<typeof buildSeismicWindRiskEngine>; structuralResponseMergeEngine: ReturnType<typeof buildStructuralResponseMergeEngine>; materialTaxonomyEngine: ReturnType<typeof buildMaterialTaxonomyEngine>; interiorMaterialSelectorEngine: ReturnType<typeof buildInteriorMaterialSelectorEngine>; furnitureQuantityBasisEngine: ReturnType<typeof buildFurnitureQuantityBasisEngine>; materialPriceSourceFreshnessEngine: ReturnType<typeof buildMaterialPriceSourceFreshnessEngine>; materialWebSearchRateAdapter: ReturnType<typeof buildMaterialWebSearchRateAdapter>; boqMaterialMappingEngine: ReturnType<typeof buildBoqMaterialMappingEngine>; materialResponseMergeEngine: ReturnType<typeof buildMaterialResponseMergeEngine>; materialWebSearchSourceCaptureEngine: ReturnType<typeof buildMaterialWebSearchSourceCaptureEngine>; universalWebUpdatePolicyEngine: ReturnType<typeof buildUniversalWebUpdatePolicyEngine>; webUpdateUiActionEngine: ReturnType<typeof buildWebUpdateUiActionEngine>; webUpdateBrowserExecutionAdapter: ReturnType<typeof buildWebUpdateBrowserExecutionAdapter>; webUpdateSourceSignalReviewEngine: ReturnType<typeof buildWebUpdateSourceSignalReviewEngine> }> {
+export async function runUniversalPlanningAgent(input: UniversalPlanningAgentInput): Promise<UniversalPlanningResult & { dimensionUnderstanding: ReturnType<typeof buildUniversalPlanningDimensionContext>; planningMissingQuestionEngine: ReturnType<typeof buildPlanningMissingQuestionEngine>; buildingTypeClassification: ReturnType<typeof classifyBuildSetuBuildingType>; planningModeQuestionTuning: ReturnType<typeof buildPlanningModeQuestionTuning>; humanPlanningResponse: ReturnType<typeof buildHumanPlanningResponse>; conceptPlanningActionEngine: ReturnType<typeof buildConceptPlanningActionEngine>; roomFurnitureFitEngine: ReturnType<typeof buildRoomFurnitureFitEngine>; roomSpaceStandardsEngine: ReturnType<typeof buildRoomSpaceStandardsEngine>; planningCategoryIntelligence: ReturnType<typeof buildPlanningCategoryIntelligenceEngine>; planningReferenceIntelligence: ReturnType<typeof buildPlanningReferenceIntelligenceEngine>; planningProjectMemoryEngine: ReturnType<typeof buildPlanningProjectMemoryEngine>; planningOutputRoutingEngine: ReturnType<typeof buildPlanningOutputRoutingEngine>; planningRegressionQaEngine: ReturnType<typeof buildPlanningRegressionQaEngine>; sourceWatchAwarenessEngine: ReturnType<typeof buildSourceWatchAwarenessEngine>; planningUiConsumptionAdapter: ReturnType<typeof buildPlanningUiConsumptionAdapter>; structuralGridIntelligence: ReturnType<typeof buildStructuralGridIntelligenceEngine>; foundationSoilRiskEngine: ReturnType<typeof buildFoundationSoilRiskEngine>; seismicWindRiskEngine: ReturnType<typeof buildSeismicWindRiskEngine>; structuralResponseMergeEngine: ReturnType<typeof buildStructuralResponseMergeEngine>; materialTaxonomyEngine: ReturnType<typeof buildMaterialTaxonomyEngine>; interiorMaterialSelectorEngine: ReturnType<typeof buildInteriorMaterialSelectorEngine>; furnitureQuantityBasisEngine: ReturnType<typeof buildFurnitureQuantityBasisEngine>; materialPriceSourceFreshnessEngine: ReturnType<typeof buildMaterialPriceSourceFreshnessEngine>; materialWebSearchRateAdapter: ReturnType<typeof buildMaterialWebSearchRateAdapter>; boqMaterialMappingEngine: ReturnType<typeof buildBoqMaterialMappingEngine>; materialResponseMergeEngine: ReturnType<typeof buildMaterialResponseMergeEngine>; materialWebSearchSourceCaptureEngine: ReturnType<typeof buildMaterialWebSearchSourceCaptureEngine>; universalWebUpdatePolicyEngine: ReturnType<typeof buildUniversalWebUpdatePolicyEngine>; webUpdateUiActionEngine: ReturnType<typeof buildWebUpdateUiActionEngine>; webUpdateBrowserExecutionAdapter: ReturnType<typeof buildWebUpdateBrowserExecutionAdapter>; webUpdateSourceSignalReviewEngine: ReturnType<typeof buildWebUpdateSourceSignalReviewEngine>; boqSourceAttachWorkflowEngine: ReturnType<typeof buildBoqSourceAttachWorkflowEngine> }> {
   const inputText = getPlanningInputText(input);
   const sourceWatchAwarenessEngine = buildSourceWatchAwarenessEngine(inputText);
   const dimensionUnderstanding = buildUniversalPlanningDimensionContext(inputText);
@@ -243,6 +244,11 @@ export async function runUniversalPlanningAgent(input: UniversalPlanningAgentInp
     boqMaterialMappingEngine,
   });
   const webUpdateSourceSignalReviewPromptBlock = buildWebUpdateSourceSignalReviewPromptBlock(webUpdateSourceSignalReviewEngine);
+  const boqSourceAttachWorkflowEngine = buildBoqSourceAttachWorkflowEngine({
+    webUpdateSourceSignalReviewEngine,
+    boqMaterialMappingEngine,
+  });
+  const boqSourceAttachWorkflowPromptBlock = buildBoqSourceAttachWorkflowPromptBlock(boqSourceAttachWorkflowEngine);
 
   const planningReferenceIntelligence = buildPlanningReferenceIntelligenceEngine({
     inputText,
@@ -390,6 +396,17 @@ export async function runUniversalPlanningAgent(input: UniversalPlanningAgentInp
     webUpdateBoqAttachPolicy: webUpdateSourceSignalReviewEngine.boqAttachPolicy,
   };
 
+  // BUILDSETU_PHASE_M8G_BOQ_SOURCE_ATTACH_SECTIONS
+  const humanPlanningResponseForBoqSourceAttach: any = humanPlanningResponse as any;
+  humanPlanningResponseForBoqSourceAttach.sections = {
+    ...(humanPlanningResponseForBoqSourceAttach.sections || {}),
+    boqSourceAttachCandidates: boqSourceAttachWorkflowEngine.attachActions.map((item) => `${item.boqItemName} | ${item.attachStatus} | finalRateLocked=${!item.canApproveFinalRate}`),
+    boqSourceAttachStateMachine: boqSourceAttachWorkflowEngine.attachStateMachine,
+    boqSourceAttachValidationRules: boqSourceAttachWorkflowEngine.attachValidationRules,
+    boqSourceAttachFinalRateBoundary: boqSourceAttachWorkflowEngine.finalRateApprovalBoundary,
+    boqSourceAttachUiActions: boqSourceAttachWorkflowEngine.uiActions,
+  };
+
   const planningUiConsumptionAdapter = buildPlanningUiConsumptionAdapter({
     humanPlanningResponse,
     planningOutputRoutingEngine,
@@ -463,6 +480,19 @@ export async function runUniversalPlanningAgent(input: UniversalPlanningAgentInp
       : []),
     "UI should render webUpdateSourceSignalReviewRows as review table rows.",
     "UI should keep source signal review separate from final BOQ rate approval.",
+  ];
+
+  // BUILDSETU_PHASE_M8G_APPEND_BOQ_SOURCE_ATTACH_TO_UI_ADAPTER
+  const planningUiConsumptionAdapterForBoqSourceAttach: any = planningUiConsumptionAdapter as any;
+  planningUiConsumptionAdapterForBoqSourceAttach.boqSourceAttachWorkflowEngine = boqSourceAttachWorkflowEngine;
+  planningUiConsumptionAdapterForBoqSourceAttach.boqSourceAttachActions = boqSourceAttachWorkflowEngine.attachActions;
+  planningUiConsumptionAdapterForBoqSourceAttach.apiContractNotes = [
+    ...(Array.isArray(planningUiConsumptionAdapterForBoqSourceAttach.apiContractNotes)
+      ? planningUiConsumptionAdapterForBoqSourceAttach.apiContractNotes
+      : []),
+    "UI should render boqSourceAttachActions under BOQ line items.",
+    "UI must keep source attach separate from final rate approval.",
+    "UI should disable final rate approval until a later approval workflow is completed.",
   ];
 
   const planningUiConsumptionPromptBlock = buildPlanningUiConsumptionPromptBlock(planningUiConsumptionAdapter);
@@ -561,6 +591,9 @@ export async function runUniversalPlanningAgent(input: UniversalPlanningAgentInp
           "Web Update Source Signal Review Table",
           webUpdateSourceSignalReviewPromptBlock,
           "",
+          "BOQ Source Attach Workflow",
+          boqSourceAttachWorkflowPromptBlock,
+          "",
           "Planning UI Consumption Adapter",
           planningUiConsumptionPromptBlock,
           "",
@@ -611,6 +644,9 @@ export async function runUniversalPlanningAgent(input: UniversalPlanningAgentInp
           "",
           "Web Update Source Signal Review Table",
           webUpdateSourceSignalReviewPromptBlock,
+          "",
+          "BOQ Source Attach Workflow",
+          boqSourceAttachWorkflowPromptBlock,
           "",
           "Planning UI Consumption Adapter",
           planningUiConsumptionPromptBlock,
@@ -702,6 +738,7 @@ export async function runUniversalPlanningAgent(input: UniversalPlanningAgentInp
     webUpdateUiActionEngine,
     webUpdateBrowserExecutionAdapter,
     webUpdateSourceSignalReviewEngine,
+    boqSourceAttachWorkflowEngine,
     buildingRules,
     vastuReport,
     spaceProgram,
