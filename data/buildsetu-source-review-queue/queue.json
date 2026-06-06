@@ -4681,7 +4681,7 @@
     },
     {
       "id": "official_source_review_smoke-test-web-search-ui_bis.gov.in_bis-national-building-code",
-      "status": "pending_review",
+      "status": "rejected",
       "sourceId": "smoke-test-web-search-ui_bis.gov.in_bis-national-building-code",
       "title": "BIS National Building Code",
       "url": "https://www.bis.gov.in/standards/technical-department/national-building-code/",
@@ -4705,9 +4705,9 @@
         "Mark professional/local authority review boundary.",
         "Approve and set mergeReady=true before any trusted merge."
       ],
-      "nextAction": "manual_review_required",
+      "nextAction": "source_rejected_manual_review",
       "createdAt": "2026-06-06T05:47:40.442Z",
-      "updatedAt": "2026-06-06T06:02:09.079Z",
+      "updatedAt": "2026-06-06T06:18:32.318Z",
       "source": {
         "sourceId": "smoke-test-web-search-ui_bis.gov.in_bis-national-building-code",
         "title": "BIS National Building Code",
@@ -4790,11 +4790,15 @@
         }
       },
       "review": {
-        "reviewer": "",
-        "reviewedAt": "",
-        "notes": "",
-        "mergeReady": false
-      }
+        "reviewer": "47B-2O safety smoke test",
+        "reviewedAt": "2026-06-06T06:18:32.318Z",
+        "notes": "Smoke-test BIS candidate rejected after verifying candidate capture/review UI. No trusted merge/write executed.",
+        "mergeReady": false,
+        "reviewedBy": "server-script-review-action-safety-test",
+        "status": "rejected",
+        "trustedMergeExecuted": false
+      },
+      "trustedKnowledgeChanged": false
     },
     {
       "id": "official_source_review_india-uttarakhand-approval-authority-index",
@@ -7222,6 +7226,14 @@
       }
     }
   ],
-  "updatedAt": "2026-06-06T06:02:09.079Z",
-  "updatedBy": "usr_1779277411640_8bb5e23ec30cc05b"
+  "updatedAt": "2026-06-06T06:18:32.318Z",
+  "updatedBy": "server-script-review-action-safety-test",
+  "safety": {
+    "sourceRegistryChanged": false,
+    "extractionAllowedChanged": false,
+    "qaReadyAllowedChanged": false,
+    "trustedMergeCandidateAllowedChanged": false,
+    "trustedKnowledgeWrite": false,
+    "trustedMergeExecuted": false
+  }
 }
