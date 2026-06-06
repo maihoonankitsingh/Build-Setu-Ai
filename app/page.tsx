@@ -7501,6 +7501,93 @@ function ProjectTaskChatInterfaceShell({
   const [webUpdateRuntimeStatus, setWebUpdateRuntimeStatus] = useState("");
   // BUILDSETU_PHASE_M8M_SOURCE_REVIEW_OVERRIDE_STATE
   const [webUpdateRuntimeReviewOverrides, setWebUpdateRuntimeReviewOverrides] = useState<Record<string, any>>({});
+  // BUILDSETU_PHASE_M8O_PERSISTED_REVIEW_LOAD_STATE
+  const [webUpdatePersistedReviewsLoaded, setWebUpdatePersistedReviewsLoaded] = useState(false);
+
+  // BUILDSETU_PHASE_M8O_LOAD_PERSISTED_REVIEWS_EFFECT
+  useEffect(() => {
+    if (webUpdatePersistedReviewsLoaded) return;
+
+    let cancelled = false;
+    const projectKey = getBuildSetuSourceReviewProjectKey();
+
+    fetch(`/api/planning/source-review?projectKey=${encodeURIComponent(projectKey)}`, {
+      method: "GET",
+      credentials: "include",
+      cache: "no-store",
+    })
+      .then(async (response) => {
+        const data = await response.json().catch(() => null);
+        if (!response.ok || !data?.ok) {
+          throw new Error(data?.error || data?.code || "Source review load failed.");
+        }
+        return data;
+      })
+      .then((data) => {
+        if (cancelled) return;
+
+        const reviews = Array.isArray(data?.reviews) ? data.reviews : [];
+        const nextOverrides: Record<string, any> = {};
+        const persistedRows = reviews.map((review: any) => {
+          const rowId = String(review?.sourceRowId || review?.id || review?.sourceUrl || "").trim();
+          if (rowId) {
+            nextOverrides[rowId] = {
+              reviewStatus: review?.reviewStatus || "pending_review",
+              confidence: review?.confidence || "medium",
+              freshnessStatus: review?.freshnessStatus || "fresh",
+              reviewNote: review?.reviewNote || "",
+              reviewedAt: review?.reviewedAt || "",
+              boqAttachReady: Boolean(review?.boqAttachReady),
+            };
+          }
+
+          return {
+            id: rowId,
+            sourceTitle: review?.sourceTitle || "Persisted source review",
+            sourceUrl: review?.sourceUrl || "",
+            query: review?.query || "",
+            topicGroup: review?.topicGroup || "general",
+            sourceLayer: review?.sourceLayer || "public_web_search",
+            executionStatus: "persisted_review_loaded",
+            reviewStatus: review?.reviewStatus || "pending_review",
+            freshnessStatus: review?.freshnessStatus || "fresh",
+            confidence: review?.confidence || "medium",
+            fetchedAt: review?.reviewedAt || "",
+            reviewNote: review?.reviewNote || "",
+            boqAttachReady: Boolean(review?.boqAttachReady),
+          };
+        }).filter((row: any) => row.id);
+
+        if (Object.keys(nextOverrides).length) {
+          setWebUpdateRuntimeReviewOverrides((existing: Record<string, any>) => ({
+            ...existing,
+            ...nextOverrides,
+          }));
+        }
+
+        if (persistedRows.length) {
+          setWebUpdateRuntimeSourceRows((existing: any[]) => {
+            const existingIds = new Set(existing.map((row: any) => getBuildSetuSourceRowId(row)).filter(Boolean));
+            const freshPersistedRows = persistedRows.filter((row: any) => !existingIds.has(getBuildSetuSourceRowId(row)));
+            return [...freshPersistedRows, ...existing].slice(0, 60);
+          });
+
+          setWebUpdateRuntimeStatus(`Loaded ${persistedRows.length} persisted source review(s). Final rate remains locked.`);
+        }
+      })
+      .catch((error: any) => {
+        if (!cancelled) {
+          setWebUpdateRuntimeStatus(error?.message || "Source review load failed.");
+        }
+      })
+      .finally(() => {
+        if (!cancelled) setWebUpdatePersistedReviewsLoaded(true);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [webUpdatePersistedReviewsLoaded]);
 
   const [executingPromptId, setExecutingPromptId] = useState("");
   const chatStreamRef = useRef<HTMLDivElement | null>(null);
@@ -8663,6 +8750,12 @@ function buildToolHrefWithActiveProject(slug: string, projectId?: string) {
     });
   }
 
+  // BUILDSETU_PHASE_M8O_SOURCE_REVIEW_PROJECT_KEY_HELPER
+  function getBuildSetuSourceReviewProjectKey() {
+    if (typeof window === "undefined") return "project-chat-ui";
+    return `${window.location.pathname}${window.location.search}`;
+  }
+
   // BUILDSETU_PHASE_M8M_SOURCE_REVIEW_HELPERS
   function getBuildSetuSourceRowId(row: any) {
     return String(row?.id || row?.sourceUrl || row?.query || "").trim();
@@ -8704,10 +8797,7 @@ function buildToolHrefWithActiveProject(slug: string, projectId?: string) {
     );
 
     // BUILDSETU_PHASE_M8N_SOURCE_REVIEW_PERSISTENCE_CLIENT
-    const projectKey =
-      typeof window !== "undefined"
-        ? `${window.location.pathname}${window.location.search}`
-        : "project-chat-ui";
+    const projectKey = getBuildSetuSourceReviewProjectKey();
 
     void fetch("/api/planning/source-review", {
       method: "POST",
@@ -8865,7 +8955,13 @@ function buildToolHrefWithActiveProject(slug: string, projectId?: string) {
       ? adapter.webUpdateSourceSignalReviewRows
       : [];
     // BUILDSETU_PHASE_M8L_HYDRATED_SOURCE_ROW_BINDING
-    const hydratedWebUpdateSourceRows = webUpdateRuntimeSourceRows.length ? webUpdateRuntimeSourceRows : webUpdateSourceRows;
+    const hydratedWebUpdateSourceRows = [
+      ...webUpdateRuntimeSourceRows,
+      ...webUpdateSourceRows.filter((row: any) => {
+        const rowId = getBuildSetuSourceRowId(row);
+        return !webUpdateRuntimeSourceRows.some((runtimeRow: any) => getBuildSetuSourceRowId(runtimeRow) === rowId);
+      }),
+    ];
     // BUILDSETU_PHASE_M8M_REVIEWED_SOURCE_ROW_BINDING
     const reviewedHydratedWebUpdateSourceRows = hydratedWebUpdateSourceRows.map((row: any) => {
       const rowId = getBuildSetuSourceRowId(row);
