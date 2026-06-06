@@ -1,6 +1,6 @@
 {
   "ok": true,
-  "generatedAt": "2026-06-06T08:27:22.303Z",
+  "generatedAt": "2026-06-06T08:35:32.009Z",
   "phase": "47B-2R",
   "title": "BuildSetu source watch, web-search candidate capture, and review queue pipeline status",
   "routes": {
@@ -34,12 +34,13 @@
     "trustedKnowledgeAutoMerge": false
   },
   "candidateQueue": {
-    "totalCandidates": 30,
+    "totalCandidates": 33,
     "byDecision": {
-      "web_search_candidate_saved_needs_review": 5,
+      "web_search_candidate_saved_needs_review": 8,
       "candidate_saved_needs_review": 25
     },
     "byJurisdiction": {
+      "Karnataka": 3,
       "Delhi": 3,
       "India": 2,
       "Uttarakhand": 1,
@@ -69,21 +70,21 @@
       "Andaman and Nicobar Islands": 1
     },
     "latestCandidate": {
-      "sourceId": "failed-source-recovery_dda.gov.in_dda-compendium-of-ubbl-2016-with-amendments-upto-12-february-2020",
-      "title": "DDA Compendium of UBBL 2016 with Amendments upto 12 February 2020",
-      "url": "https://dda.gov.in/compendium-ubbl2016incorporating-amendments-upto-12th-february-2020",
+      "sourceId": "failed-source-recovery_municipaladmn.gov.in_karnataka-directorate-of-municipal-administration-acts-and-rules",
+      "title": "Karnataka Directorate of Municipal Administration Acts and Rules",
+      "url": "https://www.municipaladmn.gov.in/index.php/en/acts-rules",
       "decision": "web_search_candidate_saved_needs_review",
       "confidence": "official_page_needs_manual_review"
     }
   },
   "reviewQueue": {
-    "updatedAt": "2026-06-06T08:27:22.234Z",
-    "sourceCandidateCount": 85,
-    "itemCount": 85,
+    "updatedAt": "2026-06-06T08:35:31.947Z",
+    "sourceCandidateCount": 88,
+    "itemCount": 88,
     "byStatus": {
-      "rejected": 2,
-      "pending_review": 82,
-      "approved": 1
+      "pending_review": 85,
+      "approved": 1,
+      "rejected": 2
     },
     "bySourcePackId": {
       "official_core_building_codes_india": 6,
@@ -91,12 +92,12 @@
       "construction_materials_execution_pack": 2,
       "state_local_approval_bylaws_pack": 8,
       "all_india_state_ut_authority_index_pack": 36,
-      "pending_exact_source_candidates": 30
+      "pending_exact_source_candidates": 33
     },
-    "pendingExactSourceCandidateItems": 30,
+    "pendingExactSourceCandidateItems": 33,
     "rejectedItems": 2,
     "approvedItems": 1,
-    "pendingReviewItems": 82
+    "pendingReviewItems": 85
   },
   "safety": {
     "sourceRegistryChanged": false,
