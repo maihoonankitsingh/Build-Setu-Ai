@@ -197,7 +197,7 @@ export default function OfficialSourceReviewQueuePage() {
             : "Back to pending";
       if (typeof window !== "undefined") {
         const ok = window.confirm(
-          `${explicitActionLabel}\n\nThis will save status: ${explicitStatusLabel}\n\nItem: ${item.title || item.id}\n\nContinue?`
+          `${explicitActionLabel}\n\nBUILDSETU_PHASE_M8Y_FIX1_CONFIRM_STATUS_AUDIT\nThis will save status: ${explicitStatusLabel}\n\nItem: ${item.title || item.id}\n\nContinue?`
         );
         if (!ok) return;
       }
@@ -392,6 +392,12 @@ export default function OfficialSourceReviewQueuePage() {
           data-buildsetu-m8y="BUILDSETU_PHASE_M8Y_EXPLICIT_BUTTON_LABELS"
           className="rounded-2xl border border-amber-400/30 bg-amber-950/20 p-4 text-sm text-amber-100"
         >
+          <p
+            className="mt-2 text-xs text-amber-200"
+            data-buildsetu-marker="BUILDSETU_PHASE_M8Y_FIX1_EXPLICIT_STATUS_LEGEND"
+          >
+            M8Y status actions: Approve reference (approved) · Reject source (rejected) · Back to pending (pending_review)
+          </p>
           Review controls available after sync: Approve notes only, Reject source, Back to pending.
           No trusted merge button is present. Trusted knowledge remains unchanged until a separate
           merge phase is implemented and verified.
