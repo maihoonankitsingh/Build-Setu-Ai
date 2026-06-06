@@ -7503,6 +7503,9 @@ function ProjectTaskChatInterfaceShell({
   const [webUpdateRuntimeReviewOverrides, setWebUpdateRuntimeReviewOverrides] = useState<Record<string, any>>({});
   // BUILDSETU_PHASE_M8O_PERSISTED_REVIEW_LOAD_STATE
   const [webUpdatePersistedReviewsLoaded, setWebUpdatePersistedReviewsLoaded] = useState(false);
+  // BUILDSETU_PHASE_M8Q_WEB_UPDATE_RUNNING_STATE
+  const [webUpdateRuntimeRunningAction, setWebUpdateRuntimeRunningAction] = useState("");
+  const [webUpdateRuntimeResultSummary, setWebUpdateRuntimeResultSummary] = useState<string[]>([]);
 
   // BUILDSETU_PHASE_M8O_LOAD_PERSISTED_REVIEWS_EFFECT
   useEffect(() => {
@@ -8832,10 +8835,28 @@ function buildToolHrefWithActiveProject(slug: string, projectId?: string) {
       });
   }
 
+  // BUILDSETU_PHASE_M8Q_WEB_UPDATE_UI_HELPERS
+  function getBuildSetuWebUpdateActionLabel(card: any, execution: any) {
+    const title = String(card?.cta || card?.title || "Run web update");
+    const queryCount = execution?.queryCount ?? card?.queryCount ?? 0;
+    return queryCount ? `${title} · ${queryCount}` : title;
+  }
+
+  function getBuildSetuWebUpdateActionKey(card: any) {
+    return String(card?.id || card?.actionType || card?.title || "web_update_action");
+  }
+
   // BUILDSETU_PHASE_M8J_WEB_UPDATE_UI_RUNTIME_WIRING
   async function runBuildSetuWebUpdateCard(adapter: any, card: any) {
     const actionId = String(card?.id || card?.title || "");
     const actionType = String(card?.actionType || "");
+    // BUILDSETU_PHASE_M8Q_RUNNING_ACTION_GUARD
+    const actionKey = getBuildSetuWebUpdateActionKey(card);
+
+    if (webUpdateRuntimeRunningAction) {
+      setWebUpdateRuntimeStatus("Another web update is already running. Please wait.");
+      return;
+    }
 
     if (actionType === "review_pending_source_updates" && card?.navigationPath) {
       window.location.href = String(card.navigationPath);
@@ -8857,6 +8878,11 @@ function buildToolHrefWithActiveProject(slug: string, projectId?: string) {
       window.alert("No executable web-update query found for this action.");
       return;
     }
+
+    // BUILDSETU_PHASE_M8Q_SET_RUNNING_ACTION
+    setWebUpdateRuntimeRunningAction(actionKey);
+    setWebUpdateRuntimeResultSummary([]);
+    setWebUpdateRuntimeStatus("Running live web update. Source rows will hydrate after results return.");
 
     const endpoint =
       String(adapter?.webUpdateExecutionContract?.endpoint || "") ||
@@ -8913,6 +8939,13 @@ function buildToolHrefWithActiveProject(slug: string, projectId?: string) {
         setWebUpdateRuntimeStatus("Web update completed, but no source signal rows were hydrated.");
       }
 
+      // BUILDSETU_PHASE_M8Q_INLINE_RESULT_SUMMARY
+      setWebUpdateRuntimeResultSummary(
+        summaries.length
+          ? summaries
+          : ["Web update completed, but no source signals were returned."]
+      );
+
       window.alert(
         summaries.length
           ? `Web update completed.\n\n${summaries.join("\n")}`
@@ -8920,8 +8953,13 @@ function buildToolHrefWithActiveProject(slug: string, projectId?: string) {
       );
     } catch (error: any) {
       // BUILDSETU_PHASE_M8L_ERROR_STATUS
-      setWebUpdateRuntimeStatus(error?.message || "Web update failed.");
-      window.alert(error?.message || "Web update failed.");
+      const message = error?.message || "Web update failed.";
+      setWebUpdateRuntimeStatus(message);
+      setWebUpdateRuntimeResultSummary([message]);
+      window.alert(message);
+    } finally {
+      // BUILDSETU_PHASE_M8Q_RESET_RUNNING_ACTION
+      setWebUpdateRuntimeRunningAction("");
     }
   }
 
@@ -9016,6 +9054,24 @@ function buildToolHrefWithActiveProject(slug: string, projectId?: string) {
               </span>
             </div>
 
+            {/* BUILDSETU_PHASE_M8Q_INLINE_WEB_UPDATE_RESULT_PANEL */}
+            {webUpdateRuntimeStatus || webUpdateRuntimeResultSummary.length ? (
+              <div className="mt-2 rounded-xl border border-[#fde68a] bg-[#fffbeb] px-3 py-2 text-[11px] text-[#7a4b00]">
+                {webUpdateRuntimeStatus ? (
+                  <div className="font-black">{webUpdateRuntimeStatus}</div>
+                ) : null}
+                {webUpdateRuntimeResultSummary.length ? (
+                  <div className="mt-1 grid gap-0.5">
+                    {webUpdateRuntimeResultSummary.slice(0, 4).map((item: string, index: number) => (
+                      <div key={`${item}-${index}`} className="truncate">
+                        {item}
+                      </div>
+                    ))}
+                  </div>
+                ) : null}
+              </div>
+            ) : null}
+
             <div className="mt-2 flex flex-wrap gap-2">
               {webUpdateActionCards.slice(0, 7).map((card: any) => {
                 const execution = webUpdateExecutions.find((item: any) =>
@@ -9024,17 +9080,26 @@ function buildToolHrefWithActiveProject(slug: string, projectId?: string) {
                 );
                 const queryCount = execution?.queryCount ?? card?.queryCount ?? 0;
                 const blocked = card?.status === "blocked" || execution?.status === "blocked";
+                // BUILDSETU_PHASE_M8Q_ACTION_BUTTON_POLISH
+                const actionKey = getBuildSetuWebUpdateActionKey(card);
+                const runningThisAction = webUpdateRuntimeRunningAction === actionKey;
+                const anyActionRunning = Boolean(webUpdateRuntimeRunningAction);
 
                 return (
                   <button
                     key={card.id || card.title}
                     type="button"
                     onClick={() => runBuildSetuWebUpdateCard(adapter, card)}
-                    disabled={blocked}
-                    className="rounded-full border border-[#e8ddf8] bg-white px-3 py-1.5 text-[11px] font-bold text-[#2b164f] transition hover:border-[#7c3aed] hover:bg-[#fbf8ff] disabled:cursor-not-allowed disabled:opacity-50"
+                    disabled={blocked || anyActionRunning}
+                    className={[
+                      "rounded-full border px-3 py-1.5 text-[11px] font-bold transition disabled:cursor-not-allowed disabled:opacity-60",
+                      runningThisAction
+                        ? "border-[#7c3aed] bg-[#f3e8ff] text-[#4c1d95]"
+                        : "border-[#e8ddf8] bg-white text-[#2b164f] hover:border-[#7c3aed] hover:bg-[#fbf8ff]",
+                    ].join(" ")}
                     title={card.description || ""}
                   >
-                    {card.cta || card.title || "Run web update"} · {queryCount}
+                    {runningThisAction ? "Running..." : getBuildSetuWebUpdateActionLabel(card, execution)}
                   </button>
                 );
               })}
@@ -9140,6 +9205,14 @@ function buildToolHrefWithActiveProject(slug: string, projectId?: string) {
                 </div>
               </div>
             ) : null}
+
+            {/* BUILDSETU_PHASE_M8Q_FINAL_RATE_LOCK_POLICY_PANEL */}
+            <div className="mt-2 rounded-xl border border-[#fecaca] bg-[#fff1f2] px-3 py-2 text-[11px] text-[#7f1d1d]">
+              <div className="font-black">Final rate approval policy</div>
+              <div className="mt-0.5">
+                Web source review is evidence only. Vendor quote and manual approval are required before finalRate/approvedRate can be written.
+              </div>
+            </div>
 
             {boqFinalRateApprovalRows.length ? (
               <div className="mt-2">
