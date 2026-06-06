@@ -3,7 +3,7 @@
   "description": "BuildSetu official/trusted source review queue. No auto-merge.",
   "mergePolicy": "manual_review_required",
   "autoMerge": false,
-  "sourceCandidateCount": 81,
+  "sourceCandidateCount": 78,
   "items": [
     {
       "id": "official_source_review_bis-national-building-code",
@@ -12,17 +12,20 @@
       "title": "BIS National Building Code",
       "url": "https://www.bis.gov.in/standards/technical-department/national-building-code/",
       "domains": [
-        "bis.gov.in"
+        "architecture_planning",
+        "civil_construction",
+        "approvals_bylaws",
+        "units_dimensions"
       ],
       "sourcePackId": "official_core_building_codes_india",
       "sourcePackTitle": "Official Core Building Codes India",
       "authorityType": "trusted_source",
-      "publisher": "bis.gov.in",
+      "publisher": "",
       "reviewRequired": true,
       "mergePolicy": "manual_review_required",
       "trustedMergeBlockedUntilApproved": true,
       "autoMerge": false,
-      "sourceFingerprint": "bis-national-building-code|https://www.bis.gov.in/standards/technical-department/national-building-code/|bis.gov.in",
+      "sourceFingerprint": "bis-national-building-code|https://www.bis.gov.in/standards/technical-department/national-building-code/|architecture_planning,civil_construction,approvals_bylaws,units_dimensions",
       "reviewChecklist": [
         "Verify source authority/publisher.",
         "Verify jurisdiction and applicability.",
@@ -32,25 +35,25 @@
         "Approve and set mergeReady=true before any trusted merge."
       ],
       "nextAction": "manual_review_required",
-      "createdAt": "2026-06-06T05:47:40.441Z",
-      "updatedAt": "2026-06-06T05:47:40.442Z",
+      "createdAt": "2026-06-06T05:47:40.442Z",
+      "updatedAt": "2026-06-06T06:02:09.079Z",
       "source": {
         "sourceId": "bis-national-building-code",
         "title": "BIS National Building Code",
         "url": "https://www.bis.gov.in/standards/technical-department/national-building-code/",
         "domains": [
-          "bis.gov.in"
+          "architecture_planning",
+          "civil_construction",
+          "approvals_bylaws",
+          "units_dimensions"
         ],
         "sourcePackId": "official_core_building_codes_india",
         "sourcePackTitle": "Official Core Building Codes India",
         "authorityType": "trusted_source",
-        "publisher": "bis.gov.in",
+        "publisher": "",
         "watch": true,
         "reviewRequired": true,
         "mergePolicy": "manual_review_required",
-        "decision": "",
-        "confidence": "",
-        "jurisdiction": "",
         "source": {
           "id": "bis-national-building-code",
           "title": "BIS National Building Code",
@@ -83,17 +86,20 @@
       "title": "BIS SP 73:2023 Standardized Development and Building Regulations",
       "url": "https://www.bis.gov.in/wp-content/uploads/2024/02/SP-732023-Standardized-Development-and-Building-Regulations-2023.pdf",
       "domains": [
-        "bis.gov.in"
+        "architecture_planning",
+        "civil_construction",
+        "approvals_bylaws",
+        "units_dimensions"
       ],
       "sourcePackId": "official_core_building_codes_india",
       "sourcePackTitle": "Official Core Building Codes India",
       "authorityType": "trusted_source",
-      "publisher": "bis.gov.in",
+      "publisher": "",
       "reviewRequired": true,
       "mergePolicy": "manual_review_required",
       "trustedMergeBlockedUntilApproved": true,
       "autoMerge": false,
-      "sourceFingerprint": "bis-sp73-building-regulations-2023|https://www.bis.gov.in/wp-content/uploads/2024/02/SP-732023-Standardized-Development-and-Building-Regulations-2023.pdf|bis.gov.in",
+      "sourceFingerprint": "bis-sp73-building-regulations-2023|https://www.bis.gov.in/wp-content/uploads/2024/02/SP-732023-Standardized-Development-and-Building-Regulations-2023.pdf|architecture_planning,civil_construction,approvals_bylaws,units_dimensions",
       "reviewChecklist": [
         "Verify source authority/publisher.",
         "Verify jurisdiction and applicability.",
@@ -104,24 +110,24 @@
       ],
       "nextAction": "manual_review_required",
       "createdAt": "2026-06-06T05:47:40.442Z",
-      "updatedAt": "2026-06-06T05:47:40.442Z",
+      "updatedAt": "2026-06-06T06:02:09.079Z",
       "source": {
         "sourceId": "bis-sp73-building-regulations-2023",
         "title": "BIS SP 73:2023 Standardized Development and Building Regulations",
         "url": "https://www.bis.gov.in/wp-content/uploads/2024/02/SP-732023-Standardized-Development-and-Building-Regulations-2023.pdf",
         "domains": [
-          "bis.gov.in"
+          "architecture_planning",
+          "civil_construction",
+          "approvals_bylaws",
+          "units_dimensions"
         ],
         "sourcePackId": "official_core_building_codes_india",
         "sourcePackTitle": "Official Core Building Codes India",
         "authorityType": "trusted_source",
-        "publisher": "bis.gov.in",
+        "publisher": "",
         "watch": true,
         "reviewRequired": true,
         "mergePolicy": "manual_review_required",
-        "decision": "",
-        "confidence": "",
-        "jurisdiction": "",
         "source": {
           "id": "bis-sp73-building-regulations-2023",
           "title": "BIS SP 73:2023 Standardized Development and Building Regulations",
@@ -154,17 +160,20 @@
       "title": "MoHUA Model Building Bye Laws reference",
       "url": "https://mohua.gov.in/",
       "domains": [
-        "mohua.gov.in"
+        "architecture_planning",
+        "civil_construction",
+        "approvals_bylaws",
+        "units_dimensions"
       ],
       "sourcePackId": "official_core_building_codes_india",
       "sourcePackTitle": "Official Core Building Codes India",
       "authorityType": "trusted_source",
-      "publisher": "mohua.gov.in",
+      "publisher": "",
       "reviewRequired": true,
       "mergePolicy": "manual_review_required",
       "trustedMergeBlockedUntilApproved": true,
       "autoMerge": false,
-      "sourceFingerprint": "mohua-model-building-bye-laws|https://mohua.gov.in/|mohua.gov.in",
+      "sourceFingerprint": "mohua-model-building-bye-laws|https://mohua.gov.in/|architecture_planning,civil_construction,approvals_bylaws,units_dimensions",
       "reviewChecklist": [
         "Verify source authority/publisher.",
         "Verify jurisdiction and applicability.",
@@ -175,24 +184,24 @@
       ],
       "nextAction": "manual_review_required",
       "createdAt": "2026-06-06T05:47:40.442Z",
-      "updatedAt": "2026-06-06T05:47:40.442Z",
+      "updatedAt": "2026-06-06T06:02:09.079Z",
       "source": {
         "sourceId": "mohua-model-building-bye-laws",
         "title": "MoHUA Model Building Bye Laws reference",
         "url": "https://mohua.gov.in/",
         "domains": [
-          "mohua.gov.in"
+          "architecture_planning",
+          "civil_construction",
+          "approvals_bylaws",
+          "units_dimensions"
         ],
         "sourcePackId": "official_core_building_codes_india",
         "sourcePackTitle": "Official Core Building Codes India",
         "authorityType": "trusted_source",
-        "publisher": "mohua.gov.in",
+        "publisher": "",
         "watch": true,
         "reviewRequired": true,
         "mergePolicy": "manual_review_required",
-        "decision": "",
-        "confidence": "",
-        "jurisdiction": "",
         "source": {
           "id": "mohua-model-building-bye-laws",
           "title": "MoHUA Model Building Bye Laws reference",
@@ -220,7 +229,7 @@
     },
     {
       "id": "official_source_review_mohua-urdpfi-guidelines-page",
-      "status": "pending_review",
+      "status": "approved",
       "sourceId": "mohua-urdpfi-guidelines-page",
       "title": "MoHUA URDPFI Guidelines official page",
       "url": "https://mohua.gov.in/link/urdpfi-guidelines.php",
@@ -246,9 +255,9 @@
         "Mark professional/local authority review boundary.",
         "Approve and set mergeReady=true before any trusted merge."
       ],
-      "nextAction": "manual_review_required",
+      "nextAction": "review_status_preserved",
       "createdAt": "2026-06-06T05:47:40.442Z",
-      "updatedAt": "2026-06-06T05:47:40.442Z",
+      "updatedAt": "2026-06-06T06:02:09.079Z",
       "source": {
         "sourceId": "mohua-urdpfi-guidelines-page",
         "title": "MoHUA URDPFI Guidelines official page",
@@ -265,9 +274,6 @@
         "watch": true,
         "reviewRequired": true,
         "mergePolicy": "manual_review_required",
-        "decision": "",
-        "confidence": "",
-        "jurisdiction": "",
         "source": {
           "id": "mohua-urdpfi-guidelines-page",
           "title": "MoHUA URDPFI Guidelines official page",
@@ -285,10 +291,13 @@
         }
       },
       "review": {
-        "reviewer": "",
-        "reviewedAt": "",
+        "reviewer": "workspace-review",
+        "reviewedAt": "2026-06-06T06:00:45.647Z",
         "notes": "",
-        "mergeReady": false
+        "mergeReady": false,
+        "reviewedBy": "usr_1779277411640_8bb5e23ec30cc05b",
+        "status": "approved",
+        "trustedMergeExecuted": false
       }
     },
     {
@@ -321,7 +330,7 @@
       ],
       "nextAction": "manual_review_required",
       "createdAt": "2026-06-06T05:47:40.442Z",
-      "updatedAt": "2026-06-06T05:47:40.442Z",
+      "updatedAt": "2026-06-06T06:02:09.079Z",
       "source": {
         "sourceId": "mohua-urdpfi-guidelines-vol-1",
         "title": "MoHUA URDPFI Guidelines Volume I",
@@ -338,9 +347,6 @@
         "watch": true,
         "reviewRequired": true,
         "mergePolicy": "manual_review_required",
-        "decision": "",
-        "confidence": "",
-        "jurisdiction": "",
         "source": {
           "id": "mohua-urdpfi-guidelines-vol-1",
           "title": "MoHUA URDPFI Guidelines Volume I",
@@ -395,7 +401,7 @@
       ],
       "nextAction": "manual_review_required",
       "createdAt": "2026-06-06T05:47:40.442Z",
-      "updatedAt": "2026-06-06T05:47:40.442Z",
+      "updatedAt": "2026-06-06T06:02:09.079Z",
       "source": {
         "sourceId": "mohua-tod-guidance-document",
         "title": "MoHUA Transit Oriented Development Guidance Document",
@@ -413,9 +419,6 @@
         "watch": true,
         "reviewRequired": true,
         "mergePolicy": "manual_review_required",
-        "decision": "",
-        "confidence": "",
-        "jurisdiction": "",
         "source": {
           "id": "mohua-tod-guidance-document",
           "title": "MoHUA Transit Oriented Development Guidance Document",
@@ -471,7 +474,7 @@
       ],
       "nextAction": "manual_review_required",
       "createdAt": "2026-06-06T05:47:40.442Z",
-      "updatedAt": "2026-06-06T05:47:40.442Z",
+      "updatedAt": "2026-06-06T06:02:09.079Z",
       "source": {
         "sourceId": "cpwd-works-manual-2024",
         "title": "CPWD Works Manual 2024",
@@ -489,9 +492,6 @@
         "watch": true,
         "reviewRequired": true,
         "mergePolicy": "manual_review_required",
-        "decision": "",
-        "confidence": "",
-        "jurisdiction": "",
         "source": {
           "id": "cpwd-works-manual-2024",
           "title": "CPWD Works Manual 2024",
@@ -546,7 +546,7 @@
       ],
       "nextAction": "manual_review_required",
       "createdAt": "2026-06-06T05:47:40.442Z",
-      "updatedAt": "2026-06-06T05:47:40.442Z",
+      "updatedAt": "2026-06-06T06:02:09.079Z",
       "source": {
         "sourceId": "dda-ubbl-2016-page",
         "title": "DDA UBBL 2016 and Amendments official page",
@@ -563,9 +563,6 @@
         "watch": true,
         "reviewRequired": true,
         "mergePolicy": "manual_review_required",
-        "decision": "",
-        "confidence": "",
-        "jurisdiction": "",
         "source": {
           "id": "dda-ubbl-2016-page",
           "title": "DDA UBBL 2016 and Amendments official page",
@@ -619,7 +616,7 @@
       ],
       "nextAction": "manual_review_required",
       "createdAt": "2026-06-06T05:47:40.442Z",
-      "updatedAt": "2026-06-06T05:47:40.442Z",
+      "updatedAt": "2026-06-06T06:02:09.079Z",
       "source": {
         "sourceId": "dda-ubbl-2016-compendium",
         "title": "DDA Unified Building Bye-Laws for Delhi 2016 Compendium",
@@ -636,9 +633,6 @@
         "watch": true,
         "reviewRequired": true,
         "mergePolicy": "manual_review_required",
-        "decision": "",
-        "confidence": "",
-        "jurisdiction": "",
         "source": {
           "id": "dda-ubbl-2016-compendium",
           "title": "DDA Unified Building Bye-Laws for Delhi 2016 Compendium",
@@ -693,7 +687,7 @@
       ],
       "nextAction": "manual_review_required",
       "createdAt": "2026-06-06T05:47:40.442Z",
-      "updatedAt": "2026-06-06T05:47:40.442Z",
+      "updatedAt": "2026-06-06T06:02:09.079Z",
       "source": {
         "sourceId": "haryana-building-code-2017-amended-2023",
         "title": "Haryana Building Code 2017 with amendments up to 25.05.2023",
@@ -711,9 +705,6 @@
         "watch": true,
         "reviewRequired": true,
         "mergePolicy": "manual_review_required",
-        "decision": "",
-        "confidence": "",
-        "jurisdiction": "",
         "source": {
           "id": "haryana-building-code-2017-amended-2023",
           "title": "Haryana Building Code 2017 with amendments up to 25.05.2023",
@@ -768,7 +759,7 @@
       ],
       "nextAction": "manual_review_required",
       "createdAt": "2026-06-06T05:47:40.442Z",
-      "updatedAt": "2026-06-06T05:47:40.442Z",
+      "updatedAt": "2026-06-06T06:02:09.079Z",
       "source": {
         "sourceId": "karnataka-model-building-bye-laws-2017",
         "title": "Karnataka Municipalities Model Building Bye-Laws 2017",
@@ -785,9 +776,6 @@
         "watch": true,
         "reviewRequired": true,
         "mergePolicy": "manual_review_required",
-        "decision": "",
-        "confidence": "",
-        "jurisdiction": "",
         "source": {
           "id": "karnataka-model-building-bye-laws-2017",
           "title": "Karnataka Municipalities Model Building Bye-Laws 2017",
@@ -842,7 +830,7 @@
       ],
       "nextAction": "manual_review_required",
       "createdAt": "2026-06-06T05:47:40.442Z",
-      "updatedAt": "2026-06-06T05:47:40.442Z",
+      "updatedAt": "2026-06-06T06:02:09.079Z",
       "source": {
         "sourceId": "maharashtra-udcpr-official-pdf",
         "title": "Maharashtra Unified Development Control and Promotion Regulations",
@@ -860,9 +848,6 @@
         "watch": true,
         "reviewRequired": true,
         "mergePolicy": "manual_review_required",
-        "decision": "",
-        "confidence": "",
-        "jurisdiction": "",
         "source": {
           "id": "maharashtra-udcpr-official-pdf",
           "title": "Maharashtra Unified Development Control and Promotion Regulations",
@@ -918,7 +903,7 @@
       ],
       "nextAction": "manual_review_required",
       "createdAt": "2026-06-06T05:47:40.442Z",
-      "updatedAt": "2026-06-06T05:47:40.442Z",
+      "updatedAt": "2026-06-06T06:02:09.079Z",
       "source": {
         "sourceId": "india-andhra-pradesh-approval-authority-index",
         "title": "Andhra Pradesh approval authority and building bye-laws index candidate",
@@ -936,9 +921,6 @@
         "watch": false,
         "reviewRequired": true,
         "mergePolicy": "manual_review_required",
-        "decision": "",
-        "confidence": "",
-        "jurisdiction": "[object Object]",
         "source": {
           "id": "india-andhra-pradesh-approval-authority-index",
           "title": "Andhra Pradesh approval authority and building bye-laws index candidate",
@@ -1017,7 +999,7 @@
       ],
       "nextAction": "manual_review_required",
       "createdAt": "2026-06-06T05:47:40.442Z",
-      "updatedAt": "2026-06-06T05:47:40.442Z",
+      "updatedAt": "2026-06-06T06:02:09.079Z",
       "source": {
         "sourceId": "india-arunachal-pradesh-approval-authority-index",
         "title": "Arunachal Pradesh approval authority and building bye-laws index candidate",
@@ -1035,9 +1017,6 @@
         "watch": false,
         "reviewRequired": true,
         "mergePolicy": "manual_review_required",
-        "decision": "",
-        "confidence": "",
-        "jurisdiction": "[object Object]",
         "source": {
           "id": "india-arunachal-pradesh-approval-authority-index",
           "title": "Arunachal Pradesh approval authority and building bye-laws index candidate",
@@ -1116,7 +1095,7 @@
       ],
       "nextAction": "manual_review_required",
       "createdAt": "2026-06-06T05:47:40.442Z",
-      "updatedAt": "2026-06-06T05:47:40.442Z",
+      "updatedAt": "2026-06-06T06:02:09.079Z",
       "source": {
         "sourceId": "india-assam-approval-authority-index",
         "title": "Assam approval authority and building bye-laws index candidate",
@@ -1134,9 +1113,6 @@
         "watch": false,
         "reviewRequired": true,
         "mergePolicy": "manual_review_required",
-        "decision": "",
-        "confidence": "",
-        "jurisdiction": "[object Object]",
         "source": {
           "id": "india-assam-approval-authority-index",
           "title": "Assam approval authority and building bye-laws index candidate",
@@ -1215,7 +1191,7 @@
       ],
       "nextAction": "manual_review_required",
       "createdAt": "2026-06-06T05:47:40.442Z",
-      "updatedAt": "2026-06-06T05:47:40.442Z",
+      "updatedAt": "2026-06-06T06:02:09.079Z",
       "source": {
         "sourceId": "india-bihar-approval-authority-index",
         "title": "Bihar approval authority and building bye-laws index candidate",
@@ -1233,9 +1209,6 @@
         "watch": false,
         "reviewRequired": true,
         "mergePolicy": "manual_review_required",
-        "decision": "",
-        "confidence": "",
-        "jurisdiction": "[object Object]",
         "source": {
           "id": "india-bihar-approval-authority-index",
           "title": "Bihar approval authority and building bye-laws index candidate",
@@ -1314,7 +1287,7 @@
       ],
       "nextAction": "manual_review_required",
       "createdAt": "2026-06-06T05:47:40.442Z",
-      "updatedAt": "2026-06-06T05:47:40.442Z",
+      "updatedAt": "2026-06-06T06:02:09.079Z",
       "source": {
         "sourceId": "india-chhattisgarh-approval-authority-index",
         "title": "Chhattisgarh approval authority and building bye-laws index candidate",
@@ -1332,9 +1305,6 @@
         "watch": false,
         "reviewRequired": true,
         "mergePolicy": "manual_review_required",
-        "decision": "",
-        "confidence": "",
-        "jurisdiction": "[object Object]",
         "source": {
           "id": "india-chhattisgarh-approval-authority-index",
           "title": "Chhattisgarh approval authority and building bye-laws index candidate",
@@ -1413,7 +1383,7 @@
       ],
       "nextAction": "manual_review_required",
       "createdAt": "2026-06-06T05:47:40.442Z",
-      "updatedAt": "2026-06-06T05:47:40.442Z",
+      "updatedAt": "2026-06-06T06:02:09.079Z",
       "source": {
         "sourceId": "india-goa-approval-authority-index",
         "title": "Goa approval authority and building bye-laws index candidate",
@@ -1431,9 +1401,6 @@
         "watch": false,
         "reviewRequired": true,
         "mergePolicy": "manual_review_required",
-        "decision": "",
-        "confidence": "",
-        "jurisdiction": "[object Object]",
         "source": {
           "id": "india-goa-approval-authority-index",
           "title": "Goa approval authority and building bye-laws index candidate",
@@ -1512,7 +1479,7 @@
       ],
       "nextAction": "manual_review_required",
       "createdAt": "2026-06-06T05:47:40.442Z",
-      "updatedAt": "2026-06-06T05:47:40.442Z",
+      "updatedAt": "2026-06-06T06:02:09.079Z",
       "source": {
         "sourceId": "india-gujarat-approval-authority-index",
         "title": "Gujarat approval authority and building bye-laws index candidate",
@@ -1530,9 +1497,6 @@
         "watch": false,
         "reviewRequired": true,
         "mergePolicy": "manual_review_required",
-        "decision": "",
-        "confidence": "",
-        "jurisdiction": "[object Object]",
         "source": {
           "id": "india-gujarat-approval-authority-index",
           "title": "Gujarat approval authority and building bye-laws index candidate",
@@ -1607,7 +1571,7 @@
       ],
       "nextAction": "manual_review_required",
       "createdAt": "2026-06-06T05:47:40.442Z",
-      "updatedAt": "2026-06-06T05:47:40.442Z",
+      "updatedAt": "2026-06-06T06:02:09.079Z",
       "source": {
         "sourceId": "india-haryana-approval-authority-index",
         "title": "Haryana approval authority and building bye-laws index candidate",
@@ -1625,9 +1589,6 @@
         "watch": false,
         "reviewRequired": true,
         "mergePolicy": "manual_review_required",
-        "decision": "",
-        "confidence": "",
-        "jurisdiction": "[object Object]",
         "source": {
           "id": "india-haryana-approval-authority-index",
           "title": "Haryana approval authority and building bye-laws index candidate",
@@ -1702,7 +1663,7 @@
       ],
       "nextAction": "manual_review_required",
       "createdAt": "2026-06-06T05:47:40.442Z",
-      "updatedAt": "2026-06-06T05:47:40.442Z",
+      "updatedAt": "2026-06-06T06:02:09.079Z",
       "source": {
         "sourceId": "india-himachal-pradesh-approval-authority-index",
         "title": "Himachal Pradesh approval authority and building bye-laws index candidate",
@@ -1720,9 +1681,6 @@
         "watch": false,
         "reviewRequired": true,
         "mergePolicy": "manual_review_required",
-        "decision": "",
-        "confidence": "",
-        "jurisdiction": "[object Object]",
         "source": {
           "id": "india-himachal-pradesh-approval-authority-index",
           "title": "Himachal Pradesh approval authority and building bye-laws index candidate",
@@ -1801,7 +1759,7 @@
       ],
       "nextAction": "manual_review_required",
       "createdAt": "2026-06-06T05:47:40.442Z",
-      "updatedAt": "2026-06-06T05:47:40.442Z",
+      "updatedAt": "2026-06-06T06:02:09.079Z",
       "source": {
         "sourceId": "india-jharkhand-approval-authority-index",
         "title": "Jharkhand approval authority and building bye-laws index candidate",
@@ -1819,9 +1777,6 @@
         "watch": false,
         "reviewRequired": true,
         "mergePolicy": "manual_review_required",
-        "decision": "",
-        "confidence": "",
-        "jurisdiction": "[object Object]",
         "source": {
           "id": "india-jharkhand-approval-authority-index",
           "title": "Jharkhand approval authority and building bye-laws index candidate",
@@ -1900,7 +1855,7 @@
       ],
       "nextAction": "manual_review_required",
       "createdAt": "2026-06-06T05:47:40.442Z",
-      "updatedAt": "2026-06-06T05:47:40.442Z",
+      "updatedAt": "2026-06-06T06:02:09.079Z",
       "source": {
         "sourceId": "india-karnataka-approval-authority-index",
         "title": "Karnataka approval authority and building bye-laws index candidate",
@@ -1918,9 +1873,6 @@
         "watch": false,
         "reviewRequired": true,
         "mergePolicy": "manual_review_required",
-        "decision": "",
-        "confidence": "",
-        "jurisdiction": "[object Object]",
         "source": {
           "id": "india-karnataka-approval-authority-index",
           "title": "Karnataka approval authority and building bye-laws index candidate",
@@ -2006,7 +1958,7 @@
       ],
       "nextAction": "manual_review_required",
       "createdAt": "2026-06-06T05:47:40.442Z",
-      "updatedAt": "2026-06-06T05:47:40.442Z",
+      "updatedAt": "2026-06-06T06:02:09.079Z",
       "source": {
         "sourceId": "india-kerala-approval-authority-index",
         "title": "Kerala approval authority and building bye-laws index candidate",
@@ -2024,9 +1976,6 @@
         "watch": false,
         "reviewRequired": true,
         "mergePolicy": "manual_review_required",
-        "decision": "",
-        "confidence": "",
-        "jurisdiction": "[object Object]",
         "source": {
           "id": "india-kerala-approval-authority-index",
           "title": "Kerala approval authority and building bye-laws index candidate",
@@ -2105,7 +2054,7 @@
       ],
       "nextAction": "manual_review_required",
       "createdAt": "2026-06-06T05:47:40.442Z",
-      "updatedAt": "2026-06-06T05:47:40.442Z",
+      "updatedAt": "2026-06-06T06:02:09.079Z",
       "source": {
         "sourceId": "india-madhya-pradesh-approval-authority-index",
         "title": "Madhya Pradesh approval authority and building bye-laws index candidate",
@@ -2123,9 +2072,6 @@
         "watch": false,
         "reviewRequired": true,
         "mergePolicy": "manual_review_required",
-        "decision": "",
-        "confidence": "",
-        "jurisdiction": "[object Object]",
         "source": {
           "id": "india-madhya-pradesh-approval-authority-index",
           "title": "Madhya Pradesh approval authority and building bye-laws index candidate",
@@ -2200,7 +2146,7 @@
       ],
       "nextAction": "manual_review_required",
       "createdAt": "2026-06-06T05:47:40.442Z",
-      "updatedAt": "2026-06-06T05:47:40.442Z",
+      "updatedAt": "2026-06-06T06:02:09.079Z",
       "source": {
         "sourceId": "india-maharashtra-approval-authority-index",
         "title": "Maharashtra approval authority and building bye-laws index candidate",
@@ -2218,9 +2164,6 @@
         "watch": false,
         "reviewRequired": true,
         "mergePolicy": "manual_review_required",
-        "decision": "",
-        "confidence": "",
-        "jurisdiction": "[object Object]",
         "source": {
           "id": "india-maharashtra-approval-authority-index",
           "title": "Maharashtra approval authority and building bye-laws index candidate",
@@ -2306,7 +2249,7 @@
       ],
       "nextAction": "manual_review_required",
       "createdAt": "2026-06-06T05:47:40.442Z",
-      "updatedAt": "2026-06-06T05:47:40.442Z",
+      "updatedAt": "2026-06-06T06:02:09.079Z",
       "source": {
         "sourceId": "india-manipur-approval-authority-index",
         "title": "Manipur approval authority and building bye-laws index candidate",
@@ -2324,9 +2267,6 @@
         "watch": false,
         "reviewRequired": true,
         "mergePolicy": "manual_review_required",
-        "decision": "",
-        "confidence": "",
-        "jurisdiction": "[object Object]",
         "source": {
           "id": "india-manipur-approval-authority-index",
           "title": "Manipur approval authority and building bye-laws index candidate",
@@ -2405,7 +2345,7 @@
       ],
       "nextAction": "manual_review_required",
       "createdAt": "2026-06-06T05:47:40.442Z",
-      "updatedAt": "2026-06-06T05:47:40.442Z",
+      "updatedAt": "2026-06-06T06:02:09.079Z",
       "source": {
         "sourceId": "india-meghalaya-approval-authority-index",
         "title": "Meghalaya approval authority and building bye-laws index candidate",
@@ -2423,9 +2363,6 @@
         "watch": false,
         "reviewRequired": true,
         "mergePolicy": "manual_review_required",
-        "decision": "",
-        "confidence": "",
-        "jurisdiction": "[object Object]",
         "source": {
           "id": "india-meghalaya-approval-authority-index",
           "title": "Meghalaya approval authority and building bye-laws index candidate",
@@ -2504,7 +2441,7 @@
       ],
       "nextAction": "manual_review_required",
       "createdAt": "2026-06-06T05:47:40.442Z",
-      "updatedAt": "2026-06-06T05:47:40.442Z",
+      "updatedAt": "2026-06-06T06:02:09.079Z",
       "source": {
         "sourceId": "india-mizoram-approval-authority-index",
         "title": "Mizoram approval authority and building bye-laws index candidate",
@@ -2522,9 +2459,6 @@
         "watch": false,
         "reviewRequired": true,
         "mergePolicy": "manual_review_required",
-        "decision": "",
-        "confidence": "",
-        "jurisdiction": "[object Object]",
         "source": {
           "id": "india-mizoram-approval-authority-index",
           "title": "Mizoram approval authority and building bye-laws index candidate",
@@ -2603,7 +2537,7 @@
       ],
       "nextAction": "manual_review_required",
       "createdAt": "2026-06-06T05:47:40.442Z",
-      "updatedAt": "2026-06-06T05:47:40.442Z",
+      "updatedAt": "2026-06-06T06:02:09.079Z",
       "source": {
         "sourceId": "india-nagaland-approval-authority-index",
         "title": "Nagaland approval authority and building bye-laws index candidate",
@@ -2621,9 +2555,6 @@
         "watch": false,
         "reviewRequired": true,
         "mergePolicy": "manual_review_required",
-        "decision": "",
-        "confidence": "",
-        "jurisdiction": "[object Object]",
         "source": {
           "id": "india-nagaland-approval-authority-index",
           "title": "Nagaland approval authority and building bye-laws index candidate",
@@ -2702,7 +2633,7 @@
       ],
       "nextAction": "manual_review_required",
       "createdAt": "2026-06-06T05:47:40.442Z",
-      "updatedAt": "2026-06-06T05:47:40.442Z",
+      "updatedAt": "2026-06-06T06:02:09.079Z",
       "source": {
         "sourceId": "india-odisha-approval-authority-index",
         "title": "Odisha approval authority and building bye-laws index candidate",
@@ -2720,9 +2651,6 @@
         "watch": false,
         "reviewRequired": true,
         "mergePolicy": "manual_review_required",
-        "decision": "",
-        "confidence": "",
-        "jurisdiction": "[object Object]",
         "source": {
           "id": "india-odisha-approval-authority-index",
           "title": "Odisha approval authority and building bye-laws index candidate",
@@ -2801,7 +2729,7 @@
       ],
       "nextAction": "manual_review_required",
       "createdAt": "2026-06-06T05:47:40.442Z",
-      "updatedAt": "2026-06-06T05:47:40.442Z",
+      "updatedAt": "2026-06-06T06:02:09.079Z",
       "source": {
         "sourceId": "india-punjab-approval-authority-index",
         "title": "Punjab approval authority and building bye-laws index candidate",
@@ -2819,9 +2747,6 @@
         "watch": false,
         "reviewRequired": true,
         "mergePolicy": "manual_review_required",
-        "decision": "",
-        "confidence": "",
-        "jurisdiction": "[object Object]",
         "source": {
           "id": "india-punjab-approval-authority-index",
           "title": "Punjab approval authority and building bye-laws index candidate",
@@ -2900,7 +2825,7 @@
       ],
       "nextAction": "manual_review_required",
       "createdAt": "2026-06-06T05:47:40.442Z",
-      "updatedAt": "2026-06-06T05:47:40.442Z",
+      "updatedAt": "2026-06-06T06:02:09.079Z",
       "source": {
         "sourceId": "india-rajasthan-approval-authority-index",
         "title": "Rajasthan approval authority and building bye-laws index candidate",
@@ -2918,9 +2843,6 @@
         "watch": false,
         "reviewRequired": true,
         "mergePolicy": "manual_review_required",
-        "decision": "",
-        "confidence": "",
-        "jurisdiction": "[object Object]",
         "source": {
           "id": "india-rajasthan-approval-authority-index",
           "title": "Rajasthan approval authority and building bye-laws index candidate",
@@ -2995,7 +2917,7 @@
       ],
       "nextAction": "manual_review_required",
       "createdAt": "2026-06-06T05:47:40.442Z",
-      "updatedAt": "2026-06-06T05:47:40.442Z",
+      "updatedAt": "2026-06-06T06:02:09.079Z",
       "source": {
         "sourceId": "india-sikkim-approval-authority-index",
         "title": "Sikkim approval authority and building bye-laws index candidate",
@@ -3013,9 +2935,6 @@
         "watch": false,
         "reviewRequired": true,
         "mergePolicy": "manual_review_required",
-        "decision": "",
-        "confidence": "",
-        "jurisdiction": "[object Object]",
         "source": {
           "id": "india-sikkim-approval-authority-index",
           "title": "Sikkim approval authority and building bye-laws index candidate",
@@ -3094,7 +3013,7 @@
       ],
       "nextAction": "manual_review_required",
       "createdAt": "2026-06-06T05:47:40.442Z",
-      "updatedAt": "2026-06-06T05:47:40.442Z",
+      "updatedAt": "2026-06-06T06:02:09.079Z",
       "source": {
         "sourceId": "india-tamil-nadu-approval-authority-index",
         "title": "Tamil Nadu approval authority and building bye-laws index candidate",
@@ -3112,9 +3031,6 @@
         "watch": false,
         "reviewRequired": true,
         "mergePolicy": "manual_review_required",
-        "decision": "",
-        "confidence": "",
-        "jurisdiction": "[object Object]",
         "source": {
           "id": "india-tamil-nadu-approval-authority-index",
           "title": "Tamil Nadu approval authority and building bye-laws index candidate",
@@ -3189,7 +3105,7 @@
       ],
       "nextAction": "manual_review_required",
       "createdAt": "2026-06-06T05:47:40.442Z",
-      "updatedAt": "2026-06-06T05:47:40.442Z",
+      "updatedAt": "2026-06-06T06:02:09.079Z",
       "source": {
         "sourceId": "india-telangana-approval-authority-index",
         "title": "Telangana approval authority and building bye-laws index candidate",
@@ -3207,9 +3123,6 @@
         "watch": false,
         "reviewRequired": true,
         "mergePolicy": "manual_review_required",
-        "decision": "",
-        "confidence": "",
-        "jurisdiction": "[object Object]",
         "source": {
           "id": "india-telangana-approval-authority-index",
           "title": "Telangana approval authority and building bye-laws index candidate",
@@ -3284,7 +3197,7 @@
       ],
       "nextAction": "manual_review_required",
       "createdAt": "2026-06-06T05:47:40.442Z",
-      "updatedAt": "2026-06-06T05:47:40.442Z",
+      "updatedAt": "2026-06-06T06:02:09.079Z",
       "source": {
         "sourceId": "india-tripura-approval-authority-index",
         "title": "Tripura approval authority and building bye-laws index candidate",
@@ -3302,9 +3215,6 @@
         "watch": false,
         "reviewRequired": true,
         "mergePolicy": "manual_review_required",
-        "decision": "",
-        "confidence": "",
-        "jurisdiction": "[object Object]",
         "source": {
           "id": "india-tripura-approval-authority-index",
           "title": "Tripura approval authority and building bye-laws index candidate",
@@ -3383,7 +3293,7 @@
       ],
       "nextAction": "manual_review_required",
       "createdAt": "2026-06-06T05:47:40.442Z",
-      "updatedAt": "2026-06-06T05:47:40.442Z",
+      "updatedAt": "2026-06-06T06:02:09.079Z",
       "source": {
         "sourceId": "india-uttar-pradesh-approval-authority-index",
         "title": "Uttar Pradesh approval authority and building bye-laws index candidate",
@@ -3401,9 +3311,6 @@
         "watch": false,
         "reviewRequired": true,
         "mergePolicy": "manual_review_required",
-        "decision": "",
-        "confidence": "",
-        "jurisdiction": "[object Object]",
         "source": {
           "id": "india-uttar-pradesh-approval-authority-index",
           "title": "Uttar Pradesh approval authority and building bye-laws index candidate",
@@ -3489,7 +3396,7 @@
       ],
       "nextAction": "manual_review_required",
       "createdAt": "2026-06-06T05:47:40.442Z",
-      "updatedAt": "2026-06-06T05:47:40.442Z",
+      "updatedAt": "2026-06-06T06:02:09.079Z",
       "source": {
         "sourceId": "india-uttarakhand-approval-authority-index",
         "title": "Uttarakhand approval authority and building bye-laws index candidate",
@@ -3507,9 +3414,6 @@
         "watch": false,
         "reviewRequired": true,
         "mergePolicy": "manual_review_required",
-        "decision": "",
-        "confidence": "",
-        "jurisdiction": "[object Object]",
         "source": {
           "id": "india-uttarakhand-approval-authority-index",
           "title": "Uttarakhand approval authority and building bye-laws index candidate",
@@ -3588,7 +3492,7 @@
       ],
       "nextAction": "manual_review_required",
       "createdAt": "2026-06-06T05:47:40.442Z",
-      "updatedAt": "2026-06-06T05:47:40.442Z",
+      "updatedAt": "2026-06-06T06:02:09.079Z",
       "source": {
         "sourceId": "india-west-bengal-approval-authority-index",
         "title": "West Bengal approval authority and building bye-laws index candidate",
@@ -3606,9 +3510,6 @@
         "watch": false,
         "reviewRequired": true,
         "mergePolicy": "manual_review_required",
-        "decision": "",
-        "confidence": "",
-        "jurisdiction": "[object Object]",
         "source": {
           "id": "india-west-bengal-approval-authority-index",
           "title": "West Bengal approval authority and building bye-laws index candidate",
@@ -3694,7 +3595,7 @@
       ],
       "nextAction": "manual_review_required",
       "createdAt": "2026-06-06T05:47:40.442Z",
-      "updatedAt": "2026-06-06T05:47:40.442Z",
+      "updatedAt": "2026-06-06T06:02:09.079Z",
       "source": {
         "sourceId": "india-andaman-nicobar-islands-approval-authority-index",
         "title": "Andaman and Nicobar Islands approval authority and building bye-laws index candidate",
@@ -3712,9 +3613,6 @@
         "watch": false,
         "reviewRequired": true,
         "mergePolicy": "manual_review_required",
-        "decision": "",
-        "confidence": "",
-        "jurisdiction": "[object Object]",
         "source": {
           "id": "india-andaman-nicobar-islands-approval-authority-index",
           "title": "Andaman and Nicobar Islands approval authority and building bye-laws index candidate",
@@ -3793,7 +3691,7 @@
       ],
       "nextAction": "manual_review_required",
       "createdAt": "2026-06-06T05:47:40.442Z",
-      "updatedAt": "2026-06-06T05:47:40.442Z",
+      "updatedAt": "2026-06-06T06:02:09.079Z",
       "source": {
         "sourceId": "india-chandigarh-approval-authority-index",
         "title": "Chandigarh approval authority and building bye-laws index candidate",
@@ -3811,9 +3709,6 @@
         "watch": false,
         "reviewRequired": true,
         "mergePolicy": "manual_review_required",
-        "decision": "",
-        "confidence": "",
-        "jurisdiction": "[object Object]",
         "source": {
           "id": "india-chandigarh-approval-authority-index",
           "title": "Chandigarh approval authority and building bye-laws index candidate",
@@ -3892,7 +3787,7 @@
       ],
       "nextAction": "manual_review_required",
       "createdAt": "2026-06-06T05:47:40.442Z",
-      "updatedAt": "2026-06-06T05:47:40.442Z",
+      "updatedAt": "2026-06-06T06:02:09.079Z",
       "source": {
         "sourceId": "india-dadra-nagar-haveli-daman-diu-approval-authority-index",
         "title": "Dadra and Nagar Haveli and Daman and Diu approval authority and building bye-laws index candidate",
@@ -3910,9 +3805,6 @@
         "watch": false,
         "reviewRequired": true,
         "mergePolicy": "manual_review_required",
-        "decision": "",
-        "confidence": "",
-        "jurisdiction": "[object Object]",
         "source": {
           "id": "india-dadra-nagar-haveli-daman-diu-approval-authority-index",
           "title": "Dadra and Nagar Haveli and Daman and Diu approval authority and building bye-laws index candidate",
@@ -3991,7 +3883,7 @@
       ],
       "nextAction": "manual_review_required",
       "createdAt": "2026-06-06T05:47:40.442Z",
-      "updatedAt": "2026-06-06T05:47:40.442Z",
+      "updatedAt": "2026-06-06T06:02:09.079Z",
       "source": {
         "sourceId": "india-delhi-approval-authority-index",
         "title": "Delhi approval authority and building bye-laws index candidate",
@@ -4009,9 +3901,6 @@
         "watch": false,
         "reviewRequired": true,
         "mergePolicy": "manual_review_required",
-        "decision": "",
-        "confidence": "",
-        "jurisdiction": "[object Object]",
         "source": {
           "id": "india-delhi-approval-authority-index",
           "title": "Delhi approval authority and building bye-laws index candidate",
@@ -4086,7 +3975,7 @@
       ],
       "nextAction": "manual_review_required",
       "createdAt": "2026-06-06T05:47:40.442Z",
-      "updatedAt": "2026-06-06T05:47:40.442Z",
+      "updatedAt": "2026-06-06T06:02:09.079Z",
       "source": {
         "sourceId": "india-jammu-kashmir-approval-authority-index",
         "title": "Jammu and Kashmir approval authority and building bye-laws index candidate",
@@ -4104,9 +3993,6 @@
         "watch": false,
         "reviewRequired": true,
         "mergePolicy": "manual_review_required",
-        "decision": "",
-        "confidence": "",
-        "jurisdiction": "[object Object]",
         "source": {
           "id": "india-jammu-kashmir-approval-authority-index",
           "title": "Jammu and Kashmir approval authority and building bye-laws index candidate",
@@ -4185,7 +4071,7 @@
       ],
       "nextAction": "manual_review_required",
       "createdAt": "2026-06-06T05:47:40.442Z",
-      "updatedAt": "2026-06-06T05:47:40.442Z",
+      "updatedAt": "2026-06-06T06:02:09.079Z",
       "source": {
         "sourceId": "india-ladakh-approval-authority-index",
         "title": "Ladakh approval authority and building bye-laws index candidate",
@@ -4203,9 +4089,6 @@
         "watch": false,
         "reviewRequired": true,
         "mergePolicy": "manual_review_required",
-        "decision": "",
-        "confidence": "",
-        "jurisdiction": "[object Object]",
         "source": {
           "id": "india-ladakh-approval-authority-index",
           "title": "Ladakh approval authority and building bye-laws index candidate",
@@ -4284,7 +4167,7 @@
       ],
       "nextAction": "manual_review_required",
       "createdAt": "2026-06-06T05:47:40.442Z",
-      "updatedAt": "2026-06-06T05:47:40.442Z",
+      "updatedAt": "2026-06-06T06:02:09.079Z",
       "source": {
         "sourceId": "india-lakshadweep-approval-authority-index",
         "title": "Lakshadweep approval authority and building bye-laws index candidate",
@@ -4302,9 +4185,6 @@
         "watch": false,
         "reviewRequired": true,
         "mergePolicy": "manual_review_required",
-        "decision": "",
-        "confidence": "",
-        "jurisdiction": "[object Object]",
         "source": {
           "id": "india-lakshadweep-approval-authority-index",
           "title": "Lakshadweep approval authority and building bye-laws index candidate",
@@ -4383,7 +4263,7 @@
       ],
       "nextAction": "manual_review_required",
       "createdAt": "2026-06-06T05:47:40.442Z",
-      "updatedAt": "2026-06-06T05:47:40.442Z",
+      "updatedAt": "2026-06-06T06:02:09.079Z",
       "source": {
         "sourceId": "india-puducherry-approval-authority-index",
         "title": "Puducherry approval authority and building bye-laws index candidate",
@@ -4401,9 +4281,6 @@
         "watch": false,
         "reviewRequired": true,
         "mergePolicy": "manual_review_required",
-        "decision": "",
-        "confidence": "",
-        "jurisdiction": "[object Object]",
         "source": {
           "id": "india-puducherry-approval-authority-index",
           "title": "Puducherry approval authority and building bye-laws index candidate",
@@ -4452,186 +4329,6 @@
       }
     },
     {
-      "id": "official_source_review_bis-national-building-code",
-      "status": "pending_review",
-      "sourceId": "bis-national-building-code",
-      "title": "BIS National Building Code",
-      "url": "https://www.bis.gov.in/standards/technical-department/national-building-code/",
-      "domains": [
-        "architecture_planning",
-        "civil_construction",
-        "approvals_bylaws",
-        "units_dimensions"
-      ],
-      "sourcePackId": "official_core_building_codes_india",
-      "sourcePackTitle": "Official Core Building Codes India",
-      "authorityType": "trusted_source",
-      "publisher": "bis.gov.in",
-      "reviewRequired": true,
-      "mergePolicy": "manual_review_required",
-      "trustedMergeBlockedUntilApproved": true,
-      "autoMerge": false,
-      "sourceFingerprint": "bis-national-building-code|https://www.bis.gov.in/standards/technical-department/national-building-code/|architecture_planning,civil_construction,approvals_bylaws,units_dimensions",
-      "reviewChecklist": [
-        "Verify source authority/publisher.",
-        "Verify jurisdiction and applicability.",
-        "Verify publication/update date if available.",
-        "Extract only factual, non-final guidance.",
-        "Mark professional/local authority review boundary.",
-        "Approve and set mergeReady=true before any trusted merge."
-      ],
-      "nextAction": "manual_review_required",
-      "createdAt": "2026-06-06T05:47:40.442Z",
-      "updatedAt": "2026-06-06T05:47:40.442Z",
-      "source": {
-        "sourceId": "bis-national-building-code",
-        "title": "BIS National Building Code",
-        "url": "https://www.bis.gov.in/standards/technical-department/national-building-code/",
-        "domains": [
-          "architecture_planning",
-          "civil_construction",
-          "approvals_bylaws",
-          "units_dimensions"
-        ],
-        "sourcePackId": "official_core_building_codes_india",
-        "sourcePackTitle": "Official Core Building Codes India",
-        "authorityType": "trusted_source",
-        "publisher": "bis.gov.in",
-        "watch": true,
-        "reviewRequired": true,
-        "mergePolicy": "manual_review_required",
-        "decision": "",
-        "confidence": "",
-        "jurisdiction": "",
-        "source": {
-          "id": "bis-national-building-code",
-          "title": "BIS National Building Code",
-          "category": "construction_code",
-          "priority": "high",
-          "country": "IN",
-          "sourceType": "official_primary",
-          "url": "https://www.bis.gov.in/standards/technical-department/national-building-code/",
-          "tags": [
-            "bis",
-            "nbc",
-            "construction",
-            "building_code",
-            "planning",
-            "source_pack",
-            "official_core_building_codes_india",
-            "architecture_planning",
-            "civil_construction",
-            "approvals_bylaws",
-            "units_dimensions"
-          ],
-          "sourcePackId": "official_core_building_codes_india",
-          "sourcePackTitle": "Official Core Building Codes India",
-          "domains": [
-            "architecture_planning",
-            "civil_construction",
-            "approvals_bylaws",
-            "units_dimensions"
-          ]
-        }
-      },
-      "review": {
-        "reviewer": "",
-        "reviewedAt": "",
-        "notes": "",
-        "mergeReady": false
-      }
-    },
-    {
-      "id": "official_source_review_bis-sp73-building-regulations-2023",
-      "status": "pending_review",
-      "sourceId": "bis-sp73-building-regulations-2023",
-      "title": "BIS SP 73:2023 Standardized Development and Building Regulations",
-      "url": "https://www.bis.gov.in/wp-content/uploads/2024/02/SP-732023-Standardized-Development-and-Building-Regulations-2023.pdf",
-      "domains": [
-        "architecture_planning",
-        "civil_construction",
-        "approvals_bylaws",
-        "units_dimensions"
-      ],
-      "sourcePackId": "official_core_building_codes_india",
-      "sourcePackTitle": "Official Core Building Codes India",
-      "authorityType": "trusted_source",
-      "publisher": "bis.gov.in",
-      "reviewRequired": true,
-      "mergePolicy": "manual_review_required",
-      "trustedMergeBlockedUntilApproved": true,
-      "autoMerge": false,
-      "sourceFingerprint": "bis-sp73-building-regulations-2023|https://www.bis.gov.in/wp-content/uploads/2024/02/SP-732023-Standardized-Development-and-Building-Regulations-2023.pdf|architecture_planning,civil_construction,approvals_bylaws,units_dimensions",
-      "reviewChecklist": [
-        "Verify source authority/publisher.",
-        "Verify jurisdiction and applicability.",
-        "Verify publication/update date if available.",
-        "Extract only factual, non-final guidance.",
-        "Mark professional/local authority review boundary.",
-        "Approve and set mergeReady=true before any trusted merge."
-      ],
-      "nextAction": "manual_review_required",
-      "createdAt": "2026-06-06T05:47:40.442Z",
-      "updatedAt": "2026-06-06T05:47:40.442Z",
-      "source": {
-        "sourceId": "bis-sp73-building-regulations-2023",
-        "title": "BIS SP 73:2023 Standardized Development and Building Regulations",
-        "url": "https://www.bis.gov.in/wp-content/uploads/2024/02/SP-732023-Standardized-Development-and-Building-Regulations-2023.pdf",
-        "domains": [
-          "architecture_planning",
-          "civil_construction",
-          "approvals_bylaws",
-          "units_dimensions"
-        ],
-        "sourcePackId": "official_core_building_codes_india",
-        "sourcePackTitle": "Official Core Building Codes India",
-        "authorityType": "trusted_source",
-        "publisher": "bis.gov.in",
-        "watch": true,
-        "reviewRequired": true,
-        "mergePolicy": "manual_review_required",
-        "decision": "",
-        "confidence": "",
-        "jurisdiction": "",
-        "source": {
-          "id": "bis-sp73-building-regulations-2023",
-          "title": "BIS SP 73:2023 Standardized Development and Building Regulations",
-          "category": "planning_bylaws",
-          "priority": "high",
-          "country": "IN",
-          "sourceType": "official_primary",
-          "url": "https://www.bis.gov.in/wp-content/uploads/2024/02/SP-732023-Standardized-Development-and-Building-Regulations-2023.pdf",
-          "tags": [
-            "bis",
-            "planning",
-            "bylaws",
-            "regulations",
-            "dimensions",
-            "source_pack",
-            "official_core_building_codes_india",
-            "architecture_planning",
-            "civil_construction",
-            "approvals_bylaws",
-            "units_dimensions"
-          ],
-          "sourcePackId": "official_core_building_codes_india",
-          "sourcePackTitle": "Official Core Building Codes India",
-          "domains": [
-            "architecture_planning",
-            "civil_construction",
-            "approvals_bylaws",
-            "units_dimensions"
-          ]
-        }
-      },
-      "review": {
-        "reviewer": "",
-        "reviewedAt": "",
-        "notes": "",
-        "mergeReady": false
-      }
-    },
-    {
       "id": "official_source_review_cpwd-works-manual-2024",
       "status": "pending_review",
       "sourceId": "cpwd-works-manual-2024",
@@ -4663,7 +4360,7 @@
       ],
       "nextAction": "manual_review_required",
       "createdAt": "2026-06-06T05:47:40.442Z",
-      "updatedAt": "2026-06-06T05:47:40.442Z",
+      "updatedAt": "2026-06-06T06:02:09.079Z",
       "source": {
         "sourceId": "cpwd-works-manual-2024",
         "title": "CPWD Works Manual 2024",
@@ -4682,9 +4379,6 @@
         "watch": true,
         "reviewRequired": true,
         "mergePolicy": "manual_review_required",
-        "decision": "",
-        "confidence": "",
-        "jurisdiction": "",
         "source": {
           "id": "cpwd-works-manual-2024",
           "title": "CPWD Works Manual 2024",
@@ -4755,7 +4449,7 @@
       ],
       "nextAction": "manual_review_required",
       "createdAt": "2026-06-06T05:47:40.442Z",
-      "updatedAt": "2026-06-06T05:47:40.442Z",
+      "updatedAt": "2026-06-06T06:02:09.079Z",
       "source": {
         "sourceId": "dda-ubbl-2016-compendium",
         "title": "DDA Unified Building Bye-Laws for Delhi 2016 Compendium",
@@ -4773,9 +4467,6 @@
         "watch": true,
         "reviewRequired": true,
         "mergePolicy": "manual_review_required",
-        "decision": "",
-        "confidence": "",
-        "jurisdiction": "",
         "source": {
           "id": "dda-ubbl-2016-compendium",
           "title": "DDA Unified Building Bye-Laws for Delhi 2016 Compendium",
@@ -4845,7 +4536,7 @@
       ],
       "nextAction": "manual_review_required",
       "createdAt": "2026-06-06T05:47:40.442Z",
-      "updatedAt": "2026-06-06T05:47:40.442Z",
+      "updatedAt": "2026-06-06T06:02:09.079Z",
       "source": {
         "sourceId": "dda-ubbl-2016-page",
         "title": "DDA UBBL 2016 and Amendments official page",
@@ -4863,9 +4554,6 @@
         "watch": true,
         "reviewRequired": true,
         "mergePolicy": "manual_review_required",
-        "decision": "",
-        "confidence": "",
-        "jurisdiction": "",
         "source": {
           "id": "dda-ubbl-2016-page",
           "title": "DDA UBBL 2016 and Amendments official page",
@@ -4935,7 +4623,7 @@
       ],
       "nextAction": "manual_review_required",
       "createdAt": "2026-06-06T05:47:40.442Z",
-      "updatedAt": "2026-06-06T05:47:40.442Z",
+      "updatedAt": "2026-06-06T06:02:09.079Z",
       "source": {
         "sourceId": "karnataka-model-building-bye-laws-2017",
         "title": "Karnataka Municipalities Model Building Bye-Laws 2017",
@@ -4953,9 +4641,6 @@
         "watch": true,
         "reviewRequired": true,
         "mergePolicy": "manual_review_required",
-        "decision": "",
-        "confidence": "",
-        "jurisdiction": "",
         "source": {
           "id": "karnataka-model-building-bye-laws-2017",
           "title": "Karnataka Municipalities Model Building Bye-Laws 2017",
@@ -4995,96 +4680,6 @@
       }
     },
     {
-      "id": "official_source_review_mohua-model-building-bye-laws",
-      "status": "pending_review",
-      "sourceId": "mohua-model-building-bye-laws",
-      "title": "MoHUA Model Building Bye Laws reference",
-      "url": "https://mohua.gov.in/",
-      "domains": [
-        "architecture_planning",
-        "civil_construction",
-        "approvals_bylaws",
-        "units_dimensions"
-      ],
-      "sourcePackId": "official_core_building_codes_india",
-      "sourcePackTitle": "Official Core Building Codes India",
-      "authorityType": "trusted_source",
-      "publisher": "mohua.gov.in",
-      "reviewRequired": true,
-      "mergePolicy": "manual_review_required",
-      "trustedMergeBlockedUntilApproved": true,
-      "autoMerge": false,
-      "sourceFingerprint": "mohua-model-building-bye-laws|https://mohua.gov.in/|architecture_planning,civil_construction,approvals_bylaws,units_dimensions",
-      "reviewChecklist": [
-        "Verify source authority/publisher.",
-        "Verify jurisdiction and applicability.",
-        "Verify publication/update date if available.",
-        "Extract only factual, non-final guidance.",
-        "Mark professional/local authority review boundary.",
-        "Approve and set mergeReady=true before any trusted merge."
-      ],
-      "nextAction": "manual_review_required",
-      "createdAt": "2026-06-06T05:47:40.442Z",
-      "updatedAt": "2026-06-06T05:47:40.442Z",
-      "source": {
-        "sourceId": "mohua-model-building-bye-laws",
-        "title": "MoHUA Model Building Bye Laws reference",
-        "url": "https://mohua.gov.in/",
-        "domains": [
-          "architecture_planning",
-          "civil_construction",
-          "approvals_bylaws",
-          "units_dimensions"
-        ],
-        "sourcePackId": "official_core_building_codes_india",
-        "sourcePackTitle": "Official Core Building Codes India",
-        "authorityType": "trusted_source",
-        "publisher": "mohua.gov.in",
-        "watch": true,
-        "reviewRequired": true,
-        "mergePolicy": "manual_review_required",
-        "decision": "",
-        "confidence": "",
-        "jurisdiction": "",
-        "source": {
-          "id": "mohua-model-building-bye-laws",
-          "title": "MoHUA Model Building Bye Laws reference",
-          "category": "planning_bylaws",
-          "priority": "high",
-          "country": "IN",
-          "sourceType": "official_primary",
-          "url": "https://mohua.gov.in/",
-          "tags": [
-            "mohua",
-            "byelaws",
-            "setback",
-            "far",
-            "approval",
-            "source_pack",
-            "official_core_building_codes_india",
-            "architecture_planning",
-            "civil_construction",
-            "approvals_bylaws",
-            "units_dimensions"
-          ],
-          "sourcePackId": "official_core_building_codes_india",
-          "sourcePackTitle": "Official Core Building Codes India",
-          "domains": [
-            "architecture_planning",
-            "civil_construction",
-            "approvals_bylaws",
-            "units_dimensions"
-          ]
-        }
-      },
-      "review": {
-        "reviewer": "",
-        "reviewedAt": "",
-        "notes": "",
-        "mergeReady": false
-      }
-    },
-    {
       "id": "official_source_review_smoke-test-web-search-ui_bis.gov.in_bis-national-building-code",
       "status": "pending_review",
       "sourceId": "smoke-test-web-search-ui_bis.gov.in_bis-national-building-code",
@@ -5112,7 +4707,7 @@
       ],
       "nextAction": "manual_review_required",
       "createdAt": "2026-06-06T05:47:40.442Z",
-      "updatedAt": "2026-06-06T05:47:40.442Z",
+      "updatedAt": "2026-06-06T06:02:09.079Z",
       "source": {
         "sourceId": "smoke-test-web-search-ui_bis.gov.in_bis-national-building-code",
         "title": "BIS National Building Code",
@@ -5127,9 +4722,6 @@
         "watch": false,
         "reviewRequired": true,
         "mergePolicy": "manual_review_required",
-        "decision": "web_search_candidate_saved_needs_review",
-        "confidence": "medium_official_domain_needs_review",
-        "jurisdiction": "India",
         "source": {
           "sourceId": "smoke-test-web-search-ui_bis.gov.in_bis-national-building-code",
           "title": "BIS National Building Code",
@@ -5142,10 +4734,12 @@
           "authorityType": "standards_body_official",
           "publisher": "Bureau of Indian Standards",
           "watch": false,
+          "reviewRequired": true,
+          "mergePolicy": "manual_review_required",
           "decision": "web_search_candidate_saved_needs_review",
           "confidence": "medium_official_domain_needs_review",
           "jurisdiction": "India",
-          "rawCandidate": {
+          "source": {
             "id": "exact_source_candidate_smoke-test-web-search-ui_bis.gov.in_bis-national-building-code_1780723856874_0",
             "sourceId": "smoke-test-web-search-ui_bis.gov.in_bis-national-building-code",
             "jurisdiction": "India",
@@ -5187,12 +4781,12 @@
               },
               "sourceLayer": "candidate_queue_only",
               "autoMerge": false
-            }
-          },
-          "sourceLayer": "pending_exact_source_candidates",
-          "sourceRegistryChanged": false,
-          "trustedKnowledgeWrite": false,
-          "trustedMergeExecuted": false
+            },
+            "sourceLayer": "pending_exact_source_candidates",
+            "sourceRegistryChanged": false,
+            "trustedKnowledgeWrite": false,
+            "trustedMergeExecuted": false
+          }
         }
       },
       "review": {
@@ -5230,7 +4824,7 @@
       ],
       "nextAction": "manual_review_required",
       "createdAt": "2026-06-06T05:47:40.442Z",
-      "updatedAt": "2026-06-06T05:47:40.442Z",
+      "updatedAt": "2026-06-06T06:02:09.079Z",
       "source": {
         "sourceId": "india-uttarakhand-approval-authority-index",
         "title": "Uttarakhand Building Construction and Development Bye Laws / Regulations 2011",
@@ -5245,9 +4839,6 @@
         "watch": false,
         "reviewRequired": true,
         "mergePolicy": "manual_review_required",
-        "decision": "candidate_saved_needs_review",
-        "confidence": "high",
-        "jurisdiction": "Uttarakhand",
         "source": {
           "sourceId": "india-uttarakhand-approval-authority-index",
           "title": "Uttarakhand Building Construction and Development Bye Laws / Regulations 2011",
@@ -5260,10 +4851,12 @@
           "authorityType": "government_or_official_authority",
           "publisher": "Uttarakhand Housing and Urban Development Authority",
           "watch": false,
+          "reviewRequired": true,
+          "mergePolicy": "manual_review_required",
           "decision": "candidate_saved_needs_review",
           "confidence": "high",
           "jurisdiction": "Uttarakhand",
-          "rawCandidate": {
+          "source": {
             "id": "exact_source_candidate_india-uttarakhand-approval-authority-index_1780685847486_24",
             "sourceId": "india-uttarakhand-approval-authority-index",
             "jurisdiction": "Uttarakhand",
@@ -5285,12 +4878,12 @@
               "trustedMergeCandidateAllowedChanged": false,
               "trustedKnowledgeWrite": false,
               "trustedMergeExecuted": false
-            }
-          },
-          "sourceLayer": "pending_exact_source_candidates",
-          "sourceRegistryChanged": false,
-          "trustedKnowledgeWrite": false,
-          "trustedMergeExecuted": false
+            },
+            "sourceLayer": "pending_exact_source_candidates",
+            "sourceRegistryChanged": false,
+            "trustedKnowledgeWrite": false,
+            "trustedMergeExecuted": false
+          }
         }
       },
       "review": {
@@ -5328,7 +4921,7 @@
       ],
       "nextAction": "manual_review_required",
       "createdAt": "2026-06-06T05:47:40.442Z",
-      "updatedAt": "2026-06-06T05:47:40.442Z",
+      "updatedAt": "2026-06-06T06:02:09.079Z",
       "source": {
         "sourceId": "india-tripura-approval-authority-index",
         "title": "Tripura Building Rules, 2017",
@@ -5343,9 +4936,6 @@
         "watch": false,
         "reviewRequired": true,
         "mergePolicy": "manual_review_required",
-        "decision": "candidate_saved_needs_review",
-        "confidence": "high",
-        "jurisdiction": "Tripura",
         "source": {
           "sourceId": "india-tripura-approval-authority-index",
           "title": "Tripura Building Rules, 2017",
@@ -5358,10 +4948,12 @@
           "authorityType": "government_or_official_authority",
           "publisher": "Tripura Urban Development Authority",
           "watch": false,
+          "reviewRequired": true,
+          "mergePolicy": "manual_review_required",
           "decision": "candidate_saved_needs_review",
           "confidence": "high",
           "jurisdiction": "Tripura",
-          "rawCandidate": {
+          "source": {
             "id": "exact_source_candidate_india-tripura-approval-authority-index_1780685847486_23",
             "sourceId": "india-tripura-approval-authority-index",
             "jurisdiction": "Tripura",
@@ -5383,12 +4975,12 @@
               "trustedMergeCandidateAllowedChanged": false,
               "trustedKnowledgeWrite": false,
               "trustedMergeExecuted": false
-            }
-          },
-          "sourceLayer": "pending_exact_source_candidates",
-          "sourceRegistryChanged": false,
-          "trustedKnowledgeWrite": false,
-          "trustedMergeExecuted": false
+            },
+            "sourceLayer": "pending_exact_source_candidates",
+            "sourceRegistryChanged": false,
+            "trustedKnowledgeWrite": false,
+            "trustedMergeExecuted": false
+          }
         }
       },
       "review": {
@@ -5426,7 +5018,7 @@
       ],
       "nextAction": "manual_review_required",
       "createdAt": "2026-06-06T05:47:40.442Z",
-      "updatedAt": "2026-06-06T05:47:40.442Z",
+      "updatedAt": "2026-06-06T06:02:09.079Z",
       "source": {
         "sourceId": "india-sikkim-approval-authority-index",
         "title": "The Sikkim Building Construction Regulations, 1991",
@@ -5441,9 +5033,6 @@
         "watch": false,
         "reviewRequired": true,
         "mergePolicy": "manual_review_required",
-        "decision": "candidate_saved_needs_review",
-        "confidence": "high",
-        "jurisdiction": "Sikkim",
         "source": {
           "sourceId": "india-sikkim-approval-authority-index",
           "title": "The Sikkim Building Construction Regulations, 1991",
@@ -5456,10 +5045,12 @@
           "authorityType": "government_or_official_authority",
           "publisher": "Urban Development and Housing Department, Government of Sikkim",
           "watch": false,
+          "reviewRequired": true,
+          "mergePolicy": "manual_review_required",
           "decision": "candidate_saved_needs_review",
           "confidence": "high",
           "jurisdiction": "Sikkim",
-          "rawCandidate": {
+          "source": {
             "id": "exact_source_candidate_india-sikkim-approval-authority-index_1780685847486_22",
             "sourceId": "india-sikkim-approval-authority-index",
             "jurisdiction": "Sikkim",
@@ -5481,12 +5072,12 @@
               "trustedMergeCandidateAllowedChanged": false,
               "trustedKnowledgeWrite": false,
               "trustedMergeExecuted": false
-            }
-          },
-          "sourceLayer": "pending_exact_source_candidates",
-          "sourceRegistryChanged": false,
-          "trustedKnowledgeWrite": false,
-          "trustedMergeExecuted": false
+            },
+            "sourceLayer": "pending_exact_source_candidates",
+            "sourceRegistryChanged": false,
+            "trustedKnowledgeWrite": false,
+            "trustedMergeExecuted": false
+          }
         }
       },
       "review": {
@@ -5524,7 +5115,7 @@
       ],
       "nextAction": "manual_review_required",
       "createdAt": "2026-06-06T05:47:40.442Z",
-      "updatedAt": "2026-06-06T05:47:40.442Z",
+      "updatedAt": "2026-06-06T06:02:09.079Z",
       "source": {
         "sourceId": "india-punjab-approval-authority-index",
         "title": "Punjab Urban Planning and Development Building Rules, 2021",
@@ -5539,9 +5130,6 @@
         "watch": false,
         "reviewRequired": true,
         "mergePolicy": "manual_review_required",
-        "decision": "candidate_saved_needs_review",
-        "confidence": "high",
-        "jurisdiction": "Punjab",
         "source": {
           "sourceId": "india-punjab-approval-authority-index",
           "title": "Punjab Urban Planning and Development Building Rules, 2021",
@@ -5554,10 +5142,12 @@
           "authorityType": "government_or_official_authority",
           "publisher": "Punjab Urban Planning and Development Authority",
           "watch": false,
+          "reviewRequired": true,
+          "mergePolicy": "manual_review_required",
           "decision": "candidate_saved_needs_review",
           "confidence": "high",
           "jurisdiction": "Punjab",
-          "rawCandidate": {
+          "source": {
             "id": "exact_source_candidate_india-punjab-approval-authority-index_1780685847486_21",
             "sourceId": "india-punjab-approval-authority-index",
             "jurisdiction": "Punjab",
@@ -5579,12 +5169,12 @@
               "trustedMergeCandidateAllowedChanged": false,
               "trustedKnowledgeWrite": false,
               "trustedMergeExecuted": false
-            }
-          },
-          "sourceLayer": "pending_exact_source_candidates",
-          "sourceRegistryChanged": false,
-          "trustedKnowledgeWrite": false,
-          "trustedMergeExecuted": false
+            },
+            "sourceLayer": "pending_exact_source_candidates",
+            "sourceRegistryChanged": false,
+            "trustedKnowledgeWrite": false,
+            "trustedMergeExecuted": false
+          }
         }
       },
       "review": {
@@ -5622,7 +5212,7 @@
       ],
       "nextAction": "manual_review_required",
       "createdAt": "2026-06-06T05:47:40.442Z",
-      "updatedAt": "2026-06-06T05:47:40.442Z",
+      "updatedAt": "2026-06-06T06:02:09.079Z",
       "source": {
         "sourceId": "india-puducherry-approval-authority-index",
         "title": "The Puducherry Building Bye-Laws and Zoning Regulations, 2012",
@@ -5637,9 +5227,6 @@
         "watch": false,
         "reviewRequired": true,
         "mergePolicy": "manual_review_required",
-        "decision": "candidate_saved_needs_review",
-        "confidence": "high",
-        "jurisdiction": "Puducherry",
         "source": {
           "sourceId": "india-puducherry-approval-authority-index",
           "title": "The Puducherry Building Bye-Laws and Zoning Regulations, 2012",
@@ -5652,10 +5239,12 @@
           "authorityType": "government_or_official_authority",
           "publisher": "Puducherry Planning Authority",
           "watch": false,
+          "reviewRequired": true,
+          "mergePolicy": "manual_review_required",
           "decision": "candidate_saved_needs_review",
           "confidence": "high",
           "jurisdiction": "Puducherry",
-          "rawCandidate": {
+          "source": {
             "id": "exact_source_candidate_india-puducherry-approval-authority-index_1780685847486_20",
             "sourceId": "india-puducherry-approval-authority-index",
             "jurisdiction": "Puducherry",
@@ -5677,12 +5266,12 @@
               "trustedMergeCandidateAllowedChanged": false,
               "trustedKnowledgeWrite": false,
               "trustedMergeExecuted": false
-            }
-          },
-          "sourceLayer": "pending_exact_source_candidates",
-          "sourceRegistryChanged": false,
-          "trustedKnowledgeWrite": false,
-          "trustedMergeExecuted": false
+            },
+            "sourceLayer": "pending_exact_source_candidates",
+            "sourceRegistryChanged": false,
+            "trustedKnowledgeWrite": false,
+            "trustedMergeExecuted": false
+          }
         }
       },
       "review": {
@@ -5720,7 +5309,7 @@
       ],
       "nextAction": "manual_review_required",
       "createdAt": "2026-06-06T05:47:40.442Z",
-      "updatedAt": "2026-06-06T05:47:40.442Z",
+      "updatedAt": "2026-06-06T06:02:09.079Z",
       "source": {
         "sourceId": "india-odisha-approval-authority-index",
         "title": "Odisha Development Authorities (Planning and Building Standards) Rules, 2020",
@@ -5735,9 +5324,6 @@
         "watch": false,
         "reviewRequired": true,
         "mergePolicy": "manual_review_required",
-        "decision": "candidate_saved_needs_review",
-        "confidence": "high",
-        "jurisdiction": "Odisha",
         "source": {
           "sourceId": "india-odisha-approval-authority-index",
           "title": "Odisha Development Authorities (Planning and Building Standards) Rules, 2020",
@@ -5750,10 +5336,12 @@
           "authorityType": "government_or_official_authority",
           "publisher": "Housing and Urban Development Department, Government of Odisha",
           "watch": false,
+          "reviewRequired": true,
+          "mergePolicy": "manual_review_required",
           "decision": "candidate_saved_needs_review",
           "confidence": "high",
           "jurisdiction": "Odisha",
-          "rawCandidate": {
+          "source": {
             "id": "exact_source_candidate_india-odisha-approval-authority-index_1780685847486_19",
             "sourceId": "india-odisha-approval-authority-index",
             "jurisdiction": "Odisha",
@@ -5775,12 +5363,12 @@
               "trustedMergeCandidateAllowedChanged": false,
               "trustedKnowledgeWrite": false,
               "trustedMergeExecuted": false
-            }
-          },
-          "sourceLayer": "pending_exact_source_candidates",
-          "sourceRegistryChanged": false,
-          "trustedKnowledgeWrite": false,
-          "trustedMergeExecuted": false
+            },
+            "sourceLayer": "pending_exact_source_candidates",
+            "sourceRegistryChanged": false,
+            "trustedKnowledgeWrite": false,
+            "trustedMergeExecuted": false
+          }
         }
       },
       "review": {
@@ -5818,7 +5406,7 @@
       ],
       "nextAction": "manual_review_required",
       "createdAt": "2026-06-06T05:47:40.442Z",
-      "updatedAt": "2026-06-06T05:47:40.442Z",
+      "updatedAt": "2026-06-06T06:02:09.079Z",
       "source": {
         "sourceId": "india-nagaland-approval-authority-index",
         "title": "The Nagaland Building Bye-Laws, 2012",
@@ -5833,9 +5421,6 @@
         "watch": false,
         "reviewRequired": true,
         "mergePolicy": "manual_review_required",
-        "decision": "candidate_saved_needs_review",
-        "confidence": "high",
-        "jurisdiction": "Nagaland",
         "source": {
           "sourceId": "india-nagaland-approval-authority-index",
           "title": "The Nagaland Building Bye-Laws, 2012",
@@ -5848,10 +5433,12 @@
           "authorityType": "government_or_official_authority",
           "publisher": "Urban Development Department, Government of Nagaland",
           "watch": false,
+          "reviewRequired": true,
+          "mergePolicy": "manual_review_required",
           "decision": "candidate_saved_needs_review",
           "confidence": "high",
           "jurisdiction": "Nagaland",
-          "rawCandidate": {
+          "source": {
             "id": "exact_source_candidate_india-nagaland-approval-authority-index_1780685847486_18",
             "sourceId": "india-nagaland-approval-authority-index",
             "jurisdiction": "Nagaland",
@@ -5873,12 +5460,12 @@
               "trustedMergeCandidateAllowedChanged": false,
               "trustedKnowledgeWrite": false,
               "trustedMergeExecuted": false
-            }
-          },
-          "sourceLayer": "pending_exact_source_candidates",
-          "sourceRegistryChanged": false,
-          "trustedKnowledgeWrite": false,
-          "trustedMergeExecuted": false
+            },
+            "sourceLayer": "pending_exact_source_candidates",
+            "sourceRegistryChanged": false,
+            "trustedKnowledgeWrite": false,
+            "trustedMergeExecuted": false
+          }
         }
       },
       "review": {
@@ -5916,7 +5503,7 @@
       ],
       "nextAction": "manual_review_required",
       "createdAt": "2026-06-06T05:47:40.442Z",
-      "updatedAt": "2026-06-06T05:47:40.442Z",
+      "updatedAt": "2026-06-06T06:02:09.079Z",
       "source": {
         "sourceId": "india-mizoram-approval-authority-index",
         "title": "The Aizawl Municipal Council Building Regulations 2019",
@@ -5931,9 +5518,6 @@
         "watch": false,
         "reviewRequired": true,
         "mergePolicy": "manual_review_required",
-        "decision": "candidate_saved_needs_review",
-        "confidence": "medium",
-        "jurisdiction": "Mizoram",
         "source": {
           "sourceId": "india-mizoram-approval-authority-index",
           "title": "The Aizawl Municipal Council Building Regulations 2019",
@@ -5946,10 +5530,12 @@
           "authorityType": "government_or_official_authority",
           "publisher": "Directorate of Urban Development and Poverty Alleviation Department, Government of Mizoram",
           "watch": false,
+          "reviewRequired": true,
+          "mergePolicy": "manual_review_required",
           "decision": "candidate_saved_needs_review",
           "confidence": "medium",
           "jurisdiction": "Mizoram",
-          "rawCandidate": {
+          "source": {
             "id": "exact_source_candidate_india-mizoram-approval-authority-index_1780685847486_17",
             "sourceId": "india-mizoram-approval-authority-index",
             "jurisdiction": "Mizoram",
@@ -5971,12 +5557,12 @@
               "trustedMergeCandidateAllowedChanged": false,
               "trustedKnowledgeWrite": false,
               "trustedMergeExecuted": false
-            }
-          },
-          "sourceLayer": "pending_exact_source_candidates",
-          "sourceRegistryChanged": false,
-          "trustedKnowledgeWrite": false,
-          "trustedMergeExecuted": false
+            },
+            "sourceLayer": "pending_exact_source_candidates",
+            "sourceRegistryChanged": false,
+            "trustedKnowledgeWrite": false,
+            "trustedMergeExecuted": false
+          }
         }
       },
       "review": {
@@ -6014,7 +5600,7 @@
       ],
       "nextAction": "manual_review_required",
       "createdAt": "2026-06-06T05:47:40.442Z",
-      "updatedAt": "2026-06-06T05:47:40.442Z",
+      "updatedAt": "2026-06-06T06:02:09.079Z",
       "source": {
         "sourceId": "india-meghalaya-approval-authority-index",
         "title": "The Meghalaya Building Bye Laws, 2021",
@@ -6029,9 +5615,6 @@
         "watch": false,
         "reviewRequired": true,
         "mergePolicy": "manual_review_required",
-        "decision": "candidate_saved_needs_review",
-        "confidence": "high",
-        "jurisdiction": "Meghalaya",
         "source": {
           "sourceId": "india-meghalaya-approval-authority-index",
           "title": "The Meghalaya Building Bye Laws, 2021",
@@ -6044,10 +5627,12 @@
           "authorityType": "government_or_official_authority",
           "publisher": "Urban Affairs Department, Government of Meghalaya",
           "watch": false,
+          "reviewRequired": true,
+          "mergePolicy": "manual_review_required",
           "decision": "candidate_saved_needs_review",
           "confidence": "high",
           "jurisdiction": "Meghalaya",
-          "rawCandidate": {
+          "source": {
             "id": "exact_source_candidate_india-meghalaya-approval-authority-index_1780685847486_16",
             "sourceId": "india-meghalaya-approval-authority-index",
             "jurisdiction": "Meghalaya",
@@ -6069,12 +5654,12 @@
               "trustedMergeCandidateAllowedChanged": false,
               "trustedKnowledgeWrite": false,
               "trustedMergeExecuted": false
-            }
-          },
-          "sourceLayer": "pending_exact_source_candidates",
-          "sourceRegistryChanged": false,
-          "trustedKnowledgeWrite": false,
-          "trustedMergeExecuted": false
+            },
+            "sourceLayer": "pending_exact_source_candidates",
+            "sourceRegistryChanged": false,
+            "trustedKnowledgeWrite": false,
+            "trustedMergeExecuted": false
+          }
         }
       },
       "review": {
@@ -6112,7 +5697,7 @@
       ],
       "nextAction": "manual_review_required",
       "createdAt": "2026-06-06T05:47:40.442Z",
-      "updatedAt": "2026-06-06T05:47:40.442Z",
+      "updatedAt": "2026-06-06T06:02:09.079Z",
       "source": {
         "sourceId": "india-manipur-approval-authority-index",
         "title": "The Manipur Unified Building Bye-Laws, 2024",
@@ -6127,9 +5712,6 @@
         "watch": false,
         "reviewRequired": true,
         "mergePolicy": "manual_review_required",
-        "decision": "candidate_saved_needs_review",
-        "confidence": "medium",
-        "jurisdiction": "Manipur",
         "source": {
           "sourceId": "india-manipur-approval-authority-index",
           "title": "The Manipur Unified Building Bye-Laws, 2024",
@@ -6142,10 +5724,12 @@
           "authorityType": "government_or_official_authority",
           "publisher": "Town Planning Department, Government of Manipur",
           "watch": false,
+          "reviewRequired": true,
+          "mergePolicy": "manual_review_required",
           "decision": "candidate_saved_needs_review",
           "confidence": "medium",
           "jurisdiction": "Manipur",
-          "rawCandidate": {
+          "source": {
             "id": "exact_source_candidate_india-manipur-approval-authority-index_1780685847486_15",
             "sourceId": "india-manipur-approval-authority-index",
             "jurisdiction": "Manipur",
@@ -6167,12 +5751,12 @@
               "trustedMergeCandidateAllowedChanged": false,
               "trustedKnowledgeWrite": false,
               "trustedMergeExecuted": false
-            }
-          },
-          "sourceLayer": "pending_exact_source_candidates",
-          "sourceRegistryChanged": false,
-          "trustedKnowledgeWrite": false,
-          "trustedMergeExecuted": false
+            },
+            "sourceLayer": "pending_exact_source_candidates",
+            "sourceRegistryChanged": false,
+            "trustedKnowledgeWrite": false,
+            "trustedMergeExecuted": false
+          }
         }
       },
       "review": {
@@ -6210,7 +5794,7 @@
       ],
       "nextAction": "manual_review_required",
       "createdAt": "2026-06-06T05:47:40.442Z",
-      "updatedAt": "2026-06-06T05:47:40.442Z",
+      "updatedAt": "2026-06-06T06:02:09.079Z",
       "source": {
         "sourceId": "india-lakshadweep-approval-authority-index",
         "title": "Lakshadweep Building-Bylaw: Extra Ordinary Gazette Notification February 2016",
@@ -6225,9 +5809,6 @@
         "watch": false,
         "reviewRequired": true,
         "mergePolicy": "manual_review_required",
-        "decision": "candidate_saved_needs_review",
-        "confidence": "high",
-        "jurisdiction": "Lakshadweep",
         "source": {
           "sourceId": "india-lakshadweep-approval-authority-index",
           "title": "Lakshadweep Building-Bylaw: Extra Ordinary Gazette Notification February 2016",
@@ -6240,10 +5821,12 @@
           "authorityType": "government_or_official_authority",
           "publisher": "UT Administration of Lakshadweep",
           "watch": false,
+          "reviewRequired": true,
+          "mergePolicy": "manual_review_required",
           "decision": "candidate_saved_needs_review",
           "confidence": "high",
           "jurisdiction": "Lakshadweep",
-          "rawCandidate": {
+          "source": {
             "id": "exact_source_candidate_india-lakshadweep-approval-authority-index_1780685847486_14",
             "sourceId": "india-lakshadweep-approval-authority-index",
             "jurisdiction": "Lakshadweep",
@@ -6265,12 +5848,12 @@
               "trustedMergeCandidateAllowedChanged": false,
               "trustedKnowledgeWrite": false,
               "trustedMergeExecuted": false
-            }
-          },
-          "sourceLayer": "pending_exact_source_candidates",
-          "sourceRegistryChanged": false,
-          "trustedKnowledgeWrite": false,
-          "trustedMergeExecuted": false
+            },
+            "sourceLayer": "pending_exact_source_candidates",
+            "sourceRegistryChanged": false,
+            "trustedKnowledgeWrite": false,
+            "trustedMergeExecuted": false
+          }
         }
       },
       "review": {
@@ -6308,7 +5891,7 @@
       ],
       "nextAction": "manual_review_required",
       "createdAt": "2026-06-06T05:47:40.442Z",
-      "updatedAt": "2026-06-06T05:47:40.442Z",
+      "updatedAt": "2026-06-06T06:02:09.079Z",
       "source": {
         "sourceId": "india-ladakh-approval-authority-index",
         "title": "Notification: Draft Unified Building Bye-Laws UT Ladakh",
@@ -6323,9 +5906,6 @@
         "watch": false,
         "reviewRequired": true,
         "mergePolicy": "manual_review_required",
-        "decision": "candidate_saved_needs_review",
-        "confidence": "medium",
-        "jurisdiction": "Ladakh",
         "source": {
           "sourceId": "india-ladakh-approval-authority-index",
           "title": "Notification: Draft Unified Building Bye-Laws UT Ladakh",
@@ -6338,10 +5918,12 @@
           "authorityType": "government_or_official_authority",
           "publisher": "Administration of Union Territory of Ladakh",
           "watch": false,
+          "reviewRequired": true,
+          "mergePolicy": "manual_review_required",
           "decision": "candidate_saved_needs_review",
           "confidence": "medium",
           "jurisdiction": "Ladakh",
-          "rawCandidate": {
+          "source": {
             "id": "exact_source_candidate_india-ladakh-approval-authority-index_1780685847486_13",
             "sourceId": "india-ladakh-approval-authority-index",
             "jurisdiction": "Ladakh",
@@ -6363,12 +5945,12 @@
               "trustedMergeCandidateAllowedChanged": false,
               "trustedKnowledgeWrite": false,
               "trustedMergeExecuted": false
-            }
-          },
-          "sourceLayer": "pending_exact_source_candidates",
-          "sourceRegistryChanged": false,
-          "trustedKnowledgeWrite": false,
-          "trustedMergeExecuted": false
+            },
+            "sourceLayer": "pending_exact_source_candidates",
+            "sourceRegistryChanged": false,
+            "trustedKnowledgeWrite": false,
+            "trustedMergeExecuted": false
+          }
         }
       },
       "review": {
@@ -6406,7 +5988,7 @@
       ],
       "nextAction": "manual_review_required",
       "createdAt": "2026-06-06T05:47:40.442Z",
-      "updatedAt": "2026-06-06T05:47:40.442Z",
+      "updatedAt": "2026-06-06T06:02:09.079Z",
       "source": {
         "sourceId": "india-kerala-approval-authority-index",
         "title": "Kerala Municipality Building Rules, 2019 and Kerala Panchayat Building Rules, 2019",
@@ -6421,9 +6003,6 @@
         "watch": false,
         "reviewRequired": true,
         "mergePolicy": "manual_review_required",
-        "decision": "candidate_saved_needs_review",
-        "confidence": "high",
-        "jurisdiction": "Kerala",
         "source": {
           "sourceId": "india-kerala-approval-authority-index",
           "title": "Kerala Municipality Building Rules, 2019 and Kerala Panchayat Building Rules, 2019",
@@ -6436,10 +6015,12 @@
           "authorityType": "government_or_official_authority",
           "publisher": "Local Self Government Department, Government of Kerala",
           "watch": false,
+          "reviewRequired": true,
+          "mergePolicy": "manual_review_required",
           "decision": "candidate_saved_needs_review",
           "confidence": "high",
           "jurisdiction": "Kerala",
-          "rawCandidate": {
+          "source": {
             "id": "exact_source_candidate_india-kerala-approval-authority-index_1780685847486_12",
             "sourceId": "india-kerala-approval-authority-index",
             "jurisdiction": "Kerala",
@@ -6461,12 +6042,12 @@
               "trustedMergeCandidateAllowedChanged": false,
               "trustedKnowledgeWrite": false,
               "trustedMergeExecuted": false
-            }
-          },
-          "sourceLayer": "pending_exact_source_candidates",
-          "sourceRegistryChanged": false,
-          "trustedKnowledgeWrite": false,
-          "trustedMergeExecuted": false
+            },
+            "sourceLayer": "pending_exact_source_candidates",
+            "sourceRegistryChanged": false,
+            "trustedKnowledgeWrite": false,
+            "trustedMergeExecuted": false
+          }
         }
       },
       "review": {
@@ -6504,7 +6085,7 @@
       ],
       "nextAction": "manual_review_required",
       "createdAt": "2026-06-06T05:47:40.442Z",
-      "updatedAt": "2026-06-06T05:47:40.442Z",
+      "updatedAt": "2026-06-06T06:02:09.079Z",
       "source": {
         "sourceId": "india-jharkhand-approval-authority-index",
         "title": "Jharkhand Building Byelaws, 2016",
@@ -6519,9 +6100,6 @@
         "watch": false,
         "reviewRequired": true,
         "mergePolicy": "manual_review_required",
-        "decision": "candidate_saved_needs_review",
-        "confidence": "high",
-        "jurisdiction": "Jharkhand",
         "source": {
           "sourceId": "india-jharkhand-approval-authority-index",
           "title": "Jharkhand Building Byelaws, 2016",
@@ -6534,10 +6112,12 @@
           "authorityType": "government_or_official_authority",
           "publisher": "Urban Development and Housing Department, Government of Jharkhand",
           "watch": false,
+          "reviewRequired": true,
+          "mergePolicy": "manual_review_required",
           "decision": "candidate_saved_needs_review",
           "confidence": "high",
           "jurisdiction": "Jharkhand",
-          "rawCandidate": {
+          "source": {
             "id": "exact_source_candidate_india-jharkhand-approval-authority-index_1780685847486_11",
             "sourceId": "india-jharkhand-approval-authority-index",
             "jurisdiction": "Jharkhand",
@@ -6559,12 +6139,12 @@
               "trustedMergeCandidateAllowedChanged": false,
               "trustedKnowledgeWrite": false,
               "trustedMergeExecuted": false
-            }
-          },
-          "sourceLayer": "pending_exact_source_candidates",
-          "sourceRegistryChanged": false,
-          "trustedKnowledgeWrite": false,
-          "trustedMergeExecuted": false
+            },
+            "sourceLayer": "pending_exact_source_candidates",
+            "sourceRegistryChanged": false,
+            "trustedKnowledgeWrite": false,
+            "trustedMergeExecuted": false
+          }
         }
       },
       "review": {
@@ -6602,7 +6182,7 @@
       ],
       "nextAction": "manual_review_required",
       "createdAt": "2026-06-06T05:47:40.442Z",
-      "updatedAt": "2026-06-06T05:47:40.442Z",
+      "updatedAt": "2026-06-06T06:02:09.079Z",
       "source": {
         "sourceId": "india-jammu-kashmir-approval-authority-index",
         "title": "Jammu and Kashmir Unified Building Bye-Laws, 2021",
@@ -6617,9 +6197,6 @@
         "watch": false,
         "reviewRequired": true,
         "mergePolicy": "manual_review_required",
-        "decision": "candidate_saved_needs_review",
-        "confidence": "high",
-        "jurisdiction": "Jammu and Kashmir",
         "source": {
           "sourceId": "india-jammu-kashmir-approval-authority-index",
           "title": "Jammu and Kashmir Unified Building Bye-Laws, 2021",
@@ -6632,10 +6209,12 @@
           "authorityType": "government_or_official_authority",
           "publisher": "Housing and Urban Development Department, Government of Jammu and Kashmir",
           "watch": false,
+          "reviewRequired": true,
+          "mergePolicy": "manual_review_required",
           "decision": "candidate_saved_needs_review",
           "confidence": "high",
           "jurisdiction": "Jammu and Kashmir",
-          "rawCandidate": {
+          "source": {
             "id": "exact_source_candidate_india-jammu-kashmir-approval-authority-index_1780685847486_10",
             "sourceId": "india-jammu-kashmir-approval-authority-index",
             "jurisdiction": "Jammu and Kashmir",
@@ -6657,12 +6236,12 @@
               "trustedMergeCandidateAllowedChanged": false,
               "trustedKnowledgeWrite": false,
               "trustedMergeExecuted": false
-            }
-          },
-          "sourceLayer": "pending_exact_source_candidates",
-          "sourceRegistryChanged": false,
-          "trustedKnowledgeWrite": false,
-          "trustedMergeExecuted": false
+            },
+            "sourceLayer": "pending_exact_source_candidates",
+            "sourceRegistryChanged": false,
+            "trustedKnowledgeWrite": false,
+            "trustedMergeExecuted": false
+          }
         }
       },
       "review": {
@@ -6700,7 +6279,7 @@
       ],
       "nextAction": "manual_review_required",
       "createdAt": "2026-06-06T05:47:40.442Z",
-      "updatedAt": "2026-06-06T05:47:40.442Z",
+      "updatedAt": "2026-06-06T06:02:09.079Z",
       "source": {
         "sourceId": "india-himachal-pradesh-approval-authority-index",
         "title": "Himachal Pradesh Town and Country Planning Rules, 2014",
@@ -6715,9 +6294,6 @@
         "watch": false,
         "reviewRequired": true,
         "mergePolicy": "manual_review_required",
-        "decision": "candidate_saved_needs_review",
-        "confidence": "high",
-        "jurisdiction": "Himachal Pradesh",
         "source": {
           "sourceId": "india-himachal-pradesh-approval-authority-index",
           "title": "Himachal Pradesh Town and Country Planning Rules, 2014",
@@ -6730,10 +6306,12 @@
           "authorityType": "government_or_official_authority",
           "publisher": "Department of Town and Country Planning, Government of Himachal Pradesh",
           "watch": false,
+          "reviewRequired": true,
+          "mergePolicy": "manual_review_required",
           "decision": "candidate_saved_needs_review",
           "confidence": "high",
           "jurisdiction": "Himachal Pradesh",
-          "rawCandidate": {
+          "source": {
             "id": "exact_source_candidate_india-himachal-pradesh-approval-authority-index_1780685847485_9",
             "sourceId": "india-himachal-pradesh-approval-authority-index",
             "jurisdiction": "Himachal Pradesh",
@@ -6755,12 +6333,12 @@
               "trustedMergeCandidateAllowedChanged": false,
               "trustedKnowledgeWrite": false,
               "trustedMergeExecuted": false
-            }
-          },
-          "sourceLayer": "pending_exact_source_candidates",
-          "sourceRegistryChanged": false,
-          "trustedKnowledgeWrite": false,
-          "trustedMergeExecuted": false
+            },
+            "sourceLayer": "pending_exact_source_candidates",
+            "sourceRegistryChanged": false,
+            "trustedKnowledgeWrite": false,
+            "trustedMergeExecuted": false
+          }
         }
       },
       "review": {
@@ -6798,7 +6376,7 @@
       ],
       "nextAction": "manual_review_required",
       "createdAt": "2026-06-06T05:47:40.442Z",
-      "updatedAt": "2026-06-06T05:47:40.442Z",
+      "updatedAt": "2026-06-06T06:02:09.079Z",
       "source": {
         "sourceId": "india-goa-approval-authority-index",
         "title": "The Goa Land Development and Building Construction Regulations, 2010",
@@ -6813,9 +6391,6 @@
         "watch": false,
         "reviewRequired": true,
         "mergePolicy": "manual_review_required",
-        "decision": "candidate_saved_needs_review",
-        "confidence": "high",
-        "jurisdiction": "Goa",
         "source": {
           "sourceId": "india-goa-approval-authority-index",
           "title": "The Goa Land Development and Building Construction Regulations, 2010",
@@ -6828,10 +6403,12 @@
           "authorityType": "government_or_official_authority",
           "publisher": "Town and Country Planning Department, Government of Goa",
           "watch": false,
+          "reviewRequired": true,
+          "mergePolicy": "manual_review_required",
           "decision": "candidate_saved_needs_review",
           "confidence": "high",
           "jurisdiction": "Goa",
-          "rawCandidate": {
+          "source": {
             "id": "exact_source_candidate_india-goa-approval-authority-index_1780685847485_8",
             "sourceId": "india-goa-approval-authority-index",
             "jurisdiction": "Goa",
@@ -6853,12 +6430,12 @@
               "trustedMergeCandidateAllowedChanged": false,
               "trustedKnowledgeWrite": false,
               "trustedMergeExecuted": false
-            }
-          },
-          "sourceLayer": "pending_exact_source_candidates",
-          "sourceRegistryChanged": false,
-          "trustedKnowledgeWrite": false,
-          "trustedMergeExecuted": false
+            },
+            "sourceLayer": "pending_exact_source_candidates",
+            "sourceRegistryChanged": false,
+            "trustedKnowledgeWrite": false,
+            "trustedMergeExecuted": false
+          }
         }
       },
       "review": {
@@ -6896,7 +6473,7 @@
       ],
       "nextAction": "manual_review_required",
       "createdAt": "2026-06-06T05:47:40.442Z",
-      "updatedAt": "2026-06-06T05:47:40.442Z",
+      "updatedAt": "2026-06-06T06:02:09.079Z",
       "source": {
         "sourceId": "india-dadra-nagar-haveli-daman-diu-approval-authority-index",
         "title": "General Development Rules 2023",
@@ -6911,9 +6488,6 @@
         "watch": false,
         "reviewRequired": true,
         "mergePolicy": "manual_review_required",
-        "decision": "candidate_saved_needs_review",
-        "confidence": "high",
-        "jurisdiction": "Dadra and Nagar Haveli and Daman and Diu",
         "source": {
           "sourceId": "india-dadra-nagar-haveli-daman-diu-approval-authority-index",
           "title": "General Development Rules 2023",
@@ -6926,10 +6500,12 @@
           "authorityType": "government_or_official_authority",
           "publisher": "U.T. Administration of Dadra and Nagar Haveli and Daman and Diu",
           "watch": false,
+          "reviewRequired": true,
+          "mergePolicy": "manual_review_required",
           "decision": "candidate_saved_needs_review",
           "confidence": "high",
           "jurisdiction": "Dadra and Nagar Haveli and Daman and Diu",
-          "rawCandidate": {
+          "source": {
             "id": "exact_source_candidate_india-dadra-nagar-haveli-daman-diu-approval-authority-index_1780685847485_7",
             "sourceId": "india-dadra-nagar-haveli-daman-diu-approval-authority-index",
             "jurisdiction": "Dadra and Nagar Haveli and Daman and Diu",
@@ -6951,12 +6527,12 @@
               "trustedMergeCandidateAllowedChanged": false,
               "trustedKnowledgeWrite": false,
               "trustedMergeExecuted": false
-            }
-          },
-          "sourceLayer": "pending_exact_source_candidates",
-          "sourceRegistryChanged": false,
-          "trustedKnowledgeWrite": false,
-          "trustedMergeExecuted": false
+            },
+            "sourceLayer": "pending_exact_source_candidates",
+            "sourceRegistryChanged": false,
+            "trustedKnowledgeWrite": false,
+            "trustedMergeExecuted": false
+          }
         }
       },
       "review": {
@@ -6994,7 +6570,7 @@
       ],
       "nextAction": "manual_review_required",
       "createdAt": "2026-06-06T05:47:40.442Z",
-      "updatedAt": "2026-06-06T05:47:40.442Z",
+      "updatedAt": "2026-06-06T06:02:09.079Z",
       "source": {
         "sourceId": "india-chhattisgarh-approval-authority-index",
         "title": "Chhattisgarh Bhumi Vikas Niyam, 1984",
@@ -7009,9 +6585,6 @@
         "watch": false,
         "reviewRequired": true,
         "mergePolicy": "manual_review_required",
-        "decision": "candidate_saved_needs_review",
-        "confidence": "high",
-        "jurisdiction": "Chhattisgarh",
         "source": {
           "sourceId": "india-chhattisgarh-approval-authority-index",
           "title": "Chhattisgarh Bhumi Vikas Niyam, 1984",
@@ -7024,10 +6597,12 @@
           "authorityType": "government_or_official_authority",
           "publisher": "Directorate of Town and Country Planning, Chhattisgarh",
           "watch": false,
+          "reviewRequired": true,
+          "mergePolicy": "manual_review_required",
           "decision": "candidate_saved_needs_review",
           "confidence": "high",
           "jurisdiction": "Chhattisgarh",
-          "rawCandidate": {
+          "source": {
             "id": "exact_source_candidate_india-chhattisgarh-approval-authority-index_1780685847485_6",
             "sourceId": "india-chhattisgarh-approval-authority-index",
             "jurisdiction": "Chhattisgarh",
@@ -7049,12 +6624,12 @@
               "trustedMergeCandidateAllowedChanged": false,
               "trustedKnowledgeWrite": false,
               "trustedMergeExecuted": false
-            }
-          },
-          "sourceLayer": "pending_exact_source_candidates",
-          "sourceRegistryChanged": false,
-          "trustedKnowledgeWrite": false,
-          "trustedMergeExecuted": false
+            },
+            "sourceLayer": "pending_exact_source_candidates",
+            "sourceRegistryChanged": false,
+            "trustedKnowledgeWrite": false,
+            "trustedMergeExecuted": false
+          }
         }
       },
       "review": {
@@ -7092,7 +6667,7 @@
       ],
       "nextAction": "manual_review_required",
       "createdAt": "2026-06-06T05:47:40.442Z",
-      "updatedAt": "2026-06-06T05:47:40.442Z",
+      "updatedAt": "2026-06-06T06:02:09.079Z",
       "source": {
         "sourceId": "india-chandigarh-approval-authority-index",
         "title": "Chandigarh Building Rules (Urban), 2017",
@@ -7107,9 +6682,6 @@
         "watch": false,
         "reviewRequired": true,
         "mergePolicy": "manual_review_required",
-        "decision": "candidate_saved_needs_review",
-        "confidence": "high",
-        "jurisdiction": "Chandigarh",
         "source": {
           "sourceId": "india-chandigarh-approval-authority-index",
           "title": "Chandigarh Building Rules (Urban), 2017",
@@ -7122,10 +6694,12 @@
           "authorityType": "government_or_official_authority",
           "publisher": "Chandigarh Administration",
           "watch": false,
+          "reviewRequired": true,
+          "mergePolicy": "manual_review_required",
           "decision": "candidate_saved_needs_review",
           "confidence": "high",
           "jurisdiction": "Chandigarh",
-          "rawCandidate": {
+          "source": {
             "id": "exact_source_candidate_india-chandigarh-approval-authority-index_1780685847485_5",
             "sourceId": "india-chandigarh-approval-authority-index",
             "jurisdiction": "Chandigarh",
@@ -7147,12 +6721,12 @@
               "trustedMergeCandidateAllowedChanged": false,
               "trustedKnowledgeWrite": false,
               "trustedMergeExecuted": false
-            }
-          },
-          "sourceLayer": "pending_exact_source_candidates",
-          "sourceRegistryChanged": false,
-          "trustedKnowledgeWrite": false,
-          "trustedMergeExecuted": false
+            },
+            "sourceLayer": "pending_exact_source_candidates",
+            "sourceRegistryChanged": false,
+            "trustedKnowledgeWrite": false,
+            "trustedMergeExecuted": false
+          }
         }
       },
       "review": {
@@ -7190,7 +6764,7 @@
       ],
       "nextAction": "manual_review_required",
       "createdAt": "2026-06-06T05:47:40.442Z",
-      "updatedAt": "2026-06-06T05:47:40.442Z",
+      "updatedAt": "2026-06-06T06:02:09.079Z",
       "source": {
         "sourceId": "india-bihar-approval-authority-index",
         "title": "Bihar Building Byelaws, 2014",
@@ -7205,9 +6779,6 @@
         "watch": false,
         "reviewRequired": true,
         "mergePolicy": "manual_review_required",
-        "decision": "candidate_saved_needs_review",
-        "confidence": "high",
-        "jurisdiction": "Bihar",
         "source": {
           "sourceId": "india-bihar-approval-authority-index",
           "title": "Bihar Building Byelaws, 2014",
@@ -7220,10 +6791,12 @@
           "authorityType": "government_or_official_authority",
           "publisher": "Urban Development and Housing Department, Government of Bihar",
           "watch": false,
+          "reviewRequired": true,
+          "mergePolicy": "manual_review_required",
           "decision": "candidate_saved_needs_review",
           "confidence": "high",
           "jurisdiction": "Bihar",
-          "rawCandidate": {
+          "source": {
             "id": "exact_source_candidate_india-bihar-approval-authority-index_1780685847485_4",
             "sourceId": "india-bihar-approval-authority-index",
             "jurisdiction": "Bihar",
@@ -7245,12 +6818,12 @@
               "trustedMergeCandidateAllowedChanged": false,
               "trustedKnowledgeWrite": false,
               "trustedMergeExecuted": false
-            }
-          },
-          "sourceLayer": "pending_exact_source_candidates",
-          "sourceRegistryChanged": false,
-          "trustedKnowledgeWrite": false,
-          "trustedMergeExecuted": false
+            },
+            "sourceLayer": "pending_exact_source_candidates",
+            "sourceRegistryChanged": false,
+            "trustedKnowledgeWrite": false,
+            "trustedMergeExecuted": false
+          }
         }
       },
       "review": {
@@ -7288,7 +6861,7 @@
       ],
       "nextAction": "manual_review_required",
       "createdAt": "2026-06-06T05:47:40.442Z",
-      "updatedAt": "2026-06-06T05:47:40.442Z",
+      "updatedAt": "2026-06-06T06:02:09.079Z",
       "source": {
         "sourceId": "india-assam-approval-authority-index",
         "title": "Assam Unified Building Construction (Regulation) Byelaws, 2022",
@@ -7303,9 +6876,6 @@
         "watch": false,
         "reviewRequired": true,
         "mergePolicy": "manual_review_required",
-        "decision": "candidate_saved_needs_review",
-        "confidence": "high",
-        "jurisdiction": "Assam",
         "source": {
           "sourceId": "india-assam-approval-authority-index",
           "title": "Assam Unified Building Construction (Regulation) Byelaws, 2022",
@@ -7318,10 +6888,12 @@
           "authorityType": "government_or_official_authority",
           "publisher": "Housing & Urban Affairs Department, Government of Assam",
           "watch": false,
+          "reviewRequired": true,
+          "mergePolicy": "manual_review_required",
           "decision": "candidate_saved_needs_review",
           "confidence": "high",
           "jurisdiction": "Assam",
-          "rawCandidate": {
+          "source": {
             "id": "exact_source_candidate_india-assam-approval-authority-index_1780685847485_3",
             "sourceId": "india-assam-approval-authority-index",
             "jurisdiction": "Assam",
@@ -7343,12 +6915,12 @@
               "trustedMergeCandidateAllowedChanged": false,
               "trustedKnowledgeWrite": false,
               "trustedMergeExecuted": false
-            }
-          },
-          "sourceLayer": "pending_exact_source_candidates",
-          "sourceRegistryChanged": false,
-          "trustedKnowledgeWrite": false,
-          "trustedMergeExecuted": false
+            },
+            "sourceLayer": "pending_exact_source_candidates",
+            "sourceRegistryChanged": false,
+            "trustedKnowledgeWrite": false,
+            "trustedMergeExecuted": false
+          }
         }
       },
       "review": {
@@ -7386,7 +6958,7 @@
       ],
       "nextAction": "manual_review_required",
       "createdAt": "2026-06-06T05:47:40.442Z",
-      "updatedAt": "2026-06-06T05:47:40.442Z",
+      "updatedAt": "2026-06-06T06:02:09.079Z",
       "source": {
         "sourceId": "india-arunachal-pradesh-approval-authority-index",
         "title": "ARUNACHAL PRADESH BUILDING BYE-LAWS - 2019",
@@ -7401,9 +6973,6 @@
         "watch": false,
         "reviewRequired": true,
         "mergePolicy": "manual_review_required",
-        "decision": "candidate_saved_needs_review",
-        "confidence": "high",
-        "jurisdiction": "Arunachal Pradesh",
         "source": {
           "sourceId": "india-arunachal-pradesh-approval-authority-index",
           "title": "ARUNACHAL PRADESH BUILDING BYE-LAWS - 2019",
@@ -7416,10 +6985,12 @@
           "authorityType": "government_or_official_authority",
           "publisher": "Government of Arunachal Pradesh",
           "watch": false,
+          "reviewRequired": true,
+          "mergePolicy": "manual_review_required",
           "decision": "candidate_saved_needs_review",
           "confidence": "high",
           "jurisdiction": "Arunachal Pradesh",
-          "rawCandidate": {
+          "source": {
             "id": "exact_source_candidate_india-arunachal-pradesh-approval-authority-index_1780685847485_2",
             "sourceId": "india-arunachal-pradesh-approval-authority-index",
             "jurisdiction": "Arunachal Pradesh",
@@ -7441,12 +7012,12 @@
               "trustedMergeCandidateAllowedChanged": false,
               "trustedKnowledgeWrite": false,
               "trustedMergeExecuted": false
-            }
-          },
-          "sourceLayer": "pending_exact_source_candidates",
-          "sourceRegistryChanged": false,
-          "trustedKnowledgeWrite": false,
-          "trustedMergeExecuted": false
+            },
+            "sourceLayer": "pending_exact_source_candidates",
+            "sourceRegistryChanged": false,
+            "trustedKnowledgeWrite": false,
+            "trustedMergeExecuted": false
+          }
         }
       },
       "review": {
@@ -7484,7 +7055,7 @@
       ],
       "nextAction": "manual_review_required",
       "createdAt": "2026-06-06T05:47:40.442Z",
-      "updatedAt": "2026-06-06T05:47:40.442Z",
+      "updatedAt": "2026-06-06T06:02:09.079Z",
       "source": {
         "sourceId": "india-andhra-pradesh-approval-authority-index",
         "title": "The Andhra Pradesh Building Rules - 2017",
@@ -7499,9 +7070,6 @@
         "watch": false,
         "reviewRequired": true,
         "mergePolicy": "manual_review_required",
-        "decision": "candidate_saved_needs_review",
-        "confidence": "medium",
-        "jurisdiction": "Andhra Pradesh",
         "source": {
           "sourceId": "india-andhra-pradesh-approval-authority-index",
           "title": "The Andhra Pradesh Building Rules - 2017",
@@ -7514,10 +7082,12 @@
           "authorityType": "government_or_official_authority",
           "publisher": "Municipal Administration and Urban Development Department, Government of Andhra Pradesh",
           "watch": false,
+          "reviewRequired": true,
+          "mergePolicy": "manual_review_required",
           "decision": "candidate_saved_needs_review",
           "confidence": "medium",
           "jurisdiction": "Andhra Pradesh",
-          "rawCandidate": {
+          "source": {
             "id": "exact_source_candidate_india-andhra-pradesh-approval-authority-index_1780685847485_1",
             "sourceId": "india-andhra-pradesh-approval-authority-index",
             "jurisdiction": "Andhra Pradesh",
@@ -7539,12 +7109,12 @@
               "trustedMergeCandidateAllowedChanged": false,
               "trustedKnowledgeWrite": false,
               "trustedMergeExecuted": false
-            }
-          },
-          "sourceLayer": "pending_exact_source_candidates",
-          "sourceRegistryChanged": false,
-          "trustedKnowledgeWrite": false,
-          "trustedMergeExecuted": false
+            },
+            "sourceLayer": "pending_exact_source_candidates",
+            "sourceRegistryChanged": false,
+            "trustedKnowledgeWrite": false,
+            "trustedMergeExecuted": false
+          }
         }
       },
       "review": {
@@ -7582,7 +7152,7 @@
       ],
       "nextAction": "manual_review_required",
       "createdAt": "2026-06-06T05:47:40.442Z",
-      "updatedAt": "2026-06-06T05:47:40.442Z",
+      "updatedAt": "2026-06-06T06:02:09.079Z",
       "source": {
         "sourceId": "india-andaman-nicobar-islands-approval-authority-index",
         "title": "Port Blair Municipal Council Building Bye-Laws dated Oct 13, 1999",
@@ -7597,9 +7167,6 @@
         "watch": false,
         "reviewRequired": true,
         "mergePolicy": "manual_review_required",
-        "decision": "candidate_saved_needs_review",
-        "confidence": "high",
-        "jurisdiction": "Andaman and Nicobar Islands",
         "source": {
           "sourceId": "india-andaman-nicobar-islands-approval-authority-index",
           "title": "Port Blair Municipal Council Building Bye-Laws dated Oct 13, 1999",
@@ -7612,10 +7179,12 @@
           "authorityType": "government_or_official_authority",
           "publisher": "Port Blair Municipal Council",
           "watch": false,
+          "reviewRequired": true,
+          "mergePolicy": "manual_review_required",
           "decision": "candidate_saved_needs_review",
           "confidence": "high",
           "jurisdiction": "Andaman and Nicobar Islands",
-          "rawCandidate": {
+          "source": {
             "id": "exact_source_candidate_india-andaman-nicobar-islands-approval-authority-index_1780685847485_0",
             "sourceId": "india-andaman-nicobar-islands-approval-authority-index",
             "jurisdiction": "Andaman and Nicobar Islands",
@@ -7637,12 +7206,12 @@
               "trustedMergeCandidateAllowedChanged": false,
               "trustedKnowledgeWrite": false,
               "trustedMergeExecuted": false
-            }
-          },
-          "sourceLayer": "pending_exact_source_candidates",
-          "sourceRegistryChanged": false,
-          "trustedKnowledgeWrite": false,
-          "trustedMergeExecuted": false
+            },
+            "sourceLayer": "pending_exact_source_candidates",
+            "sourceRegistryChanged": false,
+            "trustedKnowledgeWrite": false,
+            "trustedMergeExecuted": false
+          }
         }
       },
       "review": {
@@ -7653,14 +7222,6 @@
       }
     }
   ],
-  "updatedAt": "2026-06-06T05:47:40.442Z",
-  "updatedBy": "server-script-buildsetu-source-review-queue-sync",
-  "safety": {
-    "sourceRegistryChanged": false,
-    "extractionAllowedChanged": false,
-    "qaReadyAllowedChanged": false,
-    "trustedMergeCandidateAllowedChanged": false,
-    "trustedKnowledgeWrite": false,
-    "trustedMergeExecuted": false
-  }
+  "updatedAt": "2026-06-06T06:02:09.079Z",
+  "updatedBy": "usr_1779277411640_8bb5e23ec30cc05b"
 }

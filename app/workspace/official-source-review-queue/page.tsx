@@ -11,6 +11,8 @@ type QueueItem = {
   url: string;
   domains?: string[];
   sourcePackId?: string;
+  publisher?: string;
+  sourceId?: string;
   sourcePackTitle?: string;
   authorityType?: string;
   reviewRequired?: boolean;
@@ -250,6 +252,70 @@ export default function OfficialSourceReviewQueuePage() {
   const items = useMemo(() => data?.items || [], [data]);
   const candidates = useMemo(() => data?.sourceCandidates || [], [data]);
 
+  const [queueSearch, setQueueSearch] = useState("");
+  const [queueFilter, setQueueFilter] = useState("all");
+
+  const queueCounts = useMemo(() => {
+    const pendingExact = items.filter((item) => item.sourcePackId === "pending_exact_source_candidates").length;
+    const sourcePack = items.filter((item) => item.sourcePackId !== "pending_exact_source_candidates").length;
+    const pendingReview = items.filter((item) => item.status === "pending_review").length;
+    const approved = items.filter((item) => item.status === "approved").length;
+    const rejected = items.filter((item) => item.status === "rejected").length;
+
+    return {
+      all: items.length,
+      pendingExact,
+      sourcePack,
+      pendingReview,
+      approved,
+      rejected,
+    };
+  }, [items]);
+
+  const filteredItems = useMemo(() => {
+    const query = queueSearch.trim().toLowerCase();
+
+    return items.filter((item) => {
+      const isPendingExact = item.sourcePackId === "pending_exact_source_candidates";
+
+      if (queueFilter === "pending_exact" && !isPendingExact) return false;
+      if (queueFilter === "source_pack" && isPendingExact) return false;
+      if (queueFilter === "pending_review" && item.status !== "pending_review") return false;
+      if (queueFilter === "approved" && item.status !== "approved") return false;
+      if (queueFilter === "rejected" && item.status !== "rejected") return false;
+
+      if (!query) return true;
+
+      const haystack = [
+        item.title,
+        item.url,
+        item.sourceId,
+        item.sourcePackId,
+        item.sourcePackTitle,
+        item.authorityType,
+        item.publisher,
+        item.source?.jurisdiction,
+        item.source?.confidence,
+        item.source?.decision,
+        ...(item.domains || []),
+      ]
+        .filter(Boolean)
+        .join(" ")
+        .toLowerCase();
+
+      return haystack.includes(query);
+    });
+  }, [items, queueFilter, queueSearch]);
+
+  const queueFilterOptions = [
+    { id: "all", label: "All", count: queueCounts.all },
+    { id: "pending_exact", label: "Pending exact", count: queueCounts.pendingExact },
+    { id: "source_pack", label: "Source packs", count: queueCounts.sourcePack },
+    { id: "pending_review", label: "Pending review", count: queueCounts.pendingReview },
+    { id: "approved", label: "Approved", count: queueCounts.approved },
+    { id: "rejected", label: "Rejected", count: queueCounts.rejected },
+  ];
+
   return (
     <main className="min-h-screen bg-slate-950 px-4 py-8 text-slate-100">
       <div className="mx-auto max-w-6xl space-y-6">
@@ -363,14 +429,62 @@ export default function OfficialSourceReviewQueuePage() {
           </p>
         </section>
 
+        <section
+          data-buildsetu-marker="BUILDSETU_REVIEW_QUEUE_FILTER_UI_V1"
+          className="rounded-2xl border border-cyan-400/20 bg-slate-900/70 p-5"
+        >
+          <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+            <div>
+              <h2 className="text-lg font-bold text-white">Review filters</h2>
+              <p className="mt-1 text-sm text-slate-400">
+                Filter 81+ review items by source type, status, jurisdiction, title, URL, confidence, or decision.
+              </p>
+            </div>
+
+            <label className="block w-full lg:max-w-md">
+              <span className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
+                Search queue
+              </span>
+              <input
+                value={queueSearch}
+                onChange={(event) => setQueueSearch(event.target.value)}
+                className="mt-2 w-full rounded-2xl border border-slate-700 bg-slate-950 px-4 py-3 text-sm text-white outline-none focus:border-cyan-400"
+                placeholder="Search title, URL, jurisdiction, confidence..."
+              />
+            </label>
+          </div>
+
+          <div className="mt-4 flex flex-wrap gap-2">
+            {queueFilterOptions.map((option) => (
+              <button
+                key={option.id}
+                type="button"
+                onClick={() => setQueueFilter(option.id)}
+                className={`rounded-full border px-4 py-2 text-xs font-black transition ${
+                  queueFilter === option.id
+                    ? "border-cyan-300 bg-cyan-300 text-slate-950"
+                    : "border-slate-700 bg-slate-950 text-slate-300 hover:border-cyan-400 hover:text-cyan-200"
+                }`}
+              >
+                {option.label} · {option.count}
+              </button>
+            ))}
+          </div>
+
+          <div className="mt-4 rounded-2xl border border-slate-800 bg-slate-950/70 p-3 text-xs text-slate-300">
+            Showing <span className="font-bold text-white">{filteredItems.length}</span> of{" "}
+            <span className="font-bold text-white">{items.length}</span> queue items. Auto merge remains OFF.
+          </div>
+        </section>
+
         <section className="rounded-2xl border border-slate-800 bg-slate-900/70 p-5">
           <h2 className="text-lg font-bold text-white">Review queue items</h2>
 
           {loading ? (
             <p className="mt-4 text-sm text-slate-400">Loading queue...</p>
-          ) : items.length ? (
+          ) : filteredItems.length ? (
             <div className="mt-4 space-y-4">
-              {items.map((item) => {
+              {filteredItems.map((item) => {
                 const form = reviewForms[item.id] || initialFormState(item);
                 const isBusy = reviewingId === item.id;
 
@@ -538,7 +652,7 @@ export default function OfficialSourceReviewQueuePage() {
             </div>
           ) : (
             <div className="mt-4 rounded-2xl border border-dashed border-slate-700 p-5 text-sm text-slate-400">
-              No queue items yet. Use “Sync from source packs” to create pending-review entries.
+              No queue items match the current filter/search. Clear search or switch to All.
             </div>
           )}
         </section>
