@@ -1,0 +1,96 @@
+{
+  "ok": true,
+  "generatedAt": "2026-06-06T04:57:08.488Z",
+  "reportFile": "data/buildsetu-source-watch/changes/source-watch-report-20260606_045708.json",
+  "originalFailedCount": 8,
+  "recoveredCount": 1,
+  "unresolvedCount": 7,
+  "recovered": [
+    {
+      "id": "maharashtra-udcpr-official-pdf",
+      "title": "Maharashtra Unified Development Control and Promotion Regulations",
+      "url": "https://www.mmrda.maharashtra.gov.in/sites/default/files/2023-10/UDCPR_compressed_2.pdf",
+      "originalError": "fetch failed",
+      "recoveredAt": "2026-06-06T04:57:08.488Z",
+      "method": "curl_get_insecure_tls_fallback",
+      "warning": "Recovered only with TLS verification disabled. Treat as transport recovery, not legal/content verification.",
+      "status": 200,
+      "effectiveUrl": "https://www.mmrda.maharashtra.gov.in/sites/default/files/2023-10/UDCPR_compressed_2.pdf",
+      "contentType": "application/pdf",
+      "bytes": 5290657,
+      "hash": "33e0a970abf800ab3e0bbcc546d0a5f3bb2387cb2596dd1c65fb3f02d9197d8c"
+    }
+  ],
+  "unresolved": [
+    {
+      "id": "cpwd-works-manual-2024",
+      "title": "CPWD Works Manual 2024",
+      "url": "https://cpwd.gov.in/Publication/CPWD_Works_Manual_2024.pdf",
+      "error": "fetch failed",
+      "errorClass": "connection_reset",
+      "recoveryAttemptedAt": "2026-06-06T04:57:08.488Z",
+      "recoveryMethod": "curl_get",
+      "recoveryError": "curl: (35) Recv failure: Connection reset by peer\n"
+    },
+    {
+      "id": "dda-ubbl-2016-page",
+      "title": "DDA UBBL 2016 and Amendments official page",
+      "url": "https://ddaservices.dda.org.in/ddaweb/ubbl.aspx",
+      "error": "fetch failed",
+      "errorClass": "ssl_handshake",
+      "recoveryAttemptedAt": "2026-06-06T04:57:08.488Z",
+      "recoveryMethod": "curl_get_then_insecure_tls_fallback",
+      "recoveryError": "curl: (35) OpenSSL SSL_connect: SSL_ERROR_SYSCALL in connection to ddaservices.dda.org.in:443 \n"
+    },
+    {
+      "id": "karnataka-model-building-bye-laws-2017",
+      "title": "Karnataka Municipalities Model Building Bye-Laws 2017",
+      "url": "https://www.dtcp.gov.in/sites/dtcp.gov.in/files/PDF/notificationsOrdersCirculars/notifications/model_building_bye_law.pdf",
+      "error": "fetch failed",
+      "errorClass": "timeout",
+      "recoveryAttemptedAt": "2026-06-06T04:57:08.488Z",
+      "recoveryMethod": "curl_get",
+      "recoveryError": "curl: (28) Failed to connect to www.dtcp.gov.in port 443 after 20002 ms: Timeout was reached\ncurl: (28) Failed to connect to www.dtcp.gov.in port 443 after 20002 ms: Timeout was reached\n"
+    },
+    {
+      "id": "mohua-model-building-bye-laws",
+      "title": "MoHUA Model Building Bye Laws reference",
+      "url": "https://mohua.gov.in/",
+      "error": "fetch failed",
+      "errorClass": "timeout",
+      "recoveryAttemptedAt": "2026-06-06T04:57:08.488Z",
+      "recoveryMethod": "curl_get",
+      "recoveryError": "curl: (28) Failed to connect to mohua.gov.in port 443 after 20002 ms: Timeout was reached\ncurl: (28) Failed to connect to mohua.gov.in port 443 after 20002 ms: Timeout was reached\n"
+    },
+    {
+      "id": "mohua-tod-guidance-document",
+      "title": "MoHUA Transit Oriented Development Guidance Document",
+      "url": "https://mohua.gov.in/upload/uploadfiles/files/TOD-Guidance-Document.pdf",
+      "error": "fetch failed",
+      "errorClass": "timeout",
+      "recoveryAttemptedAt": "2026-06-06T04:57:08.488Z",
+      "recoveryMethod": "curl_get",
+      "recoveryError": "curl: (28) Failed to connect to mohua.gov.in port 443 after 20002 ms: Timeout was reached\ncurl: (28) Failed to connect to mohua.gov.in port 443 after 20002 ms: Timeout was reached\n"
+    },
+    {
+      "id": "mohua-urdpfi-guidelines-page",
+      "title": "MoHUA URDPFI Guidelines official page",
+      "url": "https://mohua.gov.in/link/urdpfi-guidelines.php",
+      "error": "fetch failed",
+      "errorClass": "timeout",
+      "recoveryAttemptedAt": "2026-06-06T04:57:08.488Z",
+      "recoveryMethod": "curl_get",
+      "recoveryError": "curl: (28) Failed to connect to mohua.gov.in port 443 after 20002 ms: Timeout was reached\ncurl: (28) Failed to connect to mohua.gov.in port 443 after 20002 ms: Timeout was reached\n"
+    },
+    {
+      "id": "mohua-urdpfi-guidelines-vol-1",
+      "title": "MoHUA URDPFI Guidelines Volume I",
+      "url": "https://mohua.gov.in/upload/uploadfiles/files/URDPFI%20Guidelines%20Vol%20I%283%29.pdf",
+      "error": "fetch failed",
+      "errorClass": "timeout",
+      "recoveryAttemptedAt": "2026-06-06T04:57:08.488Z",
+      "recoveryMethod": "curl_get",
+      "recoveryError": "curl: (28) Failed to connect to mohua.gov.in port 443 after 20002 ms: Timeout was reached\ncurl: (28) Failed to connect to mohua.gov.in port 443 after 20002 ms: Timeout was reached\n"
+    }
+  ]
+}

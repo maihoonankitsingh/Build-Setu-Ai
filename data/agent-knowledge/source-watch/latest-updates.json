@@ -1,30 +1,30 @@
 {
   "schema": "buildsetu-source-watch-live-inbox-v1",
-  "generatedAt": "2026-06-06T04:49:08.996Z",
+  "generatedAt": "2026-06-06T05:00:39.333Z",
   "purpose": "Agent-readable source update awareness inbox. This is not trusted knowledge.",
   "summary": {
     "sourceCount": 48,
-    "latestCheckedAt": "2026-06-06T03:39:56.854Z",
+    "latestCheckedAt": "2026-06-06T04:56:15.740Z",
     "pendingSourceUpdateDrafts": 0,
     "latestChangedSources": 1,
-    "latestFailedSources": 8
+    "latestFailedSources": 7
   },
   "latestReport": {
-    "file": "data/buildsetu-source-watch/changes/source-watch-report-20260606_034049.json",
-    "checkedAt": "2026-06-06T03:39:38.761Z",
+    "file": "data/buildsetu-source-watch/changes/source-watch-report-20260606_045708.json",
+    "checkedAt": "2026-06-06T04:55:56.741Z",
     "ok": true,
     "total": 48,
     "changedCount": 1,
     "unchangedCount": 39,
-    "failedCount": 8,
+    "failedCount": 7,
     "changed": [
       {
         "id": "bis-national-building-code",
         "title": "BIS National Building Code",
         "url": "https://www.bis.gov.in/standards/technical-department/national-building-code/",
         "reason": "content_hash_changed",
-        "draftId": "draft_20260606_033941_sourceupdate_bis-national-building-code_235214cb",
-        "draftFile": "/var/www/build.sikhadenge.in/sikhadenge-build/data/buildsetu-research/drafts/draft_20260606_033941_sourceupdate_bis-national-building-code_235214cb_bis-national-building-code.json"
+        "draftId": "draft_20260606_045559_sourceupdate_bis-national-building-code_9c1ed005",
+        "draftFile": "/var/www/build.sikhadenge.in/sikhadenge-build/data/buildsetu-research/drafts/draft_20260606_045559_sourceupdate_bis-national-building-code_9c1ed005_bis-national-building-code.json"
       }
     ],
     "failed": [
@@ -44,12 +44,6 @@
         "id": "karnataka-model-building-bye-laws-2017",
         "title": "Karnataka Municipalities Model Building Bye-Laws 2017",
         "url": "https://www.dtcp.gov.in/sites/dtcp.gov.in/files/PDF/notificationsOrdersCirculars/notifications/model_building_bye_law.pdf",
-        "error": "fetch failed"
-      },
-      {
-        "id": "maharashtra-udcpr-official-pdf",
-        "title": "Maharashtra Unified Development Control and Promotion Regulations",
-        "url": "https://www.mmrda.maharashtra.gov.in/sites/default/files/2023-10/UDCPR_compressed_2.pdf",
         "error": "fetch failed"
       },
       {

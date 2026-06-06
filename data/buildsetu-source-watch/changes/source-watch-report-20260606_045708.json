@@ -1,0 +1,433 @@
+{
+  "ok": true,
+  "checkedAt": "2026-06-06T04:55:56.741Z",
+  "forceAlert": false,
+  "dryRun": false,
+  "total": 48,
+  "changed": [
+    {
+      "id": "bis-national-building-code",
+      "title": "BIS National Building Code",
+      "url": "https://www.bis.gov.in/standards/technical-department/national-building-code/",
+      "reason": "content_hash_changed",
+      "draftId": "draft_20260606_045559_sourceupdate_bis-national-building-code_9c1ed005",
+      "draftFile": "/var/www/build.sikhadenge.in/sikhadenge-build/data/buildsetu-research/drafts/draft_20260606_045559_sourceupdate_bis-national-building-code_9c1ed005_bis-national-building-code.json"
+    }
+  ],
+  "unchanged": [
+    {
+      "id": "bis-sp73-building-regulations-2023",
+      "title": "BIS SP 73:2023 Standardized Development and Building Regulations",
+      "url": "https://www.bis.gov.in/wp-content/uploads/2024/02/SP-732023-Standardized-Development-and-Building-Regulations-2023.pdf"
+    },
+    {
+      "id": "dda-ubbl-2016-compendium",
+      "title": "DDA Unified Building Bye-Laws for Delhi 2016 Compendium",
+      "url": "https://dda.gov.in/sites/default/files/public-notice/COMPENDIUM_OF_UBBL_201605082020_0.pdf"
+    },
+    {
+      "id": "haryana-building-code-2017-amended-2023",
+      "title": "Haryana Building Code 2017 with amendments up to 25.05.2023",
+      "url": "https://tcpharyana.gov.in/Haryana%20Building%20Code/Haryana%20Building%20Code-2017%20with%20amendments%20upto%2025.05.2023%20%281%29.pdf"
+    },
+    {
+      "id": "india-andaman-nicobar-islands-approval-authority-index",
+      "title": "Andaman and Nicobar Islands approval authority and building bye-laws index candidate",
+      "url": "https://igod.gov.in/sg/states"
+    },
+    {
+      "id": "india-andhra-pradesh-approval-authority-index",
+      "title": "Andhra Pradesh approval authority and building bye-laws index candidate",
+      "url": "https://igod.gov.in/sg/states"
+    },
+    {
+      "id": "india-arunachal-pradesh-approval-authority-index",
+      "title": "Arunachal Pradesh approval authority and building bye-laws index candidate",
+      "url": "https://igod.gov.in/sg/states"
+    },
+    {
+      "id": "india-assam-approval-authority-index",
+      "title": "Assam approval authority and building bye-laws index candidate",
+      "url": "https://igod.gov.in/sg/states"
+    },
+    {
+      "id": "india-bihar-approval-authority-index",
+      "title": "Bihar approval authority and building bye-laws index candidate",
+      "url": "https://igod.gov.in/sg/states"
+    },
+    {
+      "id": "india-chandigarh-approval-authority-index",
+      "title": "Chandigarh approval authority and building bye-laws index candidate",
+      "url": "https://igod.gov.in/sg/states"
+    },
+    {
+      "id": "india-chhattisgarh-approval-authority-index",
+      "title": "Chhattisgarh approval authority and building bye-laws index candidate",
+      "url": "https://igod.gov.in/sg/states"
+    },
+    {
+      "id": "india-dadra-nagar-haveli-daman-diu-approval-authority-index",
+      "title": "Dadra and Nagar Haveli and Daman and Diu approval authority and building bye-laws index candidate",
+      "url": "https://igod.gov.in/sg/states"
+    },
+    {
+      "id": "india-delhi-approval-authority-index",
+      "title": "Delhi approval authority and building bye-laws index candidate",
+      "url": "https://igod.gov.in/sg/states"
+    },
+    {
+      "id": "india-goa-approval-authority-index",
+      "title": "Goa approval authority and building bye-laws index candidate",
+      "url": "https://igod.gov.in/sg/states"
+    },
+    {
+      "id": "india-gujarat-approval-authority-index",
+      "title": "Gujarat approval authority and building bye-laws index candidate",
+      "url": "https://igod.gov.in/sg/states"
+    },
+    {
+      "id": "india-haryana-approval-authority-index",
+      "title": "Haryana approval authority and building bye-laws index candidate",
+      "url": "https://igod.gov.in/sg/states"
+    },
+    {
+      "id": "india-himachal-pradesh-approval-authority-index",
+      "title": "Himachal Pradesh approval authority and building bye-laws index candidate",
+      "url": "https://igod.gov.in/sg/states"
+    },
+    {
+      "id": "india-jammu-kashmir-approval-authority-index",
+      "title": "Jammu and Kashmir approval authority and building bye-laws index candidate",
+      "url": "https://igod.gov.in/sg/states"
+    },
+    {
+      "id": "india-jharkhand-approval-authority-index",
+      "title": "Jharkhand approval authority and building bye-laws index candidate",
+      "url": "https://igod.gov.in/sg/states"
+    },
+    {
+      "id": "india-karnataka-approval-authority-index",
+      "title": "Karnataka approval authority and building bye-laws index candidate",
+      "url": "https://igod.gov.in/sg/states"
+    },
+    {
+      "id": "india-kerala-approval-authority-index",
+      "title": "Kerala approval authority and building bye-laws index candidate",
+      "url": "https://igod.gov.in/sg/states"
+    },
+    {
+      "id": "india-ladakh-approval-authority-index",
+      "title": "Ladakh approval authority and building bye-laws index candidate",
+      "url": "https://igod.gov.in/sg/states"
+    },
+    {
+      "id": "india-lakshadweep-approval-authority-index",
+      "title": "Lakshadweep approval authority and building bye-laws index candidate",
+      "url": "https://igod.gov.in/sg/states"
+    },
+    {
+      "id": "india-madhya-pradesh-approval-authority-index",
+      "title": "Madhya Pradesh approval authority and building bye-laws index candidate",
+      "url": "https://igod.gov.in/sg/states"
+    },
+    {
+      "id": "india-maharashtra-approval-authority-index",
+      "title": "Maharashtra approval authority and building bye-laws index candidate",
+      "url": "https://igod.gov.in/sg/states"
+    },
+    {
+      "id": "india-manipur-approval-authority-index",
+      "title": "Manipur approval authority and building bye-laws index candidate",
+      "url": "https://igod.gov.in/sg/states"
+    },
+    {
+      "id": "india-meghalaya-approval-authority-index",
+      "title": "Meghalaya approval authority and building bye-laws index candidate",
+      "url": "https://igod.gov.in/sg/states"
+    },
+    {
+      "id": "india-mizoram-approval-authority-index",
+      "title": "Mizoram approval authority and building bye-laws index candidate",
+      "url": "https://igod.gov.in/sg/states"
+    },
+    {
+      "id": "india-nagaland-approval-authority-index",
+      "title": "Nagaland approval authority and building bye-laws index candidate",
+      "url": "https://igod.gov.in/sg/states"
+    },
+    {
+      "id": "india-odisha-approval-authority-index",
+      "title": "Odisha approval authority and building bye-laws index candidate",
+      "url": "https://igod.gov.in/sg/states"
+    },
+    {
+      "id": "india-puducherry-approval-authority-index",
+      "title": "Puducherry approval authority and building bye-laws index candidate",
+      "url": "https://igod.gov.in/sg/states"
+    },
+    {
+      "id": "india-punjab-approval-authority-index",
+      "title": "Punjab approval authority and building bye-laws index candidate",
+      "url": "https://igod.gov.in/sg/states"
+    },
+    {
+      "id": "india-rajasthan-approval-authority-index",
+      "title": "Rajasthan approval authority and building bye-laws index candidate",
+      "url": "https://igod.gov.in/sg/states"
+    },
+    {
+      "id": "india-sikkim-approval-authority-index",
+      "title": "Sikkim approval authority and building bye-laws index candidate",
+      "url": "https://igod.gov.in/sg/states"
+    },
+    {
+      "id": "india-tamil-nadu-approval-authority-index",
+      "title": "Tamil Nadu approval authority and building bye-laws index candidate",
+      "url": "https://igod.gov.in/sg/states"
+    },
+    {
+      "id": "india-telangana-approval-authority-index",
+      "title": "Telangana approval authority and building bye-laws index candidate",
+      "url": "https://igod.gov.in/sg/states"
+    },
+    {
+      "id": "india-tripura-approval-authority-index",
+      "title": "Tripura approval authority and building bye-laws index candidate",
+      "url": "https://igod.gov.in/sg/states"
+    },
+    {
+      "id": "india-uttar-pradesh-approval-authority-index",
+      "title": "Uttar Pradesh approval authority and building bye-laws index candidate",
+      "url": "https://igod.gov.in/sg/states"
+    },
+    {
+      "id": "india-uttarakhand-approval-authority-index",
+      "title": "Uttarakhand approval authority and building bye-laws index candidate",
+      "url": "https://igod.gov.in/sg/states"
+    },
+    {
+      "id": "india-west-bengal-approval-authority-index",
+      "title": "West Bengal approval authority and building bye-laws index candidate",
+      "url": "https://igod.gov.in/sg/states"
+    }
+  ],
+  "failed": [
+    {
+      "id": "cpwd-works-manual-2024",
+      "title": "CPWD Works Manual 2024",
+      "url": "https://cpwd.gov.in/Publication/CPWD_Works_Manual_2024.pdf",
+      "error": "fetch failed",
+      "errorClass": "connection_reset",
+      "recoveryAttemptedAt": "2026-06-06T04:57:08.488Z",
+      "recoveryMethod": "curl_get",
+      "recoveryError": "curl: (35) Recv failure: Connection reset by peer\n"
+    },
+    {
+      "id": "dda-ubbl-2016-page",
+      "title": "DDA UBBL 2016 and Amendments official page",
+      "url": "https://ddaservices.dda.org.in/ddaweb/ubbl.aspx",
+      "error": "fetch failed",
+      "errorClass": "ssl_handshake",
+      "recoveryAttemptedAt": "2026-06-06T04:57:08.488Z",
+      "recoveryMethod": "curl_get_then_insecure_tls_fallback",
+      "recoveryError": "curl: (35) OpenSSL SSL_connect: SSL_ERROR_SYSCALL in connection to ddaservices.dda.org.in:443 \n"
+    },
+    {
+      "id": "karnataka-model-building-bye-laws-2017",
+      "title": "Karnataka Municipalities Model Building Bye-Laws 2017",
+      "url": "https://www.dtcp.gov.in/sites/dtcp.gov.in/files/PDF/notificationsOrdersCirculars/notifications/model_building_bye_law.pdf",
+      "error": "fetch failed",
+      "errorClass": "timeout",
+      "recoveryAttemptedAt": "2026-06-06T04:57:08.488Z",
+      "recoveryMethod": "curl_get",
+      "recoveryError": "curl: (28) Failed to connect to www.dtcp.gov.in port 443 after 20002 ms: Timeout was reached\ncurl: (28) Failed to connect to www.dtcp.gov.in port 443 after 20002 ms: Timeout was reached\n"
+    },
+    {
+      "id": "mohua-model-building-bye-laws",
+      "title": "MoHUA Model Building Bye Laws reference",
+      "url": "https://mohua.gov.in/",
+      "error": "fetch failed",
+      "errorClass": "timeout",
+      "recoveryAttemptedAt": "2026-06-06T04:57:08.488Z",
+      "recoveryMethod": "curl_get",
+      "recoveryError": "curl: (28) Failed to connect to mohua.gov.in port 443 after 20002 ms: Timeout was reached\ncurl: (28) Failed to connect to mohua.gov.in port 443 after 20002 ms: Timeout was reached\n"
+    },
+    {
+      "id": "mohua-tod-guidance-document",
+      "title": "MoHUA Transit Oriented Development Guidance Document",
+      "url": "https://mohua.gov.in/upload/uploadfiles/files/TOD-Guidance-Document.pdf",
+      "error": "fetch failed",
+      "errorClass": "timeout",
+      "recoveryAttemptedAt": "2026-06-06T04:57:08.488Z",
+      "recoveryMethod": "curl_get",
+      "recoveryError": "curl: (28) Failed to connect to mohua.gov.in port 443 after 20002 ms: Timeout was reached\ncurl: (28) Failed to connect to mohua.gov.in port 443 after 20002 ms: Timeout was reached\n"
+    },
+    {
+      "id": "mohua-urdpfi-guidelines-page",
+      "title": "MoHUA URDPFI Guidelines official page",
+      "url": "https://mohua.gov.in/link/urdpfi-guidelines.php",
+      "error": "fetch failed",
+      "errorClass": "timeout",
+      "recoveryAttemptedAt": "2026-06-06T04:57:08.488Z",
+      "recoveryMethod": "curl_get",
+      "recoveryError": "curl: (28) Failed to connect to mohua.gov.in port 443 after 20002 ms: Timeout was reached\ncurl: (28) Failed to connect to mohua.gov.in port 443 after 20002 ms: Timeout was reached\n"
+    },
+    {
+      "id": "mohua-urdpfi-guidelines-vol-1",
+      "title": "MoHUA URDPFI Guidelines Volume I",
+      "url": "https://mohua.gov.in/upload/uploadfiles/files/URDPFI%20Guidelines%20Vol%20I%283%29.pdf",
+      "error": "fetch failed",
+      "errorClass": "timeout",
+      "recoveryAttemptedAt": "2026-06-06T04:57:08.488Z",
+      "recoveryMethod": "curl_get",
+      "recoveryError": "curl: (28) Failed to connect to mohua.gov.in port 443 after 20002 ms: Timeout was reached\ncurl: (28) Failed to connect to mohua.gov.in port 443 after 20002 ms: Timeout was reached\n"
+    }
+  ],
+  "fetchRecovery": {
+    "ok": true,
+    "generatedAt": "2026-06-06T04:57:08.488Z",
+    "reportFile": "data/buildsetu-source-watch/changes/source-watch-report-20260606_045708.json",
+    "originalFailedCount": 8,
+    "recoveredCount": 1,
+    "unresolvedCount": 7,
+    "recovered": [
+      {
+        "id": "maharashtra-udcpr-official-pdf",
+        "title": "Maharashtra Unified Development Control and Promotion Regulations",
+        "url": "https://www.mmrda.maharashtra.gov.in/sites/default/files/2023-10/UDCPR_compressed_2.pdf",
+        "originalError": "fetch failed",
+        "recoveredAt": "2026-06-06T04:57:08.488Z",
+        "method": "curl_get_insecure_tls_fallback",
+        "warning": "Recovered only with TLS verification disabled. Treat as transport recovery, not legal/content verification.",
+        "status": 200,
+        "effectiveUrl": "https://www.mmrda.maharashtra.gov.in/sites/default/files/2023-10/UDCPR_compressed_2.pdf",
+        "contentType": "application/pdf",
+        "bytes": 5290657,
+        "hash": "33e0a970abf800ab3e0bbcc546d0a5f3bb2387cb2596dd1c65fb3f02d9197d8c"
+      }
+    ],
+    "unresolved": [
+      {
+        "id": "cpwd-works-manual-2024",
+        "title": "CPWD Works Manual 2024",
+        "url": "https://cpwd.gov.in/Publication/CPWD_Works_Manual_2024.pdf",
+        "error": "fetch failed",
+        "errorClass": "connection_reset",
+        "recoveryAttemptedAt": "2026-06-06T04:57:08.488Z",
+        "recoveryMethod": "curl_get",
+        "recoveryError": "curl: (35) Recv failure: Connection reset by peer\n"
+      },
+      {
+        "id": "dda-ubbl-2016-page",
+        "title": "DDA UBBL 2016 and Amendments official page",
+        "url": "https://ddaservices.dda.org.in/ddaweb/ubbl.aspx",
+        "error": "fetch failed",
+        "errorClass": "ssl_handshake",
+        "recoveryAttemptedAt": "2026-06-06T04:57:08.488Z",
+        "recoveryMethod": "curl_get_then_insecure_tls_fallback",
+        "recoveryError": "curl: (35) OpenSSL SSL_connect: SSL_ERROR_SYSCALL in connection to ddaservices.dda.org.in:443 \n"
+      },
+      {
+        "id": "karnataka-model-building-bye-laws-2017",
+        "title": "Karnataka Municipalities Model Building Bye-Laws 2017",
+        "url": "https://www.dtcp.gov.in/sites/dtcp.gov.in/files/PDF/notificationsOrdersCirculars/notifications/model_building_bye_law.pdf",
+        "error": "fetch failed",
+        "errorClass": "timeout",
+        "recoveryAttemptedAt": "2026-06-06T04:57:08.488Z",
+        "recoveryMethod": "curl_get",
+        "recoveryError": "curl: (28) Failed to connect to www.dtcp.gov.in port 443 after 20002 ms: Timeout was reached\ncurl: (28) Failed to connect to www.dtcp.gov.in port 443 after 20002 ms: Timeout was reached\n"
+      },
+      {
+        "id": "mohua-model-building-bye-laws",
+        "title": "MoHUA Model Building Bye Laws reference",
+        "url": "https://mohua.gov.in/",
+        "error": "fetch failed",
+        "errorClass": "timeout",
+        "recoveryAttemptedAt": "2026-06-06T04:57:08.488Z",
+        "recoveryMethod": "curl_get",
+        "recoveryError": "curl: (28) Failed to connect to mohua.gov.in port 443 after 20002 ms: Timeout was reached\ncurl: (28) Failed to connect to mohua.gov.in port 443 after 20002 ms: Timeout was reached\n"
+      },
+      {
+        "id": "mohua-tod-guidance-document",
+        "title": "MoHUA Transit Oriented Development Guidance Document",
+        "url": "https://mohua.gov.in/upload/uploadfiles/files/TOD-Guidance-Document.pdf",
+        "error": "fetch failed",
+        "errorClass": "timeout",
+        "recoveryAttemptedAt": "2026-06-06T04:57:08.488Z",
+        "recoveryMethod": "curl_get",
+        "recoveryError": "curl: (28) Failed to connect to mohua.gov.in port 443 after 20002 ms: Timeout was reached\ncurl: (28) Failed to connect to mohua.gov.in port 443 after 20002 ms: Timeout was reached\n"
+      },
+      {
+        "id": "mohua-urdpfi-guidelines-page",
+        "title": "MoHUA URDPFI Guidelines official page",
+        "url": "https://mohua.gov.in/link/urdpfi-guidelines.php",
+        "error": "fetch failed",
+        "errorClass": "timeout",
+        "recoveryAttemptedAt": "2026-06-06T04:57:08.488Z",
+        "recoveryMethod": "curl_get",
+        "recoveryError": "curl: (28) Failed to connect to mohua.gov.in port 443 after 20002 ms: Timeout was reached\ncurl: (28) Failed to connect to mohua.gov.in port 443 after 20002 ms: Timeout was reached\n"
+      },
+      {
+        "id": "mohua-urdpfi-guidelines-vol-1",
+        "title": "MoHUA URDPFI Guidelines Volume I",
+        "url": "https://mohua.gov.in/upload/uploadfiles/files/URDPFI%20Guidelines%20Vol%20I%283%29.pdf",
+        "error": "fetch failed",
+        "errorClass": "timeout",
+        "recoveryAttemptedAt": "2026-06-06T04:57:08.488Z",
+        "recoveryMethod": "curl_get",
+        "recoveryError": "curl: (28) Failed to connect to mohua.gov.in port 443 after 20002 ms: Timeout was reached\ncurl: (28) Failed to connect to mohua.gov.in port 443 after 20002 ms: Timeout was reached\n"
+      }
+    ]
+  },
+  "failedOriginal": [
+    {
+      "id": "cpwd-works-manual-2024",
+      "title": "CPWD Works Manual 2024",
+      "url": "https://cpwd.gov.in/Publication/CPWD_Works_Manual_2024.pdf",
+      "error": "fetch failed"
+    },
+    {
+      "id": "dda-ubbl-2016-page",
+      "title": "DDA UBBL 2016 and Amendments official page",
+      "url": "https://ddaservices.dda.org.in/ddaweb/ubbl.aspx",
+      "error": "fetch failed"
+    },
+    {
+      "id": "karnataka-model-building-bye-laws-2017",
+      "title": "Karnataka Municipalities Model Building Bye-Laws 2017",
+      "url": "https://www.dtcp.gov.in/sites/dtcp.gov.in/files/PDF/notificationsOrdersCirculars/notifications/model_building_bye_law.pdf",
+      "error": "fetch failed"
+    },
+    {
+      "id": "maharashtra-udcpr-official-pdf",
+      "title": "Maharashtra Unified Development Control and Promotion Regulations",
+      "url": "https://www.mmrda.maharashtra.gov.in/sites/default/files/2023-10/UDCPR_compressed_2.pdf",
+      "error": "fetch failed"
+    },
+    {
+      "id": "mohua-model-building-bye-laws",
+      "title": "MoHUA Model Building Bye Laws reference",
+      "url": "https://mohua.gov.in/",
+      "error": "fetch failed"
+    },
+    {
+      "id": "mohua-tod-guidance-document",
+      "title": "MoHUA Transit Oriented Development Guidance Document",
+      "url": "https://mohua.gov.in/upload/uploadfiles/files/TOD-Guidance-Document.pdf",
+      "error": "fetch failed"
+    },
+    {
+      "id": "mohua-urdpfi-guidelines-page",
+      "title": "MoHUA URDPFI Guidelines official page",
+      "url": "https://mohua.gov.in/link/urdpfi-guidelines.php",
+      "error": "fetch failed"
+    },
+    {
+      "id": "mohua-urdpfi-guidelines-vol-1",
+      "title": "MoHUA URDPFI Guidelines Volume I",
+      "url": "https://mohua.gov.in/upload/uploadfiles/files/URDPFI%20Guidelines%20Vol%20I%283%29.pdf",
+      "error": "fetch failed"
+    }
+  ],
+  "updatedByFetchRecoveryAt": "2026-06-06T04:57:08.488Z"
+}
