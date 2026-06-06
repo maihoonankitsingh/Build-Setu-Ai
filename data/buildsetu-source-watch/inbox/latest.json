@@ -1,0 +1,433 @@
+{
+  "schema": "buildsetu-source-watch-live-inbox-v1",
+  "generatedAt": "2026-06-06T03:31:08.015Z",
+  "purpose": "Agent-readable source update awareness inbox. This is not trusted knowledge.",
+  "config": {
+    "sourceCount": 48,
+    "watchEnabledCount": 48,
+    "updatedAt": "2026-06-05T19:26:17.322270+00:00",
+    "updatedBy": "phase_46x4d_exact_source_patch"
+  },
+  "state": {
+    "sourceCount": 41,
+    "okCount": 41,
+    "failedCount": 0,
+    "latestCheckedAt": "2026-06-05T21:47:22.800Z",
+    "changeReasonBreakdown": {
+      "content_hash_changed": 2,
+      "none": 39
+    }
+  },
+  "latestReport": {
+    "file": "data/buildsetu-source-watch/changes/source-watch-report-20260605_214815.json",
+    "checkedAt": "2026-06-05T21:47:01.527Z",
+    "ok": true,
+    "total": 48,
+    "changedCount": 1,
+    "unchangedCount": 39,
+    "failedCount": 8,
+    "changed": [
+      {
+        "id": "bis-national-building-code",
+        "title": "BIS National Building Code",
+        "url": "https://www.bis.gov.in/standards/technical-department/national-building-code/",
+        "reason": "content_hash_changed",
+        "draftId": "draft_20260605_214704_sourceupdate_bis-national-building-code_f5777a1c",
+        "draftFile": "/var/www/build.sikhadenge.in/sikhadenge-build/data/buildsetu-research/drafts/draft_20260605_214704_sourceupdate_bis-national-building-code_f5777a1c_bis-national-building-code.json"
+      }
+    ],
+    "failed": [
+      {
+        "id": "cpwd-works-manual-2024",
+        "title": "CPWD Works Manual 2024",
+        "url": "https://cpwd.gov.in/Publication/CPWD_Works_Manual_2024.pdf",
+        "error": "fetch failed"
+      },
+      {
+        "id": "dda-ubbl-2016-page",
+        "title": "DDA UBBL 2016 and Amendments official page",
+        "url": "https://ddaservices.dda.org.in/ddaweb/ubbl.aspx",
+        "error": "fetch failed"
+      },
+      {
+        "id": "karnataka-model-building-bye-laws-2017",
+        "title": "Karnataka Municipalities Model Building Bye-Laws 2017",
+        "url": "https://www.dtcp.gov.in/sites/dtcp.gov.in/files/PDF/notificationsOrdersCirculars/notifications/model_building_bye_law.pdf",
+        "error": "fetch failed"
+      },
+      {
+        "id": "maharashtra-udcpr-official-pdf",
+        "title": "Maharashtra Unified Development Control and Promotion Regulations",
+        "url": "https://www.mmrda.maharashtra.gov.in/sites/default/files/2023-10/UDCPR_compressed_2.pdf",
+        "error": "fetch failed"
+      },
+      {
+        "id": "mohua-model-building-bye-laws",
+        "title": "MoHUA Model Building Bye Laws reference",
+        "url": "https://mohua.gov.in/",
+        "error": "fetch failed"
+      },
+      {
+        "id": "mohua-tod-guidance-document",
+        "title": "MoHUA Transit Oriented Development Guidance Document",
+        "url": "https://mohua.gov.in/upload/uploadfiles/files/TOD-Guidance-Document.pdf",
+        "error": "fetch failed"
+      },
+      {
+        "id": "mohua-urdpfi-guidelines-page",
+        "title": "MoHUA URDPFI Guidelines official page",
+        "url": "https://mohua.gov.in/link/urdpfi-guidelines.php",
+        "error": "fetch failed"
+      },
+      {
+        "id": "mohua-urdpfi-guidelines-vol-1",
+        "title": "MoHUA URDPFI Guidelines Volume I",
+        "url": "https://mohua.gov.in/upload/uploadfiles/files/URDPFI%20Guidelines%20Vol%20I%283%29.pdf",
+        "error": "fetch failed"
+      }
+    ]
+  },
+  "recentReports": [
+    {
+      "file": "data/buildsetu-source-watch/changes/source-watch-report-20260605_214815.json",
+      "checkedAt": "2026-06-05T21:47:01.527Z",
+      "ok": true,
+      "total": 48,
+      "changedCount": 1,
+      "unchangedCount": 39,
+      "failedCount": 8,
+      "changed": [
+        {
+          "id": "bis-national-building-code",
+          "title": "BIS National Building Code",
+          "url": "https://www.bis.gov.in/standards/technical-department/national-building-code/",
+          "reason": "content_hash_changed",
+          "draftId": "draft_20260605_214704_sourceupdate_bis-national-building-code_f5777a1c",
+          "draftFile": "/var/www/build.sikhadenge.in/sikhadenge-build/data/buildsetu-research/drafts/draft_20260605_214704_sourceupdate_bis-national-building-code_f5777a1c_bis-national-building-code.json"
+        }
+      ],
+      "failed": [
+        {
+          "id": "cpwd-works-manual-2024",
+          "title": "CPWD Works Manual 2024",
+          "url": "https://cpwd.gov.in/Publication/CPWD_Works_Manual_2024.pdf",
+          "error": "fetch failed"
+        },
+        {
+          "id": "dda-ubbl-2016-page",
+          "title": "DDA UBBL 2016 and Amendments official page",
+          "url": "https://ddaservices.dda.org.in/ddaweb/ubbl.aspx",
+          "error": "fetch failed"
+        },
+        {
+          "id": "karnataka-model-building-bye-laws-2017",
+          "title": "Karnataka Municipalities Model Building Bye-Laws 2017",
+          "url": "https://www.dtcp.gov.in/sites/dtcp.gov.in/files/PDF/notificationsOrdersCirculars/notifications/model_building_bye_law.pdf",
+          "error": "fetch failed"
+        },
+        {
+          "id": "maharashtra-udcpr-official-pdf",
+          "title": "Maharashtra Unified Development Control and Promotion Regulations",
+          "url": "https://www.mmrda.maharashtra.gov.in/sites/default/files/2023-10/UDCPR_compressed_2.pdf",
+          "error": "fetch failed"
+        },
+        {
+          "id": "mohua-model-building-bye-laws",
+          "title": "MoHUA Model Building Bye Laws reference",
+          "url": "https://mohua.gov.in/",
+          "error": "fetch failed"
+        },
+        {
+          "id": "mohua-tod-guidance-document",
+          "title": "MoHUA Transit Oriented Development Guidance Document",
+          "url": "https://mohua.gov.in/upload/uploadfiles/files/TOD-Guidance-Document.pdf",
+          "error": "fetch failed"
+        },
+        {
+          "id": "mohua-urdpfi-guidelines-page",
+          "title": "MoHUA URDPFI Guidelines official page",
+          "url": "https://mohua.gov.in/link/urdpfi-guidelines.php",
+          "error": "fetch failed"
+        },
+        {
+          "id": "mohua-urdpfi-guidelines-vol-1",
+          "title": "MoHUA URDPFI Guidelines Volume I",
+          "url": "https://mohua.gov.in/upload/uploadfiles/files/URDPFI%20Guidelines%20Vol%20I%283%29.pdf",
+          "error": "fetch failed"
+        }
+      ]
+    },
+    {
+      "file": "data/buildsetu-source-watch/changes/source-watch-report-20260604_214710.json",
+      "checkedAt": "2026-06-04T21:47:01.273Z",
+      "ok": true,
+      "total": 3,
+      "changedCount": 2,
+      "unchangedCount": 1,
+      "failedCount": 0,
+      "changed": [
+        {
+          "id": "bis-national-building-code",
+          "title": "BIS National Building Code",
+          "url": "https://www.bis.gov.in/standards/technical-department/national-building-code/",
+          "reason": "content_hash_changed",
+          "draftId": "draft_20260604_214704_sourceupdate_bis-national-building-code_1a6d2b4c",
+          "draftFile": "/var/www/build.sikhadenge.in/sikhadenge-build/data/buildsetu-research/drafts/draft_20260604_214704_sourceupdate_bis-national-building-code_1a6d2b4c_bis-national-building-code.json"
+        },
+        {
+          "id": "mohua-model-building-bye-laws",
+          "title": "MoHUA Model Building Bye Laws reference",
+          "url": "https://mohua.gov.in/",
+          "reason": "content_hash_changed",
+          "draftId": "draft_20260604_214710_sourceupdate_mohua-model-building-bye-laws_fc2a0d86",
+          "draftFile": "/var/www/build.sikhadenge.in/sikhadenge-build/data/buildsetu-research/drafts/draft_20260604_214710_sourceupdate_mohua-model-building-bye-laws_fc2a0d86_mohua-model-building-bye-laws.json"
+        }
+      ],
+      "failed": []
+    },
+    {
+      "file": "data/buildsetu-source-watch/changes/source-watch-report-20260604_115742.json",
+      "checkedAt": "2026-06-04T11:57:32.533Z",
+      "ok": true,
+      "total": 3,
+      "changedCount": 2,
+      "unchangedCount": 1,
+      "failedCount": 0,
+      "changed": [
+        {
+          "id": "bis-national-building-code",
+          "title": "BIS National Building Code",
+          "url": "https://www.bis.gov.in/standards/technical-department/national-building-code/",
+          "reason": "content_hash_changed",
+          "draftId": "draft_20260604_115736_sourceupdate_bis-national-building-code_5516e2cc",
+          "draftFile": "/var/www/build.sikhadenge.in/sikhadenge-build/data/buildsetu-research/drafts/draft_20260604_115736_sourceupdate_bis-national-building-code_5516e2cc_bis-national-building-code.json"
+        },
+        {
+          "id": "mohua-model-building-bye-laws",
+          "title": "MoHUA Model Building Bye Laws reference",
+          "url": "https://mohua.gov.in/",
+          "reason": "last_modified_changed",
+          "draftId": "draft_20260604_115742_sourceupdate_mohua-model-building-bye-laws_e2cb5132",
+          "draftFile": "/var/www/build.sikhadenge.in/sikhadenge-build/data/buildsetu-research/drafts/draft_20260604_115742_sourceupdate_mohua-model-building-bye-laws_e2cb5132_mohua-model-building-bye-laws.json"
+        }
+      ],
+      "failed": []
+    },
+    {
+      "file": "data/buildsetu-source-watch/changes/source-watch-report-20260604_115732.json",
+      "checkedAt": "2026-06-04T11:57:24.281Z",
+      "ok": true,
+      "total": 3,
+      "changedCount": 0,
+      "unchangedCount": 3,
+      "failedCount": 0,
+      "changed": [],
+      "failed": []
+    }
+  ],
+  "pendingSourceUpdateDrafts": [
+    {
+      "file": "data/buildsetu-research/drafts/draft_20260605_214704_sourceupdate_bis-national-building-code_f5777a1c_bis-national-building-code.json",
+      "id": "draft_20260605_214704_sourceupdate_bis-national-building-code_f5777a1c",
+      "status": "pending_review",
+      "category": "sourceUpdate",
+      "riskLevel": "medium",
+      "title": "BIS National Building Code",
+      "url": "https://www.bis.gov.in/standards/technical-department/national-building-code/",
+      "sourceCitation": "BIS National Building Code — https://www.bis.gov.in/standards/technical-department/national-building-code/",
+      "summary": "Source watcher detected a possible update for BIS National Building Code. Review the source before merging new facts into BuildSetu knowledge.",
+      "requiresProfessionalReview": true,
+      "createdAt": "2026-06-05T21:47:04.755Z",
+      "updatedAt": "2026-06-05T21:47:04.755Z",
+      "createdBy": "BuildSetu Source Watcher",
+      "tags": [
+        "source_watch",
+        "pending_review",
+        "construction_code",
+        "bis",
+        "nbc",
+        "construction",
+        "building_code",
+        "planning",
+        "source_pack",
+        "official_core_building_codes_india",
+        "architecture_planning",
+        "civil_construction",
+        "approvals_bylaws",
+        "units_dimensions"
+      ]
+    },
+    {
+      "file": "data/buildsetu-research/drafts/draft_20260604_214710_sourceupdate_mohua-model-building-bye-laws_fc2a0d86_mohua-model-building-bye-laws.json",
+      "id": "draft_20260604_214710_sourceupdate_mohua-model-building-bye-laws_fc2a0d86",
+      "status": "pending_review",
+      "category": "sourceUpdate",
+      "riskLevel": "medium",
+      "title": "MoHUA Model Building Bye Laws reference",
+      "url": "https://mohua.gov.in/",
+      "sourceCitation": "MoHUA Model Building Bye Laws reference — https://mohua.gov.in/",
+      "summary": "Source watcher detected a possible update for MoHUA Model Building Bye Laws reference. Review the source before merging new facts into BuildSetu knowledge.",
+      "requiresProfessionalReview": true,
+      "createdAt": "2026-06-04T21:47:10.442Z",
+      "updatedAt": "2026-06-04T21:47:10.442Z",
+      "createdBy": "BuildSetu Source Watcher",
+      "tags": [
+        "source_watch",
+        "pending_review",
+        "planning_bylaws",
+        "mohua",
+        "byelaws",
+        "setback",
+        "far",
+        "approval",
+        "source_pack",
+        "official_core_building_codes_india",
+        "architecture_planning",
+        "civil_construction",
+        "approvals_bylaws",
+        "units_dimensions"
+      ]
+    },
+    {
+      "file": "data/buildsetu-research/drafts/draft_20260604_214704_sourceupdate_bis-national-building-code_1a6d2b4c_bis-national-building-code.json",
+      "id": "draft_20260604_214704_sourceupdate_bis-national-building-code_1a6d2b4c",
+      "status": "pending_review",
+      "category": "sourceUpdate",
+      "riskLevel": "medium",
+      "title": "BIS National Building Code",
+      "url": "https://www.bis.gov.in/standards/technical-department/national-building-code/",
+      "sourceCitation": "BIS National Building Code — https://www.bis.gov.in/standards/technical-department/national-building-code/",
+      "summary": "Source watcher detected a possible update for BIS National Building Code. Review the source before merging new facts into BuildSetu knowledge.",
+      "requiresProfessionalReview": true,
+      "createdAt": "2026-06-04T21:47:04.640Z",
+      "updatedAt": "2026-06-04T21:47:04.640Z",
+      "createdBy": "BuildSetu Source Watcher",
+      "tags": [
+        "source_watch",
+        "pending_review",
+        "construction_code",
+        "bis",
+        "nbc",
+        "construction",
+        "building_code",
+        "planning",
+        "source_pack",
+        "official_core_building_codes_india",
+        "architecture_planning",
+        "civil_construction",
+        "approvals_bylaws",
+        "units_dimensions"
+      ]
+    }
+  ],
+  "latestSourceUpdateDrafts": [
+    {
+      "file": "data/buildsetu-research/drafts/draft_20260605_214704_sourceupdate_bis-national-building-code_f5777a1c_bis-national-building-code.json",
+      "id": "draft_20260605_214704_sourceupdate_bis-national-building-code_f5777a1c",
+      "status": "pending_review",
+      "category": "sourceUpdate",
+      "riskLevel": "medium",
+      "title": "BIS National Building Code",
+      "url": "https://www.bis.gov.in/standards/technical-department/national-building-code/",
+      "sourceCitation": "BIS National Building Code — https://www.bis.gov.in/standards/technical-department/national-building-code/",
+      "summary": "Source watcher detected a possible update for BIS National Building Code. Review the source before merging new facts into BuildSetu knowledge.",
+      "requiresProfessionalReview": true,
+      "createdAt": "2026-06-05T21:47:04.755Z",
+      "updatedAt": "2026-06-05T21:47:04.755Z",
+      "createdBy": "BuildSetu Source Watcher",
+      "tags": [
+        "source_watch",
+        "pending_review",
+        "construction_code",
+        "bis",
+        "nbc",
+        "construction",
+        "building_code",
+        "planning",
+        "source_pack",
+        "official_core_building_codes_india",
+        "architecture_planning",
+        "civil_construction",
+        "approvals_bylaws",
+        "units_dimensions"
+      ]
+    },
+    {
+      "file": "data/buildsetu-research/drafts/draft_20260604_214710_sourceupdate_mohua-model-building-bye-laws_fc2a0d86_mohua-model-building-bye-laws.json",
+      "id": "draft_20260604_214710_sourceupdate_mohua-model-building-bye-laws_fc2a0d86",
+      "status": "pending_review",
+      "category": "sourceUpdate",
+      "riskLevel": "medium",
+      "title": "MoHUA Model Building Bye Laws reference",
+      "url": "https://mohua.gov.in/",
+      "sourceCitation": "MoHUA Model Building Bye Laws reference — https://mohua.gov.in/",
+      "summary": "Source watcher detected a possible update for MoHUA Model Building Bye Laws reference. Review the source before merging new facts into BuildSetu knowledge.",
+      "requiresProfessionalReview": true,
+      "createdAt": "2026-06-04T21:47:10.442Z",
+      "updatedAt": "2026-06-04T21:47:10.442Z",
+      "createdBy": "BuildSetu Source Watcher",
+      "tags": [
+        "source_watch",
+        "pending_review",
+        "planning_bylaws",
+        "mohua",
+        "byelaws",
+        "setback",
+        "far",
+        "approval",
+        "source_pack",
+        "official_core_building_codes_india",
+        "architecture_planning",
+        "civil_construction",
+        "approvals_bylaws",
+        "units_dimensions"
+      ]
+    },
+    {
+      "file": "data/buildsetu-research/drafts/draft_20260604_214704_sourceupdate_bis-national-building-code_1a6d2b4c_bis-national-building-code.json",
+      "id": "draft_20260604_214704_sourceupdate_bis-national-building-code_1a6d2b4c",
+      "status": "pending_review",
+      "category": "sourceUpdate",
+      "riskLevel": "medium",
+      "title": "BIS National Building Code",
+      "url": "https://www.bis.gov.in/standards/technical-department/national-building-code/",
+      "sourceCitation": "BIS National Building Code — https://www.bis.gov.in/standards/technical-department/national-building-code/",
+      "summary": "Source watcher detected a possible update for BIS National Building Code. Review the source before merging new facts into BuildSetu knowledge.",
+      "requiresProfessionalReview": true,
+      "createdAt": "2026-06-04T21:47:04.640Z",
+      "updatedAt": "2026-06-04T21:47:04.640Z",
+      "createdBy": "BuildSetu Source Watcher",
+      "tags": [
+        "source_watch",
+        "pending_review",
+        "construction_code",
+        "bis",
+        "nbc",
+        "construction",
+        "building_code",
+        "planning",
+        "source_pack",
+        "official_core_building_codes_india",
+        "architecture_planning",
+        "civil_construction",
+        "approvals_bylaws",
+        "units_dimensions"
+      ]
+    }
+  ],
+  "agentInstructions": [
+    "Read this inbox before answering questions that depend on current building rules, source updates, government byelaws, codes, standards, material rates or official references.",
+    "If pending source updates exist, mention that updates are pending review before giving final guidance.",
+    "Never treat source-watch alerts as trusted knowledge until QA and trusted merge are completed.",
+    "Use source URL, source citation, checkedAt and draft status when explaining update status."
+  ],
+  "safety": {
+    "trustedKnowledgeWrite": false,
+    "trustedKnowledgeChanged": false,
+    "trustedMergeExecuted": false,
+    "mergeActionAvailable": false,
+    "sourceRegistryChanged": false,
+    "autoMerge": false,
+    "requiresHumanReview": true
+  }
+}

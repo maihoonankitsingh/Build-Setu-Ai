@@ -121,3 +121,6 @@ app/api/agent-knowledge/pending-exact-source-candidates/
 
 # Runtime exact source candidate records
 data/buildsetu-pending-exact-source-candidates/
+# BuildSetu generated source-watch runtime inbox
+data/buildsetu-source-watch/inbox/
+data/agent-knowledge/source-watch/
