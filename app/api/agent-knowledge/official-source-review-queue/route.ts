@@ -609,7 +609,55 @@ export async function POST(req: NextRequest) {
         updatedBy: user.id,
       };
       // BUILDSETU_PHASE_M8Z_REVIEW_WRITE_DIRECT_STATUS_PERSIST
-      await writeJson(projectPath(QUEUE_RELATIVE_PATH), updatedQueue);
+      const reviewQueuePath = projectPath(QUEUE_RELATIVE_PATH);
+      await writeJson(reviewQueuePath, updatedQueue);
+
+      // BUILDSETU_PHASE_M8Z_FIX1_REVIEW_READ_AFTER_WRITE_VERIFY
+      let persistedReviewQueue = await readJson(reviewQueuePath, updatedQueue);
+      let persistedReviewItems = Array.isArray(persistedReviewQueue?.items) ? persistedReviewQueue.items : [];
+      let persistedReviewedItem = persistedReviewItems.find(
+        (item: JsonObject) => cleanText(item?.id || "", 240) === reviewInput.itemId,
+      ) as JsonObject | undefined;
+
+      if (cleanText(persistedReviewedItem?.status || "", 80) !== reviewInput.status) {
+        const correctedItems = persistedReviewItems.map((item: JsonObject) =>
+          cleanText(item?.id || "", 240) === reviewInput.itemId ? nextItems[index] : item,
+        );
+
+        persistedReviewQueue = {
+          ...(persistedReviewQueue || updatedQueue),
+          description: "BuildSetu official/trusted source review queue. No auto-merge.",
+          mergePolicy: "manual_review_required",
+          autoMerge: false,
+          items: correctedItems,
+          updatedAt: nowIso(),
+          updatedBy: user.id,
+        };
+
+        await writeJson(reviewQueuePath, persistedReviewQueue);
+
+        persistedReviewQueue = await readJson(reviewQueuePath, updatedQueue);
+        persistedReviewItems = Array.isArray(persistedReviewQueue?.items) ? persistedReviewQueue.items : [];
+        persistedReviewedItem = persistedReviewItems.find(
+          (item: JsonObject) => cleanText(item?.id || "", 240) === reviewInput.itemId,
+        ) as JsonObject | undefined;
+      }
+
+      // BUILDSETU_PHASE_M8Z_FIX1_REVIEW_PERSIST_VERIFY_AUDIT
+      await appendReviewActionDebugAudit({
+        stage: "review_queue_persist_verified",
+        action,
+        itemId: reviewInput.itemId,
+        requestedStatus: reviewInput.status,
+        persistedStatus: cleanText(persistedReviewedItem?.status || "", 80),
+        persistedReviewStatus: cleanText((persistedReviewedItem?.review as JsonObject)?.status || "", 80),
+        reviewer: reviewInput.reviewer || user.id,
+        mergeReady: reviewInput.mergeReady,
+        userId: user.id,
+        queuePath: QUEUE_RELATIVE_PATH,
+        trustedKnowledgeWrite: false,
+        trustedMergeExecuted: false,
+      });
 // BUILDSETU_PHASE_M8X_REVIEW_WRITE_AUDIT
       await appendReviewActionDebugAudit({
         stage: "review_queue_written",
