@@ -1,25 +1,28 @@
 {
   "ok": true,
   "generatedAt": "2026-06-06T05:11:47Z",
-  "phase": "47B-2G",
-  "mode": "candidate_discovery_policy_ready",
+  "phase": "47B-2H",
+  "mode": "web_search_candidate_capture_api_ready",
   "currentBehavior": {
     "registeredTrustedSourceWatchAutoRuns": true,
     "openWebSearchAutoRunsInCron": false,
-    "trustedKnowledgeAutoMerge": false
+    "trustedKnowledgeAutoMerge": false,
+    "webSearchCandidateCaptureEndpointReady": true
   },
   "availableRoutes": {
     "webSearch": "/api/agent-tools/web-search",
     "webSearchSave": "/api/agent-knowledge/web-search-save",
     "pendingExactSourceCandidates": "/api/agent-knowledge/pending-exact-source-candidates",
     "pendingExactSourceResearchRun": "/api/agent-knowledge/pending-exact-source-research-run",
-    "officialSourceReviewQueue": "/api/agent-knowledge/official-source-review-queue"
+    "officialSourceReviewQueue": "/api/agent-knowledge/official-source-review-queue",
+    "webSearchCandidateCapture": "/api/agent-knowledge/web-search-candidate-capture"
   },
   "safePolicy": [
-    "Web search can create source candidates.",
+    "Web-search result items can be captured as exact-source candidates.",
     "Candidate queue does not update trusted source registry directly.",
-    "Official source review is required before registry update.",
+    "Official source review is required before extraction, QA-ready, source registry update, or trusted merge.",
     "Trusted knowledge merge stays blocked until reviewed approval."
   ],
-  "nextRecommendedPhase": "47B-2H: add user-session web-search candidate capture button/flow into source review queue"
+  "nextRecommendedPhase": "47B-2I: add UI button to save web-search results as source candidates",
+  "updatedAt": "2026-06-06T05:16:08.986Z"
 }
