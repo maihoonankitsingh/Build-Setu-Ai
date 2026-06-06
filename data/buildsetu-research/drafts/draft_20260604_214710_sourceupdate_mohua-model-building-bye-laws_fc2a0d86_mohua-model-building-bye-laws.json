@@ -1,0 +1,95 @@
+{
+  "id": "draft_20260604_214710_sourceupdate_mohua-model-building-bye-laws_fc2a0d86",
+  "status": "needs_source_url_review",
+  "category": "sourceUpdate",
+  "riskLevel": "medium",
+  "requiresProfessionalReview": true,
+  "jurisdiction": {
+    "country": "IN",
+    "stateOrProvinceOrEmirate": "unknown",
+    "cityOrAuthority": "unknown"
+  },
+  "source": {
+    "title": "MoHUA Model Building Bye Laws reference",
+    "url": "https://mohua.gov.in/",
+    "sourceUrl": "https://mohua.gov.in/",
+    "sourceType": "official_primary",
+    "sourceCitation": "MoHUA Model Building Bye Laws reference — https://mohua.gov.in/",
+    "tags": [
+      "source_watch",
+      "pending_review",
+      "mohua",
+      "byelaws",
+      "setback",
+      "far",
+      "approval",
+      "source_pack",
+      "official_core_building_codes_india",
+      "architecture_planning",
+      "civil_construction",
+      "approvals_bylaws",
+      "units_dimensions"
+    ],
+    "publisher": "trusted source watch",
+    "dateAccessed": "2026-06-04",
+    "effectiveDate": "unknown",
+    "version": "unknown"
+  },
+  "extracted": {
+    "summary": "Source watcher detected a possible update for MoHUA Model Building Bye Laws reference. Review the source before merging new facts into BuildSetu knowledge.",
+    "checklist": [
+      "Open source URL manually",
+      "Compare updated content with previous known version",
+      "Extract only verified construction/planning/interior/exterior facts",
+      "Create or update reviewed knowledge entry",
+      "Do not use unreviewed changed content for final professional claims"
+    ],
+    "requiredDocuments": [],
+    "processSteps": [
+      "Source watcher checks trusted source",
+      "Change alert draft is created",
+      "Human review validates update",
+      "Reviewed update is merged into agent knowledge"
+    ],
+    "cautions": [
+      "This is an update alert, not automatically trusted knowledge.",
+      "Do not treat detected source change as final regulation until reviewed.",
+      "Quality gate quarantine: Root homepage hash/last-modified changed; this is not enough to create a trusted building-code update."
+    ],
+    "blockedClaims": [
+      "Do not claim updated legal/building-code requirements without review."
+    ]
+  },
+  "confidence": "medium",
+  "mergeTarget": "data/buildsetu-knowledge/*.json",
+  "tags": [
+    "source_watch",
+    "pending_review",
+    "planning_bylaws",
+    "mohua",
+    "byelaws",
+    "setback",
+    "far",
+    "approval",
+    "source_pack",
+    "official_core_building_codes_india",
+    "architecture_planning",
+    "civil_construction",
+    "approvals_bylaws",
+    "units_dimensions"
+  ],
+  "smokeTestsRequired": [],
+  "createdBy": "BuildSetu Source Watcher",
+  "notes": "{\n  \"reason\": \"content_hash_changed\",\n  \"previous\": {\n    \"id\": \"mohua-model-building-bye-laws\",\n    \"title\": \"MoHUA Model Building Bye Laws reference\",\n    \"url\": \"https://mohua.gov.in/\",\n    \"category\": \"planning_bylaws\",\n    \"priority\": \"high\",\n    \"ok\": true,\n    \"status\": 200,\n    \"finalUrl\": \"https://mohua.gov.in/\",\n    \"contentType\": \"text/html; charset=UTF-8\",\n    \"etag\": \"\",\n    \"lastModified\": \"Thu, 04 Jun 2026 11:57:17 GMT\",\n    \"contentLengthHeader\": \"\",\n    \"bytes\": 110243,\n    \"hash\": \"1c2fa59992f827e2bb6db4203c62838ea36e65e7142e768eccd842acb8e45180\",\n    \"checkedAt\": \"2026-06-04T11:57:42.025Z\",\n    \"lastChangeReason\": \"last_modified_changed\"\n  },\n  \"current\": {\n    \"ok\": true,\n    \"status\": 200,\n    \"finalUrl\": \"https://mohua.gov.in/\",\n    \"contentType\": \"text/html; charset=UTF-8\",\n    \"etag\": \"\",\n    \"lastModified\": \"Thu, 04 Jun 2026 21:46:46 GMT\",\n    \"contentLengthHeader\": \"\",\n    \"bytes\": 107963,\n    \"hash\": \"6f7d08ebc88c8a46b0f07a765f125c392bfb8f85cff865e3a14b5c5dd6a3968f\",\n    \"checkedAt\": \"2026-06-04T21:47:10.442Z\"\n  }\n}",
+  "createdAt": "2026-06-04T21:47:10.442Z",
+  "updatedAt": "2026-06-06T04:42:52.265Z",
+  "qualityGate": {
+    "quarantined": true,
+    "quarantinedAt": "2026-06-06T04:42:52.265Z",
+    "previousStatus": "pending_review",
+    "code": "homepage_hash_or_last_modified_only",
+    "reason": "Root homepage hash/last-modified changed; this is not enough to create a trusted building-code update.",
+    "severity": "medium",
+    "policy": "Do not show as active pending source-update draft until exact source URL and final fetched content are manually verified."
+  }
+}
