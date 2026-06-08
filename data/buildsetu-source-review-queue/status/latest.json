@@ -1,6 +1,6 @@
 {
   "ok": true,
-  "generatedAt": "2026-06-08T06:58:05.640Z",
+  "generatedAt": "2026-06-08T07:08:29.764Z",
   "phase": "47B-2R",
   "title": "BuildSetu source watch, web-search candidate capture, and review queue pipeline status",
   "routes": {
@@ -34,13 +34,13 @@
     "trustedKnowledgeAutoMerge": false
   },
   "candidateQueue": {
-    "totalCandidates": 38,
+    "totalCandidates": 42,
     "byDecision": {
-      "web_search_candidate_saved_needs_review": 13,
+      "web_search_candidate_saved_needs_review": 17,
       "candidate_saved_needs_review": 25
     },
     "byJurisdiction": {
-      "India": 7,
+      "India": 11,
       "Karnataka": 3,
       "Delhi": 3,
       "Uttarakhand": 1,
@@ -70,19 +70,19 @@
       "Andaman and Nicobar Islands": 1
     },
     "latestCandidate": {
-      "sourceId": "failed-source-recovery_mohua.gov.in_mohua-advisory-on-transit-oriented-development",
-      "title": "MoHUA Advisory on Transit Oriented Development",
-      "url": "https://mohua.gov.in/pdf/6530ca05dcbc5advisory.pdf",
+      "sourceId": "failed-source-recovery_mohua.gov.in_mohua-urdpfi-guidelines-volume-iia-iib-pdf",
+      "title": "MoHUA URDPFI Guidelines Volume IIA-IIB PDF",
+      "url": "https://mohua.gov.in/upload/uploadfiles/files/URDPFI%20Guidelines%20IIA-IIB%281%29.pdf",
       "decision": "web_search_candidate_saved_needs_review",
       "confidence": "official_pdf_needs_manual_review"
     }
   },
   "reviewQueue": {
-    "updatedAt": "2026-06-08T06:58:05.545Z",
-    "sourceCandidateCount": 93,
-    "itemCount": 93,
+    "updatedAt": "2026-06-08T07:08:29.717Z",
+    "sourceCandidateCount": 97,
+    "itemCount": 97,
     "byStatus": {
-      "pending_review": 90,
+      "pending_review": 94,
       "approved": 1,
       "rejected": 2
     },
@@ -92,12 +92,12 @@
       "construction_materials_execution_pack": 2,
       "state_local_approval_bylaws_pack": 8,
       "all_india_state_ut_authority_index_pack": 36,
-      "pending_exact_source_candidates": 38
+      "pending_exact_source_candidates": 42
     },
-    "pendingExactSourceCandidateItems": 38,
+    "pendingExactSourceCandidateItems": 42,
     "rejectedItems": 2,
     "approvedItems": 1,
-    "pendingReviewItems": 90
+    "pendingReviewItems": 94
   },
   "safety": {
     "sourceRegistryChanged": false,
