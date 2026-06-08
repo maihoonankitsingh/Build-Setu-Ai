@@ -1,6 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import ResearchDraftWorkspace from "@/components/buildsetu/research/ResearchDraftWorkspace";
+import SourceWatchQuickRefreshCard from "@/components/buildsetu/source-watch/SourceWatchQuickRefreshCard";
 
 export const dynamic = "force-dynamic";
 
@@ -227,6 +228,9 @@ export default function KnowledgeInboxPage() {
           </div>
         )}
       </section>
+
+      {/* BUILDSETU_PHASE_M12D_KNOWLEDGE_INBOX_QUICK_REFRESH_MOUNT */}
+      <SourceWatchQuickRefreshCard />
 
       <ResearchDraftWorkspace />
     </>
