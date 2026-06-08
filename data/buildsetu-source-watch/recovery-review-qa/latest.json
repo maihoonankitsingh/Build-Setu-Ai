@@ -1,0 +1,256 @@
+{
+  "ok": true,
+  "generatedAt": "2026-06-08T07:58:54.115Z",
+  "phase": "47B-2Y",
+  "title": "Failed source recovery candidate browser QA pack",
+  "reviewQueuePage": "https://build.sikhadenge.in/workspace/official-source-review-queue",
+  "summary": {
+    "totalRecoveryCandidates": 16,
+    "candidateQueueTotal": 42,
+    "reviewQueueItems": 97,
+    "pendingExact": 42,
+    "pendingReview": 94,
+    "approved": 1,
+    "rejected": 2
+  },
+  "safety": {
+    "sourceRegistryChanged": false,
+    "extractionAllowedChanged": false,
+    "qaReadyAllowedChanged": false,
+    "trustedMergeCandidateAllowedChanged": false,
+    "trustedKnowledgeWrite": false,
+    "trustedKnowledgeChanged": false,
+    "trustedMergeExecuted": false,
+    "mergeActionAvailable": false,
+    "autoMerge": false,
+    "mergePolicy": "manual_review_required"
+  },
+  "groups": {
+    "CPWD": [
+      {
+        "sourceId": "failed-source-recovery_cpwd.gov.in_cpwd-works-manual-2024",
+        "title": "CPWD Works Manual 2024",
+        "url": "https://cpwd.gov.in/Publication/CPWD_Works_Manual_2024.pdf",
+        "status": "pending_review",
+        "sourcePackId": "pending_exact_source_candidates",
+        "mergePolicy": "manual_review_required",
+        "autoMerge": false,
+        "trustedMergeBlockedUntilApproved": true,
+        "reviewStatus": "pending_review",
+        "trustedMergeExecuted": false
+      }
+    ],
+    "DDA": [
+      {
+        "sourceId": "failed-source-recovery_dda.gov.in_dda-compendium-of-ubbl-2016-with-amendments-upto-12-february-2020",
+        "title": "DDA Compendium of UBBL 2016 with Amendments upto 12 February 2020",
+        "url": "https://dda.gov.in/compendium-ubbl2016incorporating-amendments-upto-12th-february-2020",
+        "status": "pending_review",
+        "sourcePackId": "pending_exact_source_candidates",
+        "mergePolicy": "manual_review_required",
+        "autoMerge": false,
+        "trustedMergeBlockedUntilApproved": true,
+        "reviewStatus": "pending_review",
+        "trustedMergeExecuted": false
+      },
+      {
+        "sourceId": "failed-source-recovery_dda.gov.in_dda-ubbl-2016-notified-pdf",
+        "title": "DDA UBBL 2016 Notified PDF",
+        "url": "https://dda.gov.in/sites/default/files/2022-01/UBBL_2016_Notified.pdf",
+        "status": "pending_review",
+        "sourcePackId": "pending_exact_source_candidates",
+        "mergePolicy": "manual_review_required",
+        "autoMerge": false,
+        "trustedMergeBlockedUntilApproved": true,
+        "reviewStatus": "pending_review",
+        "trustedMergeExecuted": false
+      },
+      {
+        "sourceId": "failed-source-recovery_dda.gov.in_dda-building-laws",
+        "title": "DDA Building Laws",
+        "url": "https://dda.gov.in/building-laws",
+        "status": "pending_review",
+        "sourcePackId": "pending_exact_source_candidates",
+        "mergePolicy": "manual_review_required",
+        "autoMerge": false,
+        "trustedMergeBlockedUntilApproved": true,
+        "reviewStatus": "pending_review",
+        "trustedMergeExecuted": false
+      }
+    ],
+    "Karnataka": [
+      {
+        "sourceId": "failed-source-recovery_municipaladmn.gov.in_karnataka-directorate-of-municipal-administration-acts-and-rules",
+        "title": "Karnataka Directorate of Municipal Administration Acts and Rules",
+        "url": "https://www.municipaladmn.gov.in/index.php/en/acts-rules",
+        "status": "pending_review",
+        "sourcePackId": "pending_exact_source_candidates",
+        "mergePolicy": "manual_review_required",
+        "autoMerge": false,
+        "trustedMergeBlockedUntilApproved": true,
+        "reviewStatus": "pending_review",
+        "trustedMergeExecuted": false
+      },
+      {
+        "sourceId": "failed-source-recovery_dtcp.gov.in_dtcp-karnataka-government-notifications",
+        "title": "DTCP Karnataka Government Notifications",
+        "url": "https://www.dtcp.gov.in/en/government-notifications",
+        "status": "pending_review",
+        "sourcePackId": "pending_exact_source_candidates",
+        "mergePolicy": "manual_review_required",
+        "autoMerge": false,
+        "trustedMergeBlockedUntilApproved": true,
+        "reviewStatus": "pending_review",
+        "trustedMergeExecuted": false
+      },
+      {
+        "sourceId": "failed-source-recovery_dtcp.gov.in_karnataka-municipalities-model-building-bye-laws-2017-dtcp-pdf",
+        "title": "Karnataka Municipalities Model Building Bye-Laws 2017 DTCP PDF",
+        "url": "https://www.dtcp.gov.in/sites/dtcp.gov.in/files/PDF/notificationsOrdersCirculars/notifications/model_building_bye_law.pdf",
+        "status": "pending_review",
+        "sourcePackId": "pending_exact_source_candidates",
+        "mergePolicy": "manual_review_required",
+        "autoMerge": false,
+        "trustedMergeBlockedUntilApproved": true,
+        "reviewStatus": "pending_review",
+        "trustedMergeExecuted": false
+      }
+    ],
+    "MoHUA MBBL": [
+      {
+        "sourceId": "failed-source-recovery_mohua.gov.in_mohua-model-building-bye-laws-2016-pdf",
+        "title": "MoHUA Model Building Bye-Laws 2016 PDF",
+        "url": "https://mohua.gov.in/upload/uploadfiles/files/MBBL.pdf",
+        "status": "pending_review",
+        "sourcePackId": "pending_exact_source_candidates",
+        "mergePolicy": "manual_review_required",
+        "autoMerge": false,
+        "trustedMergeBlockedUntilApproved": true,
+        "reviewStatus": "pending_review",
+        "trustedMergeExecuted": false
+      },
+      {
+        "sourceId": "failed-source-recovery_mohua.gov.in_mohua-model-building-bye-laws-official-page",
+        "title": "MoHUA Model Building Bye-Laws official page",
+        "url": "https://mohua.gov.in/cms/Model-Building-Bye-Laws.php",
+        "status": "pending_review",
+        "sourcePackId": "pending_exact_source_candidates",
+        "mergePolicy": "manual_review_required",
+        "autoMerge": false,
+        "trustedMergeBlockedUntilApproved": true,
+        "reviewStatus": "pending_review",
+        "trustedMergeExecuted": false
+      },
+      {
+        "sourceId": "failed-source-recovery_dtcp.gov.in_karnataka-municipalities-model-building-bye-laws-2017-dtcp-pdf",
+        "title": "Karnataka Municipalities Model Building Bye-Laws 2017 DTCP PDF",
+        "url": "https://www.dtcp.gov.in/sites/dtcp.gov.in/files/PDF/notificationsOrdersCirculars/notifications/model_building_bye_law.pdf",
+        "status": "pending_review",
+        "sourcePackId": "pending_exact_source_candidates",
+        "mergePolicy": "manual_review_required",
+        "autoMerge": false,
+        "trustedMergeBlockedUntilApproved": true,
+        "reviewStatus": "pending_review",
+        "trustedMergeExecuted": false
+      }
+    ],
+    "MoHUA TOD": [
+      {
+        "sourceId": "failed-source-recovery_mohua.gov.in_mohua-advisory-on-transit-oriented-development",
+        "title": "MoHUA Advisory on Transit Oriented Development",
+        "url": "https://mohua.gov.in/pdf/6530ca05dcbc5advisory.pdf",
+        "status": "pending_review",
+        "sourcePackId": "pending_exact_source_candidates",
+        "mergePolicy": "manual_review_required",
+        "autoMerge": false,
+        "trustedMergeBlockedUntilApproved": true,
+        "reviewStatus": "pending_review",
+        "trustedMergeExecuted": false
+      },
+      {
+        "sourceId": "failed-source-recovery_mohua.gov.in_mohua-national-transit-oriented-development-policy-pdf",
+        "title": "MoHUA National Transit Oriented Development Policy PDF",
+        "url": "https://mohua.gov.in/upload/whatsnew/59a4070e85256Transit_Oriented_Developoment_Policy.pdf",
+        "status": "pending_review",
+        "sourcePackId": "pending_exact_source_candidates",
+        "mergePolicy": "manual_review_required",
+        "autoMerge": false,
+        "trustedMergeBlockedUntilApproved": true,
+        "reviewStatus": "pending_review",
+        "trustedMergeExecuted": false
+      },
+      {
+        "sourceId": "failed-source-recovery_mohua.gov.in_mohua-tod-guidance-document-pdf",
+        "title": "MoHUA TOD Guidance Document PDF",
+        "url": "https://mohua.gov.in/upload/uploadfiles/files/TOD-Guidance-Document.pdf",
+        "status": "pending_review",
+        "sourcePackId": "pending_exact_source_candidates",
+        "mergePolicy": "manual_review_required",
+        "autoMerge": false,
+        "trustedMergeBlockedUntilApproved": true,
+        "reviewStatus": "pending_review",
+        "trustedMergeExecuted": false
+      }
+    ],
+    "MoHUA URDPFI": [
+      {
+        "sourceId": "failed-source-recovery_mohua.gov.in_mohua-urdpfi-guidelines-volume-iia-iib-pdf",
+        "title": "MoHUA URDPFI Guidelines Volume IIA-IIB PDF",
+        "url": "https://mohua.gov.in/upload/uploadfiles/files/URDPFI%20Guidelines%20IIA-IIB%281%29.pdf",
+        "status": "pending_review",
+        "sourcePackId": "pending_exact_source_candidates",
+        "mergePolicy": "manual_review_required",
+        "autoMerge": false,
+        "trustedMergeBlockedUntilApproved": true,
+        "reviewStatus": "pending_review",
+        "trustedMergeExecuted": false
+      },
+      {
+        "sourceId": "failed-source-recovery_mohua.gov.in_mohua-urdpfi-guidelines-volume-i-alternate-official-pdf",
+        "title": "MoHUA URDPFI Guidelines Volume I alternate official PDF",
+        "url": "https://mohua.gov.in/upload/uploadfiles/files/URDPFI%20Guidelines%20Vol%20I%282%29.pdf",
+        "status": "pending_review",
+        "sourcePackId": "pending_exact_source_candidates",
+        "mergePolicy": "manual_review_required",
+        "autoMerge": false,
+        "trustedMergeBlockedUntilApproved": true,
+        "reviewStatus": "pending_review",
+        "trustedMergeExecuted": false
+      },
+      {
+        "sourceId": "failed-source-recovery_mohua.gov.in_mohua-urdpfi-guidelines-volume-i-pdf",
+        "title": "MoHUA URDPFI Guidelines Volume I PDF",
+        "url": "https://mohua.gov.in/upload/uploadfiles/files/URDPFI%20Guidelines%20Vol%20I%283%29.pdf",
+        "status": "pending_review",
+        "sourcePackId": "pending_exact_source_candidates",
+        "mergePolicy": "manual_review_required",
+        "autoMerge": false,
+        "trustedMergeBlockedUntilApproved": true,
+        "reviewStatus": "pending_review",
+        "trustedMergeExecuted": false
+      },
+      {
+        "sourceId": "failed-source-recovery_mohua.gov.in_mohua-urdpfi-guidelines-official-page",
+        "title": "MoHUA URDPFI Guidelines official page",
+        "url": "https://mohua.gov.in/link/urdpfi-guidelines.php",
+        "status": "pending_review",
+        "sourcePackId": "pending_exact_source_candidates",
+        "mergePolicy": "manual_review_required",
+        "autoMerge": false,
+        "trustedMergeBlockedUntilApproved": true,
+        "reviewStatus": "pending_review",
+        "trustedMergeExecuted": false
+      }
+    ]
+  },
+  "instructions": [
+    "Open review queue in browser.",
+    "Use Pending exact filter.",
+    "Search each group keyword: CPWD, DDA, Karnataka, MBBL, TOD, URDPFI.",
+    "Open each URL manually.",
+    "Approve only official and correct page/PDF.",
+    "Reject duplicates, weak pages, wrong documents, or dead URLs.",
+    "Do not run trusted merge.",
+    "Do not write trusted knowledge."
+  ]
+}
