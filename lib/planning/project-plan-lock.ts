@@ -95,12 +95,21 @@ function assetProjectMatches(asset: any, projectId: string) {
   const pid = safe(projectId);
   if (!pid) return false;
 
-  return (
-    safe(asset?.projectId) === pid ||
-    safe(asset?.project?.id) === pid ||
-    safe(asset?.asset?.projectId) === pid ||
-    JSON.stringify(asset || {}).includes(pid)
-  );
+  // STRICT_PROJECT_ASSET_MATCH_V1
+  // Never use substring/JSON-wide matching here.
+  // Example: projectId "test-project" must NOT match
+  // "test-project-41x51-v8-floorfix".
+  const candidates = [
+    asset?.projectId,
+    asset?.project?.id,
+    asset?.asset?.projectId,
+    asset?.metadata?.projectId,
+    asset?.context?.projectId,
+  ]
+    .map((value) => safe(value))
+    .filter(Boolean);
+
+  return candidates.some((candidate) => candidate === pid);
 }
 
 function assetTime(asset: any) {
