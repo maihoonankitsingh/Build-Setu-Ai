@@ -18,6 +18,8 @@ type QueueItem = {
   reviewRequired?: boolean;
   mergePolicy?: string;
   trustedMergeBlockedUntilApproved?: boolean;
+  trustedMergeExecuted?: boolean;
+  trustedKnowledgeChanged?: boolean;
   autoMerge?: boolean;
   nextAction?: string;
   reviewChecklist?: string[];
@@ -74,6 +76,17 @@ function statusClass(status: string) {
   if (status === "approved") return "border-emerald-400/40 bg-emerald-950/30 text-emerald-100";
   if (status === "rejected") return "border-red-400/40 bg-red-950/30 text-red-100";
   return "border-amber-400/40 bg-amber-950/30 text-amber-100";
+}
+
+function sourcePackLabel(value: string) {
+  const clean = String(value || "none");
+  if (clean === "pending_exact_source_candidates") return "Pending exact source candidates";
+  if (clean === "all_india_state_ut_authority_index_pack") return "All India authority index";
+  return clean.replace(/_/g, " ");
+}
+
+function itemIsReviewed(item: QueueItem) {
+  return Boolean(item.review?.reviewedAt || item.status === "approved" || item.status === "rejected");
 }
 
 function initialFormState(item: QueueItem): ReviewFormState {
@@ -274,6 +287,8 @@ export default function OfficialSourceReviewQueuePage() {
 
   const [queueSearch, setQueueSearch] = useState("");
   const [queueFilter, setQueueFilter] = useState("all");
+  const [queueSourcePackFilter, setQueueSourcePackFilter] = useState("all");
+  const [queueReviewStateFilter, setQueueReviewStateFilter] = useState("all");
 
   const queueCounts = useMemo(() => {
     const pendingExact = items.filter((item) => item.sourcePackId === "pending_exact_source_candidates").length;
@@ -281,6 +296,21 @@ export default function OfficialSourceReviewQueuePage() {
     const pendingReview = items.filter((item) => item.status === "pending_review").length;
     const approved = items.filter((item) => item.status === "approved").length;
     const rejected = items.filter((item) => item.status === "rejected").length;
+    const reviewed = items.filter((item) => itemIsReviewed(item)).length;
+    const unreviewed = items.filter((item) => !itemIsReviewed(item)).length;
+
+    const idCounts = items.reduce<Record<string, number>>((acc, item) => {
+      const id = item.id || "missing_id";
+      acc[id] = (acc[id] || 0) + 1;
+      return acc;
+    }, {});
+
+    const duplicateIdCount = Object.values(idCounts).filter((count) => count > 1).length;
+    const trustedMergeExecutedTrue = items.filter(
+      (item) => item.trustedMergeExecuted === true || item.review?.trustedMergeExecuted === true,
+    ).length;
+    const autoMergeTrue = items.filter((item) => item.autoMerge === true).length;
+    const trustedKnowledgeChangedTrue = items.filter((item) => item.trustedKnowledgeChanged === true).length;
 
     return {
       all: items.length,
@@ -289,14 +319,43 @@ export default function OfficialSourceReviewQueuePage() {
       pendingReview,
       approved,
       rejected,
+      reviewed,
+      unreviewed,
+      duplicateIdCount,
+      trustedMergeExecutedTrue,
+      autoMergeTrue,
+      trustedKnowledgeChangedTrue,
     };
   }, [items]);
+
+  const queueSourcePackOptions = useMemo(() => {
+    const counts = items.reduce<Record<string, number>>((acc, item) => {
+      const key = item.sourcePackId || "none";
+      acc[key] = (acc[key] || 0) + 1;
+      return acc;
+    }, {});
+
+    return [
+      { id: "all", label: "All source packs", count: items.length },
+      ...Object.entries(counts)
+        .sort((a, b) => b[1] - a[1])
+        .map(([id, count]) => ({ id, label: sourcePackLabel(id), count })),
+    ];
+  }, [items]);
+
+  const queueReviewStateOptions = [
+    { id: "all", label: "All review states", count: queueCounts.all },
+    { id: "reviewed", label: "Reviewed only", count: queueCounts.reviewed },
+    { id: "unreviewed", label: "Unreviewed only", count: queueCounts.unreviewed },
+  ];
 
   const filteredItems = useMemo(() => {
     const query = queueSearch.trim().toLowerCase();
 
     return items.filter((item) => {
       const isPendingExact = item.sourcePackId === "pending_exact_source_candidates";
+      const sourcePackId = item.sourcePackId || "none";
+      const reviewed = itemIsReviewed(item);
 
       if (queueFilter === "pending_exact" && !isPendingExact) return false;
       if (queueFilter === "source_pack" && isPendingExact) return false;
@@ -304,9 +363,14 @@ export default function OfficialSourceReviewQueuePage() {
       if (queueFilter === "approved" && item.status !== "approved") return false;
       if (queueFilter === "rejected" && item.status !== "rejected") return false;
 
+      if (queueSourcePackFilter !== "all" && sourcePackId !== queueSourcePackFilter) return false;
+      if (queueReviewStateFilter === "reviewed" && !reviewed) return false;
+      if (queueReviewStateFilter === "unreviewed" && reviewed) return false;
+
       if (!query) return true;
 
       const haystack = [
+        item.id,
         item.title,
         item.url,
         item.sourceId,
@@ -314,6 +378,8 @@ export default function OfficialSourceReviewQueuePage() {
         item.sourcePackTitle,
         item.authorityType,
         item.publisher,
+        item.review?.reviewer,
+        item.review?.notes,
         item.source?.jurisdiction,
         item.source?.confidence,
         item.source?.decision,
@@ -325,7 +391,7 @@ export default function OfficialSourceReviewQueuePage() {
 
       return haystack.includes(query);
     });
-  }, [items, queueFilter, queueSearch]);
+  }, [items, queueFilter, queueSearch, queueSourcePackFilter, queueReviewStateFilter]);
 
   const queueFilterOptions = [
     { id: "all", label: "All", count: queueCounts.all },
@@ -464,7 +530,7 @@ export default function OfficialSourceReviewQueuePage() {
             <div>
               <h2 className="text-lg font-bold text-white">Review filters</h2>
               <p className="mt-1 text-sm text-slate-400">
-                Filter 81+ review items by source type, status, jurisdiction, title, URL, confidence, or decision.
+                Filter {items.length} review items by source type, source pack, status, review state, jurisdiction, title, URL, confidence, or decision.
               </p>
             </div>
 
@@ -479,6 +545,65 @@ export default function OfficialSourceReviewQueuePage() {
                 placeholder="Search title, URL, jurisdiction, confidence..."
               />
             </label>
+          </div>
+
+          <div
+            data-buildsetu-marker="BUILDSETU_PHASE_M14B_REVIEW_QUEUE_ADVANCED_FILTERS"
+            className="mt-4 grid gap-3 lg:grid-cols-[1fr_1fr_auto]"
+          >
+            <label className="block">
+              <span className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
+                Source pack
+              </span>
+              <select
+                value={queueSourcePackFilter}
+                onChange={(event) => setQueueSourcePackFilter(event.target.value)}
+                className="mt-2 w-full rounded-2xl border border-slate-700 bg-slate-950 px-4 py-3 text-sm text-white outline-none focus:border-cyan-400"
+              >
+                {queueSourcePackOptions.map((option) => (
+                  <option key={option.id} value={option.id}>
+                    {option.label} · {option.count}
+                  </option>
+                ))}
+              </select>
+            </label>
+
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
+                Review state
+              </p>
+              <div className="mt-2 flex flex-wrap gap-2">
+                {queueReviewStateOptions.map((option) => (
+                  <button
+                    key={option.id}
+                    type="button"
+                    onClick={() => setQueueReviewStateFilter(option.id)}
+                    className={`rounded-full border px-3 py-2 text-xs font-black transition ${
+                      queueReviewStateFilter === option.id
+                        ? "border-emerald-300 bg-emerald-300 text-slate-950"
+                        : "border-slate-700 bg-slate-950 text-slate-300 hover:border-emerald-400 hover:text-emerald-200"
+                    }`}
+                  >
+                    {option.label} · {option.count}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="flex items-end">
+              <button
+                type="button"
+                onClick={() => {
+                  setQueueSearch("");
+                  setQueueFilter("all");
+                  setQueueSourcePackFilter("all");
+                  setQueueReviewStateFilter("all");
+                }}
+                className="w-full rounded-2xl border border-slate-700 px-4 py-3 text-sm font-bold text-slate-200 hover:border-cyan-400 hover:text-cyan-200 lg:w-auto"
+              >
+                Clear filters
+              </button>
+            </div>
           </div>
 
           <div className="mt-4 flex flex-wrap gap-2">
@@ -500,7 +625,40 @@ export default function OfficialSourceReviewQueuePage() {
 
           <div className="mt-4 rounded-2xl border border-slate-800 bg-slate-950/70 p-3 text-xs text-slate-300">
             Showing <span className="font-bold text-white">{filteredItems.length}</span> of{" "}
-            <span className="font-bold text-white">{items.length}</span> queue items. Auto merge remains OFF.
+            <span className="font-bold text-white">{items.length}</span> queue items. Active filters:{" "}
+            <span className="font-bold text-white">{queueFilter}</span> ·{" "}
+            <span className="font-bold text-white">{sourcePackLabel(queueSourcePackFilter)}</span> ·{" "}
+            <span className="font-bold text-white">{queueReviewStateFilter}</span>. Auto merge remains OFF.
+          </div>
+
+          <div
+            data-buildsetu-marker="BUILDSETU_PHASE_M14B_REVIEW_QUEUE_SAFETY_SUMMARY"
+            className="mt-4 grid gap-3 text-xs md:grid-cols-4"
+          >
+            <div className="rounded-2xl border border-slate-800 bg-slate-950/70 p-3">
+              <p className="font-bold text-white">Duplicate IDs</p>
+              <p className={queueCounts.duplicateIdCount ? "mt-1 text-red-200" : "mt-1 text-emerald-200"}>
+                {queueCounts.duplicateIdCount}
+              </p>
+            </div>
+            <div className="rounded-2xl border border-slate-800 bg-slate-950/70 p-3">
+              <p className="font-bold text-white">Trusted merge executed</p>
+              <p className={queueCounts.trustedMergeExecutedTrue ? "mt-1 text-red-200" : "mt-1 text-emerald-200"}>
+                {queueCounts.trustedMergeExecutedTrue}
+              </p>
+            </div>
+            <div className="rounded-2xl border border-slate-800 bg-slate-950/70 p-3">
+              <p className="font-bold text-white">Auto merge items</p>
+              <p className={queueCounts.autoMergeTrue ? "mt-1 text-red-200" : "mt-1 text-emerald-200"}>
+                {queueCounts.autoMergeTrue}
+              </p>
+            </div>
+            <div className="rounded-2xl border border-slate-800 bg-slate-950/70 p-3">
+              <p className="font-bold text-white">Trusted knowledge changed</p>
+              <p className={queueCounts.trustedKnowledgeChangedTrue ? "mt-1 text-red-200" : "mt-1 text-emerald-200"}>
+                {queueCounts.trustedKnowledgeChangedTrue}
+              </p>
+            </div>
           </div>
         </section>
 
