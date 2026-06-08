@@ -1,6 +1,6 @@
 {
   "ok": true,
-  "generatedAt": "2026-06-08T07:08:29.764Z",
+  "generatedAt": "2026-06-08T12:53:24.649Z",
   "phase": "47B-2R",
   "title": "BuildSetu source watch, web-search candidate capture, and review queue pipeline status",
   "routes": {
@@ -13,18 +13,18 @@
   },
   "sourceWatch": {
     "registeredTrustedSourceAutoWatch": true,
-    "latestInboxGeneratedAt": "2026-06-08T06:53:20.164Z",
+    "latestInboxGeneratedAt": "2026-06-08T12:53:24.588Z",
     "watchSourceCount": null,
     "pendingSourceUpdateDrafts": 0,
-    "latestChangedSources": 0,
+    "latestChangedSources": 36,
     "latestFailedSources": 9,
     "fetchRecovery": {
       "recoveredCount": 1,
       "unresolvedCount": 9
     },
     "qualityGate": {
-      "scannedDrafts": 20,
-      "quarantinedCount": 0,
+      "scannedDrafts": 56,
+      "quarantinedCount": 36,
       "keptPendingCount": 0
     }
   },
@@ -78,26 +78,26 @@
     }
   },
   "reviewQueue": {
-    "updatedAt": "2026-06-08T07:08:29.717Z",
-    "sourceCandidateCount": 97,
-    "itemCount": 97,
+    "updatedAt": "2026-06-08T08:00:11.169Z",
+    "sourceCandidateCount": 65,
+    "itemCount": 65,
     "byStatus": {
-      "pending_review": 94,
-      "approved": 1,
-      "rejected": 2
+      "rejected": 2,
+      "pending_review": 62,
+      "approved": 1
     },
     "bySourcePackId": {
-      "official_core_building_codes_india": 6,
+      "official_core_building_codes_india": 3,
       "planning_dimensions_pack": 3,
-      "construction_materials_execution_pack": 2,
-      "state_local_approval_bylaws_pack": 8,
+      "construction_materials_execution_pack": 1,
+      "state_local_approval_bylaws_pack": 5,
       "all_india_state_ut_authority_index_pack": 36,
-      "pending_exact_source_candidates": 42
+      "pending_exact_source_candidates": 17
     },
-    "pendingExactSourceCandidateItems": 42,
+    "pendingExactSourceCandidateItems": 17,
     "rejectedItems": 2,
     "approvedItems": 1,
-    "pendingReviewItems": 94
+    "pendingReviewItems": 62
   },
   "safety": {
     "sourceRegistryChanged": false,
