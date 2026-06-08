@@ -1,11 +1,11 @@
 # BuildSetu Source Watch Live Update Inbox
 
-- Generated At: 2026-06-06T06:51:42.646Z
+- Generated At: 2026-06-08T06:53:20.164Z
 - Watch Sources: 48
-- Last Source Check: 2026-06-06T06:47:19.009Z
+- Last Source Check: 2026-06-08T06:47:32.926Z
 - Pending Source Update Drafts: 0
-- Latest Report Changed Count: 1
-- Latest Report Failed Count: 7
+- Latest Report Changed Count: 0
+- Latest Report Failed Count: 9
 
 Safety:
 - Trusted Knowledge Write: false
@@ -14,10 +14,7 @@ Safety:
 
 ## Latest Changed Sources
 
-- BIS National Building Code
-  - Reason: content_hash_changed
-  - URL: https://www.bis.gov.in/standards/technical-department/national-building-code/
-  - Draft: /var/www/build.sikhadenge.in/sikhadenge-build/data/buildsetu-research/drafts/draft_20260606_064705_sourceupdate_bis-national-building-code_e433656c_bis-national-building-code.json
+No latest changed sources detected in the latest report.
 
 ## Pending Source Update Drafts
 

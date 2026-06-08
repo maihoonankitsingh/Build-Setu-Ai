@@ -1,33 +1,36 @@
 {
   "schema": "buildsetu-source-watch-live-inbox-v1",
-  "generatedAt": "2026-06-06T06:51:42.646Z",
+  "generatedAt": "2026-06-08T06:53:20.164Z",
   "purpose": "Agent-readable source update awareness inbox. This is not trusted knowledge.",
   "summary": {
     "sourceCount": 48,
-    "latestCheckedAt": "2026-06-06T06:47:19.009Z",
+    "latestCheckedAt": "2026-06-08T06:47:32.926Z",
     "pendingSourceUpdateDrafts": 0,
-    "latestChangedSources": 1,
-    "latestFailedSources": 7
+    "latestChangedSources": 0,
+    "latestFailedSources": 9
   },
   "latestReport": {
-    "file": "data/buildsetu-source-watch/changes/source-watch-report-20260606_064811.json",
-    "checkedAt": "2026-06-06T06:47:01.298Z",
+    "file": "data/buildsetu-source-watch/changes/source-watch-report-20260608_064825.json",
+    "checkedAt": "2026-06-08T06:47:01.783Z",
     "ok": true,
     "total": 48,
-    "changedCount": 1,
-    "unchangedCount": 39,
-    "failedCount": 7,
-    "changed": [
+    "changedCount": 0,
+    "unchangedCount": 38,
+    "failedCount": 9,
+    "changed": [],
+    "failed": [
       {
         "id": "bis-national-building-code",
         "title": "BIS National Building Code",
         "url": "https://www.bis.gov.in/standards/technical-department/national-building-code/",
-        "reason": "content_hash_changed",
-        "draftId": "draft_20260606_064705_sourceupdate_bis-national-building-code_e433656c",
-        "draftFile": "/var/www/build.sikhadenge.in/sikhadenge-build/data/buildsetu-research/drafts/draft_20260606_064705_sourceupdate_bis-national-building-code_e433656c_bis-national-building-code.json"
-      }
-    ],
-    "failed": [
+        "error": "fetch failed"
+      },
+      {
+        "id": "bis-sp73-building-regulations-2023",
+        "title": "BIS SP 73:2023 Standardized Development and Building Regulations",
+        "url": "https://www.bis.gov.in/wp-content/uploads/2024/02/SP-732023-Standardized-Development-and-Building-Regulations-2023.pdf",
+        "error": "fetch failed"
+      },
       {
         "id": "cpwd-works-manual-2024",
         "title": "CPWD Works Manual 2024",
