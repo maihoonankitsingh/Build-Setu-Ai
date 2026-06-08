@@ -334,6 +334,53 @@ function preserveExistingSourceReviewQueueItem(nextItem: JsonObject, existingIte
   };
 }
 
+
+// BUILDSETU_PHASE_M9B_DEDUPE_REVIEW_QUEUE_BY_ID_HELPER
+function sourceReviewItemPriority(item: JsonObject): number {
+  const status = cleanText(item?.status || "", 80);
+  const review = item?.review && typeof item.review === "object" ? item.review as JsonObject : {};
+  const reviewStatus = cleanText((review as any)?.status || "", 80);
+  const reviewedAt = cleanText((review as any)?.reviewedAt || "", 120);
+  const reviewer = cleanText((review as any)?.reviewer || "", 160);
+
+  let score = 0;
+  if (status === "approved" || status === "rejected") score += 100;
+  if (reviewStatus === "approved" || reviewStatus === "rejected") score += 100;
+  if (reviewedAt) score += 30;
+  if (reviewer) score += 10;
+  if (status === "pending_review") score -= 10;
+  return score;
+}
+
+function dedupeSourceReviewQueueItemsById(items: JsonObject[]): JsonObject[] {
+  const byId = new Map<string, JsonObject>();
+  const order: string[] = [];
+
+  for (const item of items) {
+    const id = cleanText(item?.id || "", 240);
+    if (!id) continue;
+
+    const existing = byId.get(id);
+    if (!existing) {
+      byId.set(id, item);
+      order.push(id);
+      continue;
+    }
+
+    const existingPriority = sourceReviewItemPriority(existing);
+    const nextPriority = sourceReviewItemPriority(item);
+
+    if (nextPriority > existingPriority) {
+      byId.set(id, preserveExistingSourceReviewQueueItem(item, existing));
+    } else {
+      byId.set(id, preserveExistingSourceReviewQueueItem(existing, item));
+    }
+  }
+
+  return order.map((id) => byId.get(id)).filter(Boolean) as JsonObject[];
+}
+
+
 function preserveSourceReviewQueueSyncState(nextQueue: JsonObject, existingQueue?: JsonObject): JsonObject {
   if (!existingQueue || typeof existingQueue !== "object") {
     return {
@@ -718,13 +765,16 @@ export async function POST(req: NextRequest) {
       nextItems.push(buildQueueEntry(source, index, existing));
     });
 
+    // BUILDSETU_PHASE_M9B_SYNC_DEDUPE_NEXT_ITEMS_BY_ID
+    const dedupedNextItems = dedupeSourceReviewQueueItemsById(nextItems);
+
     const updatedQueue = {
       version: Number(queue.version || 1),
       description: "BuildSetu official/trusted source review queue. No auto-merge.",
       mergePolicy: "manual_review_required",
       autoMerge: false,
-      sourceCandidateCount: sourceCandidates.length,
-      items: nextItems,
+      sourceCandidateCount: dedupedNextItems.length,
+      items: dedupedNextItems,
       updatedAt: nowIso(),
       updatedBy: user.id,
     };
@@ -742,8 +792,8 @@ export async function POST(req: NextRequest) {
       queuePath: QUEUE_RELATIVE_PATH,
       created,
       preserved,
-      summary: summarizeQueue(nextItems),
-      items: nextItems,
+      summary: summarizeQueue(dedupedNextItems),
+      items: dedupedNextItems,
       autoMerge: false,
       mergePolicy: "manual_review_required",
       trustedKnowledgeChanged: false,
@@ -756,3 +806,5 @@ export async function POST(req: NextRequest) {
     );
   }
 }
+
+// BUILDSETU_PHASE_M9B_PRESERVE_DEDUPE_FINAL_GUARD
