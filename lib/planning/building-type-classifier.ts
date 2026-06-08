@@ -105,7 +105,7 @@ function score(text: string, patterns: Array<[RegExp, string]>): { score: number
   return { score: total, signals };
 }
 
-export function classifyBuildSetuBuildingType(input: {
+function classifyBuildSetuBuildingTypeBase(input: {
   inputText: string;
   dimensionUnderstanding?: DimensionContextLike;
   missingQuestionEngine?: MissingQuestionContextLike;
@@ -493,3 +493,69 @@ export function buildBuildingTypeClassifierPromptBlock(result: BuildSetuBuilding
 
   return lines.join("\n");
 }
+
+
+// BUILDSETU_RESIDENTIAL_CLASSIFIER_OVERRIDE_V4
+function bsResidentialClassifierOverrideV4(input: Parameters<typeof classifyBuildSetuBuildingTypeBase>[0]) {
+  const t = String(input?.inputText || "").toLowerCase();
+
+  const residentialStrong =
+    /(bhk|bed\s*room|bedroom|master\s*bed|kids\s*room|house|home|ghar|घर|residential|villa|duplex|bungalow|floor\s*plan|naksha|नक्शा|kitchen|living|drawing\s*room|pooja|toilet|bathroom|parking|staircase)/i.test(t);
+
+  const commercialStrong =
+    /(shop|showroom|office|mall|retail|warehouse|factory|hotel|hospital|school|restaurant|commercial|mixed\s*use|mixed-use|clinic|hostel)/i.test(t);
+
+  if (!residentialStrong) return null;
+  if (commercialStrong && !/(house|home|ghar|bhk|residential|villa|duplex)/i.test(t)) return null;
+
+  const bhkMatch = t.match(/(\d+)\s*bhk/);
+  const bedroomMatch = t.match(/(\d+)\s*(?:bed\s*room|bedroom|bedrooms)/);
+  const bhk = bhkMatch ? Number(bhkMatch[1]) : bedroomMatch ? Number(bedroomMatch[1]) : null;
+
+  const subType =
+    bhk && Number.isFinite(bhk)
+      ? `${bhk}BHK independent residential house`
+      : /duplex/i.test(t)
+        ? "duplex residential house"
+        : /villa|bungalow/i.test(t)
+          ? "villa / bungalow residential house"
+          : "independent residential house";
+
+  return {
+    category: "residential",
+    subType,
+    occupancyGroup: "residential",
+    planningMode: "residential_house",
+    confidence: "high",
+    riskLevel: "low",
+    detectedSignals: [
+      "residential words",
+      bhk ? `${bhk}BHK requirement` : "house planning requirement",
+      "floor plan / naksha workflow",
+    ],
+    planningFocus: [
+      "Residential zoning: public, private and service areas",
+      "Parking, staircase, kitchen and toilet wet-zone coordination",
+      "Ventilation and daylight for bedrooms/living/kitchen",
+      "Vastu preference if requested",
+      "Approval/code boundary remains local authority/professional review",
+    ],
+  };
+}
+
+export function classifyBuildSetuBuildingType(
+  input: Parameters<typeof classifyBuildSetuBuildingTypeBase>[0]
+): ReturnType<typeof classifyBuildSetuBuildingTypeBase> {
+  const base = classifyBuildSetuBuildingTypeBase(input);
+  const override = bsResidentialClassifierOverrideV4(input);
+  if (!override) return base;
+
+  return {
+    ...(base as any),
+    ...override,
+    originalClassifier: base,
+    overrideReason:
+      "BUILDSETU_RESIDENTIAL_CLASSIFIER_OVERRIDE_V4: BHK/house planning request should not be classified as mixed_use unless commercial signals are explicit.",
+  } as ReturnType<typeof classifyBuildSetuBuildingTypeBase>;
+}
+

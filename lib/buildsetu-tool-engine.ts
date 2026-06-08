@@ -43,6 +43,8 @@ function projectContextLines(projectTitle: string, combined: string) {
   return [
     `Project: ${projectTitle || "Selected Project"}`,
     "Source of truth: Master project brief + saved project chat + current tool input.",
+    "BUILDSETU_TOOL_WORKING_PROGRAM_STANDARD_V4: Follow project working program order: brief -> planning -> floor plan lock -> working drawings -> structure/MEP -> BOQ/BBS -> interior/exterior -> review/export.",
+    "Selected project rule: use selected project memory and locked outputs; never mix assets from another projectId.",
     `Context used: ${combined.slice(-900) || "No extra context found. Use selected project title and current input."}`,
     "Rule: Do not create random unrelated design. Keep project identity consistent across all outputs.",
   ];

@@ -450,6 +450,9 @@ export async function buildProjectContext(input: {
     `Available generated images/assets: ${latestImages.length}`,
     `Ignored mismatched old assets: ${mismatchedBriefAssets.length}`,
     `Available project outputs: ${outputs.length}`,
+    "BUILDSETU_PROJECT_WORKING_PROGRAM_STANDARD_V4: Project section standard working program = 1 Client Brief, 2 Site/Jurisdiction, 3 Concept Planning, 4 Floor Plan/Naksha, 5 Locked Plan, 6 Working Drawings, 7 Structure, 8 MEP, 9 BOQ/BBS, 10 Exterior/Interior, 11 Review/Export.",
+    "Project section rule: every tool must use selected projectId, master brief, saved project memory, locked plan/assets and previous outputs as source of truth.",
+    "Project section rule: do not create random/global output when selected project context exists.",
     latestExteriorMaster ? `Active exterior master: ${latestExteriorMaster.title || latestExteriorMaster.id}` : "Active exterior master: none",
     "",
     missingRequiredStages.length

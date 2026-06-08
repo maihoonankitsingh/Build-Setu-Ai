@@ -365,7 +365,7 @@ function dedupeSingles(singles: BuildSetuDimensionSingle[]): BuildSetuDimensionS
   return out;
 }
 
-export function understandBuildSetuDimensions(inputText: string): BuildSetuDimensionUnderstandingResult {
+function understandBuildSetuDimensionsBase(inputText: string): BuildSetuDimensionUnderstandingResult {
   const sourceText = normalizeWhitespace(inputText);
   const pairs: BuildSetuDimensionPair[] = [];
   const singles: BuildSetuDimensionSingle[] = [];
@@ -488,3 +488,110 @@ export function buildDimensionUnderstandingPromptBlock(inputText: string): strin
     result.warnings.length ? "Dimension warnings:\n- " + result.warnings.join("\n- ") : "Dimension warnings: none",
   ].join("\n");
 }
+
+
+// BUILDSETU_RESIDENTIAL_PLOT_DIMENSION_OVERRIDE_V4
+function bsDetectResidentialPlotDimensionV4(inputText: string): {
+  raw: string;
+  widthFt: number;
+  depthFt: number;
+  areaSqFt: number;
+} | null {
+  const text = String(inputText || "");
+  const lower = text.toLowerCase();
+
+  const hasResidentialSignal =
+    /(bhk|bed\s*room|bedroom|house|home|ghar|घर|residential|villa|duplex|floor\s*plan|naksha|नक्शा|parking|staircase|kitchen|living|toilet|bathroom|facing|east|west|north|south|ground\s*floor|first\s*floor|g\+|g\+\d)/i.test(lower);
+
+  const commercialOnly =
+    /(shop|showroom|office|mall|retail|warehouse|factory|hotel|hospital|school|restaurant|commercial|mixed\s*use|mixed-use|clinic|hostel)/i.test(lower) &&
+    !/(house|home|ghar|bhk|residential|villa|duplex)/i.test(lower);
+
+  if (!hasResidentialSignal || commercialOnly) return null;
+
+  const match = text.match(/(\d+(?:\.\d+)?)\s*(?:x|×|by|\*)\s*(\d+(?:\.\d+)?)\s*(?:ft|feet|फीट|')?/i);
+  if (!match) return null;
+
+  const widthFt = Number(match[1]);
+  const depthFt = Number(match[2]);
+
+  if (!Number.isFinite(widthFt) || !Number.isFinite(depthFt)) return null;
+  if (widthFt < 10 || widthFt > 250 || depthFt < 10 || depthFt > 250) return null;
+
+  return {
+    raw: match[0],
+    widthFt,
+    depthFt,
+    areaSqFt: Math.round(widthFt * depthFt * 100) / 100,
+  };
+}
+
+export function understandBuildSetuDimensions(inputText: string): BuildSetuDimensionUnderstandingResult {
+  const base = understandBuildSetuDimensionsBase(inputText);
+  const plot = bsDetectResidentialPlotDimensionV4(inputText);
+  if (!plot) return base;
+
+  const baseAny: any = base;
+  const originalPairs: any[] = Array.isArray(baseAny.pairs) ? baseAny.pairs : [];
+  const warnings: string[] = Array.isArray(baseAny.warnings) ? baseAny.warnings : [];
+
+  const patchedPairs = originalPairs.map((pair: any) => {
+    const widthFt = Number(pair?.width?.feet ?? pair?.widthFt ?? 0);
+    const depthFt = Number(pair?.depth?.feet ?? pair?.depthFt ?? 0);
+    const samePair =
+      Math.abs(widthFt - plot.widthFt) < 0.01 &&
+      Math.abs(depthFt - plot.depthFt) < 0.01;
+
+    if (!samePair) return pair;
+
+    return {
+      ...pair,
+      intent: "plot",
+      confidence: "high",
+      note: "Detected as plot dimension from residential house/BHK planning request.",
+    };
+  });
+
+  const hasPair = patchedPairs.some((pair: any) => {
+    const widthFt = Number(pair?.width?.feet ?? pair?.widthFt ?? 0);
+    const depthFt = Number(pair?.depth?.feet ?? pair?.depthFt ?? 0);
+    return Math.abs(widthFt - plot.widthFt) < 0.01 && Math.abs(depthFt - plot.depthFt) < 0.01;
+  });
+
+  if (!hasPair) {
+    patchedPairs.unshift({
+      raw: plot.raw,
+      width: { feet: plot.widthFt, raw: String(plot.widthFt) },
+      depth: { feet: plot.depthFt, raw: String(plot.depthFt) },
+      areaSqFt: plot.areaSqFt,
+      intent: "plot",
+      confidence: "high",
+      note: "Detected as plot dimension from residential house/BHK planning request.",
+    });
+  }
+
+  const next: any = {
+    ...baseAny,
+    pairs: patchedPairs,
+    warnings: warnings.filter((item: string) =>
+      !/plot dimension not confidently detected|ask user for plot width and depth/i.test(String(item || ""))
+    ),
+  };
+
+  next.primaryPlotAreaSqFt = plot.areaSqFt;
+  next.plotWidthFt = plot.widthFt;
+  next.plotDepthFt = plot.depthFt;
+  next.plotDimensionDetected = true;
+  next.detectedPlotDimension = true;
+  next.hasPlotDimension = true;
+  next.primaryPlotDimension = {
+    widthFt: plot.widthFt,
+    depthFt: plot.depthFt,
+    areaSqFt: plot.areaSqFt,
+    confidence: "high",
+    source: "residential_plot_dimension_override_v4",
+  };
+
+  return next as BuildSetuDimensionUnderstandingResult;
+}
+
