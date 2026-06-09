@@ -10040,3 +10040,53 @@ body * {
   overflow-y: auto !important;
   overflow-x: hidden !important;
 }
+
+/* BUILDSETU_RIGHT_SIDEBAR_BOTTOM_BLANK_FIX_V1
+   Make the last Project Files section fill remaining sidebar space
+   so the empty blank area at bottom-right is removed. */
+.bsu-assets-panel {
+  display: flex !important;
+  flex-direction: column !important;
+  align-self: stretch !important;
+  min-height: 0 !important;
+  height: 100% !important;
+}
+
+.bsu-assets-section {
+  flex: 0 0 auto !important;
+}
+
+.bsu-assets-section:last-child {
+  flex: 1 1 auto !important;
+  display: flex !important;
+  flex-direction: column !important;
+  min-height: 240px !important;
+  justify-content: flex-start !important;
+}
+
+.bsu-assets-section:last-child .bsu-assets-head {
+  flex: 0 0 auto !important;
+}
+
+.bsu-assets-section:last-child .bsu-file-list {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  scrollbar-width: none !important;
+}
+
+.bsu-assets-section:last-child .bsu-file-list::-webkit-scrollbar {
+  width: 0 !important;
+  height: 0 !important;
+}
+
+.bsu-assets-section:last-child > button:last-child,
+.bsu-assets-section:last-child > a:last-child {
+  margin-top: auto !important;
+  flex: 0 0 auto !important;
+}
+
+.bsu-assets-section:last-child {
+  padding-bottom: 12px !important;
+}
