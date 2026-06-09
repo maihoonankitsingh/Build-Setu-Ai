@@ -48,6 +48,56 @@ export function createFloorPlanImagePrompt(args: PromptAgentArgs) {
   const bhk = parseBhk(raw);
   const floor = parseFloor(raw);
 
+
+  const is49x57EastNorth =
+    plot.width === 49 &&
+    plot.depth === 57 &&
+    facing === "east" &&
+    /north\s*side|side\s*road.*north|east[-\s]*north|east\s+north|corner\s*plot/.test(raw.toLowerCase());
+
+  if (is49x57EastNorth) {
+    const imagePrompt = `
+Create a premium professional furnished 2D architectural ground floor plan for a 49' x 57' East-North corner plot.
+
+STRICT PROJECT LOCK:
+- Plot size exactly 49' x 57'.
+- East side is FRONT ROAD / main entry.
+- North side is SIDE ROAD.
+- Do not call it North facing.
+- Do not use 59'.
+- Do not create 2 or 3 bedrooms on ground floor.
+- Ground floor must have exactly 1 bedroom only.
+
+GROUND FLOOR ROOMS:
+1. Car + bike parking near East/front entry, approx 13' x 18'.
+2. Living room near East/North light, approx 18' x 14' to 20' x 14'.
+3. Dining defined but practical, approx 12' x 11'.
+4. Kitchen in South-East/service zone, approx 10' x 10'.
+5. Puja room near North-East/East zone, approx 5' x 6'.
+6. One bedroom in South-West/private zone, approx 12' x 12'.
+7. One toilet/common-attached, approx 7' x 5'.
+8. One staircase only.
+9. Wash/store/service area.
+
+DRAWING REQUIREMENTS:
+- Show 49' dimension and 57' dimension correctly.
+- Clearly label East Road/front side and North Road/side road.
+- Use professional walls, doors, windows, furniture, room labels and dimensions.
+- Keep room sizes realistic and proportional.
+- Output title: Ground Floor Plan - 49' x 57' East Front + North Side Corner Plot.
+`.trim();
+
+    return {
+      source: "floor_plan_prompt_agent_v1_49x57_east_north_lock",
+      projectTitle,
+      plot,
+      facing,
+      bhk: "1BHK",
+      floor,
+      imagePrompt,
+    };
+  }
+
   const imagePrompt = `
 Create a premium professional Indian residential floor plan image.
 

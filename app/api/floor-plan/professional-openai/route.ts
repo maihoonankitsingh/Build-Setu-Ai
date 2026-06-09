@@ -66,6 +66,35 @@ function buildPremiumOpenAiFloorPlanPrompt(args: {
   const widthFt = plot.widthFt || plot.width || plan.widthFt || plan.plotWidthFt || "";
   const depthFt = plot.depthFt || plot.depth || plan.depthFt || plan.plotDepthFt || "";
   const facing = safe(plot.facing || plan.facing || "north").toUpperCase();
+  const sourceText = `${args.projectTitle} ${args.userMessage} ${plan?.subtitle || ""} ${plan?.roadLabel || ""}`.toLowerCase();
+  const is49x57EastNorth =
+    Math.round(Number(widthFt)) === 49 &&
+    Math.round(Number(depthFt)) === 57 &&
+    facing === "EAST" &&
+    (sourceText.includes("north side") || sourceText.includes("east-north") || sourceText.includes("corner"));
+
+  const orientationLabel = is49x57EastNorth
+    ? "EAST FRONT ROAD + NORTH SIDE ROAD CORNER PLOT"
+    : `${facing} FACING`;
+
+  const titleDimensionLabel = is49x57EastNorth
+    ? `${widthFt}' x ${depthFt}' East Front + North Side Corner Plot`
+    : `${widthFt}' x ${depthFt}' ${facing} Facing`;
+
+  const strictCornerNotes = is49x57EastNorth
+    ? `
+49x57 EAST-NORTH CORNER PLOT HARD LOCK:
+- This is NOT a North-facing house.
+- East side is the front road/main entry side.
+- North side is only the side road.
+- Keep exactly 1 bedroom on ground floor.
+- Do not add Bedroom 2, Bedroom 3, master suite, or extra bedroom.
+- Do not create oversized rooms such as 14x23, 18x16, or 23x18.
+- Keep puja near North-East/East around 5x6 ft.
+- Keep kitchen in South-East/service side around 10x10 ft.
+- Mark East Road/front side and North Road/side road clearly.
+`
+    : "";
 
   return `
 PREMIUM FURNISHED 2D ARCHITECTURAL FLOOR PLAN RENDER.
@@ -83,7 +112,7 @@ Locked project:
 - Output title: ${args.title}
 - User request: ${args.userMessage}
 - Plot size: exactly ${widthFt}' x ${depthFt}'
-- Facing: ${facing}
+- Orientation: ${orientationLabel}
 - Plan source: exact_floor_plan_agent_v1
 
 Locked room rectangles:
@@ -96,11 +125,12 @@ Rendering requirements:
 4. Use professional wall thickness, door swings, windows, openings, room labels, and readable room dimensions.
 5. Add furniture symbols: car in parking, sofa in living, bed in bedrooms, dining table, kitchen counter, toilet fixtures, wash area, puja symbol, staircase steps.
 6. Add outer dimension arrows: top/front ${widthFt}', side/depth ${depthFt}'.
-7. Add north/facing label: ${facing}.
+7. Add orientation labels: ${orientationLabel}.
 8. Add clean title block: "${args.title}" and "${widthFt}' x ${depthFt}' ${facing} Facing".
 9. Use clean architectural linework, white sheet background, subtle pastel room fills, crisp black walls, readable labels.
 10. The final should look like a professional furnished 2D floor plan presentation, not a rough block diagram.
 
+${strictCornerNotes}
 Critical constraints:
 - The floor plan must be a top-view architectural plan only.
 - Do not draw square plot if ${widthFt}' and ${depthFt}' are different.

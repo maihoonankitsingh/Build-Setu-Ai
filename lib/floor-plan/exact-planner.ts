@@ -52,12 +52,20 @@ function safeText(value: unknown, fallback = ""): string {
 
 function normalizeFacingValue(value: unknown): Facing | "" {
   const text = String(value || "").toLowerCase().trim();
-
   if (!text) return "";
-  if (/\bnorth\b|north[-\s]*facing|facing\s*north|road\s*on\s*north|north\s*side/.test(text)) return "north";
-  if (/\bsouth\b|south[-\s]*facing|facing\s*south|road\s*on\s*south|south\s*side/.test(text)) return "south";
-  if (/\beast\b|east[-\s]*facing|facing\s*east|road\s*on\s*east|east\s*side/.test(text)) return "east";
-  if (/\bwest\b|west[-\s]*facing|facing\s*west|road\s*on\s*west|west\s*side/.test(text)) return "west";
+
+  const corner = text.match(/\b(north|south|east|west)\s*[-/]\s*(north|south|east|west)\b/);
+  if (corner?.[1]) return corner[1] as Facing;
+
+  if (/front\s*road\s*(is|:)?\s*(on\s*)?east|east\s*front|frontage.*east|road\s*on\s*east|facing\s*east|east[-\s]*facing/.test(text)) return "east";
+  if (/front\s*road\s*(is|:)?\s*(on\s*)?north|north\s*front|frontage.*north|road\s*on\s*north|facing\s*north|north[-\s]*facing/.test(text)) return "north";
+  if (/front\s*road\s*(is|:)?\s*(on\s*)?south|south\s*front|frontage.*south|road\s*on\s*south|facing\s*south|south[-\s]*facing/.test(text)) return "south";
+  if (/front\s*road\s*(is|:)?\s*(on\s*)?west|west\s*front|frontage.*west|road\s*on\s*west|facing\s*west|west[-\s]*facing/.test(text)) return "west";
+
+  if (/\beast\b/.test(text)) return "east";
+  if (/\bnorth\b/.test(text)) return "north";
+  if (/\bsouth\b/.test(text)) return "south";
+  if (/\bwest\b/.test(text)) return "west";
 
   return "";
 }
@@ -87,24 +95,17 @@ function detectFacing(text: string): Facing {
 function detectFloor(text: string): "ground" | "first" | "second" {
   const t = String(text || "").toLowerCase();
 
-  // Strict floor detection. Do not treat training text such as
-  // "First lock plot..." as first-floor instruction.
-  if (
-    /(?:floor\s*:\s*second|second\s+floor|2nd\s+floor|floor\s*2|\bg\s*\+\s*2\b)/.test(t)
-  ) {
+  // "G+1" means building has ground + first floor; it is not itself a first-floor drawing request.
+  if (/(?:floor\s*:\s*ground|ground\s+floor|gf\b|floor\s*0|\bground\b)/.test(t)) {
+    return "ground";
+  }
+
+  if (/(?:floor\s*:\s*second|second\s+floor|2nd\s+floor|floor\s*2|\bg\s*\+\s*2\b)/.test(t)) {
     return "second";
   }
 
-  if (
-    /(?:floor\s*:\s*first|first\s+floor|1st\s+floor|floor\s*1|\bff\b|\bg\s*\+\s*1\b|upper\s+floor)/.test(t)
-  ) {
+  if (/(?:floor\s*:\s*first|first\s+floor|1st\s+floor|floor\s*1|\bff\b|upper\s+floor)/.test(t)) {
     return "first";
-  }
-
-  if (
-    /(?:floor\s*:\s*ground|ground\s+floor|gf\b|floor\s*0|\bground\b)/.test(t)
-  ) {
-    return "ground";
   }
 
   return "ground";
@@ -123,6 +124,12 @@ function parsePlotSize(text: string): { widthFt: number; depthFt: number } {
 
 function detectBedrooms(text: string): number {
   const t = text.toLowerCase();
+
+  if (/ground\s+floor[\s\S]{0,220}(?:exactly\s*)?(?:1|one)\s+bed(room)?\s+only/.test(t)) return 1;
+  if (/ground\s+floor[\s\S]{0,220}(?:1|one)\s+bed(room)?/.test(t)) return 1;
+  if (/(?:1|one)\s+bed(room)?\s+only/.test(t)) return 1;
+  if (/ground\s+floor\s+must\s+have\s+exactly\s+1\s+bedroom/.test(t)) return 1;
+
   const bhk = t.match(/(\d)\s*bhk/);
   if (bhk) return Math.max(1, Number(bhk[1]) || 3);
 
@@ -165,7 +172,7 @@ function normalizeRequest(body: any): ExactPlanRequest {
   const agentFloorRaw = String(body?.architectAgent?.requirement?.floor || "").toLowerCase();
   const floor =
     agentFloorRaw.includes("second") ? "second" :
-    agentFloorRaw.includes("first") || agentFloorRaw.includes("g_plus_1") ? "first" :
+    agentFloorRaw.includes("first") ? "first" :
     agentFloorRaw.includes("ground") ? "ground" :
     detectFloor(combined);
 
@@ -190,6 +197,45 @@ function normalizeRequest(body: any): ExactPlanRequest {
 
 function room(id: string, name: string, x: number, y: number, w: number, h: number, kind = "room"): RoomItem {
   return { id, name, x, y, w, h, kind };
+}
+
+
+function is49x57EastNorthGroundRequest(req: ExactPlanRequest): boolean {
+  const t = `${req.projectTitle} ${req.prompt}`.toLowerCase();
+  const plotMatch = Math.round(req.widthFt) === 49 && Math.round(req.depthFt) === 57;
+  const eastFront = req.facing === "east" || /front\s*road.*east|east\s*front|east[-\s]*north/.test(t);
+  const northSide = /north\s*side|side\s*road.*north|east[-\s]*north|east\s+north|corner\s*plot/.test(t);
+  return plotMatch && eastFront && northSide && req.floor === "ground";
+}
+
+function build49x57EastNorthGroundFloorPlan(req: ExactPlanRequest): ExactPlan {
+  const rooms: RoomItem[] = [
+    room("parking", "CAR + BIKE PARKING", 34, 4, 13, 18, "parking"),
+    room("living", "LIVING ROOM", 3, 4, 23, 14, "living"),
+    room("puja", "PUJA", 27, 4, 6, 5, "puja"),
+
+    room("dining", "DINING", 18, 20, 14, 11, "dining"),
+    room("entry_lobby", "ENTRY / LOBBY", 34, 24, 13, 10, "lobby"),
+
+    room("staircase", "STAIRCASE", 27, 37, 8, 14, "stair"),
+    room("kitchen", "KITCHEN", 36, 37, 10, 10, "kitchen"),
+    room("wash_store", "WASH / STORE", 36, 48, 10, 6, "utility"),
+
+    room("bedroom", "BEDROOM", 3, 40, 12, 12, "bedroom"),
+    room("toilet", "TOILET", 18, 40, 7, 5, "toilet"),
+    room("passage", "PASSAGE", 18, 32, 17, 5, "passage"),
+  ];
+
+  return {
+    title: "GROUND FLOOR PLAN",
+    subtitle: "49' x 57' EAST FRONT + NORTH SIDE CORNER PLOT",
+    widthFt: 49,
+    depthFt: 57,
+    facing: "east",
+    roadLabel: "EAST FRONT ROAD + NORTH SIDE ROAD",
+    floorLabel: "Ground Floor",
+    rooms,
+  };
 }
 
 function buildTemplate41x51North3BHK(req: ExactPlanRequest): ExactPlan {
@@ -265,6 +311,8 @@ function buildGenericPlan(req: ExactPlanRequest): ExactPlan {
 }
 
 function buildExactPlan(req: ExactPlanRequest): ExactPlan {
+  if (is49x57EastNorthGroundRequest(req)) return build49x57EastNorthGroundFloorPlan(req);
+
   const isTemplateCase =
     req.widthFt === 41 &&
     req.depthFt === 51 &&
