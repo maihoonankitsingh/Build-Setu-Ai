@@ -7507,6 +7507,55 @@ function ProjectTaskChatInterfaceShell({
   const [webUpdateRuntimeRunningAction, setWebUpdateRuntimeRunningAction] = useState("");
   const [webUpdateRuntimeResultSummary, setWebUpdateRuntimeResultSummary] = useState<string[]>([]);
 
+  // BUILDSETU_PROJECT_DETAIL_WORKFLOW_PANEL_V1
+  type ProjectWorkspaceStage = {
+    id: string;
+    label: string;
+    order: number;
+    status?: string;
+    required?: boolean;
+  };
+
+  const [projectWorkflowStages, setProjectWorkflowStages] = useState<ProjectWorkspaceStage[]>([]);
+  const [projectWorkflowLoading, setProjectWorkflowLoading] = useState(false);
+  const [projectWorkflowError, setProjectWorkflowError] = useState("");
+
+  async function loadProjectWorkflowStages() {
+    if (!projectId) {
+      setProjectWorkflowStages([]);
+      return;
+    }
+
+    setProjectWorkflowLoading(true);
+    setProjectWorkflowError("");
+
+    try {
+      const response = await fetch(`/api/project-workspace/summary?projectId=${encodeURIComponent(projectId)}`, {
+        method: "GET",
+        credentials: "include",
+        cache: "no-store",
+      });
+
+      const data = await response.json().catch(() => null);
+
+      if (!response.ok || !data?.ok) {
+        throw new Error(data?.error || data?.code || "Project workflow load failed.");
+      }
+
+      const stages = Array.isArray(data?.stages) ? data.stages : [];
+      setProjectWorkflowStages(stages);
+    } catch (error) {
+      setProjectWorkflowStages([]);
+      setProjectWorkflowError(error instanceof Error ? error.message : "Project workflow load failed.");
+    } finally {
+      setProjectWorkflowLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    void loadProjectWorkflowStages();
+  }, [projectId]);
+
   // BUILDSETU_PHASE_M8O_LOAD_PERSISTED_REVIEWS_EFFECT
   useEffect(() => {
     if (webUpdatePersistedReviewsLoaded) return;
@@ -9439,6 +9488,54 @@ function buildToolHrefWithActiveProject(slug: string, projectId?: string) {
         </section>
 
         <aside className="bsu-assets-panel">
+          {/* BUILDSETU_PROJECT_DETAIL_WORKFLOW_PANEL_V1_RENDER */}
+          <div className="bsu-assets-section">
+            <div className="bsu-assets-head">
+              <div>
+                <h2>Project Workflow</h2>
+                <p>11-stage project working program.</p>
+              </div>
+              <button type="button" onClick={() => void loadProjectWorkflowStages()}>
+                {projectWorkflowLoading ? "Loading" : "Refresh"}
+              </button>
+            </div>
+
+            {projectWorkflowError ? (
+              <p className="bsu-assets-error">{projectWorkflowError}</p>
+            ) : null}
+
+            <div className="mt-2 grid gap-1.5">
+              {projectWorkflowStages.length > 0 ? (
+                projectWorkflowStages.map((stage) => {
+                  const statusText = String(stage.status || "not_started").replace(/_/g, " ");
+                  const isReady = ["draft_ready", "approved", "complete", "completed"].includes(String(stage.status || "").toLowerCase());
+
+                  return (
+                    <div key={stage.id} className="rounded-xl border border-[#eee7f7] bg-[#fbf8ff] px-3 py-2">
+                      <div className="flex items-center justify-between gap-2">
+                        <div className="min-w-0">
+                          <div className="truncate text-[11px] font-black text-[#2b164f]">
+                            {stage.order}. {stage.label}
+                          </div>
+                          <div className="mt-0.5 text-[10px] font-semibold text-[#7b6f8d]">
+                            {stage.required ? "Required" : "Optional"}
+                          </div>
+                        </div>
+                        <span className={isReady ? "rounded-full bg-[#dcfce7] px-2 py-1 text-[9px] font-black uppercase text-[#166534]" : "rounded-full bg-white px-2 py-1 text-[9px] font-black uppercase text-[#6b5c7f]"}>
+                          {statusText}
+                        </span>
+                      </div>
+                    </div>
+                  );
+                })
+              ) : (
+                <div className="bsu-empty-card">
+                  {projectWorkflowLoading ? "Workflow loading..." : "Workflow stages not loaded."}
+                </div>
+              )}
+            </div>
+          </div>
+
           <div className="bsu-assets-section">
             <div className="bsu-assets-head">
               <div>
