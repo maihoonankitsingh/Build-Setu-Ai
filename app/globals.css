@@ -10116,3 +10116,80 @@ body * {
 .bsu-send-btn {
   transform: translateY(2px) !important;
 }
+
+/* BUILDSETU_PROJECT_CHAT_SECTION_EXPAND_BOTTOM_FILL_V1
+   Expand the main project chat section to fill the bottom blank area above composer. */
+.bsu-pw-shell {
+  height: calc(100dvh - 92px) !important;
+  min-height: calc(100dvh - 92px) !important;
+  max-height: calc(100dvh - 92px) !important;
+  overflow: hidden !important;
+}
+
+.bsu-pw-layout {
+  height: 100% !important;
+  min-height: 0 !important;
+  max-height: 100% !important;
+  align-items: stretch !important;
+  overflow: hidden !important;
+}
+
+.bsu-chat-panel {
+  height: 100% !important;
+  min-height: 0 !important;
+  max-height: 100% !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
+  background: #ffffff !important;
+}
+
+.bsu-chat-header {
+  flex: 0 0 auto !important;
+}
+
+.bsu-chat-stream {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  padding-bottom: 18px !important;
+  background: #ffffff !important;
+}
+
+.bsu-chat-composer {
+  flex: 0 0 auto !important;
+  margin-top: 0 !important;
+  padding-top: 10px !important;
+  padding-bottom: 6px !important;
+  background: #ffffff !important;
+  border-top: 1px solid #eee7f7 !important;
+}
+
+.bsu-chat-note {
+  flex: 0 0 auto !important;
+  font-size: 8px !important;
+  line-height: 1 !important;
+  padding-top: 0 !important;
+  padding-bottom: 1px !important;
+  margin: 0 !important;
+  opacity: 0.65 !important;
+  background: #ffffff !important;
+}
+
+.bsu-assets-panel {
+  height: 100% !important;
+  max-height: 100% !important;
+  min-height: 0 !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+}
+
+@media (max-height: 760px) {
+  .bsu-pw-shell {
+    height: calc(100dvh - 82px) !important;
+    min-height: calc(100dvh - 82px) !important;
+    max-height: calc(100dvh - 82px) !important;
+  }
+}
