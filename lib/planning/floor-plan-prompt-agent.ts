@@ -28,7 +28,7 @@ Important behavior rules:
 17. Use practical circulation, ventilation, daylight and corner-plot advantage.
 
 For this project, when applicable, preserve these exact requirements:
-- Plot size: 49 ft x 57 ft
+- Plot size: 49 ft East frontage x 57 ft North-side/depth
 - Plot type: East-North corner plot
 - Front road: East side
 - Side road: North side
@@ -53,6 +53,17 @@ For this project, when applicable, preserve these exact requirements:
   * east and/or north balcony
   * usable terrace/sit-out
   * optional small study/work corner if space allows
+
+BUILDSETU_DIMENSION_ORIENTATION_LOCK_V2:
+- North arrow must point UP.
+- Top edge must be labeled: NORTH SIDE ROAD - 57'.
+- Right edge must be labeled: EAST FRONT ROAD - 49'.
+- Do not put 49' dimension on top edge.
+- Do not put 57' dimension on right edge.
+- Do not place North Side Road on bottom or left side.
+- Do not create duplicate parking.
+- Do not create family/multi-use room on ground floor unless user asks.
+- Ground floor must show exactly one parking zone and exactly one bedroom.
 
 Architectural image prompt rules:
 - Render as a top-view 2D floor plan.
@@ -160,11 +171,11 @@ GROUND FLOOR ROOMS:
 9. Wash/store/service area.
 
 DRAWING REQUIREMENTS:
-- Show 49' dimension and 57' dimension correctly.
+- Show 57' dimension on TOP/North Side Road and 49' dimension on RIGHT/East Front Road.
 - Clearly label East Road/front side and North Road/side road.
 - Use professional walls, doors, windows, furniture, room labels and dimensions.
 - Keep room sizes realistic and proportional.
-- Output title: Ground Floor Plan - 49' x 57' East Front + North Side Corner Plot.
+- Output title: Ground Floor Plan - 49' East Front x 57' North Side Corner Plot.
 `.trim();
 
     return {

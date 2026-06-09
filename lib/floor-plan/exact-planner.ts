@@ -228,7 +228,7 @@ function build49x57EastNorthGroundFloorPlan(req: ExactPlanRequest): ExactPlan {
 
   return {
     title: "GROUND FLOOR PLAN",
-    subtitle: "49' x 57' EAST FRONT + NORTH SIDE CORNER PLOT",
+    subtitle: "49' EAST FRONT x 57' NORTH SIDE CORNER PLOT",
     widthFt: 49,
     depthFt: 57,
     facing: "east",

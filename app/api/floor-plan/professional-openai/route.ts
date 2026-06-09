@@ -84,6 +84,17 @@ function buildPremiumOpenAiFloorPlanPrompt(args: {
   const strictCornerNotes = is49x57EastNorth
     ? `
 49x57 EAST-NORTH CORNER PLOT HARD LOCK:
+BUILDSETU_DIMENSION_ORIENTATION_LOCK_V2:
+- North arrow must point UP.
+- Top edge must be labeled: NORTH SIDE ROAD - 57'.
+- Right edge must be labeled: EAST FRONT ROAD - 49'.
+- Do not put 49' dimension on top edge.
+- Do not put 57' dimension on right edge.
+- Do not place North Side Road on bottom or left side.
+- Do not create duplicate parking.
+- Do not create family/multi-use room on ground floor unless user asks.
+- Ground floor must show exactly one parking zone and exactly one bedroom.
+
 - This is NOT a North-facing house.
 - East side is the front road/main entry side.
 - North side is only the side road.
