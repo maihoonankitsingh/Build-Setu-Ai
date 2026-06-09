@@ -250,6 +250,84 @@ export async function POST(req: NextRequest) {
       plan: lockedPlan,
     });
 
+    // BUILDSETU_EXACT_SVG_FLOORPLAN_SOURCE_OF_TRUTH_V1
+    // Technical floor plans must not depend on generative image text/label accuracy.
+    // OpenAI image models can beautify, but they can still invent dimensions, titles, room counts.
+    // Default renderer is exact SVG. Set BUILDSETU_FLOOR_PLAN_RENDERER=openai only for experiments.
+    const forceExactSvgRenderer =
+      String(process.env.BUILDSETU_FLOOR_PLAN_RENDERER || "exact_svg").toLowerCase() !== "openai";
+
+    if (forceExactSvgRenderer) {
+      const exact = await generateBuildSetuFloorPlanSvgFallback({
+        projectId,
+        title,
+        assetType,
+        lockedPlan,
+        prompt,
+        providerError: "OpenAI floor-plan image renderer skipped. Exact SVG source-of-truth renderer enforced.",
+      });
+
+      const exactTs = Date.now();
+      const now = new Date(exactTs).toISOString();
+
+      const asset = {
+        id: `asset_${exactTs}_floor_plan_exact_svg`,
+        projectId,
+        title,
+        label: "Floor Plan AI",
+        assetType,
+        type: assetType,
+        category: assetType,
+        toolSlug: "floor-plan-ai",
+        toolName: "Floor Plan AI",
+        imageUrl: exact.imageUrl,
+        publicUrl: exact.imageUrl,
+        url: exact.imageUrl,
+        src: exact.imageUrl,
+        file: exact.relFile,
+        provider: exact.provider,
+        source: "exact_svg_floor_plan_source_of_truth",
+        generationMode: exact.generationMode,
+        model: exact.model,
+        prompt,
+        status: "generated",
+        stageId: "floor_plan",
+        stageStatus: "draft_ready",
+        sourceOfTruthCandidate: true,
+        locked: true,
+        fallback: false,
+        createdAt: now,
+        updatedAt: now,
+      };
+
+      await appendProjectAsset(asset);
+
+      return NextResponse.json({
+        ok: true,
+        success: true,
+        fallback: false,
+        provider: exact.provider,
+        source: "exact_svg_floor_plan_source_of_truth",
+        generationMode: exact.generationMode,
+        code: "EXACT_SVG_FLOOR_PLAN_RENDERER",
+        title,
+        outputTitle: title,
+        assetType,
+        imageUrl: exact.imageUrl,
+        publicUrl: exact.imageUrl,
+        url: exact.imageUrl,
+        file: exact.relFile,
+        asset,
+        assets: [asset],
+        outputs: [asset],
+        model: exact.model,
+        widthFt: exact.widthFt,
+        depthFt: exact.depthFt,
+        facing: exact.facing,
+        roomsCount: exact.roomsCount,
+      });
+    }
+
     let generation: any = null;
     let openAiProviderError = "";
 
