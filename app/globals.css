@@ -10479,3 +10479,121 @@ body * {
     min-height: 50px !important;
   }
 }
+
+/* BUILDSETU_PROJECT_RIGHT_PANEL_ICON_FINISH_V1
+   Final semantic right panel polish:
+   replace blank header squares with real icons,
+   keep stable spacing and professional finish. */
+
+.bsu-assets-section.bsu-workflow-section,
+.bsu-assets-section.bsu-files-section,
+.bsu-assets-section.bsu-images-section {
+  background: linear-gradient(180deg, #ffffff 0%, #fefcff 100%) !important;
+  border-color: #eadff7 !important;
+  box-shadow: 0 12px 28px rgba(31, 13, 68, .045) !important;
+}
+
+.bsu-assets-section.bsu-workflow-section .bsu-assets-head h2::before,
+.bsu-assets-section.bsu-files-section .bsu-assets-head h2::before,
+.bsu-assets-section.bsu-images-section .bsu-assets-head h2::before {
+  background-color: #f1ddff !important;
+  background-repeat: no-repeat !important;
+  background-position: center !important;
+  background-size: 16px 16px !important;
+  border: 1px solid rgba(124, 58, 237, .14) !important;
+}
+
+/* Workflow icon */
+.bsu-assets-section.bsu-workflow-section .bsu-assets-head h2::before {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%237c3aed' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 3v12'/%3E%3Ccircle cx='18' cy='6' r='3'/%3E%3Cpath d='M18 9a9 9 0 0 1-9 9H6'/%3E%3Ccircle cx='6' cy='18' r='3'/%3E%3C/svg%3E") !important;
+}
+
+/* Files icon */
+.bsu-assets-section.bsu-files-section .bsu-assets-head h2::before {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%237c3aed' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z'/%3E%3C/svg%3E") !important;
+}
+
+/* Images icon */
+.bsu-assets-section.bsu-images-section .bsu-assets-head h2::before {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%237c3aed' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect width='18' height='18' x='3' y='3' rx='2'/%3E%3Ccircle cx='9' cy='9' r='2'/%3E%3Cpath d='m21 15-3.1-3.1a2 2 0 0 0-2.8 0L6 21'/%3E%3C/svg%3E") !important;
+}
+
+/* Cleaner header rhythm */
+.bsu-assets-section.bsu-workflow-section .bsu-assets-head,
+.bsu-assets-section.bsu-files-section .bsu-assets-head,
+.bsu-assets-section.bsu-images-section .bsu-assets-head {
+  margin-bottom: 11px !important;
+}
+
+.bsu-assets-section.bsu-workflow-section .bsu-assets-head h2,
+.bsu-assets-section.bsu-files-section .bsu-assets-head h2,
+.bsu-assets-section.bsu-images-section .bsu-assets-head h2 {
+  letter-spacing: .16em !important;
+}
+
+/* Action buttons final consistency */
+.bsu-assets-section.bsu-workflow-section .bsu-assets-head button,
+.bsu-assets-section.bsu-files-section .bsu-assets-head button,
+.bsu-assets-section.bsu-images-section .bsu-assets-head button {
+  width: 84px !important;
+  min-width: 84px !important;
+  max-width: 84px !important;
+  height: 36px !important;
+  min-height: 36px !important;
+  max-height: 36px !important;
+  border-radius: 15px !important;
+  font-size: 12px !important;
+  font-weight: 900 !important;
+}
+
+/* File cards final readable density */
+.bsu-files-section .bsu-file-list {
+  gap: 8px !important;
+}
+
+.bsu-files-section .bsu-file-card {
+  height: 52px !important;
+  min-height: 52px !important;
+  max-height: 52px !important;
+  border-radius: 15px !important;
+}
+
+.bsu-files-section .bsu-upload-btn {
+  height: 40px !important;
+  min-height: 40px !important;
+  max-height: 40px !important;
+  margin-top: 9px !important;
+}
+
+/* Recent image empty state plain and clean */
+.bsu-images-section .bsu-empty-card {
+  min-height: 56px !important;
+  border-radius: 15px !important;
+  background: #fbf8ff !important;
+  border: 1px dashed #e4d3fb !important;
+}
+
+/* Keep current stable viewport behavior */
+@media (max-height: 790px) {
+  .bsu-assets-section.bsu-workflow-section,
+  .bsu-assets-section.bsu-files-section,
+  .bsu-assets-section.bsu-images-section {
+    padding: 12px !important;
+  }
+
+  .bsu-files-section .bsu-file-card {
+    height: 48px !important;
+    min-height: 48px !important;
+    max-height: 48px !important;
+  }
+
+  .bsu-files-section .bsu-upload-btn {
+    height: 36px !important;
+    min-height: 36px !important;
+    max-height: 36px !important;
+  }
+
+  .bsu-images-section .bsu-empty-card {
+    min-height: 50px !important;
+  }
+}
