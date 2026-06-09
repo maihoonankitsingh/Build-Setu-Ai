@@ -10396,3 +10396,93 @@ body * {
   min-height: 215px !important;
   overflow: hidden !important;
 }
+
+/* BUILDSETU_WORKFLOW_SUMMARY_CARD_V4
+   Right sidebar workflow is a clean summary card instead of crowded stage rows. */
+.bsu-assets-section:nth-child(1) {
+  flex: 0 0 218px !important;
+  min-height: 218px !important;
+  max-height: 218px !important;
+  overflow: hidden !important;
+}
+
+.bsu-workflow-summary-card {
+  display: grid !important;
+  gap: 8px !important;
+  margin-top: 8px !important;
+}
+
+.bsu-workflow-summary-top {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 10px !important;
+  padding: 11px 12px !important;
+  border: 1px solid #eee7f7 !important;
+  border-radius: 16px !important;
+  background: linear-gradient(180deg, #ffffff, #fbf8ff) !important;
+}
+
+.bsu-workflow-summary-top span,
+.bsu-workflow-summary-line span {
+  display: block !important;
+  font-size: 9px !important;
+  line-height: 1 !important;
+  font-weight: 900 !important;
+  letter-spacing: .08em !important;
+  text-transform: uppercase !important;
+  color: #9a86ba !important;
+}
+
+.bsu-workflow-summary-top strong {
+  display: block !important;
+  margin-top: 4px !important;
+  font-size: 18px !important;
+  line-height: 1 !important;
+  font-weight: 950 !important;
+  color: #21133f !important;
+}
+
+.bsu-workflow-summary-top em {
+  flex: 0 0 auto !important;
+  border-radius: 999px !important;
+  padding: 5px 8px !important;
+  background: #dcfce7 !important;
+  color: #166534 !important;
+  font-size: 8px !important;
+  font-weight: 950 !important;
+  font-style: normal !important;
+  text-transform: uppercase !important;
+}
+
+.bsu-workflow-summary-line {
+  padding: 9px 11px !important;
+  border-radius: 13px !important;
+  background: #fbf8ff !important;
+  border: 1px solid #f0e8fb !important;
+}
+
+.bsu-workflow-summary-line strong {
+  display: block !important;
+  margin-top: 4px !important;
+  font-size: 11px !important;
+  line-height: 1.15 !important;
+  font-weight: 950 !important;
+  color: #21133f !important;
+}
+
+.bsu-workflow-summary-line.is-next {
+  background: #ffffff !important;
+}
+
+.bsu-assets-section:nth-child(2) {
+  flex: 0 0 178px !important;
+  min-height: 178px !important;
+  max-height: 178px !important;
+}
+
+.bsu-assets-section:nth-child(3),
+.bsu-assets-section:last-child {
+  flex: 1 1 auto !important;
+  min-height: 238px !important;
+}

@@ -9504,36 +9504,50 @@ function buildToolHrefWithActiveProject(slug: string, projectId?: string) {
               <p className="bsu-assets-error">{projectWorkflowError}</p>
             ) : null}
 
-            <div className="mt-2 grid gap-1.5">
-              {projectWorkflowStages.length > 0 ? (
-                projectWorkflowStages.map((stage) => {
-                  const statusText = String(stage.status || "not_started").replace(/_/g, " ");
-                  const isReady = ["draft_ready", "approved", "complete", "completed"].includes(String(stage.status || "").toLowerCase());
+              {/* BUILDSETU_WORKFLOW_SUMMARY_CARD_V4 */}
+              <div className="bsu-workflow-summary-card">
+                {projectWorkflowStages.length > 0 ? (() => {
+                  const readyStages = projectWorkflowStages.filter((stage) =>
+                    ["draft_ready", "approved", "complete", "completed"].includes(String(stage.status || "").toLowerCase())
+                  );
+                  const currentStage =
+                    projectWorkflowStages.find((stage) => String(stage.status || "").toLowerCase() === "draft_ready") ||
+                    projectWorkflowStages.find((stage) => !["approved", "complete", "completed"].includes(String(stage.status || "").toLowerCase())) ||
+                    projectWorkflowStages[0];
+                  const nextStage =
+                    projectWorkflowStages.find((stage) => Number(stage.order || 0) > Number(currentStage?.order || 0)) ||
+                    null;
+                  const currentStatus = String(currentStage?.status || "not_started").replace(/_/g, " ");
 
                   return (
-                    <div key={stage.id} className="rounded-xl border border-[#eee7f7] bg-[#fbf8ff] px-3 py-2">
-                      <div className="flex items-center justify-between gap-2">
-                        <div className="min-w-0">
-                          <div className="truncate text-[11px] font-black text-[#2b164f]">
-                            {stage.order}. {stage.label}
-                          </div>
-                          <div className="mt-0.5 text-[10px] font-semibold text-[#7b6f8d]">
-                            {stage.required ? "Required" : "Optional"}
-                          </div>
+                    <>
+                      <div className="bsu-workflow-summary-top">
+                        <div>
+                          <span>Stage progress</span>
+                          <strong>{readyStages.length}/{projectWorkflowStages.length}</strong>
                         </div>
-                        <span className={isReady ? "rounded-full bg-[#dcfce7] px-2 py-1 text-[9px] font-black uppercase text-[#166534]" : "rounded-full bg-white px-2 py-1 text-[9px] font-black uppercase text-[#6b5c7f]"}>
-                          {statusText}
-                        </span>
+                        <em>{currentStatus}</em>
                       </div>
-                    </div>
+
+                      <div className="bsu-workflow-summary-line">
+                        <span>Current</span>
+                        <strong>{currentStage?.order}. {currentStage?.label}</strong>
+                      </div>
+
+                      {nextStage ? (
+                        <div className="bsu-workflow-summary-line is-next">
+                          <span>Next</span>
+                          <strong>{nextStage.order}. {nextStage.label}</strong>
+                        </div>
+                      ) : null}
+                    </>
                   );
-                })
-              ) : (
-                <div className="bsu-empty-card">
-                  {projectWorkflowLoading ? "Workflow loading..." : "Workflow stages not loaded."}
-                </div>
-              )}
-            </div>
+                })() : (
+                  <div className="bsu-empty-card">
+                    {projectWorkflowLoading ? "Workflow loading..." : "Workflow stages not loaded."}
+                  </div>
+                )}
+              </div>
           </div>
 
           <div className="bsu-assets-section">
