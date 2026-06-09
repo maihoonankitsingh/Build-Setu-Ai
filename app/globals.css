@@ -9966,3 +9966,77 @@ body * {
     max-height: calc(100dvh - 88px) !important;
   }
 }
+
+/* BUILDSETU_PROJECT_CHAT_CONTENT_FIT_GAP_FIX_V1
+   The chat stream should not stretch into a large blank white area when messages are short.
+   Keep right workflow panel scrollable and keep composer directly after chat content. */
+@supports selector(body:has(.bsu-pw-shell)) {
+  html:has(.bsu-pw-shell),
+  body:has(.bsu-pw-shell) {
+    height: auto !important;
+    min-height: 100% !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+  }
+}
+
+.bsu-pw-shell {
+  height: auto !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  overflow: visible !important;
+  background: transparent !important;
+}
+
+.bsu-pw-layout {
+  height: auto !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  align-items: flex-start !important;
+  overflow: visible !important;
+}
+
+.bsu-chat-panel {
+  height: auto !important;
+  min-height: 0 !important;
+  max-height: calc(100dvh - 96px) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
+  background: #ffffff !important;
+}
+
+.bsu-chat-header {
+  flex: 0 0 auto !important;
+}
+
+.bsu-chat-stream {
+  flex: 0 1 auto !important;
+  min-height: 0 !important;
+  max-height: calc(100dvh - 276px) !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  padding-bottom: 8px !important;
+  background: #ffffff !important;
+}
+
+.bsu-chat-composer {
+  flex: 0 0 auto !important;
+  position: relative !important;
+  margin-top: 10px !important;
+  background: #ffffff !important;
+  border-top: 1px solid #eee7f7 !important;
+  box-shadow: none !important;
+}
+
+.bsu-chat-note {
+  flex: 0 0 auto !important;
+  background: #ffffff !important;
+}
+
+.bsu-assets-panel {
+  height: auto !important;
+  max-height: calc(100dvh - 96px) !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+}
