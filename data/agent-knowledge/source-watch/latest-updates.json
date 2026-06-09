@@ -1,325 +1,313 @@
 {
   "schema": "buildsetu-source-watch-live-inbox-v1",
-  "generatedAt": "2026-06-09T06:53:35.155Z",
+  "generatedAt": "2026-06-09T12:51:44.655Z",
   "purpose": "Agent-readable source update awareness inbox. This is not trusted knowledge.",
   "summary": {
     "sourceCount": 48,
-    "latestCheckedAt": "2026-06-09T06:47:47.542Z",
-    "pendingSourceUpdateDrafts": 36,
+    "latestCheckedAt": "2026-06-09T12:47:17.698Z",
+    "pendingSourceUpdateDrafts": 50,
     "latestChangedSources": 36,
-    "latestFailedSources": 9
+    "latestFailedSources": 7
   },
   "latestReport": {
-    "file": "data/buildsetu-source-watch/changes/source-watch-report-20260609_064839.json",
-    "checkedAt": "2026-06-09T06:47:01.863Z",
+    "file": "data/buildsetu-source-watch/changes/source-watch-report-20260609_124810.json",
+    "checkedAt": "2026-06-09T12:47:01.407Z",
     "ok": true,
     "total": 48,
     "changedCount": 36,
-    "unchangedCount": 2,
-    "failedCount": 9,
+    "unchangedCount": 3,
+    "failedCount": 7,
     "changed": [
       {
         "id": "india-andaman-nicobar-islands-approval-authority-index",
         "title": "Andaman and Nicobar Islands approval authority and building bye-laws index candidate",
         "url": "https://igod.gov.in/sg/states",
         "reason": "content_hash_changed",
-        "draftId": "draft_20260609_064742_sourceupdate_india-andaman-nicobar-islands-approval-authority-index_fc1572d2",
-        "draftFile": "/var/www/build.sikhadenge.in/sikhadenge-build/data/buildsetu-research/drafts/draft_20260609_064742_sourceupdate_india-andaman-nicobar-islands-approval-authority-index_fc1572d2_india-andaman-nicobar-islands-approval-authority-index.json"
+        "draftId": "draft_20260609_124712_sourceupdate_india-andaman-nicobar-islands-approval-authority-index_34068103",
+        "draftFile": "/var/www/build.sikhadenge.in/sikhadenge-build/data/buildsetu-research/drafts/draft_20260609_124712_sourceupdate_india-andaman-nicobar-islands-approval-authority-index_34068103_india-andaman-nicobar-islands-approval-authority-index.json"
       },
       {
         "id": "india-andhra-pradesh-approval-authority-index",
         "title": "Andhra Pradesh approval authority and building bye-laws index candidate",
         "url": "https://igod.gov.in/sg/states",
         "reason": "content_hash_changed",
-        "draftId": "draft_20260609_064742_sourceupdate_india-andhra-pradesh-approval-authority-index_df0aa7b7",
-        "draftFile": "/var/www/build.sikhadenge.in/sikhadenge-build/data/buildsetu-research/drafts/draft_20260609_064742_sourceupdate_india-andhra-pradesh-approval-authority-index_df0aa7b7_india-andhra-pradesh-approval-authority-index.json"
+        "draftId": "draft_20260609_124712_sourceupdate_india-andhra-pradesh-approval-authority-index_b0544ea1",
+        "draftFile": "/var/www/build.sikhadenge.in/sikhadenge-build/data/buildsetu-research/drafts/draft_20260609_124712_sourceupdate_india-andhra-pradesh-approval-authority-index_b0544ea1_india-andhra-pradesh-approval-authority-index.json"
       },
       {
         "id": "india-arunachal-pradesh-approval-authority-index",
         "title": "Arunachal Pradesh approval authority and building bye-laws index candidate",
         "url": "https://igod.gov.in/sg/states",
         "reason": "content_hash_changed",
-        "draftId": "draft_20260609_064742_sourceupdate_india-arunachal-pradesh-approval-authority-index_fb41756b",
-        "draftFile": "/var/www/build.sikhadenge.in/sikhadenge-build/data/buildsetu-research/drafts/draft_20260609_064742_sourceupdate_india-arunachal-pradesh-approval-authority-index_fb41756b_india-arunachal-pradesh-approval-authority-index.json"
+        "draftId": "draft_20260609_124712_sourceupdate_india-arunachal-pradesh-approval-authority-index_685d6006",
+        "draftFile": "/var/www/build.sikhadenge.in/sikhadenge-build/data/buildsetu-research/drafts/draft_20260609_124712_sourceupdate_india-arunachal-pradesh-approval-authority-index_685d6006_india-arunachal-pradesh-approval-authority-index.json"
       },
       {
         "id": "india-assam-approval-authority-index",
         "title": "Assam approval authority and building bye-laws index candidate",
         "url": "https://igod.gov.in/sg/states",
         "reason": "content_hash_changed",
-        "draftId": "draft_20260609_064743_sourceupdate_india-assam-approval-authority-index_ba58fcdf",
-        "draftFile": "/var/www/build.sikhadenge.in/sikhadenge-build/data/buildsetu-research/drafts/draft_20260609_064743_sourceupdate_india-assam-approval-authority-index_ba58fcdf_india-assam-approval-authority-index.json"
+        "draftId": "draft_20260609_124712_sourceupdate_india-assam-approval-authority-index_f1a5d3dd",
+        "draftFile": "/var/www/build.sikhadenge.in/sikhadenge-build/data/buildsetu-research/drafts/draft_20260609_124712_sourceupdate_india-assam-approval-authority-index_f1a5d3dd_india-assam-approval-authority-index.json"
       },
       {
         "id": "india-bihar-approval-authority-index",
         "title": "Bihar approval authority and building bye-laws index candidate",
         "url": "https://igod.gov.in/sg/states",
         "reason": "content_hash_changed",
-        "draftId": "draft_20260609_064743_sourceupdate_india-bihar-approval-authority-index_5a3e7928",
-        "draftFile": "/var/www/build.sikhadenge.in/sikhadenge-build/data/buildsetu-research/drafts/draft_20260609_064743_sourceupdate_india-bihar-approval-authority-index_5a3e7928_india-bihar-approval-authority-index.json"
+        "draftId": "draft_20260609_124712_sourceupdate_india-bihar-approval-authority-index_80088e6e",
+        "draftFile": "/var/www/build.sikhadenge.in/sikhadenge-build/data/buildsetu-research/drafts/draft_20260609_124712_sourceupdate_india-bihar-approval-authority-index_80088e6e_india-bihar-approval-authority-index.json"
       },
       {
         "id": "india-chandigarh-approval-authority-index",
         "title": "Chandigarh approval authority and building bye-laws index candidate",
         "url": "https://igod.gov.in/sg/states",
         "reason": "content_hash_changed",
-        "draftId": "draft_20260609_064743_sourceupdate_india-chandigarh-approval-authority-index_f8fa830a",
-        "draftFile": "/var/www/build.sikhadenge.in/sikhadenge-build/data/buildsetu-research/drafts/draft_20260609_064743_sourceupdate_india-chandigarh-approval-authority-index_f8fa830a_india-chandigarh-approval-authority-index.json"
+        "draftId": "draft_20260609_124712_sourceupdate_india-chandigarh-approval-authority-index_93feba96",
+        "draftFile": "/var/www/build.sikhadenge.in/sikhadenge-build/data/buildsetu-research/drafts/draft_20260609_124712_sourceupdate_india-chandigarh-approval-authority-index_93feba96_india-chandigarh-approval-authority-index.json"
       },
       {
         "id": "india-chhattisgarh-approval-authority-index",
         "title": "Chhattisgarh approval authority and building bye-laws index candidate",
         "url": "https://igod.gov.in/sg/states",
         "reason": "content_hash_changed",
-        "draftId": "draft_20260609_064743_sourceupdate_india-chhattisgarh-approval-authority-index_89a2f5df",
-        "draftFile": "/var/www/build.sikhadenge.in/sikhadenge-build/data/buildsetu-research/drafts/draft_20260609_064743_sourceupdate_india-chhattisgarh-approval-authority-index_89a2f5df_india-chhattisgarh-approval-authority-index.json"
+        "draftId": "draft_20260609_124713_sourceupdate_india-chhattisgarh-approval-authority-index_a17cdb79",
+        "draftFile": "/var/www/build.sikhadenge.in/sikhadenge-build/data/buildsetu-research/drafts/draft_20260609_124713_sourceupdate_india-chhattisgarh-approval-authority-index_a17cdb79_india-chhattisgarh-approval-authority-index.json"
       },
       {
         "id": "india-dadra-nagar-haveli-daman-diu-approval-authority-index",
         "title": "Dadra and Nagar Haveli and Daman and Diu approval authority and building bye-laws index candidate",
         "url": "https://igod.gov.in/sg/states",
         "reason": "content_hash_changed",
-        "draftId": "draft_20260609_064743_sourceupdate_india-dadra-nagar-haveli-daman-diu-approval-authority-index_09ad260d",
-        "draftFile": "/var/www/build.sikhadenge.in/sikhadenge-build/data/buildsetu-research/drafts/draft_20260609_064743_sourceupdate_india-dadra-nagar-haveli-daman-diu-approval-authority-index_09ad260d_india-dadra-nagar-haveli-daman-diu-approval-authority-index.json"
+        "draftId": "draft_20260609_124713_sourceupdate_india-dadra-nagar-haveli-daman-diu-approval-authority-index_869228aa",
+        "draftFile": "/var/www/build.sikhadenge.in/sikhadenge-build/data/buildsetu-research/drafts/draft_20260609_124713_sourceupdate_india-dadra-nagar-haveli-daman-diu-approval-authority-index_869228aa_india-dadra-nagar-haveli-daman-diu-approval-authority-index.json"
       },
       {
         "id": "india-delhi-approval-authority-index",
         "title": "Delhi approval authority and building bye-laws index candidate",
         "url": "https://igod.gov.in/sg/states",
         "reason": "content_hash_changed",
-        "draftId": "draft_20260609_064743_sourceupdate_india-delhi-approval-authority-index_7edfef8f",
-        "draftFile": "/var/www/build.sikhadenge.in/sikhadenge-build/data/buildsetu-research/drafts/draft_20260609_064743_sourceupdate_india-delhi-approval-authority-index_7edfef8f_india-delhi-approval-authority-index.json"
+        "draftId": "draft_20260609_124713_sourceupdate_india-delhi-approval-authority-index_a17a1d32",
+        "draftFile": "/var/www/build.sikhadenge.in/sikhadenge-build/data/buildsetu-research/drafts/draft_20260609_124713_sourceupdate_india-delhi-approval-authority-index_a17a1d32_india-delhi-approval-authority-index.json"
       },
       {
         "id": "india-goa-approval-authority-index",
         "title": "Goa approval authority and building bye-laws index candidate",
         "url": "https://igod.gov.in/sg/states",
         "reason": "content_hash_changed",
-        "draftId": "draft_20260609_064743_sourceupdate_india-goa-approval-authority-index_254c9cff",
-        "draftFile": "/var/www/build.sikhadenge.in/sikhadenge-build/data/buildsetu-research/drafts/draft_20260609_064743_sourceupdate_india-goa-approval-authority-index_254c9cff_india-goa-approval-authority-index.json"
+        "draftId": "draft_20260609_124713_sourceupdate_india-goa-approval-authority-index_9d01438f",
+        "draftFile": "/var/www/build.sikhadenge.in/sikhadenge-build/data/buildsetu-research/drafts/draft_20260609_124713_sourceupdate_india-goa-approval-authority-index_9d01438f_india-goa-approval-authority-index.json"
       },
       {
         "id": "india-gujarat-approval-authority-index",
         "title": "Gujarat approval authority and building bye-laws index candidate",
         "url": "https://igod.gov.in/sg/states",
         "reason": "content_hash_changed",
-        "draftId": "draft_20260609_064743_sourceupdate_india-gujarat-approval-authority-index_254f8a3e",
-        "draftFile": "/var/www/build.sikhadenge.in/sikhadenge-build/data/buildsetu-research/drafts/draft_20260609_064743_sourceupdate_india-gujarat-approval-authority-index_254f8a3e_india-gujarat-approval-authority-index.json"
+        "draftId": "draft_20260609_124713_sourceupdate_india-gujarat-approval-authority-index_0c831ecd",
+        "draftFile": "/var/www/build.sikhadenge.in/sikhadenge-build/data/buildsetu-research/drafts/draft_20260609_124713_sourceupdate_india-gujarat-approval-authority-index_0c831ecd_india-gujarat-approval-authority-index.json"
       },
       {
         "id": "india-haryana-approval-authority-index",
         "title": "Haryana approval authority and building bye-laws index candidate",
         "url": "https://igod.gov.in/sg/states",
         "reason": "content_hash_changed",
-        "draftId": "draft_20260609_064744_sourceupdate_india-haryana-approval-authority-index_78ad3d0e",
-        "draftFile": "/var/www/build.sikhadenge.in/sikhadenge-build/data/buildsetu-research/drafts/draft_20260609_064744_sourceupdate_india-haryana-approval-authority-index_78ad3d0e_india-haryana-approval-authority-index.json"
+        "draftId": "draft_20260609_124713_sourceupdate_india-haryana-approval-authority-index_bf8ebcf2",
+        "draftFile": "/var/www/build.sikhadenge.in/sikhadenge-build/data/buildsetu-research/drafts/draft_20260609_124713_sourceupdate_india-haryana-approval-authority-index_bf8ebcf2_india-haryana-approval-authority-index.json"
       },
       {
         "id": "india-himachal-pradesh-approval-authority-index",
         "title": "Himachal Pradesh approval authority and building bye-laws index candidate",
         "url": "https://igod.gov.in/sg/states",
         "reason": "content_hash_changed",
-        "draftId": "draft_20260609_064744_sourceupdate_india-himachal-pradesh-approval-authority-index_a6c138d0",
-        "draftFile": "/var/www/build.sikhadenge.in/sikhadenge-build/data/buildsetu-research/drafts/draft_20260609_064744_sourceupdate_india-himachal-pradesh-approval-authority-index_a6c138d0_india-himachal-pradesh-approval-authority-index.json"
+        "draftId": "draft_20260609_124714_sourceupdate_india-himachal-pradesh-approval-authority-index_2263aeab",
+        "draftFile": "/var/www/build.sikhadenge.in/sikhadenge-build/data/buildsetu-research/drafts/draft_20260609_124714_sourceupdate_india-himachal-pradesh-approval-authority-index_2263aeab_india-himachal-pradesh-approval-authority-index.json"
       },
       {
         "id": "india-jammu-kashmir-approval-authority-index",
         "title": "Jammu and Kashmir approval authority and building bye-laws index candidate",
         "url": "https://igod.gov.in/sg/states",
         "reason": "content_hash_changed",
-        "draftId": "draft_20260609_064744_sourceupdate_india-jammu-kashmir-approval-authority-index_fcb904a1",
-        "draftFile": "/var/www/build.sikhadenge.in/sikhadenge-build/data/buildsetu-research/drafts/draft_20260609_064744_sourceupdate_india-jammu-kashmir-approval-authority-index_fcb904a1_india-jammu-kashmir-approval-authority-index.json"
+        "draftId": "draft_20260609_124714_sourceupdate_india-jammu-kashmir-approval-authority-index_b716bef7",
+        "draftFile": "/var/www/build.sikhadenge.in/sikhadenge-build/data/buildsetu-research/drafts/draft_20260609_124714_sourceupdate_india-jammu-kashmir-approval-authority-index_b716bef7_india-jammu-kashmir-approval-authority-index.json"
       },
       {
         "id": "india-jharkhand-approval-authority-index",
         "title": "Jharkhand approval authority and building bye-laws index candidate",
         "url": "https://igod.gov.in/sg/states",
         "reason": "content_hash_changed",
-        "draftId": "draft_20260609_064744_sourceupdate_india-jharkhand-approval-authority-index_7b22b0f6",
-        "draftFile": "/var/www/build.sikhadenge.in/sikhadenge-build/data/buildsetu-research/drafts/draft_20260609_064744_sourceupdate_india-jharkhand-approval-authority-index_7b22b0f6_india-jharkhand-approval-authority-index.json"
+        "draftId": "draft_20260609_124714_sourceupdate_india-jharkhand-approval-authority-index_7837c763",
+        "draftFile": "/var/www/build.sikhadenge.in/sikhadenge-build/data/buildsetu-research/drafts/draft_20260609_124714_sourceupdate_india-jharkhand-approval-authority-index_7837c763_india-jharkhand-approval-authority-index.json"
       },
       {
         "id": "india-karnataka-approval-authority-index",
         "title": "Karnataka approval authority and building bye-laws index candidate",
         "url": "https://igod.gov.in/sg/states",
         "reason": "content_hash_changed",
-        "draftId": "draft_20260609_064744_sourceupdate_india-karnataka-approval-authority-index_adb7c055",
-        "draftFile": "/var/www/build.sikhadenge.in/sikhadenge-build/data/buildsetu-research/drafts/draft_20260609_064744_sourceupdate_india-karnataka-approval-authority-index_adb7c055_india-karnataka-approval-authority-index.json"
+        "draftId": "draft_20260609_124714_sourceupdate_india-karnataka-approval-authority-index_42f16a6a",
+        "draftFile": "/var/www/build.sikhadenge.in/sikhadenge-build/data/buildsetu-research/drafts/draft_20260609_124714_sourceupdate_india-karnataka-approval-authority-index_42f16a6a_india-karnataka-approval-authority-index.json"
       },
       {
         "id": "india-kerala-approval-authority-index",
         "title": "Kerala approval authority and building bye-laws index candidate",
         "url": "https://igod.gov.in/sg/states",
         "reason": "content_hash_changed",
-        "draftId": "draft_20260609_064744_sourceupdate_india-kerala-approval-authority-index_6985c426",
-        "draftFile": "/var/www/build.sikhadenge.in/sikhadenge-build/data/buildsetu-research/drafts/draft_20260609_064744_sourceupdate_india-kerala-approval-authority-index_6985c426_india-kerala-approval-authority-index.json"
+        "draftId": "draft_20260609_124714_sourceupdate_india-kerala-approval-authority-index_70e27381",
+        "draftFile": "/var/www/build.sikhadenge.in/sikhadenge-build/data/buildsetu-research/drafts/draft_20260609_124714_sourceupdate_india-kerala-approval-authority-index_70e27381_india-kerala-approval-authority-index.json"
       },
       {
         "id": "india-ladakh-approval-authority-index",
         "title": "Ladakh approval authority and building bye-laws index candidate",
         "url": "https://igod.gov.in/sg/states",
         "reason": "content_hash_changed",
-        "draftId": "draft_20260609_064744_sourceupdate_india-ladakh-approval-authority-index_9140e3e4",
-        "draftFile": "/var/www/build.sikhadenge.in/sikhadenge-build/data/buildsetu-research/drafts/draft_20260609_064744_sourceupdate_india-ladakh-approval-authority-index_9140e3e4_india-ladakh-approval-authority-index.json"
+        "draftId": "draft_20260609_124714_sourceupdate_india-ladakh-approval-authority-index_c9020a48",
+        "draftFile": "/var/www/build.sikhadenge.in/sikhadenge-build/data/buildsetu-research/drafts/draft_20260609_124714_sourceupdate_india-ladakh-approval-authority-index_c9020a48_india-ladakh-approval-authority-index.json"
       },
       {
         "id": "india-lakshadweep-approval-authority-index",
         "title": "Lakshadweep approval authority and building bye-laws index candidate",
         "url": "https://igod.gov.in/sg/states",
         "reason": "content_hash_changed",
-        "draftId": "draft_20260609_064745_sourceupdate_india-lakshadweep-approval-authority-index_a5bfa7f9",
-        "draftFile": "/var/www/build.sikhadenge.in/sikhadenge-build/data/buildsetu-research/drafts/draft_20260609_064745_sourceupdate_india-lakshadweep-approval-authority-index_a5bfa7f9_india-lakshadweep-approval-authority-index.json"
+        "draftId": "draft_20260609_124714_sourceupdate_india-lakshadweep-approval-authority-index_e675b145",
+        "draftFile": "/var/www/build.sikhadenge.in/sikhadenge-build/data/buildsetu-research/drafts/draft_20260609_124714_sourceupdate_india-lakshadweep-approval-authority-index_e675b145_india-lakshadweep-approval-authority-index.json"
       },
       {
         "id": "india-madhya-pradesh-approval-authority-index",
         "title": "Madhya Pradesh approval authority and building bye-laws index candidate",
         "url": "https://igod.gov.in/sg/states",
         "reason": "content_hash_changed",
-        "draftId": "draft_20260609_064745_sourceupdate_india-madhya-pradesh-approval-authority-index_1abb2a87",
-        "draftFile": "/var/www/build.sikhadenge.in/sikhadenge-build/data/buildsetu-research/drafts/draft_20260609_064745_sourceupdate_india-madhya-pradesh-approval-authority-index_1abb2a87_india-madhya-pradesh-approval-authority-index.json"
+        "draftId": "draft_20260609_124715_sourceupdate_india-madhya-pradesh-approval-authority-index_68a37172",
+        "draftFile": "/var/www/build.sikhadenge.in/sikhadenge-build/data/buildsetu-research/drafts/draft_20260609_124715_sourceupdate_india-madhya-pradesh-approval-authority-index_68a37172_india-madhya-pradesh-approval-authority-index.json"
       },
       {
         "id": "india-maharashtra-approval-authority-index",
         "title": "Maharashtra approval authority and building bye-laws index candidate",
         "url": "https://igod.gov.in/sg/states",
         "reason": "content_hash_changed",
-        "draftId": "draft_20260609_064745_sourceupdate_india-maharashtra-approval-authority-index_9dacf4e3",
-        "draftFile": "/var/www/build.sikhadenge.in/sikhadenge-build/data/buildsetu-research/drafts/draft_20260609_064745_sourceupdate_india-maharashtra-approval-authority-index_9dacf4e3_india-maharashtra-approval-authority-index.json"
+        "draftId": "draft_20260609_124715_sourceupdate_india-maharashtra-approval-authority-index_db4aac8a",
+        "draftFile": "/var/www/build.sikhadenge.in/sikhadenge-build/data/buildsetu-research/drafts/draft_20260609_124715_sourceupdate_india-maharashtra-approval-authority-index_db4aac8a_india-maharashtra-approval-authority-index.json"
       },
       {
         "id": "india-manipur-approval-authority-index",
         "title": "Manipur approval authority and building bye-laws index candidate",
         "url": "https://igod.gov.in/sg/states",
         "reason": "content_hash_changed",
-        "draftId": "draft_20260609_064745_sourceupdate_india-manipur-approval-authority-index_2f99eba1",
-        "draftFile": "/var/www/build.sikhadenge.in/sikhadenge-build/data/buildsetu-research/drafts/draft_20260609_064745_sourceupdate_india-manipur-approval-authority-index_2f99eba1_india-manipur-approval-authority-index.json"
+        "draftId": "draft_20260609_124715_sourceupdate_india-manipur-approval-authority-index_fb49d3bb",
+        "draftFile": "/var/www/build.sikhadenge.in/sikhadenge-build/data/buildsetu-research/drafts/draft_20260609_124715_sourceupdate_india-manipur-approval-authority-index_fb49d3bb_india-manipur-approval-authority-index.json"
       },
       {
         "id": "india-meghalaya-approval-authority-index",
         "title": "Meghalaya approval authority and building bye-laws index candidate",
         "url": "https://igod.gov.in/sg/states",
         "reason": "content_hash_changed",
-        "draftId": "draft_20260609_064745_sourceupdate_india-meghalaya-approval-authority-index_b21f4d4a",
-        "draftFile": "/var/www/build.sikhadenge.in/sikhadenge-build/data/buildsetu-research/drafts/draft_20260609_064745_sourceupdate_india-meghalaya-approval-authority-index_b21f4d4a_india-meghalaya-approval-authority-index.json"
+        "draftId": "draft_20260609_124715_sourceupdate_india-meghalaya-approval-authority-index_c4605c08",
+        "draftFile": "/var/www/build.sikhadenge.in/sikhadenge-build/data/buildsetu-research/drafts/draft_20260609_124715_sourceupdate_india-meghalaya-approval-authority-index_c4605c08_india-meghalaya-approval-authority-index.json"
       },
       {
         "id": "india-mizoram-approval-authority-index",
         "title": "Mizoram approval authority and building bye-laws index candidate",
         "url": "https://igod.gov.in/sg/states",
         "reason": "content_hash_changed",
-        "draftId": "draft_20260609_064745_sourceupdate_india-mizoram-approval-authority-index_02e128ec",
-        "draftFile": "/var/www/build.sikhadenge.in/sikhadenge-build/data/buildsetu-research/drafts/draft_20260609_064745_sourceupdate_india-mizoram-approval-authority-index_02e128ec_india-mizoram-approval-authority-index.json"
+        "draftId": "draft_20260609_124715_sourceupdate_india-mizoram-approval-authority-index_4cdf6814",
+        "draftFile": "/var/www/build.sikhadenge.in/sikhadenge-build/data/buildsetu-research/drafts/draft_20260609_124715_sourceupdate_india-mizoram-approval-authority-index_4cdf6814_india-mizoram-approval-authority-index.json"
       },
       {
         "id": "india-nagaland-approval-authority-index",
         "title": "Nagaland approval authority and building bye-laws index candidate",
         "url": "https://igod.gov.in/sg/states",
         "reason": "content_hash_changed",
-        "draftId": "draft_20260609_064745_sourceupdate_india-nagaland-approval-authority-index_5dc79c04",
-        "draftFile": "/var/www/build.sikhadenge.in/sikhadenge-build/data/buildsetu-research/drafts/draft_20260609_064745_sourceupdate_india-nagaland-approval-authority-index_5dc79c04_india-nagaland-approval-authority-index.json"
+        "draftId": "draft_20260609_124715_sourceupdate_india-nagaland-approval-authority-index_d9d8f744",
+        "draftFile": "/var/www/build.sikhadenge.in/sikhadenge-build/data/buildsetu-research/drafts/draft_20260609_124715_sourceupdate_india-nagaland-approval-authority-index_d9d8f744_india-nagaland-approval-authority-index.json"
       },
       {
         "id": "india-odisha-approval-authority-index",
         "title": "Odisha approval authority and building bye-laws index candidate",
         "url": "https://igod.gov.in/sg/states",
         "reason": "content_hash_changed",
-        "draftId": "draft_20260609_064745_sourceupdate_india-odisha-approval-authority-index_27cb25aa",
-        "draftFile": "/var/www/build.sikhadenge.in/sikhadenge-build/data/buildsetu-research/drafts/draft_20260609_064745_sourceupdate_india-odisha-approval-authority-index_27cb25aa_india-odisha-approval-authority-index.json"
+        "draftId": "draft_20260609_124715_sourceupdate_india-odisha-approval-authority-index_1a9d872b",
+        "draftFile": "/var/www/build.sikhadenge.in/sikhadenge-build/data/buildsetu-research/drafts/draft_20260609_124715_sourceupdate_india-odisha-approval-authority-index_1a9d872b_india-odisha-approval-authority-index.json"
       },
       {
         "id": "india-puducherry-approval-authority-index",
         "title": "Puducherry approval authority and building bye-laws index candidate",
         "url": "https://igod.gov.in/sg/states",
         "reason": "content_hash_changed",
-        "draftId": "draft_20260609_064746_sourceupdate_india-puducherry-approval-authority-index_7e0497cd",
-        "draftFile": "/var/www/build.sikhadenge.in/sikhadenge-build/data/buildsetu-research/drafts/draft_20260609_064746_sourceupdate_india-puducherry-approval-authority-index_7e0497cd_india-puducherry-approval-authority-index.json"
+        "draftId": "draft_20260609_124716_sourceupdate_india-puducherry-approval-authority-index_5569759f",
+        "draftFile": "/var/www/build.sikhadenge.in/sikhadenge-build/data/buildsetu-research/drafts/draft_20260609_124716_sourceupdate_india-puducherry-approval-authority-index_5569759f_india-puducherry-approval-authority-index.json"
       },
       {
         "id": "india-punjab-approval-authority-index",
         "title": "Punjab approval authority and building bye-laws index candidate",
         "url": "https://igod.gov.in/sg/states",
         "reason": "content_hash_changed",
-        "draftId": "draft_20260609_064746_sourceupdate_india-punjab-approval-authority-index_ed855b14",
-        "draftFile": "/var/www/build.sikhadenge.in/sikhadenge-build/data/buildsetu-research/drafts/draft_20260609_064746_sourceupdate_india-punjab-approval-authority-index_ed855b14_india-punjab-approval-authority-index.json"
+        "draftId": "draft_20260609_124716_sourceupdate_india-punjab-approval-authority-index_cc911ac3",
+        "draftFile": "/var/www/build.sikhadenge.in/sikhadenge-build/data/buildsetu-research/drafts/draft_20260609_124716_sourceupdate_india-punjab-approval-authority-index_cc911ac3_india-punjab-approval-authority-index.json"
       },
       {
         "id": "india-rajasthan-approval-authority-index",
         "title": "Rajasthan approval authority and building bye-laws index candidate",
         "url": "https://igod.gov.in/sg/states",
         "reason": "content_hash_changed",
-        "draftId": "draft_20260609_064746_sourceupdate_india-rajasthan-approval-authority-index_c31c3aaf",
-        "draftFile": "/var/www/build.sikhadenge.in/sikhadenge-build/data/buildsetu-research/drafts/draft_20260609_064746_sourceupdate_india-rajasthan-approval-authority-index_c31c3aaf_india-rajasthan-approval-authority-index.json"
+        "draftId": "draft_20260609_124716_sourceupdate_india-rajasthan-approval-authority-index_72fe53f5",
+        "draftFile": "/var/www/build.sikhadenge.in/sikhadenge-build/data/buildsetu-research/drafts/draft_20260609_124716_sourceupdate_india-rajasthan-approval-authority-index_72fe53f5_india-rajasthan-approval-authority-index.json"
       },
       {
         "id": "india-sikkim-approval-authority-index",
         "title": "Sikkim approval authority and building bye-laws index candidate",
         "url": "https://igod.gov.in/sg/states",
         "reason": "content_hash_changed",
-        "draftId": "draft_20260609_064746_sourceupdate_india-sikkim-approval-authority-index_4dc05f14",
-        "draftFile": "/var/www/build.sikhadenge.in/sikhadenge-build/data/buildsetu-research/drafts/draft_20260609_064746_sourceupdate_india-sikkim-approval-authority-index_4dc05f14_india-sikkim-approval-authority-index.json"
+        "draftId": "draft_20260609_124716_sourceupdate_india-sikkim-approval-authority-index_2e1db973",
+        "draftFile": "/var/www/build.sikhadenge.in/sikhadenge-build/data/buildsetu-research/drafts/draft_20260609_124716_sourceupdate_india-sikkim-approval-authority-index_2e1db973_india-sikkim-approval-authority-index.json"
       },
       {
         "id": "india-tamil-nadu-approval-authority-index",
         "title": "Tamil Nadu approval authority and building bye-laws index candidate",
         "url": "https://igod.gov.in/sg/states",
         "reason": "content_hash_changed",
-        "draftId": "draft_20260609_064746_sourceupdate_india-tamil-nadu-approval-authority-index_9f67f6fe",
-        "draftFile": "/var/www/build.sikhadenge.in/sikhadenge-build/data/buildsetu-research/drafts/draft_20260609_064746_sourceupdate_india-tamil-nadu-approval-authority-index_9f67f6fe_india-tamil-nadu-approval-authority-index.json"
+        "draftId": "draft_20260609_124716_sourceupdate_india-tamil-nadu-approval-authority-index_f7e5dd9e",
+        "draftFile": "/var/www/build.sikhadenge.in/sikhadenge-build/data/buildsetu-research/drafts/draft_20260609_124716_sourceupdate_india-tamil-nadu-approval-authority-index_f7e5dd9e_india-tamil-nadu-approval-authority-index.json"
       },
       {
         "id": "india-telangana-approval-authority-index",
         "title": "Telangana approval authority and building bye-laws index candidate",
         "url": "https://igod.gov.in/sg/states",
         "reason": "content_hash_changed",
-        "draftId": "draft_20260609_064746_sourceupdate_india-telangana-approval-authority-index_b39ea268",
-        "draftFile": "/var/www/build.sikhadenge.in/sikhadenge-build/data/buildsetu-research/drafts/draft_20260609_064746_sourceupdate_india-telangana-approval-authority-index_b39ea268_india-telangana-approval-authority-index.json"
+        "draftId": "draft_20260609_124717_sourceupdate_india-telangana-approval-authority-index_a92fe7c7",
+        "draftFile": "/var/www/build.sikhadenge.in/sikhadenge-build/data/buildsetu-research/drafts/draft_20260609_124717_sourceupdate_india-telangana-approval-authority-index_a92fe7c7_india-telangana-approval-authority-index.json"
       },
       {
         "id": "india-tripura-approval-authority-index",
         "title": "Tripura approval authority and building bye-laws index candidate",
         "url": "https://igod.gov.in/sg/states",
         "reason": "content_hash_changed",
-        "draftId": "draft_20260609_064747_sourceupdate_india-tripura-approval-authority-index_441ae2cc",
-        "draftFile": "/var/www/build.sikhadenge.in/sikhadenge-build/data/buildsetu-research/drafts/draft_20260609_064747_sourceupdate_india-tripura-approval-authority-index_441ae2cc_india-tripura-approval-authority-index.json"
+        "draftId": "draft_20260609_124717_sourceupdate_india-tripura-approval-authority-index_2322abb4",
+        "draftFile": "/var/www/build.sikhadenge.in/sikhadenge-build/data/buildsetu-research/drafts/draft_20260609_124717_sourceupdate_india-tripura-approval-authority-index_2322abb4_india-tripura-approval-authority-index.json"
       },
       {
         "id": "india-uttar-pradesh-approval-authority-index",
         "title": "Uttar Pradesh approval authority and building bye-laws index candidate",
         "url": "https://igod.gov.in/sg/states",
         "reason": "content_hash_changed",
-        "draftId": "draft_20260609_064747_sourceupdate_india-uttar-pradesh-approval-authority-index_bff782f5",
-        "draftFile": "/var/www/build.sikhadenge.in/sikhadenge-build/data/buildsetu-research/drafts/draft_20260609_064747_sourceupdate_india-uttar-pradesh-approval-authority-index_bff782f5_india-uttar-pradesh-approval-authority-index.json"
+        "draftId": "draft_20260609_124717_sourceupdate_india-uttar-pradesh-approval-authority-index_d10a977b",
+        "draftFile": "/var/www/build.sikhadenge.in/sikhadenge-build/data/buildsetu-research/drafts/draft_20260609_124717_sourceupdate_india-uttar-pradesh-approval-authority-index_d10a977b_india-uttar-pradesh-approval-authority-index.json"
       },
       {
         "id": "india-uttarakhand-approval-authority-index",
         "title": "Uttarakhand approval authority and building bye-laws index candidate",
         "url": "https://igod.gov.in/sg/states",
         "reason": "content_hash_changed",
-        "draftId": "draft_20260609_064747_sourceupdate_india-uttarakhand-approval-authority-index_bb5ffd39",
-        "draftFile": "/var/www/build.sikhadenge.in/sikhadenge-build/data/buildsetu-research/drafts/draft_20260609_064747_sourceupdate_india-uttarakhand-approval-authority-index_bb5ffd39_india-uttarakhand-approval-authority-index.json"
+        "draftId": "draft_20260609_124717_sourceupdate_india-uttarakhand-approval-authority-index_c62186d0",
+        "draftFile": "/var/www/build.sikhadenge.in/sikhadenge-build/data/buildsetu-research/drafts/draft_20260609_124717_sourceupdate_india-uttarakhand-approval-authority-index_c62186d0_india-uttarakhand-approval-authority-index.json"
       },
       {
         "id": "india-west-bengal-approval-authority-index",
         "title": "West Bengal approval authority and building bye-laws index candidate",
         "url": "https://igod.gov.in/sg/states",
         "reason": "content_hash_changed",
-        "draftId": "draft_20260609_064747_sourceupdate_india-west-bengal-approval-authority-index_a534ab0d",
-        "draftFile": "/var/www/build.sikhadenge.in/sikhadenge-build/data/buildsetu-research/drafts/draft_20260609_064747_sourceupdate_india-west-bengal-approval-authority-index_a534ab0d_india-west-bengal-approval-authority-index.json"
+        "draftId": "draft_20260609_124717_sourceupdate_india-west-bengal-approval-authority-index_7c9a310f",
+        "draftFile": "/var/www/build.sikhadenge.in/sikhadenge-build/data/buildsetu-research/drafts/draft_20260609_124717_sourceupdate_india-west-bengal-approval-authority-index_7c9a310f_india-west-bengal-approval-authority-index.json"
       }
     ],
     "failed": [
-      {
-        "id": "bis-national-building-code",
-        "title": "BIS National Building Code",
-        "url": "https://www.bis.gov.in/standards/technical-department/national-building-code/",
-        "error": "fetch failed"
-      },
-      {
-        "id": "bis-sp73-building-regulations-2023",
-        "title": "BIS SP 73:2023 Standardized Development and Building Regulations",
-        "url": "https://www.bis.gov.in/wp-content/uploads/2024/02/SP-732023-Standardized-Development-and-Building-Regulations-2023.pdf",
-        "error": "fetch failed"
-      },
       {
         "id": "cpwd-works-manual-2024",
         "title": "CPWD Works Manual 2024",
@@ -366,8 +354,8 @@
   },
   "pendingSourceUpdateDrafts": [
     {
-      "file": "data/buildsetu-research/drafts/draft_20260609_064747_sourceupdate_india-west-bengal-approval-authority-index_a534ab0d_india-west-bengal-approval-authority-index.json",
-      "id": "draft_20260609_064747_sourceupdate_india-west-bengal-approval-authority-index_a534ab0d",
+      "file": "data/buildsetu-research/drafts/draft_20260609_124717_sourceupdate_india-west-bengal-approval-authority-index_7c9a310f_india-west-bengal-approval-authority-index.json",
+      "id": "draft_20260609_124717_sourceupdate_india-west-bengal-approval-authority-index_7c9a310f",
       "status": "pending_review",
       "category": "sourceUpdate",
       "riskLevel": "medium",
@@ -376,8 +364,8 @@
       "sourceCitation": "West Bengal approval authority and building bye-laws index candidate — https://igod.gov.in/sg/states",
       "summary": "Source watcher detected a possible update for West Bengal approval authority and building bye-laws index candidate. Review the source before merging new facts into BuildSetu knowledge.",
       "requiresProfessionalReview": true,
-      "createdAt": "2026-06-09T06:47:47.542Z",
-      "updatedAt": "2026-06-09T06:47:47.542Z",
+      "createdAt": "2026-06-09T12:47:17.698Z",
+      "updatedAt": "2026-06-09T12:47:17.698Z",
       "createdBy": "BuildSetu Source Watcher",
       "tags": [
         "source_watch",
@@ -386,8 +374,8 @@
       ]
     },
     {
-      "file": "data/buildsetu-research/drafts/draft_20260609_064747_sourceupdate_india-uttarakhand-approval-authority-index_bb5ffd39_india-uttarakhand-approval-authority-index.json",
-      "id": "draft_20260609_064747_sourceupdate_india-uttarakhand-approval-authority-index_bb5ffd39",
+      "file": "data/buildsetu-research/drafts/draft_20260609_124717_sourceupdate_india-uttarakhand-approval-authority-index_c62186d0_india-uttarakhand-approval-authority-index.json",
+      "id": "draft_20260609_124717_sourceupdate_india-uttarakhand-approval-authority-index_c62186d0",
       "status": "pending_review",
       "category": "sourceUpdate",
       "riskLevel": "medium",
@@ -396,8 +384,8 @@
       "sourceCitation": "Uttarakhand approval authority and building bye-laws index candidate — https://igod.gov.in/sg/states",
       "summary": "Source watcher detected a possible update for Uttarakhand approval authority and building bye-laws index candidate. Review the source before merging new facts into BuildSetu knowledge.",
       "requiresProfessionalReview": true,
-      "createdAt": "2026-06-09T06:47:47.408Z",
-      "updatedAt": "2026-06-09T06:47:47.408Z",
+      "createdAt": "2026-06-09T12:47:17.502Z",
+      "updatedAt": "2026-06-09T12:47:17.502Z",
       "createdBy": "BuildSetu Source Watcher",
       "tags": [
         "source_watch",
@@ -406,8 +394,8 @@
       ]
     },
     {
-      "file": "data/buildsetu-research/drafts/draft_20260609_064747_sourceupdate_india-uttar-pradesh-approval-authority-index_bff782f5_india-uttar-pradesh-approval-authority-index.json",
-      "id": "draft_20260609_064747_sourceupdate_india-uttar-pradesh-approval-authority-index_bff782f5",
+      "file": "data/buildsetu-research/drafts/draft_20260609_124717_sourceupdate_india-uttar-pradesh-approval-authority-index_d10a977b_india-uttar-pradesh-approval-authority-index.json",
+      "id": "draft_20260609_124717_sourceupdate_india-uttar-pradesh-approval-authority-index_d10a977b",
       "status": "pending_review",
       "category": "sourceUpdate",
       "riskLevel": "medium",
@@ -416,8 +404,8 @@
       "sourceCitation": "Uttar Pradesh approval authority and building bye-laws index candidate — https://igod.gov.in/sg/states",
       "summary": "Source watcher detected a possible update for Uttar Pradesh approval authority and building bye-laws index candidate. Review the source before merging new facts into BuildSetu knowledge.",
       "requiresProfessionalReview": true,
-      "createdAt": "2026-06-09T06:47:47.278Z",
-      "updatedAt": "2026-06-09T06:47:47.278Z",
+      "createdAt": "2026-06-09T12:47:17.311Z",
+      "updatedAt": "2026-06-09T12:47:17.311Z",
       "createdBy": "BuildSetu Source Watcher",
       "tags": [
         "source_watch",
@@ -426,8 +414,8 @@
       ]
     },
     {
-      "file": "data/buildsetu-research/drafts/draft_20260609_064747_sourceupdate_india-tripura-approval-authority-index_441ae2cc_india-tripura-approval-authority-index.json",
-      "id": "draft_20260609_064747_sourceupdate_india-tripura-approval-authority-index_441ae2cc",
+      "file": "data/buildsetu-research/drafts/draft_20260609_124717_sourceupdate_india-tripura-approval-authority-index_2322abb4_india-tripura-approval-authority-index.json",
+      "id": "draft_20260609_124717_sourceupdate_india-tripura-approval-authority-index_2322abb4",
       "status": "pending_review",
       "category": "sourceUpdate",
       "riskLevel": "medium",
@@ -436,8 +424,8 @@
       "sourceCitation": "Tripura approval authority and building bye-laws index candidate — https://igod.gov.in/sg/states",
       "summary": "Source watcher detected a possible update for Tripura approval authority and building bye-laws index candidate. Review the source before merging new facts into BuildSetu knowledge.",
       "requiresProfessionalReview": true,
-      "createdAt": "2026-06-09T06:47:47.130Z",
-      "updatedAt": "2026-06-09T06:47:47.130Z",
+      "createdAt": "2026-06-09T12:47:17.164Z",
+      "updatedAt": "2026-06-09T12:47:17.164Z",
       "createdBy": "BuildSetu Source Watcher",
       "tags": [
         "source_watch",
@@ -446,8 +434,8 @@
       ]
     },
     {
-      "file": "data/buildsetu-research/drafts/draft_20260609_064746_sourceupdate_india-telangana-approval-authority-index_b39ea268_india-telangana-approval-authority-index.json",
-      "id": "draft_20260609_064746_sourceupdate_india-telangana-approval-authority-index_b39ea268",
+      "file": "data/buildsetu-research/drafts/draft_20260609_124717_sourceupdate_india-telangana-approval-authority-index_a92fe7c7_india-telangana-approval-authority-index.json",
+      "id": "draft_20260609_124717_sourceupdate_india-telangana-approval-authority-index_a92fe7c7",
       "status": "pending_review",
       "category": "sourceUpdate",
       "riskLevel": "medium",
@@ -456,8 +444,8 @@
       "sourceCitation": "Telangana approval authority and building bye-laws index candidate — https://igod.gov.in/sg/states",
       "summary": "Source watcher detected a possible update for Telangana approval authority and building bye-laws index candidate. Review the source before merging new facts into BuildSetu knowledge.",
       "requiresProfessionalReview": true,
-      "createdAt": "2026-06-09T06:47:46.990Z",
-      "updatedAt": "2026-06-09T06:47:46.990Z",
+      "createdAt": "2026-06-09T12:47:17.018Z",
+      "updatedAt": "2026-06-09T12:47:17.018Z",
       "createdBy": "BuildSetu Source Watcher",
       "tags": [
         "source_watch",
@@ -466,8 +454,8 @@
       ]
     },
     {
-      "file": "data/buildsetu-research/drafts/draft_20260609_064746_sourceupdate_india-tamil-nadu-approval-authority-index_9f67f6fe_india-tamil-nadu-approval-authority-index.json",
-      "id": "draft_20260609_064746_sourceupdate_india-tamil-nadu-approval-authority-index_9f67f6fe",
+      "file": "data/buildsetu-research/drafts/draft_20260609_124716_sourceupdate_india-tamil-nadu-approval-authority-index_f7e5dd9e_india-tamil-nadu-approval-authority-index.json",
+      "id": "draft_20260609_124716_sourceupdate_india-tamil-nadu-approval-authority-index_f7e5dd9e",
       "status": "pending_review",
       "category": "sourceUpdate",
       "riskLevel": "medium",
@@ -476,8 +464,8 @@
       "sourceCitation": "Tamil Nadu approval authority and building bye-laws index candidate — https://igod.gov.in/sg/states",
       "summary": "Source watcher detected a possible update for Tamil Nadu approval authority and building bye-laws index candidate. Review the source before merging new facts into BuildSetu knowledge.",
       "requiresProfessionalReview": true,
-      "createdAt": "2026-06-09T06:47:46.669Z",
-      "updatedAt": "2026-06-09T06:47:46.669Z",
+      "createdAt": "2026-06-09T12:47:16.880Z",
+      "updatedAt": "2026-06-09T12:47:16.880Z",
       "createdBy": "BuildSetu Source Watcher",
       "tags": [
         "source_watch",
@@ -486,8 +474,8 @@
       ]
     },
     {
-      "file": "data/buildsetu-research/drafts/draft_20260609_064746_sourceupdate_india-sikkim-approval-authority-index_4dc05f14_india-sikkim-approval-authority-index.json",
-      "id": "draft_20260609_064746_sourceupdate_india-sikkim-approval-authority-index_4dc05f14",
+      "file": "data/buildsetu-research/drafts/draft_20260609_124716_sourceupdate_india-sikkim-approval-authority-index_2e1db973_india-sikkim-approval-authority-index.json",
+      "id": "draft_20260609_124716_sourceupdate_india-sikkim-approval-authority-index_2e1db973",
       "status": "pending_review",
       "category": "sourceUpdate",
       "riskLevel": "medium",
@@ -496,8 +484,8 @@
       "sourceCitation": "Sikkim approval authority and building bye-laws index candidate — https://igod.gov.in/sg/states",
       "summary": "Source watcher detected a possible update for Sikkim approval authority and building bye-laws index candidate. Review the source before merging new facts into BuildSetu knowledge.",
       "requiresProfessionalReview": true,
-      "createdAt": "2026-06-09T06:47:46.535Z",
-      "updatedAt": "2026-06-09T06:47:46.535Z",
+      "createdAt": "2026-06-09T12:47:16.726Z",
+      "updatedAt": "2026-06-09T12:47:16.726Z",
       "createdBy": "BuildSetu Source Watcher",
       "tags": [
         "source_watch",
@@ -506,8 +494,8 @@
       ]
     },
     {
-      "file": "data/buildsetu-research/drafts/draft_20260609_064746_sourceupdate_india-rajasthan-approval-authority-index_c31c3aaf_india-rajasthan-approval-authority-index.json",
-      "id": "draft_20260609_064746_sourceupdate_india-rajasthan-approval-authority-index_c31c3aaf",
+      "file": "data/buildsetu-research/drafts/draft_20260609_124716_sourceupdate_india-rajasthan-approval-authority-index_72fe53f5_india-rajasthan-approval-authority-index.json",
+      "id": "draft_20260609_124716_sourceupdate_india-rajasthan-approval-authority-index_72fe53f5",
       "status": "pending_review",
       "category": "sourceUpdate",
       "riskLevel": "medium",
@@ -516,8 +504,8 @@
       "sourceCitation": "Rajasthan approval authority and building bye-laws index candidate — https://igod.gov.in/sg/states",
       "summary": "Source watcher detected a possible update for Rajasthan approval authority and building bye-laws index candidate. Review the source before merging new facts into BuildSetu knowledge.",
       "requiresProfessionalReview": true,
-      "createdAt": "2026-06-09T06:47:46.400Z",
-      "updatedAt": "2026-06-09T06:47:46.400Z",
+      "createdAt": "2026-06-09T12:47:16.521Z",
+      "updatedAt": "2026-06-09T12:47:16.521Z",
       "createdBy": "BuildSetu Source Watcher",
       "tags": [
         "source_watch",
@@ -526,8 +514,8 @@
       ]
     },
     {
-      "file": "data/buildsetu-research/drafts/draft_20260609_064746_sourceupdate_india-punjab-approval-authority-index_ed855b14_india-punjab-approval-authority-index.json",
-      "id": "draft_20260609_064746_sourceupdate_india-punjab-approval-authority-index_ed855b14",
+      "file": "data/buildsetu-research/drafts/draft_20260609_124716_sourceupdate_india-punjab-approval-authority-index_cc911ac3_india-punjab-approval-authority-index.json",
+      "id": "draft_20260609_124716_sourceupdate_india-punjab-approval-authority-index_cc911ac3",
       "status": "pending_review",
       "category": "sourceUpdate",
       "riskLevel": "medium",
@@ -536,8 +524,8 @@
       "sourceCitation": "Punjab approval authority and building bye-laws index candidate — https://igod.gov.in/sg/states",
       "summary": "Source watcher detected a possible update for Punjab approval authority and building bye-laws index candidate. Review the source before merging new facts into BuildSetu knowledge.",
       "requiresProfessionalReview": true,
-      "createdAt": "2026-06-09T06:47:46.266Z",
-      "updatedAt": "2026-06-09T06:47:46.266Z",
+      "createdAt": "2026-06-09T12:47:16.336Z",
+      "updatedAt": "2026-06-09T12:47:16.336Z",
       "createdBy": "BuildSetu Source Watcher",
       "tags": [
         "source_watch",
@@ -546,8 +534,8 @@
       ]
     },
     {
-      "file": "data/buildsetu-research/drafts/draft_20260609_064746_sourceupdate_india-puducherry-approval-authority-index_7e0497cd_india-puducherry-approval-authority-index.json",
-      "id": "draft_20260609_064746_sourceupdate_india-puducherry-approval-authority-index_7e0497cd",
+      "file": "data/buildsetu-research/drafts/draft_20260609_124716_sourceupdate_india-puducherry-approval-authority-index_5569759f_india-puducherry-approval-authority-index.json",
+      "id": "draft_20260609_124716_sourceupdate_india-puducherry-approval-authority-index_5569759f",
       "status": "pending_review",
       "category": "sourceUpdate",
       "riskLevel": "medium",
@@ -556,8 +544,8 @@
       "sourceCitation": "Puducherry approval authority and building bye-laws index candidate — https://igod.gov.in/sg/states",
       "summary": "Source watcher detected a possible update for Puducherry approval authority and building bye-laws index candidate. Review the source before merging new facts into BuildSetu knowledge.",
       "requiresProfessionalReview": true,
-      "createdAt": "2026-06-09T06:47:46.128Z",
-      "updatedAt": "2026-06-09T06:47:46.128Z",
+      "createdAt": "2026-06-09T12:47:16.138Z",
+      "updatedAt": "2026-06-09T12:47:16.138Z",
       "createdBy": "BuildSetu Source Watcher",
       "tags": [
         "source_watch",
@@ -566,8 +554,8 @@
       ]
     },
     {
-      "file": "data/buildsetu-research/drafts/draft_20260609_064745_sourceupdate_india-odisha-approval-authority-index_27cb25aa_india-odisha-approval-authority-index.json",
-      "id": "draft_20260609_064745_sourceupdate_india-odisha-approval-authority-index_27cb25aa",
+      "file": "data/buildsetu-research/drafts/draft_20260609_124715_sourceupdate_india-odisha-approval-authority-index_1a9d872b_india-odisha-approval-authority-index.json",
+      "id": "draft_20260609_124715_sourceupdate_india-odisha-approval-authority-index_1a9d872b",
       "status": "pending_review",
       "category": "sourceUpdate",
       "riskLevel": "medium",
@@ -576,8 +564,8 @@
       "sourceCitation": "Odisha approval authority and building bye-laws index candidate — https://igod.gov.in/sg/states",
       "summary": "Source watcher detected a possible update for Odisha approval authority and building bye-laws index candidate. Review the source before merging new facts into BuildSetu knowledge.",
       "requiresProfessionalReview": true,
-      "createdAt": "2026-06-09T06:47:45.991Z",
-      "updatedAt": "2026-06-09T06:47:45.991Z",
+      "createdAt": "2026-06-09T12:47:15.939Z",
+      "updatedAt": "2026-06-09T12:47:15.939Z",
       "createdBy": "BuildSetu Source Watcher",
       "tags": [
         "source_watch",
@@ -586,8 +574,8 @@
       ]
     },
     {
-      "file": "data/buildsetu-research/drafts/draft_20260609_064745_sourceupdate_india-nagaland-approval-authority-index_5dc79c04_india-nagaland-approval-authority-index.json",
-      "id": "draft_20260609_064745_sourceupdate_india-nagaland-approval-authority-index_5dc79c04",
+      "file": "data/buildsetu-research/drafts/draft_20260609_124715_sourceupdate_india-nagaland-approval-authority-index_d9d8f744_india-nagaland-approval-authority-index.json",
+      "id": "draft_20260609_124715_sourceupdate_india-nagaland-approval-authority-index_d9d8f744",
       "status": "pending_review",
       "category": "sourceUpdate",
       "riskLevel": "medium",
@@ -596,8 +584,8 @@
       "sourceCitation": "Nagaland approval authority and building bye-laws index candidate — https://igod.gov.in/sg/states",
       "summary": "Source watcher detected a possible update for Nagaland approval authority and building bye-laws index candidate. Review the source before merging new facts into BuildSetu knowledge.",
       "requiresProfessionalReview": true,
-      "createdAt": "2026-06-09T06:47:45.861Z",
-      "updatedAt": "2026-06-09T06:47:45.861Z",
+      "createdAt": "2026-06-09T12:47:15.793Z",
+      "updatedAt": "2026-06-09T12:47:15.793Z",
       "createdBy": "BuildSetu Source Watcher",
       "tags": [
         "source_watch",
@@ -606,8 +594,8 @@
       ]
     },
     {
-      "file": "data/buildsetu-research/drafts/draft_20260609_064745_sourceupdate_india-mizoram-approval-authority-index_02e128ec_india-mizoram-approval-authority-index.json",
-      "id": "draft_20260609_064745_sourceupdate_india-mizoram-approval-authority-index_02e128ec",
+      "file": "data/buildsetu-research/drafts/draft_20260609_124715_sourceupdate_india-mizoram-approval-authority-index_4cdf6814_india-mizoram-approval-authority-index.json",
+      "id": "draft_20260609_124715_sourceupdate_india-mizoram-approval-authority-index_4cdf6814",
       "status": "pending_review",
       "category": "sourceUpdate",
       "riskLevel": "medium",
@@ -616,8 +604,8 @@
       "sourceCitation": "Mizoram approval authority and building bye-laws index candidate — https://igod.gov.in/sg/states",
       "summary": "Source watcher detected a possible update for Mizoram approval authority and building bye-laws index candidate. Review the source before merging new facts into BuildSetu knowledge.",
       "requiresProfessionalReview": true,
-      "createdAt": "2026-06-09T06:47:45.730Z",
-      "updatedAt": "2026-06-09T06:47:45.730Z",
+      "createdAt": "2026-06-09T12:47:15.654Z",
+      "updatedAt": "2026-06-09T12:47:15.654Z",
       "createdBy": "BuildSetu Source Watcher",
       "tags": [
         "source_watch",
@@ -626,8 +614,8 @@
       ]
     },
     {
-      "file": "data/buildsetu-research/drafts/draft_20260609_064745_sourceupdate_india-meghalaya-approval-authority-index_b21f4d4a_india-meghalaya-approval-authority-index.json",
-      "id": "draft_20260609_064745_sourceupdate_india-meghalaya-approval-authority-index_b21f4d4a",
+      "file": "data/buildsetu-research/drafts/draft_20260609_124715_sourceupdate_india-meghalaya-approval-authority-index_c4605c08_india-meghalaya-approval-authority-index.json",
+      "id": "draft_20260609_124715_sourceupdate_india-meghalaya-approval-authority-index_c4605c08",
       "status": "pending_review",
       "category": "sourceUpdate",
       "riskLevel": "medium",
@@ -636,8 +624,8 @@
       "sourceCitation": "Meghalaya approval authority and building bye-laws index candidate — https://igod.gov.in/sg/states",
       "summary": "Source watcher detected a possible update for Meghalaya approval authority and building bye-laws index candidate. Review the source before merging new facts into BuildSetu knowledge.",
       "requiresProfessionalReview": true,
-      "createdAt": "2026-06-09T06:47:45.592Z",
-      "updatedAt": "2026-06-09T06:47:45.592Z",
+      "createdAt": "2026-06-09T12:47:15.512Z",
+      "updatedAt": "2026-06-09T12:47:15.512Z",
       "createdBy": "BuildSetu Source Watcher",
       "tags": [
         "source_watch",
@@ -646,8 +634,8 @@
       ]
     },
     {
-      "file": "data/buildsetu-research/drafts/draft_20260609_064745_sourceupdate_india-manipur-approval-authority-index_2f99eba1_india-manipur-approval-authority-index.json",
-      "id": "draft_20260609_064745_sourceupdate_india-manipur-approval-authority-index_2f99eba1",
+      "file": "data/buildsetu-research/drafts/draft_20260609_124715_sourceupdate_india-manipur-approval-authority-index_fb49d3bb_india-manipur-approval-authority-index.json",
+      "id": "draft_20260609_124715_sourceupdate_india-manipur-approval-authority-index_fb49d3bb",
       "status": "pending_review",
       "category": "sourceUpdate",
       "riskLevel": "medium",
@@ -656,8 +644,8 @@
       "sourceCitation": "Manipur approval authority and building bye-laws index candidate — https://igod.gov.in/sg/states",
       "summary": "Source watcher detected a possible update for Manipur approval authority and building bye-laws index candidate. Review the source before merging new facts into BuildSetu knowledge.",
       "requiresProfessionalReview": true,
-      "createdAt": "2026-06-09T06:47:45.459Z",
-      "updatedAt": "2026-06-09T06:47:45.459Z",
+      "createdAt": "2026-06-09T12:47:15.374Z",
+      "updatedAt": "2026-06-09T12:47:15.374Z",
       "createdBy": "BuildSetu Source Watcher",
       "tags": [
         "source_watch",
@@ -666,8 +654,8 @@
       ]
     },
     {
-      "file": "data/buildsetu-research/drafts/draft_20260609_064745_sourceupdate_india-maharashtra-approval-authority-index_9dacf4e3_india-maharashtra-approval-authority-index.json",
-      "id": "draft_20260609_064745_sourceupdate_india-maharashtra-approval-authority-index_9dacf4e3",
+      "file": "data/buildsetu-research/drafts/draft_20260609_124715_sourceupdate_india-maharashtra-approval-authority-index_db4aac8a_india-maharashtra-approval-authority-index.json",
+      "id": "draft_20260609_124715_sourceupdate_india-maharashtra-approval-authority-index_db4aac8a",
       "status": "pending_review",
       "category": "sourceUpdate",
       "riskLevel": "medium",
@@ -676,8 +664,8 @@
       "sourceCitation": "Maharashtra approval authority and building bye-laws index candidate — https://igod.gov.in/sg/states",
       "summary": "Source watcher detected a possible update for Maharashtra approval authority and building bye-laws index candidate. Review the source before merging new facts into BuildSetu knowledge.",
       "requiresProfessionalReview": true,
-      "createdAt": "2026-06-09T06:47:45.320Z",
-      "updatedAt": "2026-06-09T06:47:45.320Z",
+      "createdAt": "2026-06-09T12:47:15.233Z",
+      "updatedAt": "2026-06-09T12:47:15.233Z",
       "createdBy": "BuildSetu Source Watcher",
       "tags": [
         "source_watch",
@@ -686,8 +674,8 @@
       ]
     },
     {
-      "file": "data/buildsetu-research/drafts/draft_20260609_064745_sourceupdate_india-madhya-pradesh-approval-authority-index_1abb2a87_india-madhya-pradesh-approval-authority-index.json",
-      "id": "draft_20260609_064745_sourceupdate_india-madhya-pradesh-approval-authority-index_1abb2a87",
+      "file": "data/buildsetu-research/drafts/draft_20260609_124715_sourceupdate_india-madhya-pradesh-approval-authority-index_68a37172_india-madhya-pradesh-approval-authority-index.json",
+      "id": "draft_20260609_124715_sourceupdate_india-madhya-pradesh-approval-authority-index_68a37172",
       "status": "pending_review",
       "category": "sourceUpdate",
       "riskLevel": "medium",
@@ -696,8 +684,8 @@
       "sourceCitation": "Madhya Pradesh approval authority and building bye-laws index candidate — https://igod.gov.in/sg/states",
       "summary": "Source watcher detected a possible update for Madhya Pradesh approval authority and building bye-laws index candidate. Review the source before merging new facts into BuildSetu knowledge.",
       "requiresProfessionalReview": true,
-      "createdAt": "2026-06-09T06:47:45.189Z",
-      "updatedAt": "2026-06-09T06:47:45.189Z",
+      "createdAt": "2026-06-09T12:47:15.086Z",
+      "updatedAt": "2026-06-09T12:47:15.086Z",
       "createdBy": "BuildSetu Source Watcher",
       "tags": [
         "source_watch",
@@ -706,8 +694,8 @@
       ]
     },
     {
-      "file": "data/buildsetu-research/drafts/draft_20260609_064745_sourceupdate_india-lakshadweep-approval-authority-index_a5bfa7f9_india-lakshadweep-approval-authority-index.json",
-      "id": "draft_20260609_064745_sourceupdate_india-lakshadweep-approval-authority-index_a5bfa7f9",
+      "file": "data/buildsetu-research/drafts/draft_20260609_124714_sourceupdate_india-lakshadweep-approval-authority-index_e675b145_india-lakshadweep-approval-authority-index.json",
+      "id": "draft_20260609_124714_sourceupdate_india-lakshadweep-approval-authority-index_e675b145",
       "status": "pending_review",
       "category": "sourceUpdate",
       "riskLevel": "medium",
@@ -716,8 +704,8 @@
       "sourceCitation": "Lakshadweep approval authority and building bye-laws index candidate — https://igod.gov.in/sg/states",
       "summary": "Source watcher detected a possible update for Lakshadweep approval authority and building bye-laws index candidate. Review the source before merging new facts into BuildSetu knowledge.",
       "requiresProfessionalReview": true,
-      "createdAt": "2026-06-09T06:47:45.059Z",
-      "updatedAt": "2026-06-09T06:47:45.059Z",
+      "createdAt": "2026-06-09T12:47:14.932Z",
+      "updatedAt": "2026-06-09T12:47:14.932Z",
       "createdBy": "BuildSetu Source Watcher",
       "tags": [
         "source_watch",
@@ -726,8 +714,8 @@
       ]
     },
     {
-      "file": "data/buildsetu-research/drafts/draft_20260609_064744_sourceupdate_india-ladakh-approval-authority-index_9140e3e4_india-ladakh-approval-authority-index.json",
-      "id": "draft_20260609_064744_sourceupdate_india-ladakh-approval-authority-index_9140e3e4",
+      "file": "data/buildsetu-research/drafts/draft_20260609_124714_sourceupdate_india-ladakh-approval-authority-index_c9020a48_india-ladakh-approval-authority-index.json",
+      "id": "draft_20260609_124714_sourceupdate_india-ladakh-approval-authority-index_c9020a48",
       "status": "pending_review",
       "category": "sourceUpdate",
       "riskLevel": "medium",
@@ -736,8 +724,8 @@
       "sourceCitation": "Ladakh approval authority and building bye-laws index candidate — https://igod.gov.in/sg/states",
       "summary": "Source watcher detected a possible update for Ladakh approval authority and building bye-laws index candidate. Review the source before merging new facts into BuildSetu knowledge.",
       "requiresProfessionalReview": true,
-      "createdAt": "2026-06-09T06:47:44.927Z",
-      "updatedAt": "2026-06-09T06:47:44.927Z",
+      "createdAt": "2026-06-09T12:47:14.788Z",
+      "updatedAt": "2026-06-09T12:47:14.788Z",
       "createdBy": "BuildSetu Source Watcher",
       "tags": [
         "source_watch",
@@ -746,8 +734,8 @@
       ]
     },
     {
-      "file": "data/buildsetu-research/drafts/draft_20260609_064744_sourceupdate_india-kerala-approval-authority-index_6985c426_india-kerala-approval-authority-index.json",
-      "id": "draft_20260609_064744_sourceupdate_india-kerala-approval-authority-index_6985c426",
+      "file": "data/buildsetu-research/drafts/draft_20260609_124714_sourceupdate_india-kerala-approval-authority-index_70e27381_india-kerala-approval-authority-index.json",
+      "id": "draft_20260609_124714_sourceupdate_india-kerala-approval-authority-index_70e27381",
       "status": "pending_review",
       "category": "sourceUpdate",
       "riskLevel": "medium",
@@ -756,8 +744,8 @@
       "sourceCitation": "Kerala approval authority and building bye-laws index candidate — https://igod.gov.in/sg/states",
       "summary": "Source watcher detected a possible update for Kerala approval authority and building bye-laws index candidate. Review the source before merging new facts into BuildSetu knowledge.",
       "requiresProfessionalReview": true,
-      "createdAt": "2026-06-09T06:47:44.792Z",
-      "updatedAt": "2026-06-09T06:47:44.792Z",
+      "createdAt": "2026-06-09T12:47:14.623Z",
+      "updatedAt": "2026-06-09T12:47:14.623Z",
       "createdBy": "BuildSetu Source Watcher",
       "tags": [
         "source_watch",
