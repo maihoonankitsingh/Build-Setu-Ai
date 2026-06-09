@@ -10023,59 +10023,64 @@ body * {
   }
 }
 
-/* BUILDSETU_PROJECT_RIGHT_PANEL_SEMANTIC_V1
-   Semantic Project Workspace right panel.
-   Uses explicit section classes instead of nth-child/last-child.
-   Stable cards, no overlap, no hidden sections. */
+/* BUILDSETU_PROJECT_RIGHT_PANEL_STABLE_SOURCE_V1
+   Single source-of-truth right panel CSS.
+   No nth-child layout dependency. No overlap. No clipped buttons. */
 
 .bsu-assets-panel {
   width: 100% !important;
   min-width: 0 !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
   display: flex !important;
   flex-direction: column !important;
   gap: 12px !important;
-  height: auto !important;
-  min-height: 0 !important;
-  max-height: none !important;
-  overflow: visible !important;
-  padding: 0 0 12px 0 !important;
+  padding: 0 8px 14px 0 !important;
+  overflow-x: hidden !important;
+  overflow-y: visible !important;
 }
 
 .bsu-assets-section.bsu-workflow-section,
 .bsu-assets-section.bsu-files-section,
 .bsu-assets-section.bsu-images-section {
-  position: relative !important;
-  box-sizing: border-box !important;
   width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
   height: auto !important;
   min-height: 0 !important;
   max-height: none !important;
-  overflow: visible !important;
+  box-sizing: border-box !important;
   padding: 14px !important;
   border-radius: 20px !important;
   border: 1px solid #eadff7 !important;
-  background: #ffffff !important;
+  background: linear-gradient(180deg, #ffffff 0%, #fefcff 100%) !important;
   box-shadow: 0 10px 24px rgba(31, 13, 68, .04) !important;
+  overflow: visible !important;
 }
 
-.bsu-assets-section.bsu-workflow-section { order: 1 !important; }
-.bsu-assets-section.bsu-files-section { order: 2 !important; }
-.bsu-assets-section.bsu-images-section { order: 3 !important; }
+.bsu-workflow-section { order: 1 !important; }
+.bsu-files-section { order: 2 !important; }
+.bsu-images-section { order: 3 !important; }
 
-.bsu-assets-section.bsu-workflow-section .bsu-assets-head,
-.bsu-assets-section.bsu-files-section .bsu-assets-head,
-.bsu-assets-section.bsu-images-section .bsu-assets-head {
-  display: flex !important;
-  align-items: flex-start !important;
-  justify-content: space-between !important;
-  gap: 12px !important;
+/* Header */
+.bsu-assets-section .bsu-assets-head {
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) 76px !important;
+  gap: 10px !important;
+  align-items: start !important;
   margin: 0 0 10px 0 !important;
   padding: 0 !important;
 }
 
-.bsu-assets-section.bsu-workflow-section .bsu-assets-head h2,
-.bsu-assets-section.bsu-files-section .bsu-assets-head h2,
-.bsu-assets-section.bsu-images-section .bsu-assets-head h2 {
+.bsu-assets-section .bsu-assets-head > div {
+  min-width: 0 !important;
+  overflow: hidden !important;
+}
+
+.bsu-assets-section .bsu-assets-head h2 {
   display: flex !important;
   align-items: center !important;
   gap: 8px !important;
@@ -10086,55 +10091,70 @@ body * {
   letter-spacing: .15em !important;
   font-weight: 900 !important;
   text-transform: uppercase !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
 }
 
-.bsu-assets-section.bsu-workflow-section .bsu-assets-head h2::before,
-.bsu-assets-section.bsu-files-section .bsu-assets-head h2::before,
-.bsu-assets-section.bsu-images-section .bsu-assets-head h2::before {
+.bsu-assets-section .bsu-assets-head h2::before {
   content: "" !important;
+  flex: 0 0 28px !important;
   width: 28px !important;
   height: 28px !important;
-  flex: 0 0 28px !important;
   border-radius: 11px !important;
-  background: #f1ddff !important;
-  border: 1px solid rgba(124, 58, 237, .12) !important;
+  background-color: #f1ddff !important;
+  background-repeat: no-repeat !important;
+  background-position: center !important;
+  background-size: 16px 16px !important;
+  border: 1px solid rgba(124, 58, 237, .14) !important;
 }
 
-.bsu-assets-section.bsu-workflow-section .bsu-assets-head p,
-.bsu-assets-section.bsu-files-section .bsu-assets-head p,
-.bsu-assets-section.bsu-images-section .bsu-assets-head p {
+/* Icons */
+.bsu-workflow-section .bsu-assets-head h2::before {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%237c3aed' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 3v12'/%3E%3Ccircle cx='18' cy='6' r='3'/%3E%3Cpath d='M18 9a9 9 0 0 1-9 9H6'/%3E%3Ccircle cx='6' cy='18' r='3'/%3E%3C/svg%3E") !important;
+}
+
+.bsu-files-section .bsu-assets-head h2::before {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%237c3aed' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z'/%3E%3C/svg%3E") !important;
+}
+
+.bsu-images-section .bsu-assets-head h2::before {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%237c3aed' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect width='18' height='18' x='3' y='3' rx='2'/%3E%3Ccircle cx='9' cy='9' r='2'/%3E%3Cpath d='m21 15-3.1-3.1a2 2 0 0 0-2.8 0L6 21'/%3E%3C/svg%3E") !important;
+}
+
+.bsu-assets-section .bsu-assets-head p {
   margin: 5px 0 0 0 !important;
   color: #7b6d8f !important;
   font-size: 11px !important;
   line-height: 1.25 !important;
 }
 
-.bsu-assets-section.bsu-workflow-section .bsu-assets-head button,
-.bsu-assets-section.bsu-files-section .bsu-assets-head button,
-.bsu-assets-section.bsu-images-section .bsu-assets-head button {
-  flex: 0 0 84px !important;
-  width: 84px !important;
-  min-width: 84px !important;
-  max-width: 84px !important;
-  height: 36px !important;
-  min-height: 36px !important;
-  max-height: 36px !important;
+.bsu-assets-section .bsu-assets-head button {
+  width: 76px !important;
+  min-width: 76px !important;
+  max-width: 76px !important;
+  height: 34px !important;
+  min-height: 34px !important;
+  max-height: 34px !important;
+  box-sizing: border-box !important;
+  margin: 0 !important;
   padding: 0 !important;
+  justify-self: end !important;
   border-radius: 15px !important;
   border: 1px solid #eadff7 !important;
   background: #ffffff !important;
   color: #2b1748 !important;
   font-size: 12px !important;
+  font-weight: 900 !important;
   line-height: 1 !important;
-  font-weight: 850 !important;
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
-  box-shadow: none !important;
+  overflow: hidden !important;
 }
 
 /* Workflow */
-.bsu-workflow-section .bsu-workflow-summary-card {
+.bsu-workflow-summary-card {
   display: flex !important;
   flex-direction: column !important;
   gap: 8px !important;
@@ -10142,9 +10162,9 @@ body * {
   padding: 0 !important;
 }
 
-.bsu-workflow-section .bsu-workflow-summary-top {
+.bsu-workflow-summary-top {
   display: grid !important;
-  grid-template-columns: 1fr auto !important;
+  grid-template-columns: minmax(0, 1fr) auto !important;
   gap: 8px 10px !important;
   min-height: 58px !important;
   padding: 10px 12px 14px !important;
@@ -10154,64 +10174,16 @@ body * {
   overflow: hidden !important;
 }
 
-.bsu-workflow-section .bsu-workflow-summary-top::after {
+.bsu-workflow-summary-top::after {
   content: "" !important;
   grid-column: 1 / -1 !important;
-  display: block !important;
   height: 4px !important;
   border-radius: 999px !important;
   background: linear-gradient(90deg, #7c3aed 0 9%, #eadcff 9% 100%) !important;
 }
 
-.bsu-workflow-section .bsu-workflow-summary-top span {
-  display: block !important;
-  color: #9b84b8 !important;
-  font-size: 8.5px !important;
-  line-height: 1 !important;
-  font-weight: 900 !important;
-  letter-spacing: .12em !important;
-  text-transform: uppercase !important;
-}
-
-.bsu-workflow-section .bsu-workflow-summary-top strong {
-  display: block !important;
-  margin-top: 4px !important;
-  color: #1f1235 !important;
-  font-size: 18px !important;
-  line-height: 1 !important;
-  font-weight: 950 !important;
-}
-
-.bsu-workflow-section .bsu-workflow-summary-top em {
-  justify-self: end !important;
-  align-self: center !important;
-  height: 24px !important;
-  min-width: 82px !important;
-  padding: 0 10px !important;
-  border-radius: 999px !important;
-  background: #dcfce7 !important;
-  color: #166534 !important;
-  font-size: 7.5px !important;
-  font-style: normal !important;
-  font-weight: 950 !important;
-  line-height: 1 !important;
-  letter-spacing: .02em !important;
-  text-transform: uppercase !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-}
-
-.bsu-workflow-section .bsu-workflow-summary-line {
-  min-height: 44px !important;
-  padding: 8px 12px !important;
-  border-radius: 16px !important;
-  border: 1px solid #eadff7 !important;
-  background: #ffffff !important;
-  overflow: hidden !important;
-}
-
-.bsu-workflow-section .bsu-workflow-summary-line span {
+.bsu-workflow-summary-top span,
+.bsu-workflow-summary-line span {
   display: block !important;
   color: #9b84b8 !important;
   font-size: 8px !important;
@@ -10221,7 +10193,44 @@ body * {
   text-transform: uppercase !important;
 }
 
-.bsu-workflow-section .bsu-workflow-summary-line strong {
+.bsu-workflow-summary-top strong {
+  display: block !important;
+  margin-top: 4px !important;
+  color: #1f1235 !important;
+  font-size: 18px !important;
+  line-height: 1 !important;
+  font-weight: 950 !important;
+}
+
+.bsu-workflow-summary-top em {
+  justify-self: end !important;
+  align-self: center !important;
+  min-width: 82px !important;
+  height: 24px !important;
+  padding: 0 10px !important;
+  border-radius: 999px !important;
+  background: #dcfce7 !important;
+  color: #166534 !important;
+  font-size: 7.5px !important;
+  font-style: normal !important;
+  font-weight: 950 !important;
+  line-height: 1 !important;
+  text-transform: uppercase !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.bsu-workflow-summary-line {
+  min-height: 44px !important;
+  padding: 8px 12px !important;
+  border-radius: 16px !important;
+  border: 1px solid #eadff7 !important;
+  background: #ffffff !important;
+  overflow: hidden !important;
+}
+
+.bsu-workflow-summary-line strong {
   display: block !important;
   margin-top: 4px !important;
   color: #1f1235 !important;
@@ -10234,21 +10243,20 @@ body * {
 }
 
 /* Files */
-.bsu-files-section .bsu-file-list {
+.bsu-file-list {
   display: flex !important;
   flex-direction: column !important;
   gap: 8px !important;
-  max-height: none !important;
-  overflow: visible !important;
-  padding: 0 !important;
   margin: 0 !important;
+  padding: 0 !important;
+  overflow: visible !important;
 }
 
-.bsu-files-section .bsu-file-card {
+.bsu-file-card {
   width: 100% !important;
-  height: 54px !important;
-  min-height: 54px !important;
-  max-height: 54px !important;
+  height: 52px !important;
+  min-height: 52px !important;
+  max-height: 52px !important;
   box-sizing: border-box !important;
   padding: 8px 10px !important;
   margin: 0 !important;
@@ -10257,11 +10265,11 @@ body * {
   background: #ffffff !important;
   display: flex !important;
   align-items: center !important;
-  gap: 11px !important;
+  gap: 10px !important;
   overflow: hidden !important;
 }
 
-.bsu-files-section .bsu-file-card > span:first-child {
+.bsu-file-card > span:first-child {
   flex: 0 0 34px !important;
   width: 34px !important;
   height: 34px !important;
@@ -10275,12 +10283,12 @@ body * {
   justify-content: center !important;
 }
 
-.bsu-files-section .bsu-file-card > div {
-  flex: 1 1 auto !important;
+.bsu-file-card > div {
   min-width: 0 !important;
+  flex: 1 1 auto !important;
 }
 
-.bsu-files-section .bsu-file-card strong {
+.bsu-file-card strong {
   display: block !important;
   color: #1f1235 !important;
   font-size: 12px !important;
@@ -10291,7 +10299,7 @@ body * {
   text-overflow: ellipsis !important;
 }
 
-.bsu-files-section .bsu-file-card small {
+.bsu-file-card small {
   display: block !important;
   margin-top: 3px !important;
   color: #8d78a8 !important;
@@ -10303,12 +10311,14 @@ body * {
   text-overflow: ellipsis !important;
 }
 
-.bsu-files-section .bsu-file-card button {
-  flex: 0 0 34px !important;
-  width: 34px !important;
-  height: 34px !important;
-  margin-left: auto !important;
+.bsu-file-card button {
+  flex: 0 0 32px !important;
+  width: 32px !important;
+  height: 32px !important;
+  min-width: 32px !important;
+  max-width: 32px !important;
   padding: 0 !important;
+  margin-left: 4px !important;
   border-radius: 13px !important;
   border: 1px solid #eadff7 !important;
   background: #ffffff !important;
@@ -10318,38 +10328,39 @@ body * {
   justify-content: center !important;
 }
 
-.bsu-files-section .bsu-upload-btn {
+.bsu-upload-btn {
   width: 100% !important;
+  max-width: 100% !important;
   height: 40px !important;
   min-height: 40px !important;
   max-height: 40px !important;
+  box-sizing: border-box !important;
   margin: 10px 0 0 0 !important;
+  padding: 0 12px !important;
   border-radius: 15px !important;
   border: 1.5px solid #7c3aed !important;
   background: #ffffff !important;
   color: #6d28d9 !important;
   font-size: 13px !important;
-  line-height: 1 !important;
   font-weight: 900 !important;
+  line-height: 1 !important;
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
+  overflow: hidden !important;
 }
 
-/* Images */
-.bsu-images-section .bsu-assets-list {
-  max-height: none !important;
-  overflow: visible !important;
-  padding: 0 !important;
+/* Images and empty state */
+.bsu-assets-list {
   margin: 0 !important;
+  padding: 0 !important;
+  overflow: visible !important;
 }
 
-.bsu-images-section .bsu-empty-card,
-.bsu-files-section .bsu-empty-card,
-.bsu-workflow-section .bsu-empty-card {
+.bsu-empty-card {
+  width: 100% !important;
   min-height: 58px !important;
-  height: auto !important;
-  max-height: none !important;
+  box-sizing: border-box !important;
   padding: 12px !important;
   border-radius: 16px !important;
   border: 1px dashed #e4d3fb !important;
@@ -10363,70 +10374,17 @@ body * {
   justify-content: center !important;
 }
 
-.bsu-images-section .bsu-empty-card::before,
-.bsu-images-section .bsu-empty-card::after {
+.bsu-empty-card::before,
+.bsu-empty-card::after {
   display: none !important;
   content: none !important;
 }
 
-.bsu-images-section .bsu-asset-card {
-  min-height: 62px !important;
-  padding: 8px !important;
-  border-radius: 16px !important;
-  border: 1px solid #eadff7 !important;
-  background: #ffffff !important;
-  display: flex !important;
-  align-items: center !important;
-  gap: 10px !important;
-  overflow: hidden !important;
-}
-
-.bsu-images-section .bsu-asset-card + .bsu-asset-card {
-  margin-top: 8px !important;
-}
-
-.bsu-images-section .bsu-asset-card img {
-  width: 74px !important;
-  height: 46px !important;
-  object-fit: cover !important;
-  border-radius: 12px !important;
-}
-
-.bsu-images-section .bsu-asset-card div {
-  min-width: 0 !important;
-  flex: 1 1 auto !important;
-}
-
-.bsu-images-section .bsu-asset-card strong {
-  display: block !important;
-  color: #1f1235 !important;
-  font-size: 11px !important;
-  font-weight: 900 !important;
-  white-space: nowrap !important;
-  overflow: hidden !important;
-  text-overflow: ellipsis !important;
-}
-
-.bsu-images-section .bsu-asset-card span {
-  display: block !important;
-  margin-top: 3px !important;
-  color: #8d78a8 !important;
-  font-size: 8.5px !important;
-  font-weight: 800 !important;
-}
-
-.bsu-images-section .bsu-asset-card button {
-  flex: 0 0 32px !important;
-  width: 32px !important;
-  height: 32px !important;
-  border-radius: 12px !important;
-  border: 1px solid #eadff7 !important;
-  background: #ffffff !important;
-}
-
+/* Compact viewport */
 @media (max-height: 790px) {
   .bsu-assets-panel {
-    gap: 9px !important;
+    gap: 10px !important;
+    padding-right: 8px !important;
   }
 
   .bsu-assets-section.bsu-workflow-section,
@@ -10436,342 +10394,41 @@ body * {
     border-radius: 18px !important;
   }
 
-  .bsu-assets-section.bsu-workflow-section .bsu-assets-head button,
-  .bsu-assets-section.bsu-files-section .bsu-assets-head button,
-  .bsu-assets-section.bsu-images-section .bsu-assets-head button {
-    width: 78px !important;
-    min-width: 78px !important;
-    max-width: 78px !important;
-    height: 32px !important;
-    min-height: 32px !important;
-    max-height: 32px !important;
-    font-size: 11.5px !important;
+  .bsu-assets-section .bsu-assets-head {
+    grid-template-columns: minmax(0, 1fr) 72px !important;
   }
 
-  .bsu-workflow-section .bsu-workflow-summary-top {
-    min-height: 50px !important;
-  }
-
-  .bsu-workflow-section .bsu-workflow-summary-line {
-    min-height: 38px !important;
-  }
-
-  .bsu-files-section .bsu-file-card {
-    height: 48px !important;
-    min-height: 48px !important;
-    max-height: 48px !important;
-  }
-
-  .bsu-files-section .bsu-file-card > span:first-child,
-  .bsu-files-section .bsu-file-card button {
-    flex-basis: 30px !important;
-    width: 30px !important;
-    height: 30px !important;
-  }
-
-  .bsu-files-section .bsu-upload-btn {
-    height: 36px !important;
-    min-height: 36px !important;
-    max-height: 36px !important;
-  }
-
-  .bsu-images-section .bsu-empty-card {
-    min-height: 50px !important;
-  }
-}
-
-/* BUILDSETU_PROJECT_RIGHT_PANEL_ICON_FINISH_V1
-   Final semantic right panel polish:
-   replace blank header squares with real icons,
-   keep stable spacing and professional finish. */
-
-.bsu-assets-section.bsu-workflow-section,
-.bsu-assets-section.bsu-files-section,
-.bsu-assets-section.bsu-images-section {
-  background: linear-gradient(180deg, #ffffff 0%, #fefcff 100%) !important;
-  border-color: #eadff7 !important;
-  box-shadow: 0 12px 28px rgba(31, 13, 68, .045) !important;
-}
-
-.bsu-assets-section.bsu-workflow-section .bsu-assets-head h2::before,
-.bsu-assets-section.bsu-files-section .bsu-assets-head h2::before,
-.bsu-assets-section.bsu-images-section .bsu-assets-head h2::before {
-  background-color: #f1ddff !important;
-  background-repeat: no-repeat !important;
-  background-position: center !important;
-  background-size: 16px 16px !important;
-  border: 1px solid rgba(124, 58, 237, .14) !important;
-}
-
-/* Workflow icon */
-.bsu-assets-section.bsu-workflow-section .bsu-assets-head h2::before {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%237c3aed' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 3v12'/%3E%3Ccircle cx='18' cy='6' r='3'/%3E%3Cpath d='M18 9a9 9 0 0 1-9 9H6'/%3E%3Ccircle cx='6' cy='18' r='3'/%3E%3C/svg%3E") !important;
-}
-
-/* Files icon */
-.bsu-assets-section.bsu-files-section .bsu-assets-head h2::before {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%237c3aed' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z'/%3E%3C/svg%3E") !important;
-}
-
-/* Images icon */
-.bsu-assets-section.bsu-images-section .bsu-assets-head h2::before {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%237c3aed' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect width='18' height='18' x='3' y='3' rx='2'/%3E%3Ccircle cx='9' cy='9' r='2'/%3E%3Cpath d='m21 15-3.1-3.1a2 2 0 0 0-2.8 0L6 21'/%3E%3C/svg%3E") !important;
-}
-
-/* Cleaner header rhythm */
-.bsu-assets-section.bsu-workflow-section .bsu-assets-head,
-.bsu-assets-section.bsu-files-section .bsu-assets-head,
-.bsu-assets-section.bsu-images-section .bsu-assets-head {
-  margin-bottom: 11px !important;
-}
-
-.bsu-assets-section.bsu-workflow-section .bsu-assets-head h2,
-.bsu-assets-section.bsu-files-section .bsu-assets-head h2,
-.bsu-assets-section.bsu-images-section .bsu-assets-head h2 {
-  letter-spacing: .16em !important;
-}
-
-/* Action buttons final consistency */
-.bsu-assets-section.bsu-workflow-section .bsu-assets-head button,
-.bsu-assets-section.bsu-files-section .bsu-assets-head button,
-.bsu-assets-section.bsu-images-section .bsu-assets-head button {
-  width: 84px !important;
-  min-width: 84px !important;
-  max-width: 84px !important;
-  height: 36px !important;
-  min-height: 36px !important;
-  max-height: 36px !important;
-  border-radius: 15px !important;
-  font-size: 12px !important;
-  font-weight: 900 !important;
-}
-
-/* File cards final readable density */
-.bsu-files-section .bsu-file-list {
-  gap: 8px !important;
-}
-
-.bsu-files-section .bsu-file-card {
-  height: 52px !important;
-  min-height: 52px !important;
-  max-height: 52px !important;
-  border-radius: 15px !important;
-}
-
-.bsu-files-section .bsu-upload-btn {
-  height: 40px !important;
-  min-height: 40px !important;
-  max-height: 40px !important;
-  margin-top: 9px !important;
-}
-
-/* Recent image empty state plain and clean */
-.bsu-images-section .bsu-empty-card {
-  min-height: 56px !important;
-  border-radius: 15px !important;
-  background: #fbf8ff !important;
-  border: 1px dashed #e4d3fb !important;
-}
-
-/* Keep current stable viewport behavior */
-@media (max-height: 790px) {
-  .bsu-assets-section.bsu-workflow-section,
-  .bsu-assets-section.bsu-files-section,
-  .bsu-assets-section.bsu-images-section {
-    padding: 12px !important;
-  }
-
-  .bsu-files-section .bsu-file-card {
-    height: 48px !important;
-    min-height: 48px !important;
-    max-height: 48px !important;
-  }
-
-  .bsu-files-section .bsu-upload-btn {
-    height: 36px !important;
-    min-height: 36px !important;
-    max-height: 36px !important;
-  }
-
-  .bsu-images-section .bsu-empty-card {
-    min-height: 50px !important;
-  }
-}
-
-/* BUILDSETU_PROJECT_RIGHT_PANEL_BUTTON_CONTAINMENT_V1
-   Keep all right panel action buttons strictly inside their cards. */
-
-.bsu-assets-panel {
-  box-sizing: border-box !important;
-  padding-right: 8px !important;
-  overflow-x: hidden !important;
-}
-
-.bsu-assets-section.bsu-workflow-section,
-.bsu-assets-section.bsu-files-section,
-.bsu-assets-section.bsu-images-section {
-  box-sizing: border-box !important;
-  width: 100% !important;
-  max-width: 100% !important;
-  overflow: hidden !important;
-}
-
-/* Header buttons: Refresh / View all */
-.bsu-assets-section.bsu-workflow-section .bsu-assets-head,
-.bsu-assets-section.bsu-files-section .bsu-assets-head,
-.bsu-assets-section.bsu-images-section .bsu-assets-head {
-  box-sizing: border-box !important;
-  width: 100% !important;
-  max-width: 100% !important;
-  display: grid !important;
-  grid-template-columns: minmax(0, 1fr) auto !important;
-  column-gap: 10px !important;
-  align-items: start !important;
-}
-
-.bsu-assets-section.bsu-workflow-section .bsu-assets-head > div,
-.bsu-assets-section.bsu-files-section .bsu-assets-head > div,
-.bsu-assets-section.bsu-images-section .bsu-assets-head > div {
-  min-width: 0 !important;
-  max-width: 100% !important;
-  overflow: hidden !important;
-}
-
-.bsu-assets-section.bsu-workflow-section .bsu-assets-head button,
-.bsu-assets-section.bsu-files-section .bsu-assets-head button,
-.bsu-assets-section.bsu-images-section .bsu-assets-head button {
-  box-sizing: border-box !important;
-  width: 74px !important;
-  min-width: 74px !important;
-  max-width: 74px !important;
-  height: 34px !important;
-  min-height: 34px !important;
-  max-height: 34px !important;
-  margin: 0 !important;
-  padding: 0 !important;
-  justify-self: end !important;
-  flex: none !important;
-  transform: none !important;
-  overflow: hidden !important;
-}
-
-/* File cards and 3-dot buttons */
-.bsu-files-section .bsu-file-card {
-  box-sizing: border-box !important;
-  width: 100% !important;
-  max-width: 100% !important;
-  overflow: hidden !important;
-}
-
-.bsu-files-section .bsu-file-card button {
-  flex: 0 0 32px !important;
-  width: 32px !important;
-  min-width: 32px !important;
-  max-width: 32px !important;
-  height: 32px !important;
-  min-height: 32px !important;
-  max-height: 32px !important;
-  margin-left: 6px !important;
-  padding: 0 !important;
-}
-
-/* Upload button: always inside Project Files card */
-.bsu-files-section .bsu-upload-btn {
-  box-sizing: border-box !important;
-  position: relative !important;
-  inset: auto !important;
-  transform: none !important;
-  width: calc(100% - 2px) !important;
-  max-width: calc(100% - 2px) !important;
-  height: 40px !important;
-  min-height: 40px !important;
-  max-height: 40px !important;
-  margin: 9px 1px 0 1px !important;
-  padding: 0 12px !important;
-  overflow: hidden !important;
-}
-
-/* Extra safety: no horizontal overflow from right panel */
-.bsu-assets-section.bsu-workflow-section *,
-.bsu-assets-section.bsu-files-section *,
-.bsu-assets-section.bsu-images-section * {
-  max-width: 100% !important;
-}
-
-@media (max-height: 790px) {
-  .bsu-assets-panel {
-    padding-right: 8px !important;
-  }
-
-  .bsu-assets-section.bsu-workflow-section .bsu-assets-head button,
-  .bsu-assets-section.bsu-files-section .bsu-assets-head button,
-  .bsu-assets-section.bsu-images-section .bsu-assets-head button {
-    width: 70px !important;
-    min-width: 70px !important;
-    max-width: 70px !important;
+  .bsu-assets-section .bsu-assets-head button {
+    width: 72px !important;
+    min-width: 72px !important;
+    max-width: 72px !important;
     height: 32px !important;
     min-height: 32px !important;
     max-height: 32px !important;
     font-size: 11px !important;
   }
 
-  .bsu-files-section .bsu-upload-btn {
-    height: 36px !important;
-    min-height: 36px !important;
-    max-height: 36px !important;
-  }
-}
-
-/* BUILDSETU_PROJECT_RIGHT_PANEL_UPLOAD_CLIP_FIX_V1
-   Fix Upload Files button being clipped inside Project Files card. */
-
-.bsu-assets-section.bsu-files-section {
-  overflow: visible !important;
-  padding-bottom: 18px !important;
-}
-
-.bsu-files-section .bsu-file-list {
-  overflow: visible !important;
-  margin-bottom: 0 !important;
-}
-
-.bsu-files-section .bsu-upload-btn {
-  position: relative !important;
-  display: flex !important;
-  box-sizing: border-box !important;
-  width: 100% !important;
-  max-width: 100% !important;
-  height: 40px !important;
-  min-height: 40px !important;
-  max-height: 40px !important;
-  margin: 12px 0 0 0 !important;
-  padding: 0 12px !important;
-  border-radius: 15px !important;
-  overflow: visible !important;
-  transform: none !important;
-  inset: auto !important;
-  z-index: 1 !important;
-}
-
-.bsu-assets-section.bsu-workflow-section,
-.bsu-assets-section.bsu-images-section {
-  overflow: hidden !important;
-}
-
-.bsu-assets-panel {
-  overflow-x: hidden !important;
-  overflow-y: visible !important;
-}
-
-@media (max-height: 790px) {
-  .bsu-assets-section.bsu-files-section {
-    padding-bottom: 16px !important;
+  .bsu-workflow-summary-top {
+    min-height: 50px !important;
   }
 
-  .bsu-files-section .bsu-upload-btn {
+  .bsu-workflow-summary-line {
+    min-height: 38px !important;
+  }
+
+  .bsu-file-card {
+    height: 48px !important;
+    min-height: 48px !important;
+    max-height: 48px !important;
+  }
+
+  .bsu-upload-btn {
     height: 38px !important;
     min-height: 38px !important;
     max-height: 38px !important;
-    margin-top: 10px !important;
+  }
+
+  .bsu-empty-card {
+    min-height: 50px !important;
   }
 }
