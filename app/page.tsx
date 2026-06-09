@@ -1440,10 +1440,10 @@ function DashboardProjectCard({
 function ProjectsByStage({ totalProjects }: { totalProjects: number }) {
   const total = Math.max(totalProjects, 1);
   const rows = [
-    ["In Progress", Math.ceil(total * 0.33), "bg-[#6d5dfc]"],
-    ["BOQ Ready", Math.ceil(total * 0.25), "bg-[#8b5cf6]"],
-    ["BBS Ready", Math.ceil(total * 0.21), "bg-[#b794ff]"],
-    ["Completed", Math.max(1, total - Math.ceil(total * 0.79)), "bg-[#eadbff]"],
+    ["Brief / Plan", Math.ceil(total * 0.33), "bg-[#6d5dfc]"],
+    ["Locked Plan", Math.ceil(total * 0.25), "bg-[#8b5cf6]"],
+    ["Working / MEP", Math.ceil(total * 0.21), "bg-[#b794ff]"],
+    ["Review / Export", Math.max(1, total - Math.ceil(total * 0.79)), "bg-[#eadbff]"],
   ];
 
   return (
@@ -2112,7 +2112,7 @@ function ProjectsPage({ theme, setActive, setSelectedProject }: { theme: Resolve
           <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#7c3aed]">Project workspace</p>
           <h1 className="mt-0.5 text-[21px] font-bold leading-tight tracking-[-0.045em] text-[#21133f]">Projects</h1>
           <p className="mt-1 text-xs text-[#817397]">
-            Real-time client projects, outputs, revisions and project actions.
+            Real-time client projects, stage progress, outputs and project actions.
           </p>
         </div>
 
@@ -2307,10 +2307,10 @@ function ProjectsPage({ theme, setActive, setSelectedProject }: { theme: Resolve
 
                     <div className="mt-2 grid grid-cols-4 gap-2">
                       {[
-                        ["Renders", count.renders || 0],
-                        ["BOQ", count.boqItems || 0],
-                        ["BBS", count.bbsItems || 0],
-                        ["Docs", count.agreements || 0],
+                        ["Plan", count.renders || 0],
+                        ["Structure", count.bbsItems || 0],
+                        ["BOQ/BBS", Number(count.boqItems || 0) + Number(count.bbsItems || 0)],
+                        ["Review", count.agreements || 0],
                       ].map(([label, value]) => (
                         <div key={label as string} className="rounded-xl border border-[#eee7f7] bg-[#fbf8ff] px-2 py-2 text-center">
                           <p className="text-[13px] font-bold text-[#21133f]">{String(value)}</p>
@@ -3819,7 +3819,7 @@ function RenderStudio({ theme }: { theme: ResolvedTheme }) {
 function ProjectWorkspace({ theme }: { theme: ResolvedTheme }) {
   return (
     <div>
-      <PageTitle title="Project Workspace" desc="BOQ, BBS, renders, exports and review status ek jagah." theme={theme} />
+      <PageTitle title="Project Workspace" desc="Brief, planning, locked plan, working drawings, BOQ/BBS and review status ek jagah." theme={theme} />
       <div className={cn("mb-5 rounded-2xl border p-5", false ? "border-white/10 bg-white/[0.035]" : "border-[#ded5ec] bg-white light-card-shadow")}>
         <div className="flex flex-col justify-between gap-4 lg:flex-row lg:items-start">
           <div>
@@ -6636,9 +6636,9 @@ function ProjectWorkspaceShell({
   ] as const;
 
   const outputStats = [
-    ["Renders", count.renders || 0, ImageIcon],
-    ["BOQ Items", count.boqItems || 0, Calculator],
-    ["BBS Items", count.bbsItems || 0, ClipboardList],
+    ["Plan Outputs", count.renders || 0, ImageIcon],
+    ["BOQ / BBS", Number(count.boqItems || 0) + Number(count.bbsItems || 0), Calculator],
+    ["Review Files", count.agreements || 0, ClipboardList],
     ["Docs", count.agreements || 0, FileText],
   ] as const;
 
@@ -7210,9 +7210,9 @@ function ProjectWorkspaceTaskBoardShell({
       <section className="grid grid-cols-2 gap-3 xl:grid-cols-4">
         {[
           ["Total Tasks", buildSetuProjectTasks.length, FolderKanban],
-          ["Renders", count.renders || 0, ImageIcon],
-          ["BOQ Items", count.boqItems || 0, Calculator],
-          ["BBS Items", count.bbsItems || 0, ClipboardList],
+          ["Plan Outputs", count.renders || 0, ImageIcon],
+    ["BOQ / BBS", Number(count.boqItems || 0) + Number(count.bbsItems || 0), Calculator],
+    ["Review Files", count.agreements || 0, ClipboardList],
         ].map(([label, value, Icon]) => (
           <article key={label as string} className="rounded-[18px] border border-[#ded5ec] bg-white px-3 py-2.5 light-card-shadow">
             <div className="flex items-center gap-3">
