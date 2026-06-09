@@ -9894,3 +9894,75 @@ body * {
 .bsu-assets-panel {
   z-index: 10 !important;
 }
+
+/* BUILDSETU_PROJECT_WORKSPACE_VIEWPORT_BOTTOM_GAP_FIX_V1
+   Lock project workspace to available viewport height so page-level blank bottom strip does not appear. */
+@supports selector(body:has(.bsu-pw-shell)) {
+  html:has(.bsu-pw-shell),
+  body:has(.bsu-pw-shell) {
+    height: 100% !important;
+    overflow: hidden !important;
+  }
+}
+
+.bsu-pw-shell {
+  height: calc(100dvh - 104px) !important;
+  min-height: calc(100dvh - 104px) !important;
+  max-height: calc(100dvh - 104px) !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  background: transparent !important;
+}
+
+.bsu-pw-layout {
+  height: 100% !important;
+  min-height: 0 !important;
+  max-height: 100% !important;
+  overflow: hidden !important;
+  align-items: stretch !important;
+}
+
+.bsu-chat-panel,
+.bsu-assets-panel {
+  height: 100% !important;
+  min-height: 0 !important;
+  max-height: 100% !important;
+  overflow: hidden !important;
+}
+
+.bsu-chat-panel {
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+.bsu-chat-header {
+  flex: 0 0 auto !important;
+}
+
+.bsu-chat-stream {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  padding-bottom: 14px !important;
+}
+
+.bsu-chat-composer {
+  flex: 0 0 auto !important;
+  margin: 0 !important;
+}
+
+.bsu-chat-note {
+  flex: 0 0 auto !important;
+  margin: 0 !important;
+  padding-bottom: 8px !important;
+}
+
+@media (max-height: 760px) {
+  .bsu-pw-shell {
+    height: calc(100dvh - 88px) !important;
+    min-height: calc(100dvh - 88px) !important;
+    max-height: calc(100dvh - 88px) !important;
+  }
+}
