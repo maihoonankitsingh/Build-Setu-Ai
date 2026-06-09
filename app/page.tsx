@@ -9487,9 +9487,8 @@ function buildToolHrefWithActiveProject(slug: string, projectId?: string) {
           <p className="bsu-chat-note">Final drawings, BOQ, BBS and site execution outputs should be reviewed before use.</p>
         </section>
 
-        <aside className="bsu-assets-panel">
-          {/* BUILDSETU_PROJECT_DETAIL_WORKFLOW_PANEL_V1_RENDER */}
-          <div className="bsu-assets-section">
+        <aside className="bsu-assets-panel" aria-label="Project workspace side panel">
+          <section className="bsu-assets-section bsu-workflow-section">
             <div className="bsu-assets-head">
               <div>
                 <h2>Project Workflow</h2>
@@ -9504,53 +9503,82 @@ function buildToolHrefWithActiveProject(slug: string, projectId?: string) {
               <p className="bsu-assets-error">{projectWorkflowError}</p>
             ) : null}
 
-              {/* BUILDSETU_WORKFLOW_SUMMARY_CARD_V4 */}
-              <div className="bsu-workflow-summary-card">
-                {projectWorkflowStages.length > 0 ? (() => {
-                  const readyStages = projectWorkflowStages.filter((stage) =>
-                    ["draft_ready", "approved", "complete", "completed"].includes(String(stage.status || "").toLowerCase())
-                  );
-                  const currentStage =
-                    projectWorkflowStages.find((stage) => String(stage.status || "").toLowerCase() === "draft_ready") ||
-                    projectWorkflowStages.find((stage) => !["approved", "complete", "completed"].includes(String(stage.status || "").toLowerCase())) ||
-                    projectWorkflowStages[0];
-                  const nextStage =
-                    projectWorkflowStages.find((stage) => Number(stage.order || 0) > Number(currentStage?.order || 0)) ||
-                    null;
-                  const currentStatus = String(currentStage?.status || "not_started").replace(/_/g, " ");
+            {/* BUILDSETU_WORKFLOW_SUMMARY_CARD_SEMANTIC_V1 */}
+            <div className="bsu-workflow-summary-card">
+              {projectWorkflowStages.length > 0 ? (() => {
+                const readyStages = projectWorkflowStages.filter((stage) =>
+                  ["draft_ready", "approved", "complete", "completed"].includes(String(stage.status || "").toLowerCase())
+                );
+                const currentStage =
+                  projectWorkflowStages.find((stage) => String(stage.status || "").toLowerCase() === "draft_ready") ||
+                  projectWorkflowStages.find((stage) => !["approved", "complete", "completed"].includes(String(stage.status || "").toLowerCase())) ||
+                  projectWorkflowStages[0];
+                const nextStage =
+                  projectWorkflowStages.find((stage) => Number(stage.order || 0) > Number(currentStage?.order || 0)) ||
+                  null;
+                const currentStatus = String(currentStage?.status || "not_started").replace(/_/g, " ");
 
-                  return (
-                    <>
-                      <div className="bsu-workflow-summary-top">
-                        <div>
-                          <span>Stage progress</span>
-                          <strong>{readyStages.length}/{projectWorkflowStages.length}</strong>
-                        </div>
-                        <em>{currentStatus}</em>
+                return (
+                  <>
+                    <div className="bsu-workflow-summary-top">
+                      <div>
+                        <span>Stage progress</span>
+                        <strong>{readyStages.length}/{projectWorkflowStages.length}</strong>
                       </div>
+                      <em>{currentStatus}</em>
+                    </div>
 
-                      <div className="bsu-workflow-summary-line">
-                        <span>Current</span>
-                        <strong>{currentStage?.order}. {currentStage?.label}</strong>
+                    <div className="bsu-workflow-summary-line">
+                      <span>Current</span>
+                      <strong>{currentStage?.order}. {currentStage?.label}</strong>
+                    </div>
+
+                    {nextStage ? (
+                      <div className="bsu-workflow-summary-line is-next">
+                        <span>Next</span>
+                        <strong>{nextStage.order}. {nextStage.label}</strong>
                       </div>
+                    ) : null}
+                  </>
+                );
+              })() : (
+                <div className="bsu-empty-card">
+                  {projectWorkflowLoading ? "Workflow loading..." : "Workflow stages not loaded."}
+                </div>
+              )}
+            </div>
+          </section>
 
-                      {nextStage ? (
-                        <div className="bsu-workflow-summary-line is-next">
-                          <span>Next</span>
-                          <strong>{nextStage.order}. {nextStage.label}</strong>
-                        </div>
-                      ) : null}
-                    </>
-                  );
-                })() : (
-                  <div className="bsu-empty-card">
-                    {projectWorkflowLoading ? "Workflow loading..." : "Workflow stages not loaded."}
-                  </div>
-                )}
+          <section className="bsu-assets-section bsu-files-section">
+            <div className="bsu-assets-head">
+              <div>
+                <h2>Project Files</h2>
+                <p>Saved prompts aur outputs.</p>
               </div>
-          </div>
+              <button type="button">View all</button>
+            </div>
 
-          <div className="bsu-assets-section">
+            <div className="bsu-file-list">
+              {fileMessages.length > 0 ? (
+                fileMessages.slice(0, 2).map((message) => (
+                  <div key={message.id} className="bsu-file-card">
+                    <span>{message.messageType === "image" ? "IMG" : "DOC"}</span>
+                    <div>
+                      <strong>{message.toolName || "BuildSetu Output"}</strong>
+                      <small>{message.status === "RESULT_GENERATED" ? "Generated" : message.status === "BRIEFING" ? "Brief Saved" : message.status || "Saved"} · {formatTime(message.createdAt)}</small>
+                    </div>
+                    <button type="button" aria-label="Open file actions">⋮</button>
+                  </div>
+                ))
+              ) : (
+                <div className="bsu-empty-card">Abhi project files nahi hain.</div>
+              )}
+            </div>
+
+            <button type="button" className="bsu-upload-btn">Upload Files</button>
+          </section>
+
+          <section className="bsu-assets-section bsu-images-section">
             <div className="bsu-assets-head">
               <div>
                 <h2>Recent Images</h2>
@@ -9565,7 +9593,7 @@ function buildToolHrefWithActiveProject(slug: string, projectId?: string) {
 
             <div className="bsu-assets-list">
               {recentRenders.length > 0 ? (
-                recentRenders.map((render) => (
+                recentRenders.slice(0, 3).map((render) => (
                   <div key={render.id} className="bsu-asset-card">
                     {getImageSrc(render.imageUrl) ? (
                       <img src={getImageSrc(render.imageUrl)} alt={render.renderType || "Render"} />
@@ -9574,43 +9602,14 @@ function buildToolHrefWithActiveProject(slug: string, projectId?: string) {
                       <strong>{render.renderType || render.roomType || "Generated Image"}</strong>
                       <span>{render.status === "REVIEW_REQUIRED" ? "Review Required" : render.status === "RESULT_GENERATED" ? "Generated" : render.status || "Draft"}</span>
                     </div>
-                    <button type="button">⋮</button>
+                    <button type="button" aria-label="Open render actions">⋮</button>
                   </div>
                 ))
               ) : (
                 <div className="bsu-empty-card">Abhi recent images nahi hain.</div>
               )}
             </div>
-          </div>
-
-          <div className="bsu-assets-section">
-            <div className="bsu-assets-head">
-              <div>
-                <h2>Project Files</h2>
-                <p>Saved prompts aur outputs.</p>
-              </div>
-              <button type="button">View all</button>
-            </div>
-
-            <div className="bsu-file-list">
-              {fileMessages.length > 0 ? (
-                fileMessages.map((message) => (
-                  <div key={message.id} className="bsu-file-card">
-                    <span>{message.messageType === "image" ? "IMG" : "DOC"}</span>
-                    <div>
-                      <strong>{message.toolName || "BuildSetu Output"}</strong>
-                      <small>{message.status === "RESULT_GENERATED" ? "Generated" : message.status === "BRIEFING" ? "Brief Saved" : message.status || "Saved"} · {formatTime(message.createdAt)}</small>
-                    </div>
-                    <button type="button">⋮</button>
-                  </div>
-                ))
-              ) : (
-                <div className="bsu-empty-card">Abhi project files nahi hain.</div>
-              )}
-            </div>
-
-            <button type="button" className="bsu-upload-btn">Upload Files</button>
-          </div>
+          </section>
         </aside>
       </div>
     </div>
