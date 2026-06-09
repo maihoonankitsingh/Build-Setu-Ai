@@ -10655,3 +10655,216 @@ body * {
     min-height: 68px !important;
   }
 }
+
+/* BUILDSETU_PROJECT_SIDEBAR_STABLE_FIX_V1
+   Fix after source-of-truth cleanup:
+   remove internal sidebar clipping, natural card heights, no overlap. */
+
+/* No inner sidebar scrollbar. Let page scroll normally. */
+.bsu-assets-panel {
+  height: auto !important;
+  max-height: none !important;
+  min-height: 0 !important;
+  overflow: visible !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 12px !important;
+  padding: 0 0 14px 0 !important;
+}
+
+/* All sidebar sections must size by content, not clip content. */
+.bsu-assets-section,
+.bsu-assets-section:nth-child(1),
+.bsu-assets-section:nth-child(2),
+.bsu-assets-section:nth-child(3),
+.bsu-assets-section:last-child {
+  flex: 0 0 auto !important;
+  height: auto !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  overflow: visible !important;
+  position: relative !important;
+  padding: 14px !important;
+  border-radius: 20px !important;
+}
+
+/* Keep order stable */
+.bsu-assets-section:nth-child(1) {
+  order: 1 !important;
+}
+
+.bsu-assets-section:nth-child(3),
+.bsu-assets-section:last-child {
+  order: 2 !important;
+}
+
+.bsu-assets-section:nth-child(2) {
+  order: 3 !important;
+}
+
+/* Header button consistency */
+.bsu-assets-head {
+  align-items: flex-start !important;
+  margin-bottom: 10px !important;
+}
+
+.bsu-assets-head button {
+  width: 84px !important;
+  min-width: 84px !important;
+  max-width: 84px !important;
+  height: 36px !important;
+  min-height: 36px !important;
+  max-height: 36px !important;
+  border-radius: 15px !important;
+  font-size: 12px !important;
+}
+
+/* Workflow: force clean vertical rhythm */
+.bsu-workflow-summary-card {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 8px !important;
+  margin-top: 8px !important;
+  overflow: visible !important;
+}
+
+.bsu-workflow-summary-top {
+  min-height: 58px !important;
+  height: auto !important;
+  padding: 10px 12px 16px !important;
+  overflow: hidden !important;
+}
+
+/* Fix cramped “Stage progress1/11” layout */
+.bsu-workflow-summary-top {
+  display: grid !important;
+  grid-template-columns: 1fr auto !important;
+  grid-template-rows: auto auto !important;
+  column-gap: 10px !important;
+  row-gap: 4px !important;
+  align-items: center !important;
+}
+
+.bsu-workflow-summary-top span,
+.bsu-workflow-summary-top small {
+  grid-column: 1 / -1 !important;
+  display: block !important;
+  color: #a187bd !important;
+  font-size: 8.5px !important;
+  line-height: 1 !important;
+  font-weight: 950 !important;
+  letter-spacing: .12em !important;
+  text-transform: uppercase !important;
+}
+
+.bsu-workflow-summary-top strong {
+  grid-column: 1 !important;
+  font-size: 18px !important;
+  line-height: 1 !important;
+}
+
+.bsu-workflow-summary-top em {
+  grid-column: 2 !important;
+  justify-self: end !important;
+}
+
+/* Current/Next rows must never clip */
+.bsu-workflow-summary-line {
+  min-height: 44px !important;
+  height: auto !important;
+  padding: 8px 12px 8px 40px !important;
+  overflow: visible !important;
+  display: block !important;
+}
+
+.bsu-workflow-summary-line strong {
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+/* Project files: no overlap, natural list height */
+.bsu-assets-section:nth-child(3),
+.bsu-assets-section:last-child {
+  padding: 14px !important;
+}
+
+.bsu-file-card {
+  position: relative !important;
+  height: 56px !important;
+  min-height: 56px !important;
+  max-height: 56px !important;
+  margin: 0 !important;
+  overflow: hidden !important;
+}
+
+.bsu-file-card + .bsu-file-card {
+  margin-top: 9px !important;
+}
+
+/* Upload button must be normal flow, not overlay/floating */
+.bsu-upload-btn {
+  position: relative !important;
+  inset: auto !important;
+  transform: none !important;
+  width: 100% !important;
+  height: 42px !important;
+  min-height: 42px !important;
+  max-height: 42px !important;
+  margin: 12px 0 0 0 !important;
+  border-radius: 16px !important;
+  z-index: 1 !important;
+}
+
+/* Recent Images preview: visible but not too tall */
+.bsu-assets-section:nth-child(2) .bsu-empty-card {
+  min-height: 72px !important;
+  height: auto !important;
+  max-height: none !important;
+  padding: 14px 12px !important;
+  overflow: visible !important;
+}
+
+/* Small viewport: compact, still no clipping */
+@media (max-height: 790px) {
+  .bsu-assets-panel {
+    gap: 10px !important;
+    padding-bottom: 10px !important;
+  }
+
+  .bsu-assets-section,
+  .bsu-assets-section:nth-child(1),
+  .bsu-assets-section:nth-child(2),
+  .bsu-assets-section:nth-child(3),
+  .bsu-assets-section:last-child {
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    overflow: visible !important;
+    padding: 12px 14px !important;
+  }
+
+  .bsu-workflow-summary-top {
+    min-height: 54px !important;
+  }
+
+  .bsu-workflow-summary-line {
+    min-height: 40px !important;
+  }
+
+  .bsu-file-card {
+    height: 52px !important;
+    min-height: 52px !important;
+    max-height: 52px !important;
+  }
+
+  .bsu-upload-btn {
+    height: 38px !important;
+    min-height: 38px !important;
+    max-height: 38px !important;
+  }
+
+  .bsu-assets-section:nth-child(2) .bsu-empty-card {
+    min-height: 58px !important;
+  }
+}
