@@ -10090,3 +10090,29 @@ body * {
 .bsu-assets-section:last-child {
   padding-bottom: 12px !important;
 }
+
+/* BUILDSETU_CHAT_NOTE_COMPACT_COMPOSER_LOWER_V1
+   Make bottom review note smaller and move composer/input row slightly lower. */
+.bsu-chat-composer {
+  margin-top: 16px !important;
+  padding-top: 8px !important;
+  padding-bottom: 6px !important;
+  min-height: 56px !important;
+}
+
+.bsu-chat-note {
+  font-size: 9px !important;
+  line-height: 1.05 !important;
+  height: auto !important;
+  min-height: 0 !important;
+  padding-top: 1px !important;
+  padding-bottom: 2px !important;
+  margin-top: 0 !important;
+  opacity: 0.72 !important;
+}
+
+.bsu-chat-input,
+.bsu-tool-trigger,
+.bsu-send-btn {
+  transform: translateY(2px) !important;
+}
