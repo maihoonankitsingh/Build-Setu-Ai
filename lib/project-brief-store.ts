@@ -3,14 +3,22 @@ import path from "path";
 
 export type ProjectStageId =
   | "brief"
+  | "site_jurisdiction"
+  | "concept_planning"
   | "planning"
   | "floor_plan"
+  | "locked_plan"
+  | "working_drawings"
   | "structure"
+  | "mep"
   | "bbs"
   | "boq"
+  | "boq_bbs"
   | "exterior"
   | "interior"
-  | "export";
+  | "interior_exterior"
+  | "export"
+  | "review_export";
 
 export type ProjectStageStatus =
   | "not_started"
@@ -128,68 +136,84 @@ export const DEFAULT_PROJECT_STAGES: ProjectStage[] = [
     description: "Client, site, plot, family, budget, vastu, style and references.",
   },
   {
-    id: "planning",
-    label: "Planning / Naksha",
+    id: "site_jurisdiction",
+    label: "Site / Jurisdiction",
     order: 2,
     status: "not_started",
     required: true,
-    description: "Project brief ke basis par planning aur zoning.",
+    description: "City, local authority, road width, setbacks, bylaws, approval and site constraints.",
   },
   {
-    id: "floor_plan",
-    label: "Floor-wise Plan",
+    id: "concept_planning",
+    label: "Concept Planning",
     order: 3,
     status: "not_started",
     required: true,
-    description: "Ground floor, first floor, room sizes and dimensions.",
+    description: "Requirement understanding, zoning, missing questions, area logic and concept direction.",
+  },
+  {
+    id: "floor_plan",
+    label: "Floor Plan / Naksha",
+    order: 4,
+    status: "not_started",
+    required: true,
+    description: "Floor-wise plan, room sizes, circulation, stairs, wet areas, ventilation and vastu.",
+  },
+  {
+    id: "locked_plan",
+    label: "Locked Plan",
+    order: 5,
+    status: "not_started",
+    required: true,
+    description: "Approved source-of-truth floor plan used for all downstream outputs.",
+  },
+  {
+    id: "working_drawings",
+    label: "Working Drawings",
+    order: 6,
+    status: "not_started",
+    required: true,
+    description: "Dimension plan, furniture plan, door/window schedule, sections, elevations and sheet package.",
   },
   {
     id: "structure",
     label: "Structure",
-    order: 4,
-    status: "not_started",
-    required: true,
-    description: "Column, beam, slab, staircase draft; engineer review required.",
-  },
-  {
-    id: "bbs",
-    label: "BBS",
-    order: 5,
-    status: "not_started",
-    required: true,
-    description: "Bar bending schedule draft from structural plan.",
-  },
-  {
-    id: "boq",
-    label: "BOQ / Estimate",
-    order: 6,
-    status: "not_started",
-    required: true,
-    description: "Material quantity, labour and cost estimate.",
-  },
-  {
-    id: "exterior",
-    label: "Exterior Elevation",
     order: 7,
     status: "not_started",
     required: true,
-    description: "Master exterior design, references and view generation.",
+    description: "Column, beam, slab, footing, staircase draft and structural review basis.",
   },
   {
-    id: "interior",
-    label: "Interior",
+    id: "mep",
+    label: "MEP",
     order: 8,
     status: "not_started",
-    required: false,
-    description: "Room-wise interior concepts and working notes.",
+    required: true,
+    description: "Electrical, plumbing, drainage, water supply, DB/fixture points and service coordination.",
   },
   {
-    id: "export",
-    label: "Export Package",
+    id: "boq_bbs",
+    label: "BOQ / BBS",
     order: 9,
     status: "not_started",
     required: true,
-    description: "Client PDF, contractor package, BOQ/BBS and drawings.",
+    description: "Item-wise BOQ, material list, quantity basis and bar bending schedule draft.",
+  },
+  {
+    id: "interior_exterior",
+    label: "Interior / Exterior",
+    order: 10,
+    status: "not_started",
+    required: false,
+    description: "Exterior elevation, interior concept, material palette and render package.",
+  },
+  {
+    id: "review_export",
+    label: "Review / Export",
+    order: 11,
+    status: "not_started",
+    required: true,
+    description: "Professional review checklist, client PDF, contractor package and final export.",
   },
 ];
 
