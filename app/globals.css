@@ -10300,3 +10300,99 @@ body * {
   width: 0 !important;
   height: 0 !important;
 }
+
+/* BUILDSETU_RIGHT_WORKFLOW_PREVIEW_FIX_V1
+   Final right sidebar workflow preview:
+   show first 5 stages compactly, remove internal blank, keep other cards balanced. */
+.bsu-assets-panel {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 12px !important;
+  height: 100% !important;
+  overflow: hidden !important;
+}
+
+/* Project Workflow card */
+.bsu-assets-section:nth-child(1) {
+  flex: 0 0 245px !important;
+  min-height: 245px !important;
+  max-height: 245px !important;
+  overflow: hidden !important;
+  display: flex !important;
+  flex-direction: column !important;
+  padding-bottom: 10px !important;
+}
+
+.bsu-assets-section:nth-child(1) .bsu-assets-head {
+  flex: 0 0 auto !important;
+  margin-bottom: 8px !important;
+}
+
+.bsu-assets-section:nth-child(1) .mt-2.grid {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  overflow: hidden !important;
+  display: grid !important;
+  gap: 5px !important;
+  padding-right: 0 !important;
+}
+
+/* reset older hide rules, then hide only after 5 */
+.bsu-assets-section:nth-child(1) .mt-2.grid > div {
+  display: block !important;
+}
+
+.bsu-assets-section:nth-child(1) .mt-2.grid > div:nth-child(n+6) {
+  display: none !important;
+}
+
+.bsu-assets-section:nth-child(1) .mt-2.grid > div {
+  min-height: 31px !important;
+  height: 31px !important;
+  padding: 5px 9px !important;
+  border-radius: 10px !important;
+  background: #fbf8ff !important;
+  border: 1px solid #eee7f7 !important;
+}
+
+.bsu-assets-section:nth-child(1) .mt-2.grid > div > div {
+  height: 100% !important;
+  align-items: center !important;
+}
+
+.bsu-assets-section:nth-child(1) .mt-2.grid .text-\[11px\] {
+  font-size: 9.5px !important;
+  line-height: 1 !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.bsu-assets-section:nth-child(1) .mt-2.grid .text-\[10px\] {
+  font-size: 7.8px !important;
+  line-height: 1 !important;
+  margin-top: 2px !important;
+}
+
+.bsu-assets-section:nth-child(1) .mt-2.grid .text-\[9px\] {
+  font-size: 7px !important;
+  line-height: 1 !important;
+  padding: 3px 6px !important;
+}
+
+/* Recent Images medium */
+.bsu-assets-section:nth-child(2) {
+  flex: 0 0 175px !important;
+  min-height: 175px !important;
+  max-height: 175px !important;
+  overflow: hidden !important;
+}
+
+/* Project Files fills remaining */
+.bsu-assets-section:nth-child(3),
+.bsu-assets-section:last-child {
+  flex: 1 1 auto !important;
+  min-height: 215px !important;
+  overflow: hidden !important;
+}
