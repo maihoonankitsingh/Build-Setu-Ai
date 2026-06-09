@@ -9695,3 +9695,124 @@ body * {
   font-weight: 600 !important;
   letter-spacing: 0 !important;
 }
+
+/* BUILDSETU_PROJECT_DETAIL_RIGHT_PANEL_LAYOUT_FIX_V1
+   Right sidebar now has Project Workflow + Recent Images + Project Files.
+   Replace old 2-row grid behavior to prevent the large white strip/overlay. */
+.bsu-pw-shell {
+  min-height: 0 !important;
+  overflow: hidden !important;
+}
+
+.bsu-pw-layout {
+  min-height: 0 !important;
+  align-items: stretch !important;
+  overflow: hidden !important;
+}
+
+.bsu-chat-panel {
+  min-height: 0 !important;
+  min-width: 0 !important;
+  overflow: hidden !important;
+}
+
+.bsu-chat-stream {
+  min-height: 0 !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+}
+
+.bsu-assets-panel {
+  position: relative !important;
+  top: auto !important;
+  align-self: stretch !important;
+  height: 100% !important;
+  max-height: 100% !important;
+  min-height: 0 !important;
+  min-width: 0 !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  display: flex !important;
+  flex-direction: column !important;
+  grid-template-rows: none !important;
+  gap: 12px !important;
+  padding: 0 !important;
+  scrollbar-width: none !important;
+}
+
+.bsu-assets-panel::-webkit-scrollbar {
+  width: 0 !important;
+  height: 0 !important;
+}
+
+.bsu-assets-section {
+  flex: 0 0 auto !important;
+  min-height: 0 !important;
+  overflow: visible !important;
+}
+
+.bsu-assets-section:first-child,
+.bsu-assets-section:last-child {
+  flex: 0 0 auto !important;
+  max-height: none !important;
+  overflow: visible !important;
+  display: block !important;
+}
+
+.bsu-assets-section:first-child {
+  max-height: 188px !important;
+  overflow-y: auto !important;
+  scrollbar-width: none !important;
+}
+
+.bsu-assets-section:first-child::-webkit-scrollbar {
+  width: 0 !important;
+  height: 0 !important;
+}
+
+.bsu-assets-section:first-child .mt-2.grid {
+  max-height: 122px !important;
+  overflow-y: auto !important;
+  padding-right: 2px !important;
+  scrollbar-width: none !important;
+}
+
+.bsu-assets-section:first-child .mt-2.grid::-webkit-scrollbar {
+  width: 0 !important;
+  height: 0 !important;
+}
+
+.bsu-assets-section:nth-child(2) .bsu-assets-list {
+  max-height: 128px !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  padding-right: 2px !important;
+  scrollbar-width: none !important;
+}
+
+.bsu-assets-section:nth-child(2) .bsu-assets-list::-webkit-scrollbar {
+  width: 0 !important;
+  height: 0 !important;
+}
+
+.bsu-assets-section:nth-child(3) .bsu-file-list,
+.bsu-assets-section:last-child .bsu-file-list {
+  max-height: 128px !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  padding-right: 2px !important;
+  scrollbar-width: none !important;
+}
+
+.bsu-assets-section:nth-child(3) .bsu-file-list::-webkit-scrollbar,
+.bsu-assets-section:last-child .bsu-file-list::-webkit-scrollbar {
+  width: 0 !important;
+  height: 0 !important;
+}
+
+.bsu-chat-composer {
+  flex: 0 0 auto !important;
+  position: relative !important;
+  z-index: 20 !important;
+  background: #fff !important;
+}
