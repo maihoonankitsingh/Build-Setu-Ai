@@ -11581,3 +11581,135 @@ body * {
     min-height: 34px !important;
   }
 }
+
+/* BUILDSETU_RIGHT_SIDEBAR_FILE_ALIGNMENT_FINAL_V1
+   Final polish: align file action buttons to right,
+   equalize file row rhythm, simplify recent image empty state. */
+
+/* Project Files rows: icon left, text fluid, menu fixed right */
+.bsu-file-card {
+  width: 100% !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+  min-height: 58px !important;
+  height: 58px !important;
+  padding: 10px 10px 10px 12px !important;
+  border-radius: 16px !important;
+}
+
+.bsu-file-card > span:first-child {
+  flex: 0 0 36px !important;
+  width: 36px !important;
+  height: 36px !important;
+  min-width: 36px !important;
+  margin: 0 !important;
+}
+
+.bsu-file-card > div {
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+  overflow: hidden !important;
+}
+
+.bsu-file-card strong {
+  display: block !important;
+  max-width: 100% !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+  font-size: 12.5px !important;
+  line-height: 1.08 !important;
+}
+
+.bsu-file-card small {
+  display: block !important;
+  margin-top: 4px !important;
+  max-width: 100% !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+  font-size: 8.8px !important;
+  line-height: 1 !important;
+}
+
+/* Critical fix: menu button right aligned */
+.bsu-file-card button {
+  flex: 0 0 36px !important;
+  width: 36px !important;
+  height: 36px !important;
+  min-width: 36px !important;
+  margin-left: auto !important;
+  border-radius: 13px !important;
+}
+
+/* Upload CTA: same grid width as file cards */
+.bsu-upload-btn {
+  width: 100% !important;
+  height: 42px !important;
+  min-height: 42px !important;
+  margin-top: 10px !important;
+  border-radius: 15px !important;
+  font-size: 13px !important;
+}
+
+/* Recent Images: remove odd pseudo icon/selection-looking mark and make clean placeholder */
+.bsu-assets-section:nth-child(2) .bsu-empty-card {
+  position: relative !important;
+  height: 46px !important;
+  min-height: 46px !important;
+  border-radius: 14px !important;
+  background: #fbf8ff !important;
+  color: #8b7aa3 !important;
+  font-size: 10.5px !important;
+  line-height: 1 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0 !important;
+  text-align: center !important;
+}
+
+.bsu-assets-section:nth-child(2) .bsu-empty-card::before {
+  display: none !important;
+  content: none !important;
+}
+
+/* Right sidebar final card spacing */
+.bsu-assets-section:nth-child(3),
+.bsu-assets-section:last-child {
+  padding: 14px !important;
+}
+
+.bsu-assets-section:nth-child(3) .bsu-assets-head,
+.bsu-assets-section:last-child .bsu-assets-head {
+  margin-bottom: 10px !important;
+}
+
+/* Short viewport consistency */
+@media (max-height: 790px) {
+  .bsu-file-card {
+    min-height: 54px !important;
+    height: 54px !important;
+    padding-top: 9px !important;
+    padding-bottom: 9px !important;
+  }
+
+  .bsu-file-card > span:first-child,
+  .bsu-file-card button {
+    flex-basis: 34px !important;
+    width: 34px !important;
+    height: 34px !important;
+    min-width: 34px !important;
+  }
+
+  .bsu-upload-btn {
+    height: 40px !important;
+    min-height: 40px !important;
+  }
+
+  .bsu-assets-section:nth-child(2) .bsu-empty-card {
+    height: 38px !important;
+    min-height: 38px !important;
+  }
+}
