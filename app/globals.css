@@ -12016,3 +12016,67 @@ body * {
     max-height: 34px !important;
   }
 }
+
+/* BUILDSETU_PROJECT_FILES_EMPTY_STATE_COMPACT_V1
+   Keep Project Files premium even when no files are loaded.
+   Avoid large dead blank area; keep Upload CTA visible and balanced. */
+
+/* Project Files empty-state box: compact, centered, not huge blank */
+.bsu-assets-section:nth-child(3) .bsu-empty-card,
+.bsu-assets-section:last-child .bsu-empty-card {
+  min-height: 92px !important;
+  height: 92px !important;
+  max-height: 92px !important;
+  border-radius: 16px !important;
+  background: #fbf8ff !important;
+  border: 1px dashed #eadcff !important;
+  color: #8b7aa3 !important;
+  font-size: 11px !important;
+  line-height: 1.2 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-align: center !important;
+  padding: 12px !important;
+}
+
+/* When files are empty, keep card from becoming a dead tall block */
+.bsu-assets-section:nth-child(3),
+.bsu-assets-section:last-child {
+  min-height: 230px !important;
+}
+
+/* Upload button should sit close to empty state, not float after large blank */
+.bsu-assets-section:nth-child(3) .bsu-upload-btn,
+.bsu-assets-section:last-child .bsu-upload-btn {
+  margin-top: 10px !important;
+  height: 44px !important;
+  min-height: 44px !important;
+  max-height: 44px !important;
+}
+
+/* Recent Images gets breathing after Project Files becomes compact */
+.bsu-assets-section:nth-child(2) {
+  min-height: 118px !important;
+  max-height: 118px !important;
+}
+
+/* Short viewport */
+@media (max-height: 790px) {
+  .bsu-assets-section:nth-child(3) .bsu-empty-card,
+  .bsu-assets-section:last-child .bsu-empty-card {
+    min-height: 76px !important;
+    height: 76px !important;
+    max-height: 76px !important;
+  }
+
+  .bsu-assets-section:nth-child(3),
+  .bsu-assets-section:last-child {
+    min-height: 205px !important;
+  }
+
+  .bsu-assets-section:nth-child(2) {
+    min-height: 104px !important;
+    max-height: 104px !important;
+  }
+}
