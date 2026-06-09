@@ -10597,3 +10597,127 @@ body * {
     min-height: 50px !important;
   }
 }
+
+/* BUILDSETU_PROJECT_RIGHT_PANEL_BUTTON_CONTAINMENT_V1
+   Keep all right panel action buttons strictly inside their cards. */
+
+.bsu-assets-panel {
+  box-sizing: border-box !important;
+  padding-right: 8px !important;
+  overflow-x: hidden !important;
+}
+
+.bsu-assets-section.bsu-workflow-section,
+.bsu-assets-section.bsu-files-section,
+.bsu-assets-section.bsu-images-section {
+  box-sizing: border-box !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  overflow: hidden !important;
+}
+
+/* Header buttons: Refresh / View all */
+.bsu-assets-section.bsu-workflow-section .bsu-assets-head,
+.bsu-assets-section.bsu-files-section .bsu-assets-head,
+.bsu-assets-section.bsu-images-section .bsu-assets-head {
+  box-sizing: border-box !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) auto !important;
+  column-gap: 10px !important;
+  align-items: start !important;
+}
+
+.bsu-assets-section.bsu-workflow-section .bsu-assets-head > div,
+.bsu-assets-section.bsu-files-section .bsu-assets-head > div,
+.bsu-assets-section.bsu-images-section .bsu-assets-head > div {
+  min-width: 0 !important;
+  max-width: 100% !important;
+  overflow: hidden !important;
+}
+
+.bsu-assets-section.bsu-workflow-section .bsu-assets-head button,
+.bsu-assets-section.bsu-files-section .bsu-assets-head button,
+.bsu-assets-section.bsu-images-section .bsu-assets-head button {
+  box-sizing: border-box !important;
+  width: 74px !important;
+  min-width: 74px !important;
+  max-width: 74px !important;
+  height: 34px !important;
+  min-height: 34px !important;
+  max-height: 34px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  justify-self: end !important;
+  flex: none !important;
+  transform: none !important;
+  overflow: hidden !important;
+}
+
+/* File cards and 3-dot buttons */
+.bsu-files-section .bsu-file-card {
+  box-sizing: border-box !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  overflow: hidden !important;
+}
+
+.bsu-files-section .bsu-file-card button {
+  flex: 0 0 32px !important;
+  width: 32px !important;
+  min-width: 32px !important;
+  max-width: 32px !important;
+  height: 32px !important;
+  min-height: 32px !important;
+  max-height: 32px !important;
+  margin-left: 6px !important;
+  padding: 0 !important;
+}
+
+/* Upload button: always inside Project Files card */
+.bsu-files-section .bsu-upload-btn {
+  box-sizing: border-box !important;
+  position: relative !important;
+  inset: auto !important;
+  transform: none !important;
+  width: calc(100% - 2px) !important;
+  max-width: calc(100% - 2px) !important;
+  height: 40px !important;
+  min-height: 40px !important;
+  max-height: 40px !important;
+  margin: 9px 1px 0 1px !important;
+  padding: 0 12px !important;
+  overflow: hidden !important;
+}
+
+/* Extra safety: no horizontal overflow from right panel */
+.bsu-assets-section.bsu-workflow-section *,
+.bsu-assets-section.bsu-files-section *,
+.bsu-assets-section.bsu-images-section * {
+  max-width: 100% !important;
+}
+
+@media (max-height: 790px) {
+  .bsu-assets-panel {
+    padding-right: 8px !important;
+  }
+
+  .bsu-assets-section.bsu-workflow-section .bsu-assets-head button,
+  .bsu-assets-section.bsu-files-section .bsu-assets-head button,
+  .bsu-assets-section.bsu-images-section .bsu-assets-head button {
+    width: 70px !important;
+    min-width: 70px !important;
+    max-width: 70px !important;
+    height: 32px !important;
+    min-height: 32px !important;
+    max-height: 32px !important;
+    font-size: 11px !important;
+  }
+
+  .bsu-files-section .bsu-upload-btn {
+    height: 36px !important;
+    min-height: 36px !important;
+    max-height: 36px !important;
+  }
+}
