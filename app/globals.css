@@ -10023,19 +10023,22 @@ body * {
   }
 }
 
-/* BUILDSETU_PROJECT_RIGHT_PANEL_STABLE_SOURCE_V1
-   Single source-of-truth right panel CSS.
-   No nth-child layout dependency. No overlap. No clipped buttons. */
+/* BUILDSETU_PROJECT_RIGHT_PANEL_SINGLE_RAIL_V1
+   Final stable right panel: one outer rail, clean internal sections. */
 
 .bsu-assets-panel {
   width: 100% !important;
-  min-width: 0 !important;
   max-width: 100% !important;
+  min-width: 0 !important;
   box-sizing: border-box !important;
   display: flex !important;
   flex-direction: column !important;
-  gap: 12px !important;
-  padding: 0 8px 14px 0 !important;
+  gap: 0 !important;
+  padding: 14px !important;
+  border-radius: 22px !important;
+  border: 1px solid #eadff7 !important;
+  background: #ffffff !important;
+  box-shadow: 0 16px 38px rgba(31, 13, 68, .055) !important;
   overflow-x: hidden !important;
   overflow-y: visible !important;
 }
@@ -10050,11 +10053,12 @@ body * {
   min-height: 0 !important;
   max-height: none !important;
   box-sizing: border-box !important;
-  padding: 14px !important;
-  border-radius: 20px !important;
-  border: 1px solid #eadff7 !important;
-  background: linear-gradient(180deg, #ffffff 0%, #fefcff 100%) !important;
-  box-shadow: 0 10px 24px rgba(31, 13, 68, .04) !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
   overflow: visible !important;
 }
 
@@ -10062,15 +10066,22 @@ body * {
 .bsu-files-section { order: 2 !important; }
 .bsu-images-section { order: 3 !important; }
 
+.bsu-assets-section.bsu-files-section,
+.bsu-assets-section.bsu-images-section {
+  margin-top: 16px !important;
+  padding-top: 16px !important;
+  border-top: 1px solid #f0e7fb !important;
+}
+
 /* Header */
 .bsu-assets-section .bsu-assets-head {
   width: 100% !important;
   max-width: 100% !important;
   box-sizing: border-box !important;
   display: grid !important;
-  grid-template-columns: minmax(0, 1fr) 76px !important;
+  grid-template-columns: minmax(0, 1fr) 74px !important;
   gap: 10px !important;
-  align-items: start !important;
+  align-items: center !important;
   margin: 0 0 10px 0 !important;
   padding: 0 !important;
 }
@@ -10109,7 +10120,6 @@ body * {
   border: 1px solid rgba(124, 58, 237, .14) !important;
 }
 
-/* Icons */
 .bsu-workflow-section .bsu-assets-head h2::before {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%237c3aed' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 3v12'/%3E%3Ccircle cx='18' cy='6' r='3'/%3E%3Cpath d='M18 9a9 9 0 0 1-9 9H6'/%3E%3Ccircle cx='6' cy='18' r='3'/%3E%3C/svg%3E") !important;
 }
@@ -10130,9 +10140,9 @@ body * {
 }
 
 .bsu-assets-section .bsu-assets-head button {
-  width: 76px !important;
-  min-width: 76px !important;
-  max-width: 76px !important;
+  width: 74px !important;
+  min-width: 74px !important;
+  max-width: 74px !important;
   height: 34px !important;
   min-height: 34px !important;
   max-height: 34px !important;
@@ -10158,8 +10168,15 @@ body * {
   display: flex !important;
   flex-direction: column !important;
   gap: 8px !important;
-  margin: 0 !important;
-  padding: 0 !important;
+}
+
+.bsu-workflow-summary-top,
+.bsu-workflow-summary-line {
+  border: 1px solid #eadff7 !important;
+  background: #fbf8ff !important;
+  border-radius: 16px !important;
+  box-sizing: border-box !important;
+  overflow: hidden !important;
 }
 
 .bsu-workflow-summary-top {
@@ -10168,10 +10185,6 @@ body * {
   gap: 8px 10px !important;
   min-height: 58px !important;
   padding: 10px 12px 14px !important;
-  border-radius: 16px !important;
-  border: 1px solid #eadff7 !important;
-  background: #fbf8ff !important;
-  overflow: hidden !important;
 }
 
 .bsu-workflow-summary-top::after {
@@ -10182,14 +10195,20 @@ body * {
   background: linear-gradient(90deg, #7c3aed 0 9%, #eadcff 9% 100%) !important;
 }
 
+.bsu-workflow-summary-line {
+  min-height: 44px !important;
+  padding: 8px 12px !important;
+  background: #ffffff !important;
+}
+
 .bsu-workflow-summary-top span,
 .bsu-workflow-summary-line span {
   display: block !important;
   color: #9b84b8 !important;
   font-size: 8px !important;
-  line-height: 1 !important;
   font-weight: 900 !important;
   letter-spacing: .12em !important;
+  line-height: 1 !important;
   text-transform: uppercase !important;
 }
 
@@ -10214,20 +10233,10 @@ body * {
   font-size: 7.5px !important;
   font-style: normal !important;
   font-weight: 950 !important;
-  line-height: 1 !important;
-  text-transform: uppercase !important;
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
-}
-
-.bsu-workflow-summary-line {
-  min-height: 44px !important;
-  padding: 8px 12px !important;
-  border-radius: 16px !important;
-  border: 1px solid #eadff7 !important;
-  background: #ffffff !important;
-  overflow: hidden !important;
+  text-transform: uppercase !important;
 }
 
 .bsu-workflow-summary-line strong {
@@ -10247,9 +10256,6 @@ body * {
   display: flex !important;
   flex-direction: column !important;
   gap: 8px !important;
-  margin: 0 !important;
-  padding: 0 !important;
-  overflow: visible !important;
 }
 
 .bsu-file-card {
@@ -10259,7 +10265,6 @@ body * {
   max-height: 52px !important;
   box-sizing: border-box !important;
   padding: 8px 10px !important;
-  margin: 0 !important;
   border-radius: 16px !important;
   border: 1px solid #eadff7 !important;
   background: #ffffff !important;
@@ -10292,8 +10297,8 @@ body * {
   display: block !important;
   color: #1f1235 !important;
   font-size: 12px !important;
-  line-height: 1.1 !important;
   font-weight: 900 !important;
+  line-height: 1.1 !important;
   white-space: nowrap !important;
   overflow: hidden !important;
   text-overflow: ellipsis !important;
@@ -10304,8 +10309,8 @@ body * {
   margin-top: 3px !important;
   color: #8d78a8 !important;
   font-size: 8.5px !important;
-  line-height: 1 !important;
   font-weight: 800 !important;
+  line-height: 1 !important;
   white-space: nowrap !important;
   overflow: hidden !important;
   text-overflow: ellipsis !important;
@@ -10317,15 +10322,12 @@ body * {
   height: 32px !important;
   min-width: 32px !important;
   max-width: 32px !important;
-  padding: 0 !important;
   margin-left: 4px !important;
+  padding: 0 !important;
   border-radius: 13px !important;
   border: 1px solid #eadff7 !important;
   background: #ffffff !important;
   color: #5f4c75 !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
 }
 
 .bsu-upload-btn {
@@ -10343,18 +10345,15 @@ body * {
   color: #6d28d9 !important;
   font-size: 13px !important;
   font-weight: 900 !important;
-  line-height: 1 !important;
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
-  overflow: hidden !important;
 }
 
-/* Images and empty state */
+/* Recent images */
 .bsu-assets-list {
   margin: 0 !important;
   padding: 0 !important;
-  overflow: visible !important;
 }
 
 .bsu-empty-card {
@@ -10380,40 +10379,29 @@ body * {
   content: none !important;
 }
 
-/* Compact viewport */
 @media (max-height: 790px) {
   .bsu-assets-panel {
-    gap: 10px !important;
-    padding-right: 8px !important;
+    padding: 12px !important;
   }
 
-  .bsu-assets-section.bsu-workflow-section,
   .bsu-assets-section.bsu-files-section,
   .bsu-assets-section.bsu-images-section {
-    padding: 12px !important;
-    border-radius: 18px !important;
+    margin-top: 12px !important;
+    padding-top: 12px !important;
   }
 
   .bsu-assets-section .bsu-assets-head {
-    grid-template-columns: minmax(0, 1fr) 72px !important;
+    grid-template-columns: minmax(0, 1fr) 70px !important;
   }
 
   .bsu-assets-section .bsu-assets-head button {
-    width: 72px !important;
-    min-width: 72px !important;
-    max-width: 72px !important;
+    width: 70px !important;
+    min-width: 70px !important;
+    max-width: 70px !important;
     height: 32px !important;
     min-height: 32px !important;
     max-height: 32px !important;
     font-size: 11px !important;
-  }
-
-  .bsu-workflow-summary-top {
-    min-height: 50px !important;
-  }
-
-  .bsu-workflow-summary-line {
-    min-height: 38px !important;
   }
 
   .bsu-file-card {
@@ -10426,9 +10414,5 @@ body * {
     height: 38px !important;
     min-height: 38px !important;
     max-height: 38px !important;
-  }
-
-  .bsu-empty-card {
-    min-height: 50px !important;
   }
 }
