@@ -10721,3 +10721,57 @@ body * {
     max-height: 36px !important;
   }
 }
+
+/* BUILDSETU_PROJECT_RIGHT_PANEL_UPLOAD_CLIP_FIX_V1
+   Fix Upload Files button being clipped inside Project Files card. */
+
+.bsu-assets-section.bsu-files-section {
+  overflow: visible !important;
+  padding-bottom: 18px !important;
+}
+
+.bsu-files-section .bsu-file-list {
+  overflow: visible !important;
+  margin-bottom: 0 !important;
+}
+
+.bsu-files-section .bsu-upload-btn {
+  position: relative !important;
+  display: flex !important;
+  box-sizing: border-box !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  height: 40px !important;
+  min-height: 40px !important;
+  max-height: 40px !important;
+  margin: 12px 0 0 0 !important;
+  padding: 0 12px !important;
+  border-radius: 15px !important;
+  overflow: visible !important;
+  transform: none !important;
+  inset: auto !important;
+  z-index: 1 !important;
+}
+
+.bsu-assets-section.bsu-workflow-section,
+.bsu-assets-section.bsu-images-section {
+  overflow: hidden !important;
+}
+
+.bsu-assets-panel {
+  overflow-x: hidden !important;
+  overflow-y: visible !important;
+}
+
+@media (max-height: 790px) {
+  .bsu-assets-section.bsu-files-section {
+    padding-bottom: 16px !important;
+  }
+
+  .bsu-files-section .bsu-upload-btn {
+    height: 38px !important;
+    min-height: 38px !important;
+    max-height: 38px !important;
+    margin-top: 10px !important;
+  }
+}
