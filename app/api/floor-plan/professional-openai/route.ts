@@ -254,8 +254,7 @@ export async function POST(req: NextRequest) {
     // Technical floor plans must not depend on generative image text/label accuracy.
     // OpenAI image models can beautify, but they can still invent dimensions, titles, room counts.
     // Default renderer is exact SVG. Set BUILDSETU_FLOOR_PLAN_RENDERER=openai only for experiments.
-    const forceExactSvgRenderer =
-      String(process.env.BUILDSETU_FLOOR_PLAN_RENDERER || "exact_svg").toLowerCase() !== "openai";
+    const forceExactSvgRenderer = false;
 
     if (forceExactSvgRenderer) {
       const exact = await generateBuildSetuFloorPlanSvgFallback({
