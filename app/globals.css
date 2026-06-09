@@ -10785,3 +10785,193 @@ body * {
   border-radius: 15px !important;
   font-size: 13px !important;
 }
+
+/* BUILDSETU_RIGHT_SIDEBAR_PREMIUM_ICON_POLISH_V1
+   Premium SaaS sidebar polish: icons, progress bar, cleaner empty state,
+   better file rows and stronger upload CTA. */
+
+/* Section header icon system */
+.bsu-assets-section .bsu-assets-head h2 {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  font-size: 10px !important;
+  line-height: 1 !important;
+  letter-spacing: .15em !important;
+  color: #8c74aa !important;
+}
+
+.bsu-assets-section .bsu-assets-head h2::before {
+  content: "" !important;
+  width: 26px !important;
+  height: 26px !important;
+  flex: 0 0 26px !important;
+  border-radius: 10px !important;
+  background-color: #f3e8ff !important;
+  background-repeat: no-repeat !important;
+  background-position: center !important;
+  background-size: 15px 15px !important;
+  box-shadow: inset 0 0 0 1px rgba(124, 58, 237, .10) !important;
+}
+
+/* Workflow icon */
+.bsu-assets-section:nth-child(1) .bsu-assets-head h2::before {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%237c3aed' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 3v12'/%3E%3Ccircle cx='18' cy='6' r='3'/%3E%3Cpath d='M18 9a9 9 0 0 1-9 9H6'/%3E%3Ccircle cx='6' cy='18' r='3'/%3E%3C/svg%3E") !important;
+}
+
+/* Images icon */
+.bsu-assets-section:nth-child(2) .bsu-assets-head h2::before {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%237c3aed' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect width='18' height='18' x='3' y='3' rx='2' ry='2'/%3E%3Ccircle cx='9' cy='9' r='2'/%3E%3Cpath d='m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21'/%3E%3C/svg%3E") !important;
+}
+
+/* Files icon */
+.bsu-assets-section:nth-child(3) .bsu-assets-head h2::before,
+.bsu-assets-section:last-child .bsu-assets-head h2::before {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%237c3aed' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z'/%3E%3C/svg%3E") !important;
+}
+
+/* Header buttons */
+.bsu-assets-section .bsu-assets-head button {
+  height: 36px !important;
+  min-width: 76px !important;
+  border-radius: 15px !important;
+  border: 1px solid #eee7f7 !important;
+  background: #ffffff !important;
+  color: #46305f !important;
+  font-size: 12px !important;
+  font-weight: 900 !important;
+  box-shadow: 0 8px 18px rgba(31, 13, 68, .045) !important;
+}
+
+.bsu-assets-section .bsu-assets-head button:hover {
+  border-color: #d8c7ff !important;
+  color: #6d28d9 !important;
+}
+
+/* Workflow: progress bar + iconized mini cards */
+.bsu-workflow-summary-top {
+  position: relative !important;
+  overflow: hidden !important;
+  padding-bottom: 16px !important;
+}
+
+.bsu-workflow-summary-top::after {
+  content: "" !important;
+  position: absolute !important;
+  left: 10px !important;
+  right: 10px !important;
+  bottom: 7px !important;
+  height: 4px !important;
+  border-radius: 999px !important;
+  background: linear-gradient(90deg, #7c3aed 0 9%, #eee7f7 9% 100%) !important;
+}
+
+.bsu-workflow-summary-line {
+  position: relative !important;
+  padding-left: 36px !important;
+}
+
+.bsu-workflow-summary-line::before {
+  content: "" !important;
+  position: absolute !important;
+  left: 10px !important;
+  top: 50% !important;
+  width: 18px !important;
+  height: 18px !important;
+  transform: translateY(-50%) !important;
+  border-radius: 8px !important;
+  background-color: #f3e8ff !important;
+  background-repeat: no-repeat !important;
+  background-position: center !important;
+  background-size: 12px 12px !important;
+}
+
+.bsu-workflow-summary-line::before {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%237c3aed' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 3h18v18H3z'/%3E%3Cpath d='M9 3v18'/%3E%3Cpath d='M3 9h18'/%3E%3C/svg%3E") !important;
+}
+
+.bsu-workflow-summary-line.is-next::before {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%237c3aed' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10'/%3E%3Cpath d='m12 16 4-4-4-4'/%3E%3Cpath d='M8 12h8'/%3E%3C/svg%3E") !important;
+}
+
+/* Recent Images empty state with image icon */
+.bsu-assets-section:nth-child(2) .bsu-empty-card {
+  position: relative !important;
+  flex-direction: column !important;
+  gap: 6px !important;
+  color: #7b6f8d !important;
+  background: #fbf8ff !important;
+}
+
+.bsu-assets-section:nth-child(2) .bsu-empty-card::before {
+  content: "" !important;
+  width: 28px !important;
+  height: 28px !important;
+  border-radius: 12px !important;
+  background-color: #f3e8ff !important;
+  background-repeat: no-repeat !important;
+  background-position: center !important;
+  background-size: 16px 16px !important;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%237c3aed' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m2 2 20 20'/%3E%3Cpath d='M10.41 10.41A2 2 0 0 1 9 11a2 2 0 0 1-2-2c0-.55.22-1.05.59-1.41'/%3E%3Cpath d='M13.5 3H5a2 2 0 0 0-2 2v14c0 .6.27 1.13.69 1.5'/%3E%3Cpath d='M21 15V5a2 2 0 0 0-2-2h-.5'/%3E%3Cpath d='M21 15l-3.086-3.086a2 2 0 0 0-2.828 0L14 13'/%3E%3C/svg%3E") !important;
+  opacity: .9 !important;
+}
+
+/* Project file rows: icon-first professional layout */
+.bsu-file-card {
+  gap: 12px !important;
+  transition: transform .16s ease, box-shadow .16s ease, border-color .16s ease !important;
+}
+
+.bsu-file-card:hover {
+  transform: translateY(-1px) !important;
+  border-color: #d8c7ff !important;
+  box-shadow: 0 12px 24px rgba(31, 13, 68, .06) !important;
+}
+
+.bsu-file-card > span:first-child {
+  width: 38px !important;
+  height: 38px !important;
+  border-radius: 14px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  background: #f1ddff !important;
+  color: #6d28d9 !important;
+  font-size: 9px !important;
+  font-weight: 950 !important;
+  letter-spacing: .04em !important;
+}
+
+.bsu-file-card > div {
+  min-width: 0 !important;
+}
+
+.bsu-file-card button {
+  width: 38px !important;
+  height: 38px !important;
+  border-radius: 14px !important;
+  border: 1px solid #eee7f7 !important;
+  background: #fff !important;
+  color: #6b5c7f !important;
+}
+
+/* Upload button with icon */
+.bsu-upload-btn {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  color: #6d28d9 !important;
+  border: 1.5px solid #8b5cf6 !important;
+  background: linear-gradient(180deg, #ffffff, #fbf8ff) !important;
+}
+
+.bsu-upload-btn::before {
+  content: "" !important;
+  width: 18px !important;
+  height: 18px !important;
+  background-repeat: no-repeat !important;
+  background-position: center !important;
+  background-size: 18px 18px !important;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%237c3aed' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 13V2'/%3E%3Cpath d='m8 6 4-4 4 4'/%3E%3Cpath d='M20 16.58A5 5 0 0 0 18 7h-1.26A8 8 0 1 0 4 15.25'/%3E%3Cpath d='M16 16l-4-4-4 4'/%3E%3C/svg%3E") !important;
+}
