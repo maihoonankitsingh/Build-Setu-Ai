@@ -547,11 +547,15 @@ export async function getProjectStages(projectIdRaw: string) {
   const brief = db.briefs.find((b) => b.projectId === projectId) || null;
   const completeness = getProjectBriefCompleteness(brief);
 
-  return DEFAULT_PROJECT_STAGES.map((base) => {
+  const stages = DEFAULT_PROJECT_STAGES.map((base) => {
     const stored = map.get(base.id);
+
+    // BUILDSETU_STAGE_METADATA_NORMALIZE_V2
+    // Default stage metadata is canonical. Saved project data may only override status/updatedAt.
     const merged: ProjectStage = {
       ...base,
-      ...(stored || {}),
+      status: stored?.status ?? base.status,
+      updatedAt: stored?.updatedAt,
     };
 
     if (base.id === "brief") {
@@ -564,7 +568,9 @@ export async function getProjectStages(projectIdRaw: string) {
     }
 
     return merged;
-  }).sort((a, b) => a.order - b.order);
+  });
+
+  return stages.sort((a, b) => a.order - b.order);
 }
 
 export async function updateProjectStage(projectIdRaw: string, stageId: ProjectStageId, status: ProjectStageStatus) {
