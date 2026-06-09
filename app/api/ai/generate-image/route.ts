@@ -129,6 +129,59 @@ function assetTypeForTool(toolSlug: string) {
   return "generated_image";
 }
 
+
+function buildSetuFloorPlanPromptGuard(args: { prompt: string; toolSlug: string }) {
+  const prompt = String(args.prompt || "");
+  const slug = String(args.toolSlug || "").toLowerCase();
+
+  if (!slug.includes("floor-plan") && !slug.includes("sketch-to-plan")) {
+    return prompt;
+  }
+
+  const lower = prompt.toLowerCase();
+  const is49x57 =
+    /49\s*[x×]\s*57/.test(lower) ||
+    (lower.includes("49") && lower.includes("57") && lower.includes("plot"));
+
+  const isEastNorthCorner =
+    lower.includes("east-north") ||
+    lower.includes("east north") ||
+    (lower.includes("front road: east") && lower.includes("side road: north")) ||
+    (lower.includes("front road is on east") && lower.includes("side road is on north")) ||
+    (lower.includes("east side front road") && lower.includes("north side road"));
+
+  const genericGuard = [
+    "BUILDSETU STRICT FLOOR PLAN RULES:",
+    "Use the user/project brief as the source of truth.",
+    "Do not infer front facing from side road.",
+    "If front road and side road are both given, front road is the main facing.",
+    "Do not rotate width/depth.",
+    "Do not create oversized unrealistic rooms.",
+    "Use one staircase only unless explicitly requested.",
+    "Generate the requested floor only; do not relabel ground floor as first floor.",
+  ];
+
+  const strict49x57Guard = [
+    "CRITICAL PROJECT LOCK:",
+    "Project is 49 ft East frontage x 57 ft depth.",
+    "Corner plot: East side is FRONT ROAD; North side is SIDE ROAD.",
+    "Title must be: Ground Floor Plan - 49' x 57' East Front + North Side Corner Plot.",
+    "Never write NORTH facing for this project.",
+    "Never use 59 ft dimension.",
+    "Horizontal/front dimension must be 49 ft on East frontage.",
+    "Vertical/depth dimension must be 57 ft.",
+    "Ground floor must have exactly 1 bedroom, not 2 bedrooms.",
+    "Required ground floor: car parking + bike parking, living, defined dining, SE kitchen approx 10x10, NE/East pooja approx 5x6, SW bedroom approx 11x12/12x12, 1 bathroom, one staircase, wash/store.",
+  ];
+
+  const guard = is49x57 && isEastNorthCorner
+    ? [...genericGuard, ...strict49x57Guard]
+    : genericGuard;
+
+  return `${guard.join("\n")}\n\nUSER REQUEST:\n${prompt}`;
+}
+
+
 async function registerOpenAiGeneratedAsset(args: {
   projectId: string;
   toolSlug: string;
@@ -305,7 +358,7 @@ export async function POST(req: NextRequest) {
 
     const body = await req.json().catch(() => ({}));
 
-    const prompt = extractPrompt(body);
+    let prompt = extractPrompt(body);
     const projectId = sanitizeProjectId(
       body?.projectId ||
       body?.selectedProjectId ||
@@ -315,6 +368,8 @@ export async function POST(req: NextRequest) {
     const userId = cleanText(body?.userId || body?.user?.id || body?.session?.userId || "anonymous") || "anonymous";
     const planTier = cleanText(body?.planTier || body?.tier || body?.package || "free") || "free";
     const toolSlug = cleanText(body?.toolSlug || body?.slug || body?.tool || "buildsetu-image");
+
+    prompt = buildSetuFloorPlanPromptGuard({ prompt, toolSlug });
 
     const buildSetuGenerateImageHeavyGate = await enforceBuildSetuHeavyRouteAuthGate(req, {
       projectId: projectId || "global",

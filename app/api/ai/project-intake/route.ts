@@ -8,11 +8,61 @@ function detectPlotSize(text: string) {
   return `${match[1]} x ${match[2]} ft`;
 }
 
-function detectFacing(text: string) {
-  const lower = text.toLowerCase();
+function normalizeDirection(input: string) {
+  const lower = String(input || "").trim().toLowerCase();
+  if (!lower) return "";
+  if (lower.includes("east") || lower.includes("पूर्व")) return "East";
   if (lower.includes("north") || lower.includes("उत्तर")) return "North";
   if (lower.includes("south") || lower.includes("दक्षिण")) return "South";
+  if (lower.includes("west") || lower.includes("पश्चिम")) return "West";
+  return "";
+}
+
+function detectFrontRoadFacing(text: string) {
+  const lower = String(text || "").toLowerCase();
+
+  if (/front\s+road\s*(is|:)?\s*(on\s*)?(east|पूर्व)/i.test(text)) return "East";
+  if (/(east|पूर्व)\s+(side\s+)?(front\s+)?road/i.test(text)) return "East";
+  if (/east\s+front/i.test(lower) || /frontage.*east/i.test(lower)) return "East";
+
+  if (/front\s+road\s*(is|:)?\s*(on\s*)?(north|उत्तर)/i.test(text)) return "North";
+  if (/(north|उत्तर)\s+(side\s+)?front\s+road/i.test(text)) return "North";
+  if (/north\s+front/i.test(lower) || /frontage.*north/i.test(lower)) return "North";
+
+  if (/front\s+road\s*(is|:)?\s*(on\s*)?(south|दक्षिण)/i.test(text)) return "South";
+  if (/(south|दक्षिण)\s+(side\s+)?front\s+road/i.test(text)) return "South";
+  if (/south\s+front/i.test(lower) || /frontage.*south/i.test(lower)) return "South";
+
+  if (/front\s+road\s*(is|:)?\s*(on\s*)?(west|पश्चिम)/i.test(text)) return "West";
+  if (/(west|पश्चिम)\s+(side\s+)?front\s+road/i.test(text)) return "West";
+  if (/west\s+front/i.test(lower) || /frontage.*west/i.test(lower)) return "West";
+
+  return "";
+}
+
+function detectSideRoadFacing(text: string) {
+  const lower = String(text || "").toLowerCase();
+
+  if (/side\s+road\s*(is|:)?\s*(on\s*)?(north|उत्तर)/i.test(text) || /north\s+side\s+road/i.test(lower)) return "North";
+  if (/side\s+road\s*(is|:)?\s*(on\s*)?(east|पूर्व)/i.test(text) || /east\s+side\s+road/i.test(lower)) return "East";
+  if (/side\s+road\s*(is|:)?\s*(on\s*)?(south|दक्षिण)/i.test(text) || /south\s+side\s+road/i.test(lower)) return "South";
+  if (/side\s+road\s*(is|:)?\s*(on\s*)?(west|पश्चिम)/i.test(text) || /west\s+side\s+road/i.test(lower)) return "West";
+
+  return "";
+}
+
+function detectFacing(text: string) {
+  const lower = String(text || "").toLowerCase();
+
+  const explicitFront = detectFrontRoadFacing(text);
+  if (explicitFront) return explicitFront;
+
+  const corner = lower.match(/\b(east|north|south|west)\s*[-/]\s*(east|north|south|west)\s+corner\b/i);
+  if (corner) return normalizeDirection(corner[1]);
+
   if (lower.includes("east") || lower.includes("पूर्व")) return "East";
+  if (lower.includes("north") || lower.includes("उत्तर")) return "North";
+  if (lower.includes("south") || lower.includes("दक्षिण")) return "South";
   if (lower.includes("west") || lower.includes("पश्चिम")) return "West";
   return "";
 }
@@ -34,7 +84,7 @@ function detectBudget(text: string) {
 }
 
 function detectLocation(text: string) {
-  const known = text.match(/\b(raipur|bhilai|bilaspur|durg|delhi|mumbai|pune|bangalore|bengaluru|hyderabad|indore|nagpur|lucknow|jaipur|surat|ahmedabad)\b/i);
+  const known = text.match(/\b(raipur|bhilai|bilaspur|durg|delhi|mumbai|pune|bangalore|bengaluru|hyderabad|indore|nagpur|lucknow|varanasi|banaras|jaipur|surat|ahmedabad)\b/i);
   if (!known) return "";
   return known[1].charAt(0).toUpperCase() + known[1].slice(1).toLowerCase();
 }
@@ -90,7 +140,8 @@ export async function POST(req: NextRequest) {
     const projectType = String(body.projectType || "Residential House").trim();
     const style = String(body.style || "").trim();
     const plotType = String(body.plotType || "Regular Plot").trim();
-    const sideRoadFacing = String(body.sideRoadFacing || "").trim();
+    const frontRoadFacing = normalizeDirection(String(body.frontRoadFacing || body.facing || "").trim());
+    const sideRoadFacing = normalizeDirection(String(body.sideRoadFacing || "").trim()) || detectSideRoadFacing(rawBrief);
     const spaces = Array.isArray(body.spaces) ? body.spaces.filter(Boolean) : [];
     const selectedOutputs = Array.isArray(body.requiredOutputs) ? body.requiredOutputs.filter(Boolean) : [];
     const assets = Array.isArray(body.assets) ? body.assets : [];
@@ -106,7 +157,7 @@ export async function POST(req: NextRequest) {
     }
 
     const plotSize = detectPlotSize(rawBrief);
-    const facing = detectFacing(rawBrief);
+    const facing = frontRoadFacing || detectFrontRoadFacing(rawBrief) || detectFacing(rawBrief);
     const floors = detectFloors(rawBrief);
     const budget = detectBudget(rawBrief);
     const location = detectLocation(rawBrief);
@@ -123,9 +174,16 @@ export async function POST(req: NextRequest) {
     if (!rawBrief.toLowerCase().includes("stair")) missingQuestions.push("Staircase internal chahiye ya external?");
     if (requiredOutputs.length === 0) missingQuestions.push("Pehle output kya chahiye: floor plan, interior, elevation, BOQ, BBS ya client PDF?");
 
+    const orientationTitle =
+      plotType === "Corner Plot" && facing && sideRoadFacing
+        ? `${facing}-${sideRoadFacing} Corner Plot`
+        : facing
+          ? `${facing} Facing`
+          : "";
+
     const projectTitleParts = [
       plotSize || "New",
-      facing ? `${facing} Facing` : "",
+      orientationTitle,
       projectType.includes("House") ? "House" : projectType
     ].filter(Boolean);
 
@@ -154,6 +212,7 @@ export async function POST(req: NextRequest) {
         location,
         plotSize,
         facing,
+        frontRoadFacing: facing,
         plotType,
         sideRoadFacing: plotType === "Corner Plot" ? sideRoadFacing : "",
         cornerPlot: plotType === "Corner Plot",
