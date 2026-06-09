@@ -9816,3 +9816,81 @@ body * {
   z-index: 20 !important;
   background: #fff !important;
 }
+
+/* BUILDSETU_PROJECT_CHAT_BOTTOM_WHITE_STRIP_FIX_V1
+   Prevent oversized chat/composer fade overlays from covering the lower chat area. */
+.bsu-pw-shell,
+.bsu-pw-layout {
+  min-height: 0 !important;
+  overflow: hidden !important;
+  background: transparent !important;
+}
+
+.bsu-chat-panel {
+  position: relative !important;
+  display: flex !important;
+  flex-direction: column !important;
+  min-height: 0 !important;
+  min-width: 0 !important;
+  overflow: hidden !important;
+  background: #ffffff !important;
+}
+
+.bsu-chat-panel::before,
+.bsu-chat-panel::after,
+.bsu-chat-stream::before,
+.bsu-chat-stream::after,
+.bsu-pw-layout::before,
+.bsu-pw-layout::after,
+.bsu-pw-shell::before,
+.bsu-pw-shell::after {
+  content: none !important;
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  pointer-events: none !important;
+  opacity: 0 !important;
+}
+
+.bsu-chat-stream {
+  position: relative !important;
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  padding-bottom: 12px !important;
+  background: #ffffff !important;
+  -webkit-mask-image: none !important;
+  mask-image: none !important;
+}
+
+.bsu-chat-composer {
+  flex: 0 0 auto !important;
+  position: relative !important;
+  inset: auto !important;
+  bottom: auto !important;
+  left: auto !important;
+  right: auto !important;
+  transform: none !important;
+  z-index: 30 !important;
+  min-height: 64px !important;
+  padding: 10px 12px !important;
+  background: #ffffff !important;
+  border-top: 1px solid #eee7f7 !important;
+  box-shadow: none !important;
+}
+
+.bsu-chat-note {
+  flex: 0 0 auto !important;
+  position: relative !important;
+  z-index: 20 !important;
+  margin: 0 !important;
+  padding: 4px 0 8px !important;
+  background: #ffffff !important;
+}
+
+.bsu-assets-panel {
+  z-index: 10 !important;
+}
