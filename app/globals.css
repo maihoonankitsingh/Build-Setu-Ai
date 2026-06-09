@@ -10193,3 +10193,110 @@ body * {
     max-height: calc(100dvh - 82px) !important;
   }
 }
+
+/* BUILDSETU_RIGHT_PANEL_CLEAN_STABLE_V1
+   Stable right sidebar: workflow preview top, recent images middle, files bottom.
+   Avoid cramped 11-row workflow list in the sidebar. */
+.bsu-assets-panel {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 12px !important;
+  height: 100% !important;
+  max-height: 100% !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+}
+
+/* Workflow preview */
+.bsu-assets-section:nth-child(1) {
+  flex: 0 0 228px !important;
+  min-height: 228px !important;
+  max-height: 228px !important;
+  overflow: hidden !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+.bsu-assets-section:nth-child(1) .bsu-assets-head {
+  flex: 0 0 auto !important;
+  margin-bottom: 8px !important;
+}
+
+.bsu-assets-section:nth-child(1) .mt-2.grid {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+  gap: 6px !important;
+}
+
+/* Show clean first 5 workflow stages only in sidebar preview */
+.bsu-assets-section:nth-child(1) .mt-2.grid > div:nth-child(n+6) {
+  display: none !important;
+}
+
+.bsu-assets-section:nth-child(1) .mt-2.grid > div {
+  min-height: 34px !important;
+  padding: 7px 10px !important;
+  border-radius: 12px !important;
+  background: #fbf8ff !important;
+  border: 1px solid #eee7f7 !important;
+}
+
+.bsu-assets-section:nth-child(1) .mt-2.grid .text-\[11px\] {
+  font-size: 10px !important;
+  line-height: 1.1 !important;
+}
+
+.bsu-assets-section:nth-child(1) .mt-2.grid .text-\[10px\] {
+  font-size: 8.5px !important;
+  line-height: 1 !important;
+}
+
+.bsu-assets-section:nth-child(1) .mt-2.grid .text-\[9px\] {
+  font-size: 7.5px !important;
+  line-height: 1 !important;
+  padding: 4px 6px !important;
+}
+
+/* Recent Images balanced */
+.bsu-assets-section:nth-child(2) {
+  flex: 0 0 172px !important;
+  min-height: 172px !important;
+  max-height: 172px !important;
+  overflow: hidden !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+.bsu-assets-section:nth-child(2) .bsu-empty-card {
+  flex: 1 1 auto !important;
+  min-height: 96px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+/* Project Files fills remaining space cleanly */
+.bsu-assets-section:nth-child(3),
+.bsu-assets-section:last-child {
+  flex: 1 1 auto !important;
+  min-height: 230px !important;
+  overflow: hidden !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+.bsu-assets-section:nth-child(3) .bsu-file-list,
+.bsu-assets-section:last-child .bsu-file-list {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  scrollbar-width: none !important;
+}
+
+.bsu-assets-section:nth-child(3) .bsu-file-list::-webkit-scrollbar,
+.bsu-assets-section:last-child .bsu-file-list::-webkit-scrollbar {
+  width: 0 !important;
+  height: 0 !important;
+}
