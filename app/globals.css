@@ -12080,3 +12080,127 @@ body * {
     max-height: 104px !important;
   }
 }
+
+/* BUILDSETU_RIGHT_SIDEBAR_DENSITY_FINAL_V1
+   Final density polish:
+   reduce project file row gaps, keep upload CTA visible,
+   give Recent Images more balanced bottom presence. */
+
+/* Project Files card should not feel over-tall */
+.bsu-assets-section:nth-child(3),
+.bsu-assets-section:last-child {
+  min-height: 238px !important;
+  padding: 13px 14px !important;
+}
+
+/* File list rhythm */
+.bsu-assets-section:nth-child(3) .bsu-file-list,
+.bsu-assets-section:last-child .bsu-file-list {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 10px !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+/* File rows compact but readable */
+.bsu-file-card {
+  min-height: 56px !important;
+  height: 56px !important;
+  padding: 9px 11px !important;
+  border-radius: 16px !important;
+}
+
+.bsu-file-card > span:first-child,
+.bsu-file-card button {
+  flex-basis: 36px !important;
+  width: 36px !important;
+  min-width: 36px !important;
+  max-width: 36px !important;
+  height: 36px !important;
+  min-height: 36px !important;
+  max-height: 36px !important;
+}
+
+.bsu-file-card strong {
+  font-size: 12px !important;
+}
+
+.bsu-file-card small {
+  margin-top: 3px !important;
+  font-size: 8.6px !important;
+}
+
+/* Upload button aligned with compact file rows */
+.bsu-upload-btn {
+  height: 42px !important;
+  min-height: 42px !important;
+  max-height: 42px !important;
+  margin-top: 10px !important;
+  border-radius: 15px !important;
+}
+
+/* Recent Images gets a cleaner bottom fit */
+.bsu-assets-section:nth-child(2) {
+  flex: 0 0 118px !important;
+  min-height: 118px !important;
+  max-height: 118px !important;
+  padding: 12px 14px !important;
+}
+
+.bsu-assets-section:nth-child(2) .bsu-assets-head {
+  margin-bottom: 7px !important;
+}
+
+.bsu-assets-section:nth-child(2) .bsu-empty-card {
+  height: 40px !important;
+  min-height: 40px !important;
+  max-height: 40px !important;
+}
+
+/* Short viewport exact fit */
+@media (max-height: 790px) {
+  .bsu-assets-section:nth-child(3),
+  .bsu-assets-section:last-child {
+    min-height: 220px !important;
+  }
+
+  .bsu-assets-section:nth-child(3) .bsu-file-list,
+  .bsu-assets-section:last-child .bsu-file-list {
+    gap: 8px !important;
+  }
+
+  .bsu-file-card {
+    min-height: 52px !important;
+    height: 52px !important;
+  }
+
+  .bsu-file-card > span:first-child,
+  .bsu-file-card button {
+    flex-basis: 34px !important;
+    width: 34px !important;
+    min-width: 34px !important;
+    max-width: 34px !important;
+    height: 34px !important;
+    min-height: 34px !important;
+    max-height: 34px !important;
+  }
+
+  .bsu-upload-btn {
+    height: 38px !important;
+    min-height: 38px !important;
+    max-height: 38px !important;
+  }
+
+  .bsu-assets-section:nth-child(2) {
+    flex-basis: 106px !important;
+    min-height: 106px !important;
+    max-height: 106px !important;
+  }
+
+  .bsu-assets-section:nth-child(2) .bsu-empty-card {
+    height: 34px !important;
+    min-height: 34px !important;
+    max-height: 34px !important;
+  }
+}
