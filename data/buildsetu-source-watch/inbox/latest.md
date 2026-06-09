@@ -1,10 +1,10 @@
 # BuildSetu Source Watch Live Update Inbox
 
-- Generated At: 2026-06-09T00:53:23.088Z
+- Generated At: 2026-06-09T06:53:35.155Z
 - Watch Sources: 48
-- Last Source Check: 2026-06-09T00:47:35.866Z
-- Pending Source Update Drafts: 0
-- Latest Report Changed Count: 0
+- Last Source Check: 2026-06-09T06:47:47.542Z
+- Pending Source Update Drafts: 36
+- Latest Report Changed Count: 36
 - Latest Report Failed Count: 9
 
 Safety:
@@ -14,11 +14,253 @@ Safety:
 
 ## Latest Changed Sources
 
-No latest changed sources detected in the latest report.
+- Andaman and Nicobar Islands approval authority and building bye-laws index candidate
+  - Reason: content_hash_changed
+  - URL: https://igod.gov.in/sg/states
+  - Draft: /var/www/build.sikhadenge.in/sikhadenge-build/data/buildsetu-research/drafts/draft_20260609_064742_sourceupdate_india-andaman-nicobar-islands-approval-authority-index_fc1572d2_india-andaman-nicobar-islands-approval-authority-index.json
+- Andhra Pradesh approval authority and building bye-laws index candidate
+  - Reason: content_hash_changed
+  - URL: https://igod.gov.in/sg/states
+  - Draft: /var/www/build.sikhadenge.in/sikhadenge-build/data/buildsetu-research/drafts/draft_20260609_064742_sourceupdate_india-andhra-pradesh-approval-authority-index_df0aa7b7_india-andhra-pradesh-approval-authority-index.json
+- Arunachal Pradesh approval authority and building bye-laws index candidate
+  - Reason: content_hash_changed
+  - URL: https://igod.gov.in/sg/states
+  - Draft: /var/www/build.sikhadenge.in/sikhadenge-build/data/buildsetu-research/drafts/draft_20260609_064742_sourceupdate_india-arunachal-pradesh-approval-authority-index_fb41756b_india-arunachal-pradesh-approval-authority-index.json
+- Assam approval authority and building bye-laws index candidate
+  - Reason: content_hash_changed
+  - URL: https://igod.gov.in/sg/states
+  - Draft: /var/www/build.sikhadenge.in/sikhadenge-build/data/buildsetu-research/drafts/draft_20260609_064743_sourceupdate_india-assam-approval-authority-index_ba58fcdf_india-assam-approval-authority-index.json
+- Bihar approval authority and building bye-laws index candidate
+  - Reason: content_hash_changed
+  - URL: https://igod.gov.in/sg/states
+  - Draft: /var/www/build.sikhadenge.in/sikhadenge-build/data/buildsetu-research/drafts/draft_20260609_064743_sourceupdate_india-bihar-approval-authority-index_5a3e7928_india-bihar-approval-authority-index.json
+- Chandigarh approval authority and building bye-laws index candidate
+  - Reason: content_hash_changed
+  - URL: https://igod.gov.in/sg/states
+  - Draft: /var/www/build.sikhadenge.in/sikhadenge-build/data/buildsetu-research/drafts/draft_20260609_064743_sourceupdate_india-chandigarh-approval-authority-index_f8fa830a_india-chandigarh-approval-authority-index.json
+- Chhattisgarh approval authority and building bye-laws index candidate
+  - Reason: content_hash_changed
+  - URL: https://igod.gov.in/sg/states
+  - Draft: /var/www/build.sikhadenge.in/sikhadenge-build/data/buildsetu-research/drafts/draft_20260609_064743_sourceupdate_india-chhattisgarh-approval-authority-index_89a2f5df_india-chhattisgarh-approval-authority-index.json
+- Dadra and Nagar Haveli and Daman and Diu approval authority and building bye-laws index candidate
+  - Reason: content_hash_changed
+  - URL: https://igod.gov.in/sg/states
+  - Draft: /var/www/build.sikhadenge.in/sikhadenge-build/data/buildsetu-research/drafts/draft_20260609_064743_sourceupdate_india-dadra-nagar-haveli-daman-diu-approval-authority-index_09ad260d_india-dadra-nagar-haveli-daman-diu-approval-authority-index.json
+- Delhi approval authority and building bye-laws index candidate
+  - Reason: content_hash_changed
+  - URL: https://igod.gov.in/sg/states
+  - Draft: /var/www/build.sikhadenge.in/sikhadenge-build/data/buildsetu-research/drafts/draft_20260609_064743_sourceupdate_india-delhi-approval-authority-index_7edfef8f_india-delhi-approval-authority-index.json
+- Goa approval authority and building bye-laws index candidate
+  - Reason: content_hash_changed
+  - URL: https://igod.gov.in/sg/states
+  - Draft: /var/www/build.sikhadenge.in/sikhadenge-build/data/buildsetu-research/drafts/draft_20260609_064743_sourceupdate_india-goa-approval-authority-index_254c9cff_india-goa-approval-authority-index.json
+- Gujarat approval authority and building bye-laws index candidate
+  - Reason: content_hash_changed
+  - URL: https://igod.gov.in/sg/states
+  - Draft: /var/www/build.sikhadenge.in/sikhadenge-build/data/buildsetu-research/drafts/draft_20260609_064743_sourceupdate_india-gujarat-approval-authority-index_254f8a3e_india-gujarat-approval-authority-index.json
+- Haryana approval authority and building bye-laws index candidate
+  - Reason: content_hash_changed
+  - URL: https://igod.gov.in/sg/states
+  - Draft: /var/www/build.sikhadenge.in/sikhadenge-build/data/buildsetu-research/drafts/draft_20260609_064744_sourceupdate_india-haryana-approval-authority-index_78ad3d0e_india-haryana-approval-authority-index.json
+- Himachal Pradesh approval authority and building bye-laws index candidate
+  - Reason: content_hash_changed
+  - URL: https://igod.gov.in/sg/states
+  - Draft: /var/www/build.sikhadenge.in/sikhadenge-build/data/buildsetu-research/drafts/draft_20260609_064744_sourceupdate_india-himachal-pradesh-approval-authority-index_a6c138d0_india-himachal-pradesh-approval-authority-index.json
+- Jammu and Kashmir approval authority and building bye-laws index candidate
+  - Reason: content_hash_changed
+  - URL: https://igod.gov.in/sg/states
+  - Draft: /var/www/build.sikhadenge.in/sikhadenge-build/data/buildsetu-research/drafts/draft_20260609_064744_sourceupdate_india-jammu-kashmir-approval-authority-index_fcb904a1_india-jammu-kashmir-approval-authority-index.json
+- Jharkhand approval authority and building bye-laws index candidate
+  - Reason: content_hash_changed
+  - URL: https://igod.gov.in/sg/states
+  - Draft: /var/www/build.sikhadenge.in/sikhadenge-build/data/buildsetu-research/drafts/draft_20260609_064744_sourceupdate_india-jharkhand-approval-authority-index_7b22b0f6_india-jharkhand-approval-authority-index.json
+- Karnataka approval authority and building bye-laws index candidate
+  - Reason: content_hash_changed
+  - URL: https://igod.gov.in/sg/states
+  - Draft: /var/www/build.sikhadenge.in/sikhadenge-build/data/buildsetu-research/drafts/draft_20260609_064744_sourceupdate_india-karnataka-approval-authority-index_adb7c055_india-karnataka-approval-authority-index.json
+- Kerala approval authority and building bye-laws index candidate
+  - Reason: content_hash_changed
+  - URL: https://igod.gov.in/sg/states
+  - Draft: /var/www/build.sikhadenge.in/sikhadenge-build/data/buildsetu-research/drafts/draft_20260609_064744_sourceupdate_india-kerala-approval-authority-index_6985c426_india-kerala-approval-authority-index.json
+- Ladakh approval authority and building bye-laws index candidate
+  - Reason: content_hash_changed
+  - URL: https://igod.gov.in/sg/states
+  - Draft: /var/www/build.sikhadenge.in/sikhadenge-build/data/buildsetu-research/drafts/draft_20260609_064744_sourceupdate_india-ladakh-approval-authority-index_9140e3e4_india-ladakh-approval-authority-index.json
+- Lakshadweep approval authority and building bye-laws index candidate
+  - Reason: content_hash_changed
+  - URL: https://igod.gov.in/sg/states
+  - Draft: /var/www/build.sikhadenge.in/sikhadenge-build/data/buildsetu-research/drafts/draft_20260609_064745_sourceupdate_india-lakshadweep-approval-authority-index_a5bfa7f9_india-lakshadweep-approval-authority-index.json
+- Madhya Pradesh approval authority and building bye-laws index candidate
+  - Reason: content_hash_changed
+  - URL: https://igod.gov.in/sg/states
+  - Draft: /var/www/build.sikhadenge.in/sikhadenge-build/data/buildsetu-research/drafts/draft_20260609_064745_sourceupdate_india-madhya-pradesh-approval-authority-index_1abb2a87_india-madhya-pradesh-approval-authority-index.json
+- Maharashtra approval authority and building bye-laws index candidate
+  - Reason: content_hash_changed
+  - URL: https://igod.gov.in/sg/states
+  - Draft: /var/www/build.sikhadenge.in/sikhadenge-build/data/buildsetu-research/drafts/draft_20260609_064745_sourceupdate_india-maharashtra-approval-authority-index_9dacf4e3_india-maharashtra-approval-authority-index.json
+- Manipur approval authority and building bye-laws index candidate
+  - Reason: content_hash_changed
+  - URL: https://igod.gov.in/sg/states
+  - Draft: /var/www/build.sikhadenge.in/sikhadenge-build/data/buildsetu-research/drafts/draft_20260609_064745_sourceupdate_india-manipur-approval-authority-index_2f99eba1_india-manipur-approval-authority-index.json
+- Meghalaya approval authority and building bye-laws index candidate
+  - Reason: content_hash_changed
+  - URL: https://igod.gov.in/sg/states
+  - Draft: /var/www/build.sikhadenge.in/sikhadenge-build/data/buildsetu-research/drafts/draft_20260609_064745_sourceupdate_india-meghalaya-approval-authority-index_b21f4d4a_india-meghalaya-approval-authority-index.json
+- Mizoram approval authority and building bye-laws index candidate
+  - Reason: content_hash_changed
+  - URL: https://igod.gov.in/sg/states
+  - Draft: /var/www/build.sikhadenge.in/sikhadenge-build/data/buildsetu-research/drafts/draft_20260609_064745_sourceupdate_india-mizoram-approval-authority-index_02e128ec_india-mizoram-approval-authority-index.json
+- Nagaland approval authority and building bye-laws index candidate
+  - Reason: content_hash_changed
+  - URL: https://igod.gov.in/sg/states
+  - Draft: /var/www/build.sikhadenge.in/sikhadenge-build/data/buildsetu-research/drafts/draft_20260609_064745_sourceupdate_india-nagaland-approval-authority-index_5dc79c04_india-nagaland-approval-authority-index.json
+- Odisha approval authority and building bye-laws index candidate
+  - Reason: content_hash_changed
+  - URL: https://igod.gov.in/sg/states
+  - Draft: /var/www/build.sikhadenge.in/sikhadenge-build/data/buildsetu-research/drafts/draft_20260609_064745_sourceupdate_india-odisha-approval-authority-index_27cb25aa_india-odisha-approval-authority-index.json
+- Puducherry approval authority and building bye-laws index candidate
+  - Reason: content_hash_changed
+  - URL: https://igod.gov.in/sg/states
+  - Draft: /var/www/build.sikhadenge.in/sikhadenge-build/data/buildsetu-research/drafts/draft_20260609_064746_sourceupdate_india-puducherry-approval-authority-index_7e0497cd_india-puducherry-approval-authority-index.json
+- Punjab approval authority and building bye-laws index candidate
+  - Reason: content_hash_changed
+  - URL: https://igod.gov.in/sg/states
+  - Draft: /var/www/build.sikhadenge.in/sikhadenge-build/data/buildsetu-research/drafts/draft_20260609_064746_sourceupdate_india-punjab-approval-authority-index_ed855b14_india-punjab-approval-authority-index.json
+- Rajasthan approval authority and building bye-laws index candidate
+  - Reason: content_hash_changed
+  - URL: https://igod.gov.in/sg/states
+  - Draft: /var/www/build.sikhadenge.in/sikhadenge-build/data/buildsetu-research/drafts/draft_20260609_064746_sourceupdate_india-rajasthan-approval-authority-index_c31c3aaf_india-rajasthan-approval-authority-index.json
+- Sikkim approval authority and building bye-laws index candidate
+  - Reason: content_hash_changed
+  - URL: https://igod.gov.in/sg/states
+  - Draft: /var/www/build.sikhadenge.in/sikhadenge-build/data/buildsetu-research/drafts/draft_20260609_064746_sourceupdate_india-sikkim-approval-authority-index_4dc05f14_india-sikkim-approval-authority-index.json
+- Tamil Nadu approval authority and building bye-laws index candidate
+  - Reason: content_hash_changed
+  - URL: https://igod.gov.in/sg/states
+  - Draft: /var/www/build.sikhadenge.in/sikhadenge-build/data/buildsetu-research/drafts/draft_20260609_064746_sourceupdate_india-tamil-nadu-approval-authority-index_9f67f6fe_india-tamil-nadu-approval-authority-index.json
+- Telangana approval authority and building bye-laws index candidate
+  - Reason: content_hash_changed
+  - URL: https://igod.gov.in/sg/states
+  - Draft: /var/www/build.sikhadenge.in/sikhadenge-build/data/buildsetu-research/drafts/draft_20260609_064746_sourceupdate_india-telangana-approval-authority-index_b39ea268_india-telangana-approval-authority-index.json
+- Tripura approval authority and building bye-laws index candidate
+  - Reason: content_hash_changed
+  - URL: https://igod.gov.in/sg/states
+  - Draft: /var/www/build.sikhadenge.in/sikhadenge-build/data/buildsetu-research/drafts/draft_20260609_064747_sourceupdate_india-tripura-approval-authority-index_441ae2cc_india-tripura-approval-authority-index.json
+- Uttar Pradesh approval authority and building bye-laws index candidate
+  - Reason: content_hash_changed
+  - URL: https://igod.gov.in/sg/states
+  - Draft: /var/www/build.sikhadenge.in/sikhadenge-build/data/buildsetu-research/drafts/draft_20260609_064747_sourceupdate_india-uttar-pradesh-approval-authority-index_bff782f5_india-uttar-pradesh-approval-authority-index.json
+- Uttarakhand approval authority and building bye-laws index candidate
+  - Reason: content_hash_changed
+  - URL: https://igod.gov.in/sg/states
+  - Draft: /var/www/build.sikhadenge.in/sikhadenge-build/data/buildsetu-research/drafts/draft_20260609_064747_sourceupdate_india-uttarakhand-approval-authority-index_bb5ffd39_india-uttarakhand-approval-authority-index.json
+- West Bengal approval authority and building bye-laws index candidate
+  - Reason: content_hash_changed
+  - URL: https://igod.gov.in/sg/states
+  - Draft: /var/www/build.sikhadenge.in/sikhadenge-build/data/buildsetu-research/drafts/draft_20260609_064747_sourceupdate_india-west-bengal-approval-authority-index_a534ab0d_india-west-bengal-approval-authority-index.json
 
 ## Pending Source Update Drafts
 
-No pending source update drafts found.
+- West Bengal approval authority and building bye-laws index candidate
+  - Status: pending_review
+  - Risk: medium
+  - URL: https://igod.gov.in/sg/states
+  - File: data/buildsetu-research/drafts/draft_20260609_064747_sourceupdate_india-west-bengal-approval-authority-index_a534ab0d_india-west-bengal-approval-authority-index.json
+- Uttarakhand approval authority and building bye-laws index candidate
+  - Status: pending_review
+  - Risk: medium
+  - URL: https://igod.gov.in/sg/states
+  - File: data/buildsetu-research/drafts/draft_20260609_064747_sourceupdate_india-uttarakhand-approval-authority-index_bb5ffd39_india-uttarakhand-approval-authority-index.json
+- Uttar Pradesh approval authority and building bye-laws index candidate
+  - Status: pending_review
+  - Risk: medium
+  - URL: https://igod.gov.in/sg/states
+  - File: data/buildsetu-research/drafts/draft_20260609_064747_sourceupdate_india-uttar-pradesh-approval-authority-index_bff782f5_india-uttar-pradesh-approval-authority-index.json
+- Tripura approval authority and building bye-laws index candidate
+  - Status: pending_review
+  - Risk: medium
+  - URL: https://igod.gov.in/sg/states
+  - File: data/buildsetu-research/drafts/draft_20260609_064747_sourceupdate_india-tripura-approval-authority-index_441ae2cc_india-tripura-approval-authority-index.json
+- Telangana approval authority and building bye-laws index candidate
+  - Status: pending_review
+  - Risk: medium
+  - URL: https://igod.gov.in/sg/states
+  - File: data/buildsetu-research/drafts/draft_20260609_064746_sourceupdate_india-telangana-approval-authority-index_b39ea268_india-telangana-approval-authority-index.json
+- Tamil Nadu approval authority and building bye-laws index candidate
+  - Status: pending_review
+  - Risk: medium
+  - URL: https://igod.gov.in/sg/states
+  - File: data/buildsetu-research/drafts/draft_20260609_064746_sourceupdate_india-tamil-nadu-approval-authority-index_9f67f6fe_india-tamil-nadu-approval-authority-index.json
+- Sikkim approval authority and building bye-laws index candidate
+  - Status: pending_review
+  - Risk: medium
+  - URL: https://igod.gov.in/sg/states
+  - File: data/buildsetu-research/drafts/draft_20260609_064746_sourceupdate_india-sikkim-approval-authority-index_4dc05f14_india-sikkim-approval-authority-index.json
+- Rajasthan approval authority and building bye-laws index candidate
+  - Status: pending_review
+  - Risk: medium
+  - URL: https://igod.gov.in/sg/states
+  - File: data/buildsetu-research/drafts/draft_20260609_064746_sourceupdate_india-rajasthan-approval-authority-index_c31c3aaf_india-rajasthan-approval-authority-index.json
+- Punjab approval authority and building bye-laws index candidate
+  - Status: pending_review
+  - Risk: medium
+  - URL: https://igod.gov.in/sg/states
+  - File: data/buildsetu-research/drafts/draft_20260609_064746_sourceupdate_india-punjab-approval-authority-index_ed855b14_india-punjab-approval-authority-index.json
+- Puducherry approval authority and building bye-laws index candidate
+  - Status: pending_review
+  - Risk: medium
+  - URL: https://igod.gov.in/sg/states
+  - File: data/buildsetu-research/drafts/draft_20260609_064746_sourceupdate_india-puducherry-approval-authority-index_7e0497cd_india-puducherry-approval-authority-index.json
+- Odisha approval authority and building bye-laws index candidate
+  - Status: pending_review
+  - Risk: medium
+  - URL: https://igod.gov.in/sg/states
+  - File: data/buildsetu-research/drafts/draft_20260609_064745_sourceupdate_india-odisha-approval-authority-index_27cb25aa_india-odisha-approval-authority-index.json
+- Nagaland approval authority and building bye-laws index candidate
+  - Status: pending_review
+  - Risk: medium
+  - URL: https://igod.gov.in/sg/states
+  - File: data/buildsetu-research/drafts/draft_20260609_064745_sourceupdate_india-nagaland-approval-authority-index_5dc79c04_india-nagaland-approval-authority-index.json
+- Mizoram approval authority and building bye-laws index candidate
+  - Status: pending_review
+  - Risk: medium
+  - URL: https://igod.gov.in/sg/states
+  - File: data/buildsetu-research/drafts/draft_20260609_064745_sourceupdate_india-mizoram-approval-authority-index_02e128ec_india-mizoram-approval-authority-index.json
+- Meghalaya approval authority and building bye-laws index candidate
+  - Status: pending_review
+  - Risk: medium
+  - URL: https://igod.gov.in/sg/states
+  - File: data/buildsetu-research/drafts/draft_20260609_064745_sourceupdate_india-meghalaya-approval-authority-index_b21f4d4a_india-meghalaya-approval-authority-index.json
+- Manipur approval authority and building bye-laws index candidate
+  - Status: pending_review
+  - Risk: medium
+  - URL: https://igod.gov.in/sg/states
+  - File: data/buildsetu-research/drafts/draft_20260609_064745_sourceupdate_india-manipur-approval-authority-index_2f99eba1_india-manipur-approval-authority-index.json
+- Maharashtra approval authority and building bye-laws index candidate
+  - Status: pending_review
+  - Risk: medium
+  - URL: https://igod.gov.in/sg/states
+  - File: data/buildsetu-research/drafts/draft_20260609_064745_sourceupdate_india-maharashtra-approval-authority-index_9dacf4e3_india-maharashtra-approval-authority-index.json
+- Madhya Pradesh approval authority and building bye-laws index candidate
+  - Status: pending_review
+  - Risk: medium
+  - URL: https://igod.gov.in/sg/states
+  - File: data/buildsetu-research/drafts/draft_20260609_064745_sourceupdate_india-madhya-pradesh-approval-authority-index_1abb2a87_india-madhya-pradesh-approval-authority-index.json
+- Lakshadweep approval authority and building bye-laws index candidate
+  - Status: pending_review
+  - Risk: medium
+  - URL: https://igod.gov.in/sg/states
+  - File: data/buildsetu-research/drafts/draft_20260609_064745_sourceupdate_india-lakshadweep-approval-authority-index_a5bfa7f9_india-lakshadweep-approval-authority-index.json
+- Ladakh approval authority and building bye-laws index candidate
+  - Status: pending_review
+  - Risk: medium
+  - URL: https://igod.gov.in/sg/states
+  - File: data/buildsetu-research/drafts/draft_20260609_064744_sourceupdate_india-ladakh-approval-authority-index_9140e3e4_india-ladakh-approval-authority-index.json
+- Kerala approval authority and building bye-laws index candidate
+  - Status: pending_review
+  - Risk: medium
+  - URL: https://igod.gov.in/sg/states
+  - File: data/buildsetu-research/drafts/draft_20260609_064744_sourceupdate_india-kerala-approval-authority-index_6985c426_india-kerala-approval-authority-index.json
 
 ## Agent Use Policy
 
