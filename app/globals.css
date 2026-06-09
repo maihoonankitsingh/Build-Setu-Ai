@@ -10868,3 +10868,211 @@ body * {
     min-height: 58px !important;
   }
 }
+
+/* BUILDSETU_RECENT_IMAGES_VISIBLE_FIT_V1
+   Make Recent Images fully visible in Project Workspace right sidebar.
+   Compact Workflow + Project Files without clipping content. */
+
+/* Sidebar total rhythm */
+.bsu-assets-panel {
+  gap: 9px !important;
+  padding-bottom: 8px !important;
+  overflow: visible !important;
+}
+
+/* All cards: compact padding */
+.bsu-assets-section,
+.bsu-assets-section:nth-child(1),
+.bsu-assets-section:nth-child(2),
+.bsu-assets-section:nth-child(3),
+.bsu-assets-section:last-child {
+  padding: 12px 14px !important;
+  border-radius: 19px !important;
+}
+
+/* Headers compact */
+.bsu-assets-head {
+  margin-bottom: 8px !important;
+}
+
+.bsu-assets-head h2 {
+  font-size: 9.5px !important;
+  gap: 8px !important;
+}
+
+.bsu-assets-head h2::before {
+  width: 28px !important;
+  height: 28px !important;
+  flex-basis: 28px !important;
+  border-radius: 11px !important;
+}
+
+.bsu-assets-head p {
+  font-size: 10.5px !important;
+  line-height: 1.18 !important;
+  margin-top: 3px !important;
+}
+
+.bsu-assets-head button {
+  width: 82px !important;
+  min-width: 82px !important;
+  height: 34px !important;
+  min-height: 34px !important;
+  border-radius: 14px !important;
+  font-size: 11.5px !important;
+}
+
+/* Workflow compact but complete */
+.bsu-workflow-summary-card {
+  gap: 7px !important;
+  margin-top: 6px !important;
+}
+
+.bsu-workflow-summary-top {
+  min-height: 50px !important;
+  padding: 8px 10px 14px !important;
+  border-radius: 14px !important;
+}
+
+.bsu-workflow-summary-top strong {
+  font-size: 16px !important;
+}
+
+.bsu-workflow-summary-top em {
+  height: 22px !important;
+  min-width: 76px !important;
+}
+
+.bsu-workflow-summary-line {
+  min-height: 38px !important;
+  padding: 7px 10px 7px 36px !important;
+  border-radius: 14px !important;
+}
+
+.bsu-workflow-summary-line::before {
+  width: 18px !important;
+  height: 18px !important;
+  left: 10px !important;
+}
+
+.bsu-workflow-summary-line span {
+  font-size: 8px !important;
+}
+
+.bsu-workflow-summary-line strong {
+  font-size: 11px !important;
+}
+
+/* Project Files compact so Recent Images does not hide */
+.bsu-file-card {
+  height: 50px !important;
+  min-height: 50px !important;
+  max-height: 50px !important;
+  padding: 8px 10px !important;
+  border-radius: 15px !important;
+}
+
+.bsu-file-card + .bsu-file-card {
+  margin-top: 7px !important;
+}
+
+.bsu-file-card > span:first-child,
+.bsu-file-card button {
+  width: 32px !important;
+  min-width: 32px !important;
+  height: 32px !important;
+  flex-basis: 32px !important;
+  border-radius: 12px !important;
+}
+
+.bsu-file-card strong {
+  font-size: 11.5px !important;
+}
+
+.bsu-file-card small {
+  margin-top: 3px !important;
+  font-size: 8.2px !important;
+}
+
+.bsu-upload-btn {
+  height: 36px !important;
+  min-height: 36px !important;
+  max-height: 36px !important;
+  margin-top: 8px !important;
+  border-radius: 14px !important;
+  font-size: 13px !important;
+}
+
+/* Recent Images must be visible and not clipped */
+.bsu-assets-section:nth-child(2) {
+  min-height: 126px !important;
+  height: auto !important;
+  max-height: none !important;
+  overflow: visible !important;
+}
+
+.bsu-assets-section:nth-child(2) .bsu-empty-card {
+  min-height: 58px !important;
+  height: 58px !important;
+  max-height: 58px !important;
+  padding: 8px 10px !important;
+  overflow: hidden !important;
+  border-radius: 14px !important;
+}
+
+.bsu-assets-section:nth-child(2) .bsu-empty-card::before {
+  width: 24px !important;
+  height: 24px !important;
+  border-radius: 10px !important;
+  background-size: 14px 14px !important;
+}
+
+/* Very short viewport fallback */
+@media (max-height: 760px) {
+  .bsu-assets-panel {
+    gap: 7px !important;
+    padding-bottom: 6px !important;
+  }
+
+  .bsu-assets-section,
+  .bsu-assets-section:nth-child(1),
+  .bsu-assets-section:nth-child(2),
+  .bsu-assets-section:nth-child(3),
+  .bsu-assets-section:last-child {
+    padding: 10px 12px !important;
+  }
+
+  .bsu-workflow-summary-top {
+    min-height: 46px !important;
+  }
+
+  .bsu-workflow-summary-line {
+    min-height: 35px !important;
+  }
+
+  .bsu-file-card {
+    height: 46px !important;
+    min-height: 46px !important;
+    max-height: 46px !important;
+  }
+
+  .bsu-file-card + .bsu-file-card {
+    margin-top: 6px !important;
+  }
+
+  .bsu-upload-btn {
+    height: 34px !important;
+    min-height: 34px !important;
+    max-height: 34px !important;
+  }
+
+  .bsu-assets-section:nth-child(2) {
+    min-height: 112px !important;
+  }
+
+  .bsu-assets-section:nth-child(2) .bsu-empty-card {
+    min-height: 46px !important;
+    height: 46px !important;
+    max-height: 46px !important;
+  }
+}
