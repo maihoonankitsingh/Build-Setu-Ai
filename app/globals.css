@@ -11147,3 +11147,148 @@ body * {
     min-height: 42px !important;
   }
 }
+
+/* BUILDSETU_RIGHT_SIDEBAR_NO_CLIP_FINAL_V1
+   Final right sidebar fit:
+   Workflow full visible, Files compact but priority, Recent Images fully visible. */
+
+.bsu-assets-panel {
+  gap: 10px !important;
+  padding-bottom: 8px !important;
+  overflow: hidden !important;
+}
+
+/* Workflow: prevent Next stage clipping */
+.bsu-assets-section:nth-child(1) {
+  flex: 0 0 232px !important;
+  min-height: 232px !important;
+  max-height: 232px !important;
+  padding: 13px 14px !important;
+  overflow: hidden !important;
+}
+
+.bsu-assets-section:nth-child(1) .bsu-assets-head {
+  margin-bottom: 6px !important;
+}
+
+.bsu-workflow-summary-card {
+  gap: 6px !important;
+  margin-top: 6px !important;
+}
+
+.bsu-workflow-summary-top {
+  padding: 8px 10px 14px !important;
+}
+
+.bsu-workflow-summary-line {
+  min-height: 42px !important;
+  padding: 7px 10px 7px 36px !important;
+}
+
+.bsu-workflow-summary-line strong {
+  font-size: 10.5px !important;
+  line-height: 1.08 !important;
+}
+
+/* Files: keep priority but free space for Recent Images */
+.bsu-assets-section:nth-child(3),
+.bsu-assets-section:last-child {
+  flex: 1 1 auto !important;
+  min-height: 250px !important;
+  padding: 13px 14px !important;
+}
+
+.bsu-file-card {
+  min-height: 56px !important;
+  padding: 9px 11px !important;
+}
+
+.bsu-file-card > span:first-child {
+  width: 34px !important;
+  height: 34px !important;
+  border-radius: 12px !important;
+}
+
+.bsu-file-card button {
+  width: 34px !important;
+  height: 34px !important;
+  border-radius: 12px !important;
+}
+
+.bsu-upload-btn {
+  height: 40px !important;
+  min-height: 40px !important;
+  margin-top: 9px !important;
+  border-radius: 14px !important;
+  font-size: 13px !important;
+}
+
+/* Recent Images: fully visible compact bottom card */
+.bsu-assets-section:nth-child(2) {
+  flex: 0 0 126px !important;
+  min-height: 126px !important;
+  max-height: 126px !important;
+  padding: 12px 14px !important;
+  overflow: hidden !important;
+}
+
+.bsu-assets-section:nth-child(2) .bsu-assets-head {
+  margin-bottom: 6px !important;
+}
+
+.bsu-assets-section:nth-child(2) .bsu-empty-card {
+  height: 48px !important;
+  min-height: 48px !important;
+  border-radius: 14px !important;
+  font-size: 10px !important;
+}
+
+/* Short viewport exact fit */
+@media (max-height: 790px) {
+  .bsu-assets-panel {
+    gap: 8px !important;
+    padding-bottom: 6px !important;
+  }
+
+  .bsu-assets-section:nth-child(1) {
+    flex-basis: 220px !important;
+    min-height: 220px !important;
+    max-height: 220px !important;
+    padding-top: 11px !important;
+    padding-bottom: 11px !important;
+  }
+
+  .bsu-workflow-summary-line {
+    min-height: 38px !important;
+  }
+
+  .bsu-assets-section:nth-child(3),
+  .bsu-assets-section:last-child {
+    min-height: 232px !important;
+    padding-top: 11px !important;
+    padding-bottom: 11px !important;
+  }
+
+  .bsu-file-card {
+    min-height: 52px !important;
+  }
+
+  .bsu-upload-btn {
+    height: 38px !important;
+    min-height: 38px !important;
+    margin-top: 8px !important;
+  }
+
+  .bsu-assets-section:nth-child(2) {
+    flex-basis: 112px !important;
+    min-height: 112px !important;
+    max-height: 112px !important;
+    padding-top: 10px !important;
+    padding-bottom: 10px !important;
+  }
+
+  .bsu-assets-section:nth-child(2) .bsu-empty-card {
+    height: 40px !important;
+    min-height: 40px !important;
+  }
+}
