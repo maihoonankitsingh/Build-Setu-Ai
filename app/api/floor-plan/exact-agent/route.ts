@@ -57,13 +57,40 @@ function round1(value: number) {
 function detectCommand(message: string) {
   const text = safe(message).toLowerCase();
 
-  if (/first\s+floor|1st\s+floor|upper\s+floor/.test(text)) return "first_floor_plan";
-  if (/terrace|roof|mumty|water tank/.test(text)) return "terrace_plan";
-  if (/furniture|sofa|bed|wardrobe|dining/.test(text)) return "furniture_layout";
-  if (/dimension|measurement|room size|wall length/.test(text)) return "dimension_plan";
-  if (/working|drawing set|complete set|construction drawing/.test(text)) return "working_drawing_set";
-  if (/door|window|schedule|opening/.test(text)) return "door_window_schedule";
-  if (/column|colom|pillar/.test(text)) return "column_layout_concept";
+  // BUILDSETU_EXACT_AGENT_COMMAND_PRIORITY_V2
+  // Floor selection must be detected before secondary drawing types.
+  // "G+1" means building has ground + first floor; it must not auto-trigger first-floor drawing.
+  // Words like "bedroom" or "dining" must not accidentally trigger furniture_layout.
+  const asksGroundFloor =
+    /\bground\s+floor\b|\bgf\b|\bfloor\s*:\s*ground\b|\bground\s+floor\s+plan\b/.test(text);
+
+  const asksFirstFloor =
+    /\bfirst\s+floor\b|\b1st\s+floor\b|\bfloor\s*:\s*first\b|\bupper\s+floor\b|\bfirst\s+floor\s+plan\b/.test(text);
+
+  const asksSecondFloor =
+    /\bsecond\s+floor\b|\b2nd\s+floor\b|\bfloor\s*:\s*second\b/.test(text);
+
+  if (asksGroundFloor) return "ground_floor_plan";
+  if (asksSecondFloor) return "second_floor_plan";
+  if (asksFirstFloor) return "first_floor_plan";
+
+  if (/\bterrace\b|\broof\b|\bmumty\b|\bwater\s+tank\b/.test(text)) return "terrace_plan";
+
+  const explicitFurnitureLayout =
+    /\bfurniture\s+(layout|plan|placement)\b|\bfurnished\s+layout\b|\bsofa\s+layout\b|\bbed\s+placement\b|\bwardrobe\s+placement\b|\bdining\s+table\s+placement\b/.test(text);
+
+  if (explicitFurnitureLayout) return "furniture_layout";
+
+  if (/\bdimension\s+plan\b|\bmeasurement\s+plan\b|\broom\s+size\s+plan\b|\bwall\s+length\b/.test(text)) {
+    return "dimension_plan";
+  }
+
+  if (/\bworking\s+drawing\b|\bdrawing\s+set\b|\bcomplete\s+set\b|\bconstruction\s+drawing\b/.test(text)) {
+    return "working_drawing_set";
+  }
+
+  if (/\bdoor\b|\bwindow\b|\bschedule\b|\bopening\b/.test(text)) return "door_window_schedule";
+  if (/\bcolumn\b|\bcolom\b|\bpillar\b/.test(text)) return "column_layout_concept";
 
   return "ground_floor_plan";
 }
