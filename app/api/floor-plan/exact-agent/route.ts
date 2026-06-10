@@ -178,6 +178,28 @@ function buildGroundFloorPlan(args: {
   const { widthFt: W, depthFt: D } = args;
 
   const rooms: Room[] = [];
+  // BUILDSETU_EXACT_AGENT_49X57_EAST_NORTH_FIRST_LOCK_V1
+  // Coordinate convention: x=West→East across 49 ft, y=North→South across 57 ft.
+  // First floor lock for G+1: exactly 3 bedrooms, 2 bathrooms, family lounge, stair continuation, East/North balcony/terrace, optional study corner.
+  if (Math.round(W) === 49 && Math.round(D) === 57 && String(args.facing || "").toLowerCase().includes("east") && args.command === "first_floor_plan") {
+    return [
+      room("north_terrace", "North Terrace / Sit-out 20x8", "terrace", 16, 3, 20, 8, "North-side usable terrace/sit-out facing side road"),
+      room("east_balcony", "East Balcony 9x28", "balcony", 37, 3, 9, 28, "East-facing balcony/front elevation feature"),
+
+      room("family_lounge", "Family Lounge 18x13", "living", 17, 12, 18, 13, "Central family lounge with daylight and balcony access"),
+      room("study", "Study Corner 7x6", "study", 28, 26, 7, 6, "Optional small study/work corner near lounge"),
+      room("passage", "First Floor Passage", "passage", 16, 30, 18, 5, "Compact circulation connecting bedrooms, lounge and staircase"),
+
+      room("bed2", "Bedroom 2 11x12", "bedroom", 3, 23, 11, 12, "Secondary bedroom with ventilation"),
+      room("master", "Master Bedroom 13x14", "bedroom", 3, 39, 13, 14, "South-West master bedroom"),
+      room("master_toilet", "Master Toilet 7x8", "toilet", 17, 40, 7, 8, "Attached toilet for master bedroom"),
+
+      room("stair", "Staircase Landing 9x15", "staircase", 24, 36, 9, 15, "Stair continuation aligned with ground-floor stair"),
+      room("bed3", "Bedroom 3 11x12", "bedroom", 35, 34, 11, 12, "Third bedroom with East-side ventilation"),
+      room("common_toilet", "Common Bathroom 7x8", "toilet", 35, 47, 7, 8, "Common/shared bathroom for first floor"),
+    ];
+  }
+
   // BUILDSETU_EXACT_AGENT_49X57_EAST_NORTH_GROUND_LOCK_V2
   // Coordinate convention: x=West→East across 49 ft, y=North→South across 57 ft.
   // Drawing convention still labels top edge as NORTH SIDE ROAD - 57' and right edge as EAST FRONT ROAD - 49'.
@@ -417,17 +439,31 @@ async function appendProjectAsset(asset: any) {
 
 
 // BUILDSETU_EXACT_AGENT_PLANNING_METADATA_V1
+// BUILDSETU_EXACT_AGENT_FLOORWISE_PLANNING_METADATA_V1
 function buildExactAgentPlanningMetadata(plan: ExactPlan) {
+  const command = String((plan as any).command || "").toLowerCase();
+  const isGroundFloor = command === "ground_floor_plan";
+  const isFirstFloor = command === "first_floor_plan";
+
   const bedroomCount = plan.rooms.filter((room) => room.kind === "bedroom").length;
   const bathroomCount = plan.rooms.filter((room) => room.kind === "toilet").length;
   const parkingCount = plan.rooms.filter((room) => room.kind === "parking").length;
+  const balconyTerraceCount = plan.rooms.filter((room) => ["balcony", "terrace"].includes(String(room.kind || "").toLowerCase())).length;
+
   const hasBedroom2 = plan.rooms.some((room) => /bedroom\s*2/i.test(room.name));
-  const hasFamilyMultiuse = plan.rooms.some((room) => /family|multi/i.test(room.name));
+  const hasBedroom3 = plan.rooms.some((room) => /bedroom\s*3/i.test(room.name));
+  const hasFamilyMultiuse = plan.rooms.some((room) => /family\s*\/\s*multi|multi-use/i.test(room.name));
 
   const is49x57EastNorth =
     Math.round(plan.plot.widthFt) === 49 &&
     Math.round(plan.plot.depthFt) === 57 &&
     String(plan.plot.facing || "").toLowerCase().includes("east");
+
+  const expected = is49x57EastNorth
+    ? isFirstFloor
+      ? { bedrooms: 3, bathrooms: 2, parkingMax: 0, label: "49x57 East-North first floor" }
+      : { bedrooms: 1, bathrooms: 1, parkingMax: 1, label: "49x57 East-North ground floor" }
+    : { bedrooms: bedroomCount, bathrooms: bathroomCount, parkingMax: 1, label: "Project-specific floor" };
 
   const validationReport = [
     {
@@ -437,22 +473,32 @@ function buildExactAgentPlanningMetadata(plan: ExactPlan) {
       note: `Plot locked to ${plan.plot.widthFt}' x ${plan.plot.depthFt}'.`,
     },
     {
-      id: "ground_bedroom_count",
-      check: "Ground floor bedroom count",
-      status: is49x57EastNorth && bedroomCount === 1 && !hasBedroom2 ? "pass" : is49x57EastNorth ? "fail" : "review",
-      note: is49x57EastNorth ? "49x57 East-North ground floor must have exactly 1 bedroom and no Bedroom 2." : "Project-specific bedroom count review required.",
+      id: "floor_room_count",
+      check: "Floor-wise room count",
+      status: is49x57EastNorth && bedroomCount === expected.bedrooms && bathroomCount === expected.bathrooms ? "pass" : is49x57EastNorth ? "fail" : "review",
+      note: `${expected.label} expects bedrooms=${expected.bedrooms}, bathrooms=${expected.bathrooms}. Current bedrooms=${bedroomCount}, bathrooms=${bathroomCount}.`,
     },
     {
-      id: "ground_bathroom_count",
-      check: "Ground floor bathroom count",
-      status: is49x57EastNorth && bathroomCount === 1 ? "pass" : is49x57EastNorth ? "fail" : "review",
-      note: is49x57EastNorth ? "49x57 East-North ground floor must have exactly 1 bathroom." : "Project-specific bathroom count review required.",
+      id: "parking_rule",
+      check: "Parking rule",
+      status: isFirstFloor ? (parkingCount === 0 ? "pass" : "fail") : parkingCount <= expected.parkingMax ? "pass" : "fail",
+      note: isFirstFloor ? "First floor must not contain parking." : "Ground floor must contain max one parking zone.",
+    },
+    {
+      id: "first_floor_balcony_terrace",
+      check: "First-floor balcony/terrace",
+      status: isFirstFloor ? (balconyTerraceCount >= 1 ? "pass" : "fail") : "review",
+      note: isFirstFloor ? "First floor should include East/North balcony or terrace." : "Ground floor balcony/terrace not required.",
     },
     {
       id: "duplicate_room_check",
       check: "Duplicate / unrequested rooms",
-      status: !hasBedroom2 && !hasFamilyMultiuse && parkingCount <= 1 ? "pass" : "fail",
-      note: "Reject Bedroom 2, Family/Multi-use room and duplicate parking on locked ground floor.",
+      status: isGroundFloor
+        ? (!hasBedroom2 && !hasBedroom3 && !hasFamilyMultiuse && parkingCount <= 1 ? "pass" : "fail")
+        : (!hasFamilyMultiuse && parkingCount === 0 ? "pass" : "fail"),
+      note: isGroundFloor
+        ? "Ground floor rejects Bedroom 2, Bedroom 3, Family/Multi-use room and duplicate parking."
+        : "First floor allows Bedroom 2/3 but rejects parking and Family/Multi-use placeholder.",
     },
     {
       id: "professional_review",
@@ -517,6 +563,7 @@ function buildExactAgentPlanningMetadata(plan: ExactPlan) {
       bedrooms: bedroomCount,
       bathrooms: bathroomCount,
       parking: parkingCount,
+      balconyTerrace: balconyTerraceCount,
     },
     validation: validationReport,
     scoreReport,
