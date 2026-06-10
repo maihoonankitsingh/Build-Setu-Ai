@@ -184,20 +184,20 @@ function buildGroundFloorPlan(args: {
   // First floor lock for G+1: exactly 3 bedrooms, 2 bathrooms, family lounge, stair continuation, East/North balcony/terrace, optional study corner.
   if (Math.round(W) === 49 && Math.round(D) === 57 && String(args.facing || "").toLowerCase().includes("east") && args.command === "first_floor_plan") {
     return [
-      room("north_terrace", "North Terrace / Sit-out 20x8", "terrace", 16, 3, 20, 8, "North-side usable terrace/sit-out facing side road"),
-      room("east_balcony", "East Balcony 9x28", "balcony", 37, 3, 9, 28, "East-facing balcony/front elevation feature"),
+      room("north_terrace", "North Terrace / Sit-out 20x8", "terrace", 16, 3, 20, 8, "BUILDSETU_EXACT_AGENT_57X49_DRAWING_COORDS_V1 North-side usable terrace/sit-out facing side road"),
+      room("east_balcony", "East Balcony 9x28", "balcony", 45, 3, 9, 28, "East-facing balcony/front elevation feature"),
 
       room("family_lounge", "Family Lounge 18x13", "living", 17, 12, 18, 13, "Central family lounge with daylight and balcony access"),
-      room("study", "Study Corner 7x6", "study", 28, 26, 7, 6, "Optional small study/work corner near lounge"),
-      room("passage", "First Floor Passage", "passage", 16, 30, 18, 5, "Compact circulation connecting bedrooms, lounge and staircase"),
+      room("study", "Study Corner 7x6", "study", 36, 12, 7, 6, "Optional small study/work corner near lounge"),
+      room("passage", "First Floor Passage", "passage", 16, 34, 18, 5, "Compact circulation connecting bedrooms, lounge and staircase"),
 
-      room("bed2", "Bedroom 2 11x12", "bedroom", 3, 23, 11, 12, "Secondary bedroom with ventilation"),
-      room("master", "Master Bedroom 13x14", "bedroom", 3, 39, 13, 14, "South-West master bedroom"),
-      room("master_toilet", "Master Toilet 7x8", "toilet", 17, 40, 7, 8, "Attached toilet for master bedroom"),
+      room("bed2", "Bedroom 2 11x12", "bedroom", 3, 20, 11, 12, "Secondary bedroom with ventilation"),
+      room("master", "Master Bedroom 13x14", "bedroom", 3, 33, 13, 14, "South-West master bedroom"),
+      room("master_toilet", "Master Toilet 7x8", "toilet", 17, 39, 7, 8, "Attached toilet for master bedroom"),
 
-      room("stair", "Staircase Landing 9x15", "staircase", 24, 36, 9, 15, "Stair continuation aligned with ground-floor stair"),
-      room("bed3", "Bedroom 3 11x12", "bedroom", 35, 34, 11, 12, "Third bedroom with East-side ventilation"),
-      room("common_toilet", "Common Bathroom 7x8", "toilet", 35, 47, 7, 8, "Common/shared bathroom for first floor"),
+      room("stair", "Staircase Landing 9x15", "staircase", 34, 31, 9, 15, "Stair continuation aligned with ground-floor stair"),
+      room("bed3", "Bedroom 3 11x12", "bedroom", 35, 32, 11, 12, "Third bedroom with East-side ventilation"),
+      room("common_toilet", "Common Bathroom 7x8", "toilet", 47, 32, 7, 8, "Common/shared bathroom for first floor"),
     ];
   }
 
@@ -207,19 +207,19 @@ function buildGroundFloorPlan(args: {
   // Goal: practical Indian-modern luxury G+1 ground floor with exactly 1 bedroom, 1 bathroom, 1 parking, living, dining, kitchen, pooja, stair, wash/store.
   if (Math.round(W) === 49 && Math.round(D) === 57 && String(args.facing || "").toLowerCase().includes("east") && args.command === "ground_floor_plan") {
     return [
-      room("puja", "Puja 5x6", "puja", 3, 3, 6, 6, "North-East/East pooja zone; compact dedicated pooja room"),
+      room("puja", "Puja 5x6", "puja", 3, 3, 6, 6, "BUILDSETU_EXACT_AGENT_57X49_DRAWING_COORDS_V1 North-East/East pooja zone; compact dedicated pooja room"),
       room("living", "Living Room 20x16", "living", 10, 3, 20, 16, "East/North daylight public living room with sofa/TV wall"),
-      room("parking", "Car + Bike Parking 15x18", "parking", 31, 3, 15, 18, "East front entry parking; one car plus bike space only"),
+      room("parking", "Car + Bike Parking 15x18", "parking", 39, 3, 15, 18, "East front entry parking; one car plus bike space only"),
 
       room("dining", "Dining 14x11", "dining", 16, 22, 14, 11, "Defined dining near living and kitchen, not oversized"),
-      room("lobby", "Entry Lobby 15x8", "lobby", 31, 22, 15, 8, "Entry/lobby from East parking to living, dining and stair"),
+      room("lobby", "Entry Lobby 15x8", "lobby", 39, 22, 15, 8, "Entry/lobby from East parking to living, dining and stair"),
 
       room("passage", "Private Passage", "passage", 16, 34, 17, 4, "Compact private/service circulation, no wasted long corridor"),
-      room("stair", "Staircase 9x15", "staircase", 24, 36, 9, 15, "Single internal staircase for G+1 with clear UP direction"),
-      room("kitchen", "Kitchen 11x10", "kitchen", 35, 36, 11, 10, "South-East/service-side kitchen with counter and ventilation"),
-      room("wash_store", "Wash / Store 11x7", "wash", 35, 47, 11, 7, "Kitchen-connected wash/store/service area"),
+      room("stair", "Staircase 9x15", "staircase", 34, 31, 9, 15, "Single internal staircase for G+1 with clear UP direction"),
+      room("kitchen", "Kitchen 11x10", "kitchen", 43, 31, 11, 10, "South-East/service-side kitchen with counter and ventilation"),
+      room("wash_store", "Wash / Store 11x7", "wash", 43, 42, 11, 7, "Kitchen-connected wash/store/service area"),
 
-      room("bed1", "Bedroom 12x13", "bedroom", 3, 39, 12, 13, "South-West/private bedroom; only ground-floor bedroom"),
+      room("bed1", "Bedroom 12x13", "bedroom", 3, 33, 12, 13, "South-West/private bedroom; only ground-floor bedroom"),
       room("toilet1", "Bathroom 7x8", "toilet", 16, 39, 7, 8, "One common/attached bathroom with ventilation; only ground-floor bathroom"),
     ];
   }
@@ -344,9 +344,19 @@ function buildComplianceChecklist(args: {
 }
 
 function renderSvg(plan: ExactPlan) {
+  // BUILDSETU_RENDERER_57X49_DRAWING_DIMENSIONS_V1
+  const sourceWidthFt = plan.plot.widthFt;
+  const sourceDepthFt = plan.plot.depthFt;
+  const is57x49EastNorthDrawing =
+    Math.round(sourceWidthFt) === 49 &&
+    Math.round(sourceDepthFt) === 57 &&
+    String(plan.plot.facing || "").toLowerCase().includes("east");
+  const drawingWidthFt = is57x49EastNorthDrawing ? 57 : sourceWidthFt;
+  const drawingDepthFt = is57x49EastNorthDrawing ? 49 : sourceDepthFt;
+
   // BUILDSETU_PROFESSIONAL_EXACT_SVG_RENDERER_SAFE_V1
-  const W = plan.plot.widthFt;
-  const D = plan.plot.depthFt;
+  const W = drawingWidthFt;
+  const D = drawingDepthFt;
 
   const scale = 15;
   const pad = 88;
@@ -788,7 +798,18 @@ export async function POST(req: NextRequest) {
       command,
     });
 
-    const validationErrors = validatePlan(widthFt, depthFt, rooms);
+    // BUILDSETU_EXACT_AGENT_57X49_OUTOFBOUNDS_FIX_V1
+    // BUILDSETU_EXACT_AGENT_57X49_VALIDATE_BOUNDS_V1
+    const use57x49DrawingBounds =
+      Math.round(widthFt) === 49 &&
+      Math.round(depthFt) === 57 &&
+      facing.includes("east") &&
+      /north\s*side|side\s*road.*north|east[-\s]*north|east\s+north|corner\s*plot/.test(sourceText.toLowerCase());
+
+    const validationWidthFt = use57x49DrawingBounds ? 57 : widthFt;
+    const validationDepthFt = use57x49DrawingBounds ? 49 : depthFt;
+
+    const validationErrors = validatePlan(validationWidthFt, validationDepthFt, rooms);
 
     const plan: ExactPlan = {
       source: "exact_floor_plan_agent_v1",

@@ -100,6 +100,24 @@ export function validateBuildSetu49x57EastNorthGroundGeometry(args: {
     `Invalid drawing height ${drawingHeight || "missing"} ft. 49x57 East-North must draw height = 49 ft.`,
   );
 
+  // BUILDSETU_GEOMETRY_ROOM_BOUNDS_CHECK_V1
+  const outOfBoundsRooms = rooms.filter((room) => {
+    const x = n(room.x);
+    const y = n(room.y);
+    const w = roomW(room);
+    const h = roomH(room);
+    return x < 0 || y < 0 || x + w > drawingWidth || y + h > drawingHeight;
+  });
+
+  addCheck(
+    checks,
+    blockers,
+    "room-bounds-57x49",
+    outOfBoundsRooms.length === 0,
+    "All rooms fit inside 57 x 49 drawing boundary.",
+    `Rooms outside 57 x 49 boundary: ${outOfBoundsRooms.map((room) => `${room.name || room.id} at x=${n(room.x)}, y=${n(room.y)}, w=${roomW(room)}, h=${roomH(room)}`).join("; ")}`,
+  );
+
   const topEdge = String(args.drawingConvention?.topEdge || "");
   const rightEdge = String(args.drawingConvention?.rightEdge || "");
 
