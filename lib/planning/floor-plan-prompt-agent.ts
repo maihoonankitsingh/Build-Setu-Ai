@@ -1,3 +1,5 @@
+import { buildSetuPlanningBrainSystemPrompt } from "@/lib/planning/buildsetu-planning-brain";
+
 
 // BUILDSETU_STRICT_FLOOR_PLAN_AGENT_PROMPT_V2
 const BUILDSETU_STRICT_FLOOR_PLAN_AGENT_PROMPT = `
@@ -110,8 +112,12 @@ function parsePlot(text: string) {
 
 function parseFacing(text: string) {
   const t = text.toLowerCase();
-  if (t.includes("south")) return "south";
+  if (/front\s*road.*east|east\s*front|east[-\s]*north|east\s+side\s+front/.test(t)) return "east";
+  if (/front\s*road.*north|north\s*front/.test(t)) return "north";
+  if (/front\s*road.*south|south\s*front/.test(t)) return "south";
+  if (/front\s*road.*west|west\s*front/.test(t)) return "west";
   if (t.includes("east")) return "east";
+  if (t.includes("south")) return "south";
   if (t.includes("west")) return "west";
   if (t.includes("north")) return "north";
   return "north";
@@ -119,7 +125,7 @@ function parseFacing(text: string) {
 
 function parseBhk(text: string) {
   const m = text.toLowerCase().match(/\b([1-9])\s*bhk\b/);
-  return m ? `${m[1]}BHK` : "3BHK";
+  return m ? `${m[1]}BHK` : "Project-specific";
 }
 
 function parseFloor(text: string) {
@@ -133,6 +139,7 @@ export function createFloorPlanImagePrompt(args: PromptAgentArgs) {
   const projectTitle = safe(args.projectTitle, "41 x 51 ft North Facing House");
   const userPrompt = safe(args.userPrompt);
   const raw = `${projectTitle}\n${userPrompt}`;
+  const planningBrainPrompt = buildSetuPlanningBrainSystemPrompt(raw);
 
   const plot = parsePlot(raw);
   const facing = parseFacing(raw);
@@ -148,7 +155,7 @@ export function createFloorPlanImagePrompt(args: PromptAgentArgs) {
 
   if (is49x57EastNorth) {
     const imagePrompt = `
-Create a premium professional furnished 2D architectural ground floor plan for a 49' x 57' East-North corner plot.
+Create a premium professional furnished 2D architectural ground floor plan for a 49' x 57' East-North corner plot.\n\nBUILDSETU PLANNING BRAIN RULES:\n${planningBrainPrompt}
 
 STRICT PROJECT LOCK:
 - Plot size exactly 49' x 57'.

@@ -57,7 +57,7 @@ function round1(value: number) {
 function detectCommand(message: string) {
   const text = safe(message).toLowerCase();
 
-  if (/first|1st|upper|g\+1/.test(text)) return "first_floor_plan";
+  if (/first\s+floor|1st\s+floor|upper\s+floor/.test(text)) return "first_floor_plan";
   if (/terrace|roof|mumty|water tank/.test(text)) return "terrace_plan";
   if (/furniture|sofa|bed|wardrobe|dining/.test(text)) return "furniture_layout";
   if (/dimension|measurement|room size|wall length/.test(text)) return "dimension_plan";
@@ -107,7 +107,7 @@ function inferRequirements(text: string, lock: any) {
     num(raw.match(/([0-9]+)\s*(?:bed|bedroom|bhk)/)?.[1], 0) ||
     (raw.includes("3bhk") || raw.includes("3 bhk") ? 3 : 0) ||
     (raw.includes("2bhk") || raw.includes("2 bhk") ? 2 : 0) ||
-    2;
+    (raw.includes("ground floor") ? 1 : 2);
 
   const bathrooms =
     num(plan.bathrooms || plan.toilets, 0) ||
@@ -151,6 +151,23 @@ function buildGroundFloorPlan(args: {
   const { widthFt: W, depthFt: D } = args;
 
   const rooms: Room[] = [];
+  // BUILDSETU_EXACT_AGENT_49X57_EAST_NORTH_GROUND_LOCK_V1
+  if (Math.round(W) === 49 && Math.round(D) === 57 && String(args.facing || "").toLowerCase().includes("east") && args.command === "ground_floor_plan") {
+    return [
+      room("parking", "Car + Bike Parking", "parking", 34, 3, 13, 18, "East/front entry parking; one car plus bike space"),
+      room("living", "Living Room", "living", 13, 3, 20, 14, "East/North daylight public zone"),
+      room("puja", "Puja", "puja", 3, 3, 6, 5, "East/North-East pooja zone"),
+      room("dining", "Dining", "dining", 17, 20, 12, 11, "Defined dining near kitchen"),
+      room("lobby", "Entry / Lobby", "lobby", 31, 22, 9, 10, "Clear circulation from entry to living/dining/stair"),
+      room("kitchen", "Kitchen", "kitchen", 36, 37, 10, 10, "South-East/service-side kitchen"),
+      room("wash_store", "Wash / Store", "wash", 36, 48, 10, 6, "Service area connected to kitchen"),
+      room("stair", "Staircase", "staircase", 26, 37, 8, 14, "Single internal staircase for G+1"),
+      room("bed1", "Bedroom", "bedroom", 3, 40, 12, 12, "South-West/private bedroom; only ground-floor bedroom"),
+      room("toilet1", "Bathroom", "toilet", 17, 40, 8, 5, "One common/attached bathroom"),
+      room("passage", "Passage", "passage", 17, 32, 17, 5, "Practical internal movement"),
+    ];
+  }
+
 
   const frontH = Math.min(18, Math.max(15, D * 0.34));
   const rearH = Math.min(16, Math.max(14, D * 0.30));
@@ -199,8 +216,6 @@ function buildGroundFloorPlan(args: {
 
   if (args.bedrooms >= 2) {
     rooms.push(room("bed2", "Bedroom 2", "bedroom", rearBedX, rearY, rearBedW, rearH, "Second bedroom fitted in rear zone"));
-  } else {
-    rooms.push(room("multi", "Family / Multi-use", "multiuse", rearBedX, rearY, rearBedW, rearH, "Flexible rear room"));
   }
 
   return rooms;

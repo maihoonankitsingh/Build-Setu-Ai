@@ -135,9 +135,9 @@ Rendering requirements:
 3. Preserve all room relationships and room sizes proportionally from the locked room rectangles.
 4. Use professional wall thickness, door swings, windows, openings, room labels, and readable room dimensions.
 5. Add furniture symbols: car in parking, sofa in living, bed in bedrooms, dining table, kitchen counter, toilet fixtures, wash area, puja symbol, staircase steps.
-6. Add outer dimension arrows: top/front ${widthFt}', side/depth ${depthFt}'.
+6. For 49x57 East-North: add TOP dimension as 57' on North Side Road and RIGHT dimension as 49' on East Front Road. For other plots, add correct outer dimension arrows.
 7. Add orientation labels: ${orientationLabel}.
-8. Add clean title block: "${args.title}" and "${widthFt}' x ${depthFt}' ${facing} Facing".
+8. Add clean title block: "${args.title}" and "${titleDimensionLabel}".
 9. Use clean architectural linework, white sheet background, subtle pastel room fills, crisp black walls, readable labels.
 10. The final should look like a professional furnished 2D floor plan presentation, not a rough block diagram.
 
