@@ -1,8 +1,16 @@
 {
   "ok": true,
-  "generatedAt": "2026-06-09T12:51:44.559Z",
-  "scannedDrafts": 128,
-  "quarantined": [],
+  "generatedAt": "2026-06-10T00:51:44.778Z",
+  "scannedDrafts": 130,
+  "quarantined": [
+    {
+      "file": "data/buildsetu-research/drafts/draft_20260610_004705_sourceupdate_bis-national-building-code_d9a294f6_bis-national-building-code.json",
+      "id": "draft_20260610_004705_sourceupdate_bis-national-building-code_d9a294f6",
+      "title": "BIS National Building Code",
+      "code": "path_changed_after_redirect",
+      "reason": "Fetch final path / does not match intended source path /standards/technical-department/national-building-code."
+    }
+  ],
   "keptPending": [
     {
       "file": "data/buildsetu-research/drafts/draft_20260609_064742_sourceupdate_india-andaman-nicobar-islands-approval-authority-index_fc1572d2_india-andaman-nicobar-islands-approval-authority-index.json",

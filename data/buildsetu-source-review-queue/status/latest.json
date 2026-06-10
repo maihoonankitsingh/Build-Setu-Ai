@@ -1,6 +1,6 @@
 {
   "ok": true,
-  "generatedAt": "2026-06-09T12:51:44.717Z",
+  "generatedAt": "2026-06-10T00:51:44.935Z",
   "phase": "47B-2R",
   "title": "BuildSetu source watch, web-search candidate capture, and review queue pipeline status",
   "routes": {
@@ -13,18 +13,18 @@
   },
   "sourceWatch": {
     "registeredTrustedSourceAutoWatch": true,
-    "latestInboxGeneratedAt": "2026-06-09T12:51:44.655Z",
+    "latestInboxGeneratedAt": "2026-06-10T00:51:44.873Z",
     "watchSourceCount": null,
-    "pendingSourceUpdateDrafts": 50,
-    "latestChangedSources": 36,
+    "pendingSourceUpdateDrafts": 48,
+    "latestChangedSources": 1,
     "latestFailedSources": 7,
     "fetchRecovery": {
-      "recoveredCount": 2,
+      "recoveredCount": 1,
       "unresolvedCount": 7
     },
     "qualityGate": {
-      "scannedDrafts": 128,
-      "quarantinedCount": 0,
+      "scannedDrafts": 130,
+      "quarantinedCount": 1,
       "keptPendingCount": 72
     }
   },
