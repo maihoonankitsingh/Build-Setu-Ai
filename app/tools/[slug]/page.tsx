@@ -3650,17 +3650,20 @@ export default function ToolWorkspacePage() {
                         <p className="mt-1 text-[11px] font-semibold leading-4 text-[#48685b]">
                           This exact SVG is the source-of-truth drawing. OpenAI preview is not the technical drawing.
                         </p>
+                        <p className="mt-2 inline-flex rounded-full border border-emerald-200 bg-white px-2 py-1 text-[9px] font-black uppercase tracking-[0.16em] text-emerald-700">
+                          BUILDSETU_EXACT_SVG_UI_POLISH_V1 · Use this for technical review
+                        </p>
                       </div>
                       <span className="shrink-0 rounded-full border border-emerald-200 bg-white px-2.5 py-1 text-[9px] font-black uppercase text-emerald-700">
                         Source of Truth
                       </span>
                     </div>
 
-                    <a href={exactUrl} target="_blank" rel="noopener noreferrer" className="mt-3 block overflow-hidden rounded-[18px] border border-emerald-100 bg-white">
+                    <a href={exactUrl} target="_blank" rel="noopener noreferrer" className="mt-3 block overflow-hidden rounded-[20px] border border-emerald-100 bg-white shadow-sm">
                       <img
                         src={exactUrl}
                         alt={exactPrimary.title || "Exact source-of-truth floor plan"}
-                        className="h-44 w-full object-contain p-2"
+                        className="h-72 w-full object-contain bg-white p-3"
                       />
                     </a>
 
@@ -3734,12 +3737,12 @@ export default function ToolWorkspacePage() {
                             title={title}
                             className="group overflow-hidden rounded-[18px] border border-[#ded1f4] bg-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
                           >
-                            <div className="h-24 overflow-hidden bg-[#fbf8ff]">
+                            <div className="h-40 overflow-hidden bg-white">
                               {imageUrl ? (
                                 <img
                                   src={imageUrl}
                                   alt={title}
-                                  className="h-full w-full object-cover transition group-hover:scale-105"
+                                  className="h-full w-full object-contain bg-white p-2 transition group-hover:scale-[1.02]"
                                 />
                               ) : (
                                 <div className="flex h-full items-center justify-center text-[10px] font-black text-[#8a76a6]">
@@ -3749,7 +3752,12 @@ export default function ToolWorkspacePage() {
                             </div>
 
                             <div className="p-2">
-                              <p className="truncate text-[11px] font-black text-[#12072f]">{title}</p>
+                              <div className="flex items-center justify-between gap-2">
+                                <p className="truncate text-[11px] font-black text-[#12072f]">{title}</p>
+                                <span className="shrink-0 rounded-full bg-emerald-50 px-1.5 py-0.5 text-[7px] font-black uppercase text-emerald-700">
+                                  SVG
+                                </span>
+                              </div>
                               <div className="mt-1 grid grid-cols-3 gap-1 text-center">
                                 <div className="rounded-xl bg-[#fbf8ff] px-1 py-1">
                                   <p className="text-[8px] font-black uppercase text-[#8a76a6]">Bed</p>
