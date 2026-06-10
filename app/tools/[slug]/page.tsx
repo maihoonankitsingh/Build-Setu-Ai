@@ -1454,6 +1454,7 @@ function getBuildSetuValidationBadgeClass(status: string) {
 
 
 // BUILDSETU_GPLUS1_EXACT_PACKAGE_HELPER_V1
+// BUILDSETU_GPLUS1_PACKAGE_STRICT_PROJECT_IMAGES_FIRST_V1
 function getBuildSetuAssetImageUrlForGPlusOne(asset: any) {
   return String(
     asset?.imageUrl ||
@@ -1465,53 +1466,73 @@ function getBuildSetuAssetImageUrlForGPlusOne(asset: any) {
   );
 }
 
+function isBuildSetuStrictExactPackageAsset(asset: any) {
+  const source = String(asset?.source || "");
+  const id = String(asset?.id || "");
+  const imageUrl = getBuildSetuAssetImageUrlForGPlusOne(asset);
+
+  return (
+    source === "exact_floor_plan_agent_v1" ||
+    id.startsWith("exact_floor_plan_") ||
+    imageUrl.includes("/exact-floor-plan-agent/") ||
+    imageUrl.includes("exact-floor-plan-agent")
+  );
+}
+
+function getBuildSetuAssetCreatedTime(asset: any) {
+  return Date.parse(asset?.createdAt || asset?.updatedAt || "") || 0;
+}
+
 function getBuildSetuGPlusOneExactPackage(projectImages: any[], output: any) {
+  const fromGallery = Array.isArray(projectImages) ? projectImages : [];
+
   const fromOutputAssets = [
     output?.asset,
     ...(Array.isArray(output?.assets) ? output.assets : []),
     ...(Array.isArray(output?.outputs) ? output.outputs : []),
   ].filter(Boolean);
 
-  const fromGallery = Array.isArray(projectImages) ? projectImages : [];
-  const candidates = [...fromOutputAssets, ...fromGallery].filter((item: any) => {
-    const text = JSON.stringify(item || {}).toLowerCase();
-    return (
-      text.includes("exact_floor_plan_agent_v1") ||
-      text.includes("exact-floor-plan-agent") ||
-      text.includes("exact-floor-plan-source-of-truth")
-    );
-  });
+  // Project images API is authoritative because it is exact-first and has full planning metadata.
+  // Output assets can be stale/partial, so they are used only as fallback.
+  const candidates = [...fromGallery, ...fromOutputAssets]
+    .filter(Boolean)
+    .filter(isBuildSetuStrictExactPackageAsset)
+    .filter((item: any) => Boolean(getBuildSetuAssetImageUrlForGPlusOne(item)));
 
   const seen = new Set<string>();
   const unique = candidates.filter((item: any) => {
-    const key = String(item?.id || item?.imageUrl || item?.publicUrl || item?.url || "");
+    const key = String(item?.id || getBuildSetuAssetImageUrlForGPlusOne(item) || "");
     if (!key || seen.has(key)) return false;
     seen.add(key);
     return true;
   });
 
+  const sorted = [...unique].sort((a: any, b: any) => {
+    const rank = (item: any) => {
+      if (item?.assetType === "ground_floor_plan") return 0;
+      if (item?.assetType === "first_floor_plan") return 1;
+      return 2;
+    };
+
+    const rankA = rank(a);
+    const rankB = rank(b);
+
+    if (rankA !== rankB) return rankA - rankB;
+    return getBuildSetuAssetCreatedTime(b) - getBuildSetuAssetCreatedTime(a);
+  });
+
   const isGround = (item: any) => {
-    const text = JSON.stringify(item || {}).toLowerCase();
-    return (
-      item?.assetType === "ground_floor_plan" ||
-      item?.command === "ground_floor_plan" ||
-      text.includes("ground floor plan") ||
-      text.includes("ground-floor-plan")
-    );
+    const text = `${item?.assetType || ""} ${item?.command || ""} ${item?.title || ""} ${item?.imageUrl || ""}`.toLowerCase();
+    return text.includes("ground_floor_plan") || text.includes("ground floor") || text.includes("ground-floor-plan");
   };
 
   const isFirst = (item: any) => {
-    const text = JSON.stringify(item || {}).toLowerCase();
-    return (
-      item?.assetType === "first_floor_plan" ||
-      item?.command === "first_floor_plan" ||
-      text.includes("first floor plan") ||
-      text.includes("first-floor-plan")
-    );
+    const text = `${item?.assetType || ""} ${item?.command || ""} ${item?.title || ""} ${item?.imageUrl || ""}`.toLowerCase();
+    return text.includes("first_floor_plan") || text.includes("first floor") || text.includes("first-floor-plan");
   };
 
-  const latestGround = unique.find(isGround) || null;
-  const latestFirst = unique.find(isFirst) || null;
+  const latestGround = sorted.find(isGround) || null;
+  const latestFirst = sorted.find(isFirst) || null;
 
   return {
     hasAny: Boolean(latestGround || latestFirst),
@@ -1524,7 +1545,6 @@ function getBuildSetuGPlusOneExactPackage(projectImages: any[], output: any) {
     ].filter(Boolean),
   };
 }
-
 
 
 // BUILDSETU_EXACT_SVG_PREVIEW_PRIORITY_HELPER_V1
@@ -1722,6 +1742,58 @@ export default function ToolWorkspacePage() {
       cancelled = true;
     };
   }, [tool?.slug, projectId]);
+
+  // BUILDSETU_DELAYED_EXACT_ASSETS_AFTER_GALLERY_V1
+  useEffect(() => {
+    if (tool?.slug !== "floor-plan-ai" || !projectId) return;
+
+    let cancelled = false;
+
+    async function refreshExactAssetsAfterGallery() {
+      try {
+        const res = await fetch(
+          `/api/project-assets/images?projectId=${encodeURIComponent(projectId)}&limit=80&fresh=${Date.now()}`,
+          {
+            cache: "no-store",
+            headers: {
+              "Cache-Control": "no-cache",
+              Pragma: "no-cache",
+            },
+          },
+        );
+
+        const data = await res.json().catch(() => ({}));
+        const list = Array.isArray(data.items)
+          ? data.items
+          : Array.isArray(data.assets)
+            ? data.assets
+            : Array.isArray(data.images)
+              ? data.images
+              : Array.isArray(data)
+                ? data
+                : [];
+
+        const ordered = sortBuildSetuFloorPlanAssetsForDisplay(list);
+
+        if (!cancelled && ordered.length) {
+          setProjectImages(ordered as any);
+        }
+      } catch (error) {
+        console.warn("BUILDSETU_DELAYED_EXACT_ASSETS_AFTER_GALLERY_V1 failed", error);
+      }
+    }
+
+    const timers = [250, 900, 1800].map((delay) =>
+      window.setTimeout(refreshExactAssetsAfterGallery, delay),
+    );
+
+    return () => {
+      cancelled = true;
+      timers.forEach((timer) => window.clearTimeout(timer));
+    };
+  }, [tool?.slug, projectId]);
+
+
 
 
 
