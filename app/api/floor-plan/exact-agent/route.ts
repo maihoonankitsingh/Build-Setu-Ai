@@ -3,6 +3,7 @@ import { mkdir, readFile, writeFile } from "fs/promises";
 import path from "path";
 import { getProjectPlanLock } from "@/lib/planning/project-plan-lock";
 import { validateBuildSetu49x57EastNorthGroundGeometry } from "@/lib/planning/buildsetu-floor-plan-geometry-validator";
+import { validateBuildSetuHumanLikeFloorPlanning } from "@/lib/planning/buildsetu-human-floor-plan-skill";
 
 export const runtime = "nodejs";
 
@@ -649,11 +650,37 @@ function buildExactAgentPlanningMetadata(plan: ExactPlan) {
         })
       : null;
 
+  // BUILDSETU_EXACT_AGENT_HUMAN_PLANNING_SKILL_GATE_V1
+  const humanPlanningReport =
+    isGroundFloor
+      ? validateBuildSetuHumanLikeFloorPlanning({
+          command,
+          plot: {
+            widthFt: plan.plot.widthFt,
+            depthFt: plan.plot.depthFt,
+            drawingWidthFt: is49x57EastNorth ? 57 : plan.plot.widthFt,
+            drawingHeightFt: is49x57EastNorth ? 49 : plan.plot.depthFt,
+          },
+          rooms: plan.rooms,
+          drawingConvention: {
+            northArrow: "UP",
+            topEdge: is49x57EastNorth ? "NORTH SIDE ROAD - 57'" : undefined,
+            rightEdge: is49x57EastNorth ? "EAST FRONT ROAD - 49'" : undefined,
+          },
+        })
+      : null;
+
   const mergedValidationReport = [
     ...validationReport,
     ...(hardGeometryReport?.checks || []).map((check) => ({
       id: check.id,
       check: check.id,
+      status: check.status,
+      note: check.note,
+    })),
+    ...(humanPlanningReport?.checks || []).map((check) => ({
+      id: check.id,
+      check: check.check,
       status: check.status,
       note: check.note,
     })),
@@ -684,12 +711,13 @@ function buildExactAgentPlanningMetadata(plan: ExactPlan) {
 
   const scoreReport = {
     source: "exact_agent_planning_scorecard_v1",
-    total: hardGeometryReport?.status === "fail" ? 0 : scoreTotal,
+    total: hardGeometryReport?.status === "fail" || humanPlanningReport?.status === "fail" ? 0 : Math.min(scoreTotal, humanPlanningReport?.total ?? scoreTotal),
     max: 100,
-    status: hardGeometryReport?.status === "fail" ? "fail" : (blockers.length ? "revise" : scoreTotal >= 75 ? "pass" : "revise"),
+    status: hardGeometryReport?.status === "fail" || humanPlanningReport?.status === "fail" ? "fail" : (blockers.length ? "revise" : scoreTotal >= 75 ? "pass" : "revise"),
     scorecard: scoreItems,
     blockers,
     hardGeometryReport,
+    humanPlanningReport,
     revisionRule: "If blockers exist or score is below 75, revise before final render/working drawing.",
   };
 
