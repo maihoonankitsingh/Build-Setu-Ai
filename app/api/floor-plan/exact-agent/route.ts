@@ -4,6 +4,7 @@ import path from "path";
 import { getProjectPlanLock } from "@/lib/planning/project-plan-lock";
 import { validateBuildSetu49x57EastNorthGroundGeometry } from "@/lib/planning/buildsetu-floor-plan-geometry-validator";
 import { validateBuildSetuHumanLikeFloorPlanning } from "@/lib/planning/buildsetu-human-floor-plan-skill";
+import { runBuildSetuPlanningSkills, summarizeBuildSetuSkillReports } from "@/lib/planning/skills";
 
 export const runtime = "nodejs";
 
@@ -667,6 +668,26 @@ function buildExactAgentPlanningMetadata(plan: ExactPlan) {
         })
       : null;
 
+  // BUILDSETU_EXACT_AGENT_SKILL_REGISTRY_PARALLEL_SCOPE_SAFE_V1
+  const planningSkillReports = runBuildSetuPlanningSkills({
+    command,
+    plot: {
+      widthFt: plan.plot.widthFt,
+      depthFt: plan.plot.depthFt,
+      drawingWidthFt: is49x57EastNorth ? 57 : plan.plot.widthFt,
+      drawingHeightFt: is49x57EastNorth ? 49 : plan.plot.depthFt,
+      facing: plan.plot.facing,
+    },
+    rooms: plan.rooms,
+    drawingConvention: {
+      northArrow: "UP",
+      topEdge: is49x57EastNorth ? "NORTH SIDE ROAD - 57'" : undefined,
+      rightEdge: is49x57EastNorth ? "EAST FRONT ROAD - 49'" : undefined,
+    },
+  });
+
+  const planningSkillSummary = summarizeBuildSetuSkillReports(planningSkillReports);
+
   const mergedValidationReport = [
     ...validationReport,
     ...(hardGeometryReport?.checks || []).map((check) => ({
@@ -681,6 +702,14 @@ function buildExactAgentPlanningMetadata(plan: ExactPlan) {
       status: check.status,
       note: check.note,
     })),
+    ...planningSkillReports.flatMap((report) =>
+      report.checks.map((check) => ({
+        id: `${report.skillId}:${check.id}`,
+        check: check.check,
+        status: check.status,
+        note: check.note,
+      })),
+    ),
   ];
 
   const scoreItems = [
@@ -715,6 +744,8 @@ function buildExactAgentPlanningMetadata(plan: ExactPlan) {
     blockers,
     hardGeometryReport,
     humanPlanningReport,
+    planningSkillSummary,
+    planningSkillReports,
     revisionRule: "If blockers exist or score is below 75, revise before final render/working drawing.",
   };
 
