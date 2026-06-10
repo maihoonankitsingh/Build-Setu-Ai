@@ -239,3 +239,292 @@ export function buildSetuPlanningOutputSkeleton() {
     nextStepsForArchitectEngineer: [],
   };
 }
+
+// BUILDSETU_PLANNING_BRAIN_V2_TRAINING_RULES
+// Extended training rules merged from old + latest BuildSetu planning notes.
+// Agent must plan, check, reason and coordinate before prompting or drawing.
+
+export const BUILDSETU_AGENT_TRAINING_LAYERS_V2 = [
+  "Knowledge training",
+  "Reasoning training",
+  "Drawing-output training",
+  "QA / checking training",
+] as const;
+
+export const BUILDSETU_CORE_TRAINING_MODULES_V2 = [
+  {
+    id: "site_reading",
+    name: "Site Reading Training",
+    train: [
+      "Read plot size, frontage, depth and total area.",
+      "Separate road side, front side and north direction.",
+      "Understand corner plot planning.",
+      "Check sunlight, ventilation, drainage slope and setback impact.",
+    ],
+    output: ["Site Summary", "Buildable Area Assumption", "Road / Entry Logic", "Light & Ventilation Logic", "Risk Points"],
+  },
+  {
+    id: "building_type",
+    name: "Building Type Training",
+    train: [
+      "Residential, duplex, G+1, G+2, apartment, commercial, hotel, restaurant, school, college, clinic, hospital, warehouse and banquet planning differ.",
+      "Residential prioritizes privacy, comfort, ventilation and family flow.",
+      "Commercial prioritizes frontage, rentable area, customer flow and service core.",
+      "Hotel prioritizes room count, guest/service circulation and MEP shafts.",
+      "School prioritizes safety, corridors, classroom light and toilets.",
+      "Hospital prioritizes patient flow, hygiene, emergency access and clean/dirty separation.",
+    ],
+    output: ["Building Type Analysis", "Planning Priorities", "Safety / Service Requirements"],
+  },
+  {
+    id: "room_dimension",
+    name: "Room Dimension Training",
+    train: [
+      "Room is valid only when furniture + movement clearance + door swing + window + wall thickness fit.",
+      "Bedroom = bed + wardrobe + side clearance + door swing + window.",
+      "Kitchen = counter + sink + stove + fridge + working clearance.",
+      "Toilet = WC + shower + basin + door swing + ventilation.",
+    ],
+    practicalSizes: [
+      { space: "Normal Bedroom", size: "12' x 14'" },
+      { space: "Master Bedroom", size: "14' x 15' / 14' x 16'" },
+      { space: "Living Room", size: "16' x 18'" },
+      { space: "Drawing Room", size: "14' x 16'" },
+      { space: "Dining", size: "12' x 14'" },
+      { space: "Kitchen", size: "10' x 12' / 11' x 13'" },
+      { space: "Toilet", size: "5' x 8' / 6' x 8'" },
+      { space: "Dressing", size: "5' x 7'" },
+      { space: "Puja", size: "5' x 6'" },
+      { space: "Staircase", size: "7' x 14'" },
+      { space: "Car Parking", size: "10' x 18' / 12' x 18'" },
+      { space: "Residential Corridor", size: "3'6\" to 5'" },
+    ],
+    output: ["Room Dimension Table", "Furniture Fit Check", "Oversize / Undersize Flags"],
+  },
+  {
+    id: "zoning",
+    name: "Zoning Training",
+    train: [
+      "Residential: public, semi-private, private and service zones.",
+      "Commercial: public, revenue, service and safety zones.",
+      "Hotel: front-of-house, guest, back-of-house and life-safety zones.",
+      "Public space should be front-side, private/service controlled side, wet areas grouped, stair/lift core logical.",
+    ],
+    output: ["Zoning Logic", "Zone Diagram", "Service Core Location"],
+  },
+  {
+    id: "circulation",
+    name: "Circulation Training",
+    train: [
+      "Check entry to living, parking to entry, guest flow, family/private flow, service flow and emergency flow.",
+      "Avoid bedroom-through-toilet access, kitchen-through-bedroom access, dead-end passage, dark long corridor, door-to-door clash, toilet opening directly into dining/living.",
+    ],
+    output: ["Circulation Logic", "Movement Flow", "Conflict Flags"],
+  },
+  {
+    id: "structural_concept",
+    name: "Structural Concept Training",
+    train: [
+      "Final RCC design is not agent's job; only conceptual coordination.",
+      "Load path: slab -> beam -> column -> footing -> soil.",
+      "Columns at wall junction/corners; avoid room centers and parking movement.",
+      "Align ground and first floor columns.",
+      "Strong support around staircase.",
+      "Avoid long spans; flag parking long-span, balcony/cantilever and heavy load zones.",
+      "Every column should connect with beams; provide peripheral beams and main/secondary beam logic.",
+    ],
+    output: ["Column Layout Concept", "Beam Layout Concept", "Slab Span Direction", "Structural Risk Notes", "Engineer Verification Required"],
+  },
+  {
+    id: "mep",
+    name: "MEP Training",
+    train: [
+      "Align upper-floor toilets over lower-floor wet zones where possible.",
+      "Place kitchen/utility near plumbing shaft.",
+      "Plan drainage slope, rainwater pipe, OHT/UGT/septic/sewer route.",
+      "Plan DB, switches, sockets, fan, lighting, AC, geyser, kitchen heavy load, inverter/solar, CCTV and LAN.",
+      "Plan AC route, chimney outlet, toilet exhaust, fresh air and MEP shaft.",
+    ],
+    output: ["Electrical Concept Plan", "Lighting Plan", "Power Point Plan", "AC Point Plan", "Water Supply Plan", "Drainage Plan", "Shaft Plan", "Rainwater Plan"],
+  },
+  {
+    id: "interior",
+    name: "Interior Planning Training",
+    train: [
+      "Furniture layout proves whether room dimensions work.",
+      "Check bed, wardrobe, TV wall, sofa, dining, kitchen triangle, false ceiling, lighting layers, storage and material finish.",
+    ],
+    output: ["Furniture Layout", "False Ceiling Concept", "Lighting Concept", "Flooring Concept", "Kitchen Layout", "Wardrobe Layout", "Toilet Interior Concept", "Material Finish Suggestions"],
+  },
+  {
+    id: "byelaw_compliance",
+    name: "Byelaw + Compliance Training",
+    train: [
+      "Do not finalize approval dimensions without verified city/local byelaw.",
+      "Check setback, FAR/FSI, ground coverage, height, parking norm, fire exit, ventilation, open space, rainwater harvesting, accessibility, lift and sewer/septic rules.",
+    ],
+    output: ["Compliance Checklist", "Missing Approval Data", "Risk Notes", "Professional Verification Required"],
+  },
+  {
+    id: "fire_safety",
+    name: "Fire & Safety Training",
+    train: [
+      "Small residential gets basic safety check.",
+      "Commercial/public/institutional/hotel/hospital needs fire consultant review note.",
+      "Check exit route, stair width, fire stair, emergency lighting, fire alarm, extinguisher, hydrant/sprinkler concept, travel distance, assembly point and fire tender access.",
+    ],
+    output: ["Fire Safety Checklist", "Exit Route Notes", "Fire Risk Flags"],
+  },
+  {
+    id: "boq_estimate",
+    name: "BOQ / Estimate Training",
+    train: [
+      "Estimate from built-up area, wall length, slab area, concrete, steel concept, brick/block, plaster, flooring, door/window count, electrical points, plumbing fixtures, painting and interior items.",
+      "Final BOQ requires final drawings/specifications.",
+    ],
+    output: ["Concept BOQ", "Rough Cost Estimate", "Civil + Structure + MEP + Interior Split", "Material Quantity Draft"],
+  },
+  {
+    id: "qa_clash",
+    name: "QA / Clash Detection Training",
+    train: [
+      "Check room overlap, dimension mismatch, door swing clash, missing windows, missing toilet/kitchen ventilation, small parking, missing landing, column in room center, column blocking parking, long unsupported span, wet area not aligned, missing shafts, missing fire exit, narrow corridor and furniture not fitting.",
+    ],
+    output: ["Planning Quality Score", "Error List", "Revision Suggestions", "Risk Level"],
+  },
+] as const;
+
+export const BUILDSETU_AGENT_DATA_LIBRARIES_V2 = [
+  "Room Size Library",
+  "Furniture Size Library",
+  "Door-Window Size Library",
+  "Staircase Size Library",
+  "Parking Size Library",
+  "Building Type Library",
+  "Zoning Pattern Library",
+  "Structural Rule Library",
+  "MEP Rule Library",
+  "Interior Rule Library",
+  "Safety Checklist Library",
+  "Byelaw RAG Library",
+  "BOQ Item Library",
+  "Drawing Template Library",
+  "Prompt Template Library",
+] as const;
+
+export const BUILDSETU_AGENT_EXAMPLE_TRAINING_CASES_V2 = [
+  "30' x 40' G+1 residential",
+  "40' x 60' duplex",
+  "49' x 57' luxury house",
+  "25' x 60' commercial shop + residence",
+  "60' x 90' hotel",
+  "School building",
+  "Clinic",
+  "Office floor",
+  "Restaurant",
+  "Warehouse",
+] as const;
+
+export const BUILDSETU_REQUIRED_QUESTIONS_V2 = [
+  "Plot size kya hai?",
+  "Road kis side hai?",
+  "North direction kya hai?",
+  "City/local authority kya hai?",
+  "Building type kya hai?",
+  "Kitne floor chahiye?",
+  "Kitne bedrooms/rooms chahiye?",
+  "Parking kitni chahiye?",
+  "Lift chahiye ya nahi?",
+  "Budget kya hai?",
+  "Vastu follow karna hai ya nahi?",
+  "Future floor option chahiye ya nahi?",
+  "Soil report available hai ya nahi?",
+  "Site photo/drawing available hai ya nahi?",
+] as const;
+
+export const BUILDSETU_PLAN_SCORE_CRITERIA_V2 = [
+  "Space Utilization",
+  "Room Dimensions",
+  "Circulation",
+  "Natural Light",
+  "Ventilation",
+  "Structure Feasibility",
+  "MEP Efficiency",
+  "Safety",
+  "Cost Practicality",
+  "Future Expansion",
+] as const;
+
+export const BUILDSETU_AGENT_TOOL_USE_CASES_V2 = [
+  "CAD/DXF output generator",
+  "PDF report generator",
+  "Image plan generator",
+  "Room area calculator",
+  "FAR/FSI calculator",
+  "BOQ calculator",
+  "Byelaw RAG search",
+  "Dimension validation checker",
+  "Clash detection checker",
+  "Prompt generator for floor plan / column / beam / MEP / interior",
+] as const;
+
+export const BUILDSETU_AGENT_TRAINING_ROADMAP_V2 = [
+  {
+    stage: "Stage 1: Basic Planning Agent",
+    train: ["Plot reading", "Room size", "Residential floor plan", "Furniture layout", "Simple zoning"],
+  },
+  {
+    stage: "Stage 2: Structure-Aware Agent",
+    train: ["Column grid", "Beam layout", "Slab span", "Staircase support", "G+1/G+2 logic"],
+  },
+  {
+    stage: "Stage 3: MEP-Aware Agent",
+    train: ["Electrical points", "Plumbing shafts", "Drainage", "AC/chimney/exhaust", "Water tank/septic/sewer"],
+  },
+  {
+    stage: "Stage 4: Multi-Building Agent",
+    train: ["Commercial", "Hotel", "School", "College", "Clinic", "Hospital", "Restaurant", "Warehouse"],
+  },
+  {
+    stage: "Stage 5: Working Drawing Agent",
+    train: ["Architectural drawing list", "Structural drawing list", "MEP drawing list", "Interior drawing list", "Schedules", "BOQ", "Revision notes"],
+  },
+  {
+    stage: "Stage 6: QA Agent",
+    train: ["Plan checking", "Mistake detection", "Safety risk", "Dimension mismatch", "MEP clash", "Structure clash", "Compliance warning"],
+  },
+] as const;
+
+export function buildSetuPlanningBrainV2TrainingPrompt() {
+  return `
+BUILDSETU PLANNING BRAIN V2 EXTENSION
+
+Training layers:
+${BUILDSETU_AGENT_TRAINING_LAYERS_V2.map((item) => `- ${item}`).join("\n")}
+
+Core rule:
+Agent must not merely generate a plan. Agent must check, reason and coordinate the plan.
+
+Building Planning =
+Site + User Requirement + Byelaws + Zoning + Circulation + Room Dimensions + Structure + MEP + Interior + Safety + Cost.
+
+Required questions:
+${BUILDSETU_REQUIRED_QUESTIONS_V2.map((item, i) => `${i + 1}. ${item}`).join("\n")}
+
+Data libraries required:
+${BUILDSETU_AGENT_DATA_LIBRARIES_V2.map((item) => `- ${item}`).join("\n")}
+
+Score every serious plan using:
+${BUILDSETU_PLAN_SCORE_CRITERIA_V2.map((item) => `- ${item}: /10`).join("\n")}
+Total: /100. If score is below 75, propose a revised option.
+
+Roadmap:
+${BUILDSETU_AGENT_TRAINING_ROADMAP_V2.map((stage) => `${stage.stage}: ${stage.train.join(", ")}`).join("\n")}
+
+Output discipline:
+Every planning output must include Project Summary, Input Details, Missing Data, Assumptions, Building Type Analysis, Room Requirement, Area Statement, Zoning Logic, Circulation Logic, Floor Plan Description, Room Schedule, Structural Concept, MEP Concept, Interior Concept, Safety/Compliance Checklist, Risk Notes, Required Working Drawings and Next Step.
+
+Professional boundary:
+Never claim final structural design, final RCC reinforcement, final fire compliance or final authority approval. Mark structural, MEP, fire and approval outputs as requiring licensed professional verification.
+`.trim();
+}
