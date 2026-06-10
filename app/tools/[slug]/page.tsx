@@ -853,6 +853,20 @@ function buildLocalPrompt(tool: ToolConfig, projectTitle: string, messages: Chat
   ].join("\n");
 }
 
+
+// BUILDSETU_EXACT_SVG_CACHE_BUST_HELPER_V1
+function getBuildSetuExactSvgDisplayUrl(url: string) {
+  const raw = String(url || "");
+  if (!raw) return raw;
+  const isExactSvg =
+    raw.includes("exact-floor-plan-agent") ||
+    raw.includes("exact_floor_plan") ||
+    raw.toLowerCase().includes(".svg");
+  if (!isExactSvg) return raw;
+  const sep = raw.includes("?") ? "&" : "?";
+  return `${raw}${sep}fresh=${Date.now()}`;
+}
+
 function getDisplayImageUrl(value: string) {
   const url = String(value || "").trim();
   if (!url) return "";
@@ -3753,7 +3767,7 @@ export default function ToolWorkspacePage() {
               {/* BUILDSETU_EXACT_CARD_PROJECT_IMAGES_WITHOUT_OUTPUT_V1 */}
               {tool?.slug === "floor-plan-ai" && getBuildSetuPrimaryExactFloorPlanAsset(projectImages, output || {}) ? (() => {
                 const exactPrimary = getBuildSetuPrimaryExactFloorPlanAsset(projectImages, output || {});
-                const exactUrl = getDisplayImageUrl(getBuildSetuAssetImageUrlForGPlusOne(exactPrimary));
+                const exactUrl = getDisplayImageUrl(getBuildSetuExactSvgDisplayUrl(getBuildSetuAssetImageUrlForGPlusOne(exactPrimary)));
 
                 if (!exactPrimary || !exactUrl) return null;
 
@@ -3774,7 +3788,7 @@ export default function ToolWorkspacePage() {
                           This exact SVG is the source-of-truth drawing. OpenAI preview is not the technical drawing.
                         </p>
                         <p className="mt-2 inline-flex rounded-full border border-emerald-200 bg-white px-2 py-1 text-[9px] font-black uppercase tracking-[0.16em] text-emerald-700">
-                          BUILDSETU_EXACT_SVG_UI_POLISH_V1 · Use this for technical review
+                          BUILDSETU_EXACT_SVG_UI_POLISH_V1 · BUILDSETU_EXACT_SVG_FULL_FIT_PREVIEW_V1 · Use this for technical review
                         </p>
                       </div>
                       <span className="shrink-0 rounded-full border border-emerald-200 bg-white px-2.5 py-1 text-[9px] font-black uppercase text-emerald-700">
@@ -3846,7 +3860,7 @@ export default function ToolWorkspacePage() {
                     <div className="mt-3 grid grid-cols-2 gap-2">
                       {gplusOnePackage.floors.map((floor: any) => {
                         const asset = floor.asset;
-                        const imageUrl = getDisplayImageUrl(getBuildSetuAssetImageUrlForGPlusOne(asset));
+                        const imageUrl = getDisplayImageUrl(getBuildSetuExactSvgDisplayUrl(getBuildSetuAssetImageUrlForGPlusOne(asset)));
                         const counts = asset?.planningJson?.roomCounts || {};
                         const score = asset?.scoreReport || {};
                         const title = asset?.title || floor.label;
@@ -4041,7 +4055,7 @@ export default function ToolWorkspacePage() {
                             <img
                               src={previewImageUrl}
                               alt={image.label || `Generated view ${index + 1}`}
-                              className="h-28 w-full object-cover transition group-hover:scale-105"
+                              className="h-28 w-full object-contain transition group-hover:scale-105"
                             />
                             <p className="truncate px-2 py-1.5 text-[10px] font-black text-[#46325f]">
                               {image.label || `View ${index + 1}`}
@@ -4067,7 +4081,7 @@ export default function ToolWorkspacePage() {
                       <img
                         src={getDisplayImageUrl(output.imageUrl)}
                         alt={tool.outputLabel}
-                        className="h-[210px] w-full rounded-[22px] object-cover shadow-[0_18px_44px_rgba(72,30,130,0.18)]"
+                        className="h-[210px] w-full rounded-[22px] object-contain shadow-[0_18px_44px_rgba(72,30,130,0.18)]"
                       />
                       <a
                         href={getDisplayImageUrl(output.imageUrl)}
@@ -4130,7 +4144,7 @@ export default function ToolWorkspacePage() {
                       <img
                         src={getDisplayImageUrl(image.imageUrl || image.publicUrl || image.url || image.assetUrl || '')}
                         alt={image.toolName || image.renderType || "Generated image"}
-                        className="h-20 w-full object-cover transition group-hover:scale-105"
+                        className="h-20 w-full object-contain transition group-hover:scale-105"
                       />
                     </a>
                   ))}
