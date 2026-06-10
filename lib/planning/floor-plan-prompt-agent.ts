@@ -153,6 +153,10 @@ export function createFloorPlanImagePrompt(args: PromptAgentArgs) {
     facing === "east" &&
     /north\s*side|side\s*road.*north|east[-\s]*north|east\s+north|corner\s*plot/.test(raw.toLowerCase());
 
+  const planningJson = is49x57EastNorth
+    ? build49x57EastNorthPlanningJson({ projectTitle, userPrompt, plot, facing })
+    : buildGenericPlanningJson({ projectTitle, userPrompt, plot, facing, bhk, floor });
+
   if (is49x57EastNorth) {
     const imagePrompt = `
 Create a premium professional furnished 2D architectural ground floor plan for a 49' x 57' East-North corner plot.\n\nBUILDSETU PLANNING BRAIN RULES:\n${planningBrainPrompt}
@@ -192,6 +196,8 @@ DRAWING REQUIREMENTS:
       facing,
       bhk: "1BHK",
       floor,
+      planningJson,
+      validationReport: planningJson.validation,
       imagePrompt,
     };
   }
@@ -302,6 +308,8 @@ Final image must look like a polished furnished professional floor plan similar 
     facing,
     bhk,
     floor,
+    planningJson,
+    validationReport: planningJson.validation,
     imagePrompt,
   };
 }
@@ -317,4 +325,310 @@ LATEST USER MESSAGE:
 ${userMessage || "No additional user message."}
 
 Now create the final floor-plan image prompt and planning notes exactly in the required structure.`;
+}
+
+
+// BUILDSETU_PLANNING_JSON_VALIDATION_V1
+type BuildSetuPlanningRoom = {
+  id: string;
+  name: string;
+  floor: "ground" | "first" | "terrace" | "unknown";
+  targetSize: string;
+  zone: "public" | "semi_private" | "private" | "service" | "circulation" | "open";
+  adjacency: string[];
+  notes: string;
+};
+
+type BuildSetuPlanningValidation = {
+  id: string;
+  check: string;
+  status: "pass" | "review" | "fail";
+  note: string;
+};
+
+function build49x57EastNorthPlanningJson(args: {
+  projectTitle: string;
+  userPrompt: string;
+  plot: { width: number; depth: number };
+  facing: string;
+}) {
+  const rooms: BuildSetuPlanningRoom[] = [
+    {
+      id: "parking",
+      name: "Car + Bike Parking",
+      floor: "ground",
+      targetSize: "approx 13' x 18'",
+      zone: "public",
+      adjacency: ["East Front Road", "Entry Lobby", "Living Room"],
+      notes: "One car plus bike parking near East/front entry. Do not duplicate parking.",
+    },
+    {
+      id: "living",
+      name: "Living Room",
+      floor: "ground",
+      targetSize: "approx 18' x 14' to 20' x 14'",
+      zone: "public",
+      adjacency: ["Entry Lobby", "Dining", "Puja"],
+      notes: "Use East/North daylight and client-entry visibility.",
+    },
+    {
+      id: "dining",
+      name: "Dining",
+      floor: "ground",
+      targetSize: "approx 12' x 11'",
+      zone: "semi_private",
+      adjacency: ["Living Room", "Kitchen", "Staircase Lobby"],
+      notes: "Defined dining near kitchen, not oversized.",
+    },
+    {
+      id: "kitchen",
+      name: "Kitchen",
+      floor: "ground",
+      targetSize: "approx 10' x 10'",
+      zone: "service",
+      adjacency: ["Dining", "Wash / Store", "Service Side"],
+      notes: "Prefer South-East/service zone with ventilation.",
+    },
+    {
+      id: "puja",
+      name: "Puja Room",
+      floor: "ground",
+      targetSize: "approx 5' x 6'",
+      zone: "semi_private",
+      adjacency: ["Living Room", "Dining"],
+      notes: "Prefer East/North-East zone. Do not duplicate pooja.",
+    },
+    {
+      id: "bedroom_ground",
+      name: "Ground Floor Bedroom",
+      floor: "ground",
+      targetSize: "approx 11' x 12' or 12' x 12'",
+      zone: "private",
+      adjacency: ["Bathroom", "Passage"],
+      notes: "Only one bedroom on ground floor; private South-West side preferred.",
+    },
+    {
+      id: "bathroom_ground",
+      name: "Ground Floor Bathroom",
+      floor: "ground",
+      targetSize: "approx 7' x 5' or 8' x 5'",
+      zone: "service",
+      adjacency: ["Bedroom", "Passage", "Plumbing Shaft"],
+      notes: "Only one bathroom on ground floor; keep shaft/ventilation logic.",
+    },
+    {
+      id: "staircase",
+      name: "Staircase",
+      floor: "ground",
+      targetSize: "approx 7' x 14'",
+      zone: "circulation",
+      adjacency: ["Lobby", "First Floor", "Terrace"],
+      notes: "One internal staircase only with clear UP direction.",
+    },
+    {
+      id: "wash_store",
+      name: "Wash / Store",
+      floor: "ground",
+      targetSize: "approx 5' x 8' to 6' x 10'",
+      zone: "service",
+      adjacency: ["Kitchen", "Plumbing Shaft"],
+      notes: "Compact service area; connect with kitchen/wet wall.",
+    },
+    {
+      id: "master_bedroom_first",
+      name: "First Floor Master Bedroom",
+      floor: "first",
+      targetSize: "approx 13' x 14'",
+      zone: "private",
+      adjacency: ["Attached Bathroom", "Balcony/Windows"],
+      notes: "First floor only, preferably South-West; not on ground floor.",
+    },
+    {
+      id: "bedroom_first_2",
+      name: "First Floor Bedroom 2",
+      floor: "first",
+      targetSize: "approx 11' x 12'",
+      zone: "private",
+      adjacency: ["Common Bathroom", "Family Lounge"],
+      notes: "First floor only.",
+    },
+    {
+      id: "bedroom_first_3",
+      name: "First Floor Bedroom 3",
+      floor: "first",
+      targetSize: "approx 11' x 12'",
+      zone: "private",
+      adjacency: ["Common Bathroom", "Family Lounge"],
+      notes: "First floor only.",
+    },
+    {
+      id: "family_lounge_first",
+      name: "First Floor Family Lounge",
+      floor: "first",
+      targetSize: "as per balance area",
+      zone: "semi_private",
+      adjacency: ["Staircase", "Bedrooms", "Balcony/Terrace"],
+      notes: "First floor only; avoid adding on ground floor unless user asks.",
+    },
+  ];
+
+  const validation: BuildSetuPlanningValidation[] = [
+    {
+      id: "plot_orientation",
+      check: "Plot orientation",
+      status: "pass",
+      note: "49 ft East frontage x 57 ft North-side/depth corner plot; East front road and North side road must be separately labeled.",
+    },
+    {
+      id: "north_arrow",
+      check: "North arrow and edge labels",
+      status: "pass",
+      note: "North arrow UP; top edge North Side Road - 57'; right edge East Front Road - 49'.",
+    },
+    {
+      id: "ground_bedroom_count",
+      check: "Ground floor bedroom count",
+      status: "pass",
+      note: "Ground floor must have exactly 1 bedroom; reject Bedroom 2/3 on ground floor.",
+    },
+    {
+      id: "ground_bathroom_count",
+      check: "Ground floor bathroom count",
+      status: "pass",
+      note: "Ground floor must have exactly 1 bathroom unless user changes requirement.",
+    },
+    {
+      id: "duplicate_rooms",
+      check: "Duplicate room prevention",
+      status: "pass",
+      note: "No duplicate parking, pooja, staircase, family room or unrequested rooms on ground floor.",
+    },
+    {
+      id: "structure_concept",
+      check: "Structural concept",
+      status: "review",
+      note: "Column/beam grid is conceptual only; licensed structural engineer must verify RCC design, steel, footing and load path.",
+    },
+    {
+      id: "byelaw_check",
+      check: "Local byelaw/approval",
+      status: "review",
+      note: "Varanasi local authority setback/FAR/coverage/height/approval rules must be verified before final approval drawing.",
+    },
+  ];
+
+  return {
+    source: "buildsetu_planning_json_validation_v1",
+    projectTitle: args.projectTitle,
+    projectType: "Residential G+1 House",
+    plot: {
+      widthFt: 49,
+      depthFt: 57,
+      areaSqft: 2793,
+      frontRoad: "East",
+      sideRoad: "North",
+      cornerPlot: true,
+      drawingConvention: {
+        northArrow: "UP",
+        topEdge: "NORTH SIDE ROAD - 57'",
+        rightEdge: "EAST FRONT ROAD - 49'",
+      },
+    },
+    planningSequence: [
+      "brief_lock",
+      "orientation_lock",
+      "area_program",
+      "zoning",
+      "circulation",
+      "room_schedule",
+      "structure_concept",
+      "mep_concept",
+      "interior_concept",
+      "validation",
+      "image_prompt",
+    ],
+    zoning: {
+      public: ["Parking", "Entry", "Living"],
+      semiPrivate: ["Dining", "Puja", "Staircase Lobby", "First Floor Family Lounge"],
+      private: ["Ground Bedroom", "First Floor Bedrooms"],
+      service: ["Kitchen", "Wash/Store", "Bathrooms", "Plumbing Shaft"],
+    },
+    circulation: [
+      "East front gate/parking to entry lobby",
+      "Entry lobby to living",
+      "Living to dining and pooja",
+      "Dining to kitchen and staircase",
+      "Private passage to ground bedroom and bathroom",
+      "Staircase continues to first floor and terrace",
+    ],
+    structureConcept: [
+      "Use conceptual RCC framed structure logic.",
+      "Keep columns near wall junctions and corners.",
+      "Avoid columns in car movement and room centers.",
+      "Align first-floor bedroom/lobby walls with ground-floor beam/column lines where possible.",
+      "Flag long spans, balcony projections and staircase support for engineer review.",
+    ],
+    mepConcept: [
+      "Group kitchen, wash/store and bathroom wet walls where possible.",
+      "Keep toilet ventilation/shaft strategy.",
+      "Plan DB/electrical points after furniture layout.",
+      "Rainwater pipes and drainage slope to be resolved in working drawing stage.",
+    ],
+    rooms,
+    validation,
+    imagePromptRules: [
+      "Do not create a new layout outside planning JSON.",
+      "Do not create 2 or 3 ground-floor bedrooms.",
+      "Do not create duplicate pooja, duplicate parking, duplicate stair or family/multi-use room on ground floor.",
+      "Use professional reference quality only for linework, labels, furniture symbols, door/window tags and sheet presentation.",
+      "Do not copy generic 3BHK room count from references.",
+    ],
+  };
+}
+
+function buildGenericPlanningJson(args: {
+  projectTitle: string;
+  userPrompt: string;
+  plot: { width: number; depth: number };
+  facing: string;
+  bhk: string;
+  floor: string;
+}) {
+  return {
+    source: "buildsetu_planning_json_validation_v1_generic",
+    projectTitle: args.projectTitle,
+    plot: {
+      widthFt: args.plot.width,
+      depthFt: args.plot.depth,
+      facing: args.facing,
+    },
+    floor: args.floor,
+    bhk: args.bhk,
+    planningSequence: [
+      "brief_lock",
+      "site_rules_review",
+      "area_program",
+      "zoning",
+      "circulation",
+      "room_schedule",
+      "structure_concept",
+      "mep_concept",
+      "validation",
+      "image_prompt",
+    ],
+    validation: [
+      {
+        id: "project_specific_requirement",
+        check: "Project-specific requirement",
+        status: "review",
+        note: "Rooms must be derived from saved project brief and latest user request, not from default 3BHK templates.",
+      },
+      {
+        id: "professional_review",
+        check: "Professional review",
+        status: "review",
+        note: "Concept plan requires architect/engineer verification before construction or approval use.",
+      },
+    ],
+  };
 }
