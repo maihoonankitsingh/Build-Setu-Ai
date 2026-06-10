@@ -208,25 +208,22 @@ function buildGroundFloorPlan(args: {
   // Goal: practical Indian-modern luxury G+1 ground floor with exactly 1 bedroom, 1 bathroom, 1 parking, living, dining, kitchen, pooja, stair, wash/store.
   if (Math.round(W) === 49 && Math.round(D) === 57 && String(args.facing || "").toLowerCase().includes("east") && args.command === "ground_floor_plan") {
     return [
-      room("puja", "Puja 5x6", "puja", 3, 3, 6, 6, "BUILDSETU_EXACT_AGENT_57X49_DRAWING_COORDS_V1 North-East/East pooja zone; compact dedicated pooja room"),
-      room("living", "Living Room 20x16", "living", 10, 3, 20, 16, "East/North daylight public living room with sofa/TV wall"),
+      room("puja", "Puja 5x6", "puja", 3, 3, 6, 6, "North-East/East pooja zone; compact dedicated pooja room"),
+      room("living", "Living Room 20x16", "living", 10, 3, 20, 16, "Public living room connected to dining/circulation flow"),
       room("parking", "Car + Bike Parking 15x18", "parking", 39, 3, 15, 18, "East front entry parking; one car plus bike space only"),
 
-      room("dining", "Dining 14x11", "dining", 16, 22, 14, 11, "Defined dining near living and kitchen, not oversized"),
-      room("lobby", "Entry Lobby 15x8", "lobby", 39, 22, 15, 8, "Entry/lobby from East parking to living, dining and stair"),
+      room("dining", "Dining 14x11", "dining", 24, 23, 14, 11, "BUILDSETU_GROUND_HUMAN_FLOW_LAYOUT_V2 Dining placed between living and kitchen for human-like public-to-service flow"),
+      room("lobby", "Entry Lobby 15x8", "lobby", 39, 22, 15, 8, "Entry transition from East side; connects parking/public circulation"),
 
-      room("passage", "Private Passage", "passage", 16, 34, 17, 4, "Compact private/service circulation, no wasted long corridor"),
+      room("passage", "Private Passage", "passage", 16, 34, 17, 4, "Compact circulation spine linking dining, stair, bedroom and bathroom"),
       room("stair", "Staircase 9x15", "staircase", 34, 31, 9, 15, "Single internal staircase for G+1 with clear UP direction"),
-      room("kitchen", "Kitchen 11x10", "kitchen", 43, 31, 11, 10, "South-East/service-side kitchen with counter and ventilation"),
-      room("wash_store", "Wash / Store 11x7", "wash", 43, 42, 11, 7, "Kitchen-connected wash/store/service area"),
+      room("kitchen", "Kitchen 11x10", "kitchen", 39, 31, 11, 10, "Kitchen beside dining and wash/store for service flow"),
+      room("wash_store", "Wash / Store 11x7", "wash", 39, 42, 11, 7, "Service wash/store directly behind kitchen, not a second kitchen"),
 
       room("bed1", "Bedroom 12x13", "bedroom", 3, 33, 12, 13, "South-West/private bedroom; only ground-floor bedroom"),
       room("toilet1", "Bathroom 7x8", "toilet", 16, 39, 7, 8, "One common/attached bathroom with ventilation; only ground-floor bathroom"),
     ];
-  }
-
-
-  const frontH = Math.min(18, Math.max(15, D * 0.34));
+  }  const frontH = Math.min(18, Math.max(15, D * 0.34));
   const rearH = Math.min(16, Math.max(14, D * 0.30));
   const midY = frontH;
   const rearY = D - rearH;
