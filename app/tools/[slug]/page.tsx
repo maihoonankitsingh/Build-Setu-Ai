@@ -1452,6 +1452,80 @@ function getBuildSetuValidationBadgeClass(status: string) {
   return "border-amber-200 bg-amber-50 text-amber-700";
 }
 
+
+// BUILDSETU_GPLUS1_EXACT_PACKAGE_HELPER_V1
+function getBuildSetuAssetImageUrlForGPlusOne(asset: any) {
+  return String(
+    asset?.imageUrl ||
+      asset?.publicUrl ||
+      asset?.url ||
+      asset?.assetUrl ||
+      asset?.thumbnailUrl ||
+      ""
+  );
+}
+
+function getBuildSetuGPlusOneExactPackage(projectImages: any[], output: any) {
+  const fromOutputAssets = [
+    output?.asset,
+    ...(Array.isArray(output?.assets) ? output.assets : []),
+    ...(Array.isArray(output?.outputs) ? output.outputs : []),
+  ].filter(Boolean);
+
+  const fromGallery = Array.isArray(projectImages) ? projectImages : [];
+  const candidates = [...fromOutputAssets, ...fromGallery].filter((item: any) => {
+    const text = JSON.stringify(item || {}).toLowerCase();
+    return (
+      text.includes("exact_floor_plan_agent_v1") ||
+      text.includes("exact-floor-plan-agent") ||
+      text.includes("exact-floor-plan-source-of-truth")
+    );
+  });
+
+  const seen = new Set<string>();
+  const unique = candidates.filter((item: any) => {
+    const key = String(item?.id || item?.imageUrl || item?.publicUrl || item?.url || "");
+    if (!key || seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+
+  const isGround = (item: any) => {
+    const text = JSON.stringify(item || {}).toLowerCase();
+    return (
+      item?.assetType === "ground_floor_plan" ||
+      item?.command === "ground_floor_plan" ||
+      text.includes("ground floor plan") ||
+      text.includes("ground-floor-plan")
+    );
+  };
+
+  const isFirst = (item: any) => {
+    const text = JSON.stringify(item || {}).toLowerCase();
+    return (
+      item?.assetType === "first_floor_plan" ||
+      item?.command === "first_floor_plan" ||
+      text.includes("first floor plan") ||
+      text.includes("first-floor-plan")
+    );
+  };
+
+  const latestGround = unique.find(isGround) || null;
+  const latestFirst = unique.find(isFirst) || null;
+
+  return {
+    hasAny: Boolean(latestGround || latestFirst),
+    isComplete: Boolean(latestGround && latestFirst),
+    ground: latestGround,
+    first: latestFirst,
+    floors: [
+      latestGround ? { key: "ground", label: "Ground Floor", asset: latestGround } : null,
+      latestFirst ? { key: "first", label: "First Floor", asset: latestFirst } : null,
+    ].filter(Boolean),
+  };
+}
+
+
 export default function ToolWorkspacePage() {
   const params = useParams();
   const router = useRouter();
@@ -3425,6 +3499,101 @@ export default function ToolWorkspacePage() {
 
             <div className="min-h-0 flex-1 overflow-y-auto p-3">
               {renderConceptStatusPanel()}
+
+
+              {/* BUILDSETU_GPLUS1_EXACT_PACKAGE_CARD_V1 */}
+              {tool?.slug === "floor-plan-ai" ? (() => {
+                const gplusOnePackage = getBuildSetuGPlusOneExactPackage(projectImages, output);
+
+                if (!gplusOnePackage.hasAny) return null;
+
+                return (
+                  <div className="mb-3 rounded-[22px] border border-[#bfa7ff] bg-[linear-gradient(180deg,#ffffff,#f7f1ff)] p-3 shadow-[0_12px_28px_rgba(72,30,130,0.09)]">
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="min-w-0">
+                        <p className="text-[10px] font-black uppercase tracking-[0.22em] text-[#7c3aed]">
+                          Exact Source-of-Truth
+                        </p>
+                        <h3 className="mt-1 text-[15px] font-black tracking-[-0.04em] text-[#12072f]">
+                          G+1 Floor Plan Package
+                        </h3>
+                        <p className="mt-1 text-[11px] font-semibold leading-4 text-[#67567f]">
+                          Exact SVG technical drawings are primary. OpenAI images are visual previews only.
+                        </p>
+                      </div>
+
+                      <span className={`shrink-0 rounded-full border px-2.5 py-1 text-[9px] font-black uppercase ${
+                        gplusOnePackage.isComplete
+                          ? "border-emerald-200 bg-emerald-50 text-emerald-700"
+                          : "border-amber-200 bg-amber-50 text-amber-700"
+                      }`}>
+                        {gplusOnePackage.isComplete ? "Complete" : "Partial"}
+                      </span>
+                    </div>
+
+                    <div className="mt-3 grid grid-cols-2 gap-2">
+                      {gplusOnePackage.floors.map((floor: any) => {
+                        const asset = floor.asset;
+                        const imageUrl = getDisplayImageUrl(getBuildSetuAssetImageUrlForGPlusOne(asset));
+                        const counts = asset?.planningJson?.roomCounts || {};
+                        const score = asset?.scoreReport || {};
+                        const title = asset?.title || floor.label;
+
+                        return (
+                          <a
+                            key={asset?.id || floor.key}
+                            href={imageUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            title={title}
+                            className="group overflow-hidden rounded-[18px] border border-[#ded1f4] bg-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
+                          >
+                            <div className="h-24 overflow-hidden bg-[#fbf8ff]">
+                              {imageUrl ? (
+                                <img
+                                  src={imageUrl}
+                                  alt={title}
+                                  className="h-full w-full object-cover transition group-hover:scale-105"
+                                />
+                              ) : (
+                                <div className="flex h-full items-center justify-center text-[10px] font-black text-[#8a76a6]">
+                                  SVG
+                                </div>
+                              )}
+                            </div>
+
+                            <div className="p-2">
+                              <p className="truncate text-[11px] font-black text-[#12072f]">{title}</p>
+                              <div className="mt-1 grid grid-cols-3 gap-1 text-center">
+                                <div className="rounded-xl bg-[#fbf8ff] px-1 py-1">
+                                  <p className="text-[8px] font-black uppercase text-[#8a76a6]">Bed</p>
+                                  <p className="text-[11px] font-black text-[#12072f]">{String(counts.bedrooms ?? "-")}</p>
+                                </div>
+                                <div className="rounded-xl bg-[#fbf8ff] px-1 py-1">
+                                  <p className="text-[8px] font-black uppercase text-[#8a76a6]">Bath</p>
+                                  <p className="text-[11px] font-black text-[#12072f]">{String(counts.bathrooms ?? "-")}</p>
+                                </div>
+                                <div className="rounded-xl bg-[#fbf8ff] px-1 py-1">
+                                  <p className="text-[8px] font-black uppercase text-[#8a76a6]">Score</p>
+                                  <p className="text-[11px] font-black text-[#12072f]">{String(score.total ?? "-")}</p>
+                                </div>
+                              </div>
+                            </div>
+                          </a>
+                        );
+                      })}
+                    </div>
+
+                    <div className="mt-3 rounded-2xl border border-[#eadfff] bg-white p-2.5">
+                      <p className="text-[10px] font-black uppercase tracking-[0.18em] text-[#8a76a6]">Package Rule</p>
+                      <p className="mt-1 text-[11px] font-semibold leading-4 text-[#67567f]">
+                        Ground floor: 1 bedroom, 1 bathroom, parking. First floor: 3 bedrooms, 2 bathrooms, balcony/terrace. Both must remain exact-agent SVG source-of-truth.
+                      </p>
+                    </div>
+                  </div>
+                );
+              })() : null}
+
 
               {/* BUILDSETU_OUTPUT_PLANNING_METADATA_CARD_V1 */}
 
