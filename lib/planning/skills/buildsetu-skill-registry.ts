@@ -1,4 +1,4 @@
-// BUILDSETU_SKILL_REGISTRY_V1
+// BUILDSETU_SKILL_REGISTRY_V2
 
 import type {
   BuildSetuPlanningContext,
@@ -7,10 +7,20 @@ import type {
 } from "./buildsetu-skill-types";
 import { buildSetuGeometrySkill } from "./buildsetu-geometry-skill";
 import { buildSetuHumanFlowSkill } from "./buildsetu-human-flow-skill";
+import { buildSetuRoomProgramSkill } from "./buildsetu-room-program-skill";
+import { buildSetuCirculationGraphSkill } from "./buildsetu-circulation-graph-skill";
+import { buildSetuVastuPreferenceSkill } from "./buildsetu-vastu-preference-skill";
+import { buildSetuVentilationSkill } from "./buildsetu-ventilation-skill";
+import { buildSetuPlanningRagSkill } from "./buildsetu-planning-rag-skill";
 
 export const buildSetuPlanningSkills: BuildSetuPlanningSkill[] = [
+  buildSetuPlanningRagSkill,
   buildSetuGeometrySkill,
+  buildSetuRoomProgramSkill,
   buildSetuHumanFlowSkill,
+  buildSetuCirculationGraphSkill,
+  buildSetuVastuPreferenceSkill,
+  buildSetuVentilationSkill,
 ];
 
 export function runBuildSetuPlanningSkills(context: BuildSetuPlanningContext): BuildSetuSkillReport[] {
