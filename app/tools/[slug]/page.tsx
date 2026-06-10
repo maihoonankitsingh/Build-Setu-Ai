@@ -1526,6 +1526,126 @@ function getBuildSetuGPlusOneExactPackage(projectImages: any[], output: any) {
 }
 
 
+
+// BUILDSETU_EXACT_SVG_PREVIEW_PRIORITY_HELPER_V1
+function isBuildSetuExactFloorPlanAsset(asset: any) {
+  const text = JSON.stringify(asset || {}).toLowerCase();
+  return (
+    asset?.source === "exact_floor_plan_agent_v1" ||
+    asset?.generationMode === "exact-floor-plan-source-of-truth" ||
+    asset?.sourceOfTruth === true ||
+    text.includes("exact_floor_plan_agent_v1") ||
+    text.includes("exact-floor-plan-agent") ||
+    text.includes("exact-floor-plan-source-of-truth")
+  );
+}
+
+function isBuildSetuOpenAiFloorPlanPreview(asset: any) {
+  const text = JSON.stringify(asset || {}).toLowerCase();
+  return (
+    asset?.source === "professional_openai_floor_plan_v1" ||
+    asset?.provider === "openai" ||
+    text.includes("professional_openai_floor_plan_v1") ||
+    text.includes("openai-floor-plan-final") ||
+    text.includes("beautified_openai_preview")
+  );
+}
+
+function getBuildSetuFloorAssetRank(asset: any) {
+  if (isBuildSetuExactFloorPlanAsset(asset)) {
+    if (asset?.assetType === "ground_floor_plan") return 0;
+    if (asset?.assetType === "first_floor_plan") return 1;
+    return 2;
+  }
+
+  if (isBuildSetuOpenAiFloorPlanPreview(asset)) return 20;
+
+  return 50;
+}
+
+function sortBuildSetuFloorPlanAssetsForDisplay(items: any[]) {
+  return [...(Array.isArray(items) ? items : [])].sort((a: any, b: any) => {
+    const rankA = getBuildSetuFloorAssetRank(a);
+    const rankB = getBuildSetuFloorAssetRank(b);
+    if (rankA !== rankB) return rankA - rankB;
+
+    const timeA = Date.parse(a?.createdAt || a?.updatedAt || "") || 0;
+    const timeB = Date.parse(b?.createdAt || b?.updatedAt || "") || 0;
+    return timeB - timeA;
+  });
+}
+
+function getBuildSetuPrimaryExactFloorPlanAsset(projectImages: any[], output: any) {
+  const fromOutput = [
+    output?.asset,
+    ...(Array.isArray(output?.assets) ? output.assets : []),
+    ...(Array.isArray(output?.outputs) ? output.outputs : []),
+  ].filter(Boolean);
+
+  const all = [...fromOutput, ...(Array.isArray(projectImages) ? projectImages : [])]
+    .filter(Boolean)
+    .filter((item: any) => {
+      const text = JSON.stringify(item || {}).toLowerCase();
+      return (
+        isBuildSetuExactFloorPlanAsset(item) &&
+        (
+          item?.assetType === "ground_floor_plan" ||
+          item?.assetType === "first_floor_plan" ||
+          text.includes("ground floor plan") ||
+          text.includes("first floor plan")
+        )
+      );
+    });
+
+  const sorted = sortBuildSetuFloorPlanAssetsForDisplay(all);
+  return sorted[0] || null;
+}
+
+function getBuildSetuOutputWithExactSvgPriority(projectImages: any[], output: any) {
+  const exact = getBuildSetuPrimaryExactFloorPlanAsset(projectImages, output);
+  if (!exact) return output;
+
+  const exactImageUrl = getBuildSetuAssetImageUrlForGPlusOne(exact);
+  if (!exactImageUrl) return output;
+
+  const openAiPreviewAsset =
+    output?.openAiPreviewAsset ||
+    (Array.isArray(output?.assets) ? output.assets.find(isBuildSetuOpenAiFloorPlanPreview) : null) ||
+    (isBuildSetuOpenAiFloorPlanPreview(output?.asset) ? output.asset : null);
+
+  return {
+    ...(output || {}),
+    imageUrl: exactImageUrl,
+    url: exactImageUrl,
+    publicUrl: exactImageUrl,
+    exactTechnicalImageUrl: exactImageUrl,
+    openAiPreviewImageUrl:
+      output?.openAiPreviewImageUrl ||
+      getBuildSetuAssetImageUrlForGPlusOne(openAiPreviewAsset) ||
+      "",
+    asset: {
+      ...exact,
+      role: "technical_source_of_truth",
+      sourceOfTruth: true,
+      previewRole: "main_technical_plan",
+    },
+    assets: sortBuildSetuFloorPlanAssetsForDisplay([
+      exact,
+      ...(Array.isArray(output?.assets) ? output.assets : []),
+      ...(Array.isArray(projectImages) ? projectImages.filter(isBuildSetuExactFloorPlanAsset).slice(0, 4) : []),
+    ]).filter((item: any, index: number, arr: any[]) => {
+      const key = String(item?.id || item?.imageUrl || item?.publicUrl || item?.url || "");
+      return key && arr.findIndex((x: any) => String(x?.id || x?.imageUrl || x?.publicUrl || x?.url || "") === key) === index;
+    }),
+    source: "tool_page_exact_svg_priority_v1",
+    provider: "buildsetu-exact",
+    generationMode: "exact-floor-plan-source-of-truth",
+    sourceOfTruth: true,
+    exactPriorityApplied: true,
+  };
+}
+
+
 export default function ToolWorkspacePage() {
   const params = useParams();
   const router = useRouter();
@@ -1549,6 +1669,12 @@ export default function ToolWorkspacePage() {
   const [input, setInput] = useState("");
   const [output, setOutput] = useState<any>(null);
   const [projectImages, setProjectImages] = useState<ProjectImageAsset[]>([]);
+  // BUILDSETU_EXACT_SVG_GALLERY_PRIORITY_V1
+  const buildSetuProjectImagesForDisplay =
+    tool?.slug === "floor-plan-ai"
+      ? sortBuildSetuFloorPlanAssetsForDisplay(projectImages)
+      : projectImages;
+
 
   // BUILDSETU_FORCE_OUTPUT_PREVIEW_FROM_LATEST_ASSET
   useEffect(() => {
@@ -3499,6 +3625,66 @@ export default function ToolWorkspacePage() {
 
             <div className="min-h-0 flex-1 overflow-y-auto p-3">
               {renderConceptStatusPanel()}
+
+
+              {/* BUILDSETU_EXACT_SVG_PREVIEW_PRIORITY_OUTPUT_V1 */}
+              {tool?.slug === "floor-plan-ai" && output && getBuildSetuPrimaryExactFloorPlanAsset(projectImages, output) ? (() => {
+                const exactPrimary = getBuildSetuPrimaryExactFloorPlanAsset(projectImages, output);
+                const exactUrl = getDisplayImageUrl(getBuildSetuAssetImageUrlForGPlusOne(exactPrimary));
+
+                if (!exactPrimary || !exactUrl) return null;
+
+                const counts = exactPrimary?.planningJson?.roomCounts || {};
+                const score = exactPrimary?.scoreReport || {};
+
+                return (
+                  <div className="mb-3 rounded-[22px] border border-emerald-200 bg-[linear-gradient(180deg,#ffffff,#ecfdf5)] p-3 shadow-[0_12px_28px_rgba(16,185,129,0.10)]">
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="min-w-0">
+                        <p className="text-[10px] font-black uppercase tracking-[0.22em] text-emerald-700">
+                          Main Technical Output
+                        </p>
+                        <h3 className="mt-1 truncate text-[15px] font-black tracking-[-0.04em] text-[#10231b]">
+                          {exactPrimary.title || "Exact Floor Plan SVG"}
+                        </h3>
+                        <p className="mt-1 text-[11px] font-semibold leading-4 text-[#48685b]">
+                          This exact SVG is the source-of-truth drawing. OpenAI preview is not the technical drawing.
+                        </p>
+                      </div>
+                      <span className="shrink-0 rounded-full border border-emerald-200 bg-white px-2.5 py-1 text-[9px] font-black uppercase text-emerald-700">
+                        Source of Truth
+                      </span>
+                    </div>
+
+                    <a href={exactUrl} target="_blank" rel="noopener noreferrer" className="mt-3 block overflow-hidden rounded-[18px] border border-emerald-100 bg-white">
+                      <img
+                        src={exactUrl}
+                        alt={exactPrimary.title || "Exact source-of-truth floor plan"}
+                        className="h-44 w-full object-contain p-2"
+                      />
+                    </a>
+
+                    <div className="mt-3 grid grid-cols-4 gap-2 text-center">
+                      <div className="rounded-2xl bg-white px-2 py-2">
+                        <p className="text-[8px] font-black uppercase text-[#6b8b7d]">Bed</p>
+                        <p className="text-[13px] font-black text-[#10231b]">{String(counts.bedrooms ?? "-")}</p>
+                      </div>
+                      <div className="rounded-2xl bg-white px-2 py-2">
+                        <p className="text-[8px] font-black uppercase text-[#6b8b7d]">Bath</p>
+                        <p className="text-[13px] font-black text-[#10231b]">{String(counts.bathrooms ?? "-")}</p>
+                      </div>
+                      <div className="rounded-2xl bg-white px-2 py-2">
+                        <p className="text-[8px] font-black uppercase text-[#6b8b7d]">Parking</p>
+                        <p className="text-[13px] font-black text-[#10231b]">{String(counts.parking ?? "-")}</p>
+                      </div>
+                      <div className="rounded-2xl bg-white px-2 py-2">
+                        <p className="text-[8px] font-black uppercase text-[#6b8b7d]">Score</p>
+                        <p className="text-[13px] font-black text-[#10231b]">{String(score.total ?? "-")}</p>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })() : null}
 
 
               {/* BUILDSETU_GPLUS1_EXACT_PACKAGE_CARD_V1 */}
