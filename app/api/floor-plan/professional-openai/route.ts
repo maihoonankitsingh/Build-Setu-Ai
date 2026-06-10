@@ -53,15 +53,86 @@ function roomLines(plan: any) {
     .join("\n");
 }
 
+function doorWindowTagSchedule(plan: any) {
+  const rooms = Array.isArray(plan?.rooms) ? plan.rooms : [];
+
+  if (!rooms.length) {
+    return "Use professional D/W tags based on final locked room layout.";
+  }
+
+  const doorLines = rooms
+    .filter((r: any) => !["passage", "lobby"].includes(String(r.kind || "").toLowerCase()))
+    .slice(0, 12)
+    .map((r: any, index: number) => {
+      const tag = `D${index + 1}`;
+      return `${tag}: door/opening for ${safe(r.name)}.`;
+    });
+
+  const windowLines = rooms
+    .filter((r: any) => !["passage", "lobby", "staircase"].includes(String(r.kind || "").toLowerCase()))
+    .slice(0, 12)
+    .map((r: any, index: number) => {
+      const tag = `W${index + 1}`;
+      return `${tag}: exterior window/ventilation opening for ${safe(r.name)} where external wall is available.`;
+    });
+
+  return [
+    "Door tags:",
+    ...(doorLines.length ? doorLines : ["D1: main entry door/opening."]),
+    "",
+    "Window / ventilation tags:",
+    ...(windowLines.length ? windowLines : ["W1: external window/ventilation opening."]),
+  ].join("\n");
+}
+
+function planningQualityContext(planningJson: any, validationReport: any, scoreReport: any) {
+  const validations = Array.isArray(validationReport)
+    ? validationReport
+    : Array.isArray(planningJson?.validation)
+      ? planningJson.validation
+      : [];
+
+  const score = scoreReport || planningJson?.scoreReport || null;
+  const roomCounts = planningJson?.roomCounts || {};
+  const drawingConvention = planningJson?.plot?.drawingConvention || {};
+
+  const validationLines = validations
+    .slice(0, 8)
+    .map((item: any, index: number) => {
+      return `${index + 1}. ${safe(item.check || item.id || "Validation")} = ${safe(item.status || "review").toUpperCase()} — ${safe(item.note || "")}`;
+    })
+    .join("\n");
+
+  return `
+BUILDSETU_FINAL_PROMPT_QUALITY_LOCK_V1
+Planning validation context:
+- Planning score: ${score ? `${score.total || "-"} / ${score.max || 100} (${safe(score.status || "review").toUpperCase()})` : "not supplied"}
+- Revision blockers: ${Array.isArray(score?.blockers) && score.blockers.length ? score.blockers.join("; ") : "none"}
+- Room counts: bedrooms=${roomCounts.bedrooms ?? "-"}, bathrooms=${roomCounts.bathrooms ?? "-"}, parking=${roomCounts.parking ?? "-"}
+- Drawing convention: north=${drawingConvention.northArrow || "UP"}, top=${drawingConvention.topEdge || "locked top edge"}, right=${drawingConvention.rightEdge || "locked right edge"}
+
+Validation checks:
+${validationLines || "Use locked planning validation; do not invent unapproved layout changes."}
+
+Render rule:
+The image model is only the sheet renderer. It must not redesign, re-zone, add rooms, remove rooms, rotate plot dimensions, invent fake room sizes, or change room count.
+`.trim();
+}
+
 function buildPremiumOpenAiFloorPlanPrompt(args: {
   title: string;
   projectTitle: string;
   userMessage: string;
   plan: any;
+  planningJson?: any;
+  validationReport?: any;
+  scoreReport?: any;
 }) {
   const plan = args.plan || {};
   const plot = plan.plot || {};
   const roomsText = roomLines(plan);
+  const tagSchedule = doorWindowTagSchedule(plan);
+  const qualityContext = planningQualityContext(args.planningJson, args.validationReport, args.scoreReport);
 
   const widthFt = plot.widthFt || plot.width || plan.widthFt || plan.plotWidthFt || "";
   const depthFt = plot.depthFt || plot.depth || plan.depthFt || plan.plotDepthFt || "";
@@ -129,12 +200,18 @@ Locked project:
 Locked room rectangles:
 ${roomsText || "Use the locked plan rooms exactly as provided in the data."}
 
+${qualityContext}
+
+Door / window / ventilation tag schedule:
+${tagSchedule}
+
 Rendering requirements:
 1. Create a premium furnished 2D architectural house-plan sheet.
 2. Preserve the exact outer plot proportion: ${widthFt}' frontage by ${depthFt}' depth.
 3. Preserve all room relationships and room sizes proportionally from the locked room rectangles.
-4. Use professional wall thickness, door swings, windows, openings, room labels, and readable room dimensions.
-5. Add furniture symbols: car in parking, sofa in living, bed in bedrooms, dining table, kitchen counter, toilet fixtures, wash area, puja symbol, staircase steps.
+4. Use professional wall thickness, door swings, windows, openings, room labels, readable room dimensions, and explicit D/W tags.
+5. Add furniture symbols: car in parking, bike space, sofa in living, bed in bedroom, dining table, kitchen counter, toilet fixtures, wash area, puja symbol, staircase steps.
+5A. Show door tags D1, D2, D3... and window/ventilation tags W1, W2, W3... near the correct openings.
 6. For 49x57 East-North: add TOP dimension as 57' on North Side Road and RIGHT dimension as 49' on East Front Road. For other plots, add correct outer dimension arrows.
 7. Add orientation labels: ${orientationLabel}.
 8. Add clean title block: "${args.title}" and "${titleDimensionLabel}".
@@ -147,7 +224,10 @@ Critical constraints:
 - Do not draw square plot if ${widthFt}' and ${depthFt}' are different.
 - Do not replace the locked plan with another layout.
 - Do not omit dimensions.
+- Do not omit D/W tags.
+- Do not omit furniture symbols.
 - Do not use decorative exterior building render style.
+- Do not add Bedroom 2, Bedroom 3, family lounge, extra toilet, second parking, or any unrequested room on the locked ground floor.
 `.trim();
 }
 
@@ -264,6 +344,9 @@ export async function POST(req: NextRequest) {
       projectTitle,
       userMessage,
       plan: lockedPlan,
+      planningJson,
+      validationReport,
+      scoreReport,
     });
 
     // BUILDSETU_EXACT_SVG_FLOORPLAN_SOURCE_OF_TRUTH_V1
@@ -388,6 +471,9 @@ export async function POST(req: NextRequest) {
         generationMode: fallback.generationMode,
         model: fallback.model,
         prompt,
+        planningJson,
+        validationReport,
+        scoreReport,
         status: "generated",
         stageId: "floor_plan",
         stageStatus: "draft_ready",
@@ -418,6 +504,11 @@ export async function POST(req: NextRequest) {
         url: fallback.imageUrl,
         file: fallback.relFile,
         asset,
+        assets: [asset],
+        outputs: [asset],
+        planningJson,
+        validationReport,
+        scoreReport,
         model: fallback.model,
         widthFt: fallback.widthFt,
         depthFt: fallback.depthFt,
@@ -458,6 +549,9 @@ export async function POST(req: NextRequest) {
       assetType,
       prompt,
       lockedPlan,
+      planningJson,
+      validationReport,
+      scoreReport,
       model: generation.model,
       size: generation.size,
       quality: generation.quality,
