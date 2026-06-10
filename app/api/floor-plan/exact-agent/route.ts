@@ -209,20 +209,20 @@ function buildGroundFloorPlan(args: {
   // Goal: practical Indian-modern luxury G+1 ground floor with exactly 1 bedroom, 1 bathroom, 1 parking, living, dining, kitchen, pooja, stair, wash/store.
   if (Math.round(W) === 49 && Math.round(D) === 57 && String(args.facing || "").toLowerCase().includes("east") && args.command === "ground_floor_plan") {
     return [
-      room("puja", "Puja 5x6", "puja", 3, 3, 6, 6, "North-East/East pooja zone; compact dedicated pooja room"),
-      room("living", "Living Room 20x16", "living", 10, 3, 20, 16, "Public living room connected to dining/circulation flow"),
-      room("parking", "Car + Bike Parking 15x18", "parking", 39, 3, 15, 18, "East front entry parking; one car plus bike space only"),
+      room("puja", "Puja 5x6", "puja", 3, 3, 6, 6, "North-side puja zone; compactly connected to living"),
+      room("living", "Living Room 24x17", "living", 10, 3, 24, 17, "BUILDSETU_GROUND_COMPACT_HUMAN_LAYOUT_V5 Public living block compactly connected with dining"),
+      room("parking", "Car + Bike Parking 15x18", "parking", 39, 3, 15, 18, "East front parking with compact lobby access"),
 
-      room("dining", "Dining 14x11", "dining", 24, 23, 14, 11, "BUILDSETU_GROUND_NO_OVERLAP_SKILL_GEOMETRY_V4 Dining between living and kitchen with no stair overlap"),
-      room("lobby", "Entry Lobby 15x8", "lobby", 39, 22, 15, 8, "Entry transition from East side; connects parking/public circulation"),
+      room("dining", "Dining 14x11", "dining", 24, 21, 14, 11, "Dining placed between living and kitchen with shared compact service flow"),
+      room("lobby", "Entry Lobby 15x7", "lobby", 39, 22, 15, 7, "East entry transition compactly linked with parking, dining, and kitchen core"),
 
-      room("passage", "Private Passage 17x4", "passage", 16, 34, 17, 4, "Compact circulation spine linking dining, stair, bedroom and bathroom"),
-      room("stair", "Staircase 9x15", "staircase", 24, 38, 9, 11, "Staircase compacted within 57x49 boundary without room overlap"),
-      room("kitchen", "Kitchen 11x10", "kitchen", 39, 31, 11, 10, "Kitchen beside dining and wash/store for service flow"),
-      room("wash_store", "Wash / Store 11x7", "wash", 39, 42, 11, 7, "Service wash/store directly behind kitchen, not a second kitchen"),
+      room("passage", "Private Passage 21x4", "passage", 16, 32, 21, 4, "Compact circulation spine linking dining, stair, bedroom, and bathroom"),
+      room("stair", "Staircase 9x13", "staircase", 24, 36, 9, 13, "Compact staircase connected to passage without floating or overlap"),
+      room("kitchen", "Kitchen 11x10", "kitchen", 38, 29, 11, 10, "Kitchen compactly connected with dining and wash/store"),
+      room("wash_store", "Wash / Store 11x7", "wash", 38, 40, 11, 7, "Service wash/store directly below kitchen"),
 
-      room("bed1", "Bedroom 12x13", "bedroom", 3, 33, 12, 13, "South-West/private bedroom; only ground-floor bedroom"),
-      room("toilet1", "Bathroom 7x8", "toilet", 16, 39, 7, 8, "One common/attached bathroom with ventilation; only ground-floor bathroom"),
+      room("bed1", "Bedroom 12x13", "bedroom", 3, 33, 12, 13, "South-west private bedroom compactly connected to bathroom"),
+      room("toilet1", "Bathroom 7x8", "toilet", 16, 37, 7, 8, "One common/attached bathroom compactly linked to bedroom and passage"),
     ];
   }  const frontH = Math.min(18, Math.max(15, D * 0.34));
   const rearH = Math.min(16, Math.max(14, D * 0.30));

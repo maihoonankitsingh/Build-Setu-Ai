@@ -1,4 +1,4 @@
-// BUILDSETU_SKILL_LIBRARY_SMOKE_V3
+// BUILDSETU_SKILL_LIBRARY_SMOKE_V4
 import fs from "node:fs";
 import path from "node:path";
 
@@ -8,6 +8,7 @@ const required = [
   "lib/planning/skills/buildsetu-geometry-skill.ts",
   "lib/planning/skills/buildsetu-polygon-geometry-skill.ts",
   "lib/planning/skills/buildsetu-human-flow-skill.ts",
+  "lib/planning/skills/buildsetu-compactness-skill.ts",
   "lib/planning/skills/buildsetu-room-program-skill.ts",
   "lib/planning/skills/buildsetu-circulation-graph-skill.ts",
   "lib/planning/skills/buildsetu-vastu-preference-skill.ts",
