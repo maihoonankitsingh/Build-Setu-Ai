@@ -687,6 +687,13 @@ function buildExactAgentPlanningMetadata(plan: ExactPlan) {
   });
 
   const planningSkillSummary = summarizeBuildSetuSkillReports(planningSkillReports);
+  // BUILDSETU_PLANNING_SKILL_GATE_ENFORCED_SCOPE_SAFE_V1
+  const planningSkillGateFailed = planningSkillSummary?.status === "fail";
+  const exactAgentQualityGateFailed =
+    hardGeometryReport?.status === "fail" ||
+    humanPlanningReport?.status === "fail" ||
+    planningSkillGateFailed;
+
 
   const mergedValidationReport = [
     ...validationReport,
@@ -737,15 +744,18 @@ function buildExactAgentPlanningMetadata(plan: ExactPlan) {
 
   const scoreReport = {
     source: "exact_agent_planning_scorecard_v1",
-    total: hardGeometryReport?.status === "fail" || humanPlanningReport?.status === "fail" ? 0 : Math.min(scoreTotal, humanPlanningReport?.total ?? scoreTotal),
+    total: exactAgentQualityGateFailed ? 0 : Math.min(scoreTotal, humanPlanningReport?.total ?? scoreTotal, planningSkillSummary?.total ?? scoreTotal),
     max: 100,
-    status: hardGeometryReport?.status === "fail" || humanPlanningReport?.status === "fail" ? "fail" : (blockers.length ? "revise" : scoreTotal >= 75 ? "pass" : "revise"),
+    status: exactAgentQualityGateFailed ? "fail" : (blockers.length ? "revise" : Math.min(scoreTotal, humanPlanningReport?.total ?? scoreTotal, planningSkillSummary?.total ?? scoreTotal) >= 75 ? "pass" : "revise"),
     scorecard: scoreItems,
     blockers,
     hardGeometryReport,
     humanPlanningReport,
     planningSkillSummary,
     planningSkillReports,
+    planningSkillGateEnforced: true,
+    planningSkillGateFailed,
+    exactAgentQualityGateFailed,
     revisionRule: "If blockers exist or score is below 75, revise before final render/working drawing.",
   };
 
