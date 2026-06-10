@@ -533,6 +533,12 @@ function buildExactAgentPlanningMetadata(plan: ExactPlan) {
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json().catch(() => ({}));
+    // BUILDSETU_EXACT_AGENT_SAVEASSET_PERSISTENCE_V1
+    const forceSaveAsset =
+      body?.saveAsset === true ||
+      body?.saveAsset === "true" ||
+      body?.persistAsset === true ||
+      body?.persistAsset === "true";
 
     // BUILDSETU_EXACT_AGENT_INTERNAL_ONLY_V1
     // When called by OpenAI render bridge, exact SVG is planning data only; do not add it as final gallery asset.
@@ -667,7 +673,7 @@ export async function POST(req: NextRequest) {
       scoreReport: planningMetadata.scoreReport,
     };
 
-    if (!internalOnly) {
+    if (!internalOnly || forceSaveAsset) {
       await appendProjectAsset(asset);
     }
 
