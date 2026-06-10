@@ -178,20 +178,26 @@ function buildGroundFloorPlan(args: {
   const { widthFt: W, depthFt: D } = args;
 
   const rooms: Room[] = [];
-  // BUILDSETU_EXACT_AGENT_49X57_EAST_NORTH_GROUND_LOCK_V1
+  // BUILDSETU_EXACT_AGENT_49X57_EAST_NORTH_GROUND_LOCK_V2
+  // Coordinate convention: x=West→East across 49 ft, y=North→South across 57 ft.
+  // Drawing convention still labels top edge as NORTH SIDE ROAD - 57' and right edge as EAST FRONT ROAD - 49'.
+  // Goal: practical Indian-modern luxury G+1 ground floor with exactly 1 bedroom, 1 bathroom, 1 parking, living, dining, kitchen, pooja, stair, wash/store.
   if (Math.round(W) === 49 && Math.round(D) === 57 && String(args.facing || "").toLowerCase().includes("east") && args.command === "ground_floor_plan") {
     return [
-      room("parking", "Car + Bike Parking", "parking", 34, 3, 13, 18, "East/front entry parking; one car plus bike space"),
-      room("living", "Living Room", "living", 13, 3, 20, 14, "East/North daylight public zone"),
-      room("puja", "Puja", "puja", 3, 3, 6, 5, "East/North-East pooja zone"),
-      room("dining", "Dining", "dining", 17, 20, 12, 11, "Defined dining near kitchen"),
-      room("lobby", "Entry / Lobby", "lobby", 31, 22, 9, 10, "Clear circulation from entry to living/dining/stair"),
-      room("kitchen", "Kitchen", "kitchen", 36, 37, 10, 10, "South-East/service-side kitchen"),
-      room("wash_store", "Wash / Store", "wash", 36, 48, 10, 6, "Service area connected to kitchen"),
-      room("stair", "Staircase", "staircase", 26, 37, 8, 14, "Single internal staircase for G+1"),
-      room("bed1", "Bedroom", "bedroom", 3, 40, 12, 12, "South-West/private bedroom; only ground-floor bedroom"),
-      room("toilet1", "Bathroom", "toilet", 17, 40, 8, 5, "One common/attached bathroom"),
-      room("passage", "Passage", "passage", 17, 32, 17, 5, "Practical internal movement"),
+      room("puja", "Puja 5x6", "puja", 3, 3, 6, 6, "North-East/East pooja zone; compact dedicated pooja room"),
+      room("living", "Living Room 20x16", "living", 10, 3, 20, 16, "East/North daylight public living room with sofa/TV wall"),
+      room("parking", "Car + Bike Parking 15x18", "parking", 31, 3, 15, 18, "East front entry parking; one car plus bike space only"),
+
+      room("dining", "Dining 14x11", "dining", 16, 22, 14, 11, "Defined dining near living and kitchen, not oversized"),
+      room("lobby", "Entry Lobby 15x8", "lobby", 31, 22, 15, 8, "Entry/lobby from East parking to living, dining and stair"),
+
+      room("passage", "Private Passage", "passage", 16, 34, 17, 4, "Compact private/service circulation, no wasted long corridor"),
+      room("stair", "Staircase 9x15", "staircase", 24, 36, 9, 15, "Single internal staircase for G+1 with clear UP direction"),
+      room("kitchen", "Kitchen 11x10", "kitchen", 35, 36, 11, 10, "South-East/service-side kitchen with counter and ventilation"),
+      room("wash_store", "Wash / Store 11x7", "wash", 35, 47, 11, 7, "Kitchen-connected wash/store/service area"),
+
+      room("bed1", "Bedroom 12x13", "bedroom", 3, 39, 12, 13, "South-West/private bedroom; only ground-floor bedroom"),
+      room("toilet1", "Bathroom 7x8", "toilet", 16, 39, 7, 8, "One common/attached bathroom with ventilation; only ground-floor bathroom"),
     ];
   }
 
