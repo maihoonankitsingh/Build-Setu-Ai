@@ -243,6 +243,11 @@ export async function POST(req: NextRequest) {
     }
 
     const lockedPlan = body.lockedPlan || body.plan || {};
+    // BUILDSETU_PROFESSIONAL_OPENAI_PLANNING_METADATA_PASSTHROUGH_V1
+    const planningJson = body.planningJson || lockedPlan?.planningJson || body.asset?.planningJson || null;
+    const validationReport = body.validationReport || lockedPlan?.validationReport || body.asset?.validationReport || planningJson?.validation || null;
+    const scoreReport = body.scoreReport || lockedPlan?.scoreReport || body.asset?.scoreReport || planningJson?.scoreReport || null;
+
     const title =
       safe(body.outputTitle || body.title || lockedPlan.title) ||
       "Ground Floor Plan";
@@ -300,6 +305,9 @@ export async function POST(req: NextRequest) {
         generationMode: exact.generationMode,
         model: exact.model,
         prompt,
+        planningJson,
+        validationReport,
+        scoreReport,
         status: "generated",
         stageId: "floor_plan",
         stageStatus: "draft_ready",
@@ -330,6 +338,9 @@ export async function POST(req: NextRequest) {
         asset,
         assets: [asset],
         outputs: [asset],
+        planningJson,
+        validationReport,
+        scoreReport,
         model: exact.model,
         widthFt: exact.widthFt,
         depthFt: exact.depthFt,
@@ -470,6 +481,9 @@ export async function POST(req: NextRequest) {
       promptUrl: `/api/ai/generated-image?file=${encodeURIComponent(
         `generated/ai-images/${projectId}/openai-floor-plan-final/${promptFileName}`,
       )}`,
+      planningJson,
+      validationReport,
+      scoreReport,
       plot: lockedPlan?.plot || null,
       rooms: Array.isArray(lockedPlan?.rooms) ? lockedPlan.rooms : [],
     };
@@ -493,6 +507,9 @@ export async function POST(req: NextRequest) {
       asset,
       assets: [asset],
       outputs: [asset],
+      planningJson,
+      validationReport,
+      scoreReport,
       promptPreview: prompt.slice(0, 1200),
       model: generation.model,
       size: generation.size,

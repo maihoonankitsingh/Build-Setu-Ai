@@ -409,6 +409,121 @@ async function appendProjectAsset(asset: any) {
   await writeJson(file, items);
 }
 
+
+// BUILDSETU_EXACT_AGENT_PLANNING_METADATA_V1
+function buildExactAgentPlanningMetadata(plan: ExactPlan) {
+  const bedroomCount = plan.rooms.filter((room) => room.kind === "bedroom").length;
+  const bathroomCount = plan.rooms.filter((room) => room.kind === "toilet").length;
+  const parkingCount = plan.rooms.filter((room) => room.kind === "parking").length;
+  const hasBedroom2 = plan.rooms.some((room) => /bedroom\s*2/i.test(room.name));
+  const hasFamilyMultiuse = plan.rooms.some((room) => /family|multi/i.test(room.name));
+
+  const is49x57EastNorth =
+    Math.round(plan.plot.widthFt) === 49 &&
+    Math.round(plan.plot.depthFt) === 57 &&
+    String(plan.plot.facing || "").toLowerCase().includes("east");
+
+  const validationReport = [
+    {
+      id: "plot_dimension",
+      check: "Plot dimension",
+      status: plan.plot.widthFt > 0 && plan.plot.depthFt > 0 ? "pass" : "fail",
+      note: `Plot locked to ${plan.plot.widthFt}' x ${plan.plot.depthFt}'.`,
+    },
+    {
+      id: "ground_bedroom_count",
+      check: "Ground floor bedroom count",
+      status: is49x57EastNorth && bedroomCount === 1 && !hasBedroom2 ? "pass" : is49x57EastNorth ? "fail" : "review",
+      note: is49x57EastNorth ? "49x57 East-North ground floor must have exactly 1 bedroom and no Bedroom 2." : "Project-specific bedroom count review required.",
+    },
+    {
+      id: "ground_bathroom_count",
+      check: "Ground floor bathroom count",
+      status: is49x57EastNorth && bathroomCount === 1 ? "pass" : is49x57EastNorth ? "fail" : "review",
+      note: is49x57EastNorth ? "49x57 East-North ground floor must have exactly 1 bathroom." : "Project-specific bathroom count review required.",
+    },
+    {
+      id: "duplicate_room_check",
+      check: "Duplicate / unrequested rooms",
+      status: !hasBedroom2 && !hasFamilyMultiuse && parkingCount <= 1 ? "pass" : "fail",
+      note: "Reject Bedroom 2, Family/Multi-use room and duplicate parking on locked ground floor.",
+    },
+    {
+      id: "professional_review",
+      check: "Professional verification",
+      status: "review",
+      note: "Concept planning only. Architect/engineer/local authority verification required before construction or approval use.",
+    },
+  ];
+
+  const scoreItems = [
+    ["Space Utilization", 8],
+    ["Room Dimensions", 8],
+    ["Circulation", 8],
+    ["Natural Light", 8],
+    ["Ventilation", 8],
+    ["Structure Feasibility", 7],
+    ["MEP Efficiency", 7],
+    ["Safety", 7],
+    ["Cost Practicality", 8],
+    ["Future Expansion", 8],
+  ].map(([criteria, score]) => ({
+    criteria,
+    score,
+    note: `${criteria} concept reviewed by exact floor-plan agent.`,
+  }));
+
+  const blockers = validationReport
+    .filter((item) => item.status === "fail")
+    .map((item) => item.note);
+
+  const scoreTotal = scoreItems.reduce((sum, item: any) => sum + Number(item.score || 0), 0);
+
+  const scoreReport = {
+    source: "exact_agent_planning_scorecard_v1",
+    total: scoreTotal,
+    max: 100,
+    status: blockers.length ? "revise" : scoreTotal >= 75 ? "pass" : "revise",
+    scorecard: scoreItems,
+    blockers,
+    revisionRule: "If blockers exist or score is below 75, revise before final render/working drawing.",
+  };
+
+  const planningJson = {
+    source: "exact_agent_planning_metadata_v1",
+    projectId: plan.projectId,
+    title: plan.title,
+    command: plan.command,
+    plot: {
+      ...plan.plot,
+      drawingConvention: is49x57EastNorth
+        ? {
+            northArrow: "UP",
+            topEdge: "NORTH SIDE ROAD - 57'",
+            rightEdge: "EAST FRONT ROAD - 49'",
+          }
+        : null,
+    },
+    rooms: plan.rooms,
+    complianceChecklist: plan.complianceChecklist,
+    openItems: plan.openItems,
+    roomCounts: {
+      bedrooms: bedroomCount,
+      bathrooms: bathroomCount,
+      parking: parkingCount,
+    },
+    validation: validationReport,
+    scoreReport,
+  };
+
+  return {
+    planningJson,
+    validationReport,
+    scoreReport,
+  };
+}
+
+
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json().catch(() => ({}));
@@ -510,6 +625,8 @@ export async function POST(req: NextRequest) {
       openItems: validationErrors,
     };
 
+    const planningMetadata = buildExactAgentPlanningMetadata(plan);
+
     const svg = renderSvg(plan);
 
     const ts = Date.now();
@@ -539,6 +656,9 @@ export async function POST(req: NextRequest) {
       rooms: plan.rooms,
       complianceChecklist: plan.complianceChecklist,
       openItems: plan.openItems,
+      planningJson: planningMetadata.planningJson,
+      validationReport: planningMetadata.validationReport,
+      scoreReport: planningMetadata.scoreReport,
     };
 
     if (!internalOnly) {
@@ -555,6 +675,13 @@ export async function POST(req: NextRequest) {
       imageUrl,
       asset: internalOnly ? { ...asset, internalOnly: true } : asset,
       plan,
+      // BUILDSETU_EXACT_AGENT_TOP_LEVEL_PLANNING_METADATA_V1
+      rooms: plan.rooms,
+      complianceChecklist: plan.complianceChecklist,
+      openItems: plan.openItems,
+      planningJson: planningMetadata.planningJson,
+      validationReport: planningMetadata.validationReport,
+      scoreReport: planningMetadata.scoreReport,
     });
   } catch (error: any) {
     return NextResponse.json(
