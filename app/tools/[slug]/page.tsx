@@ -1410,6 +1410,48 @@ function ToolMessageContent({ text, isUserMessage }: { text: string; isUserMessa
 }
 
 
+
+// BUILDSETU_OUTPUT_PLANNING_METADATA_UI_V1
+function getBuildSetuPlanningMetadata(output: any) {
+  const candidates = [
+    output,
+    output?.raw,
+    output?.asset,
+    output?.raw?.asset,
+    Array.isArray(output?.assets) ? output.assets[0] : null,
+    Array.isArray(output?.raw?.assets) ? output.raw.assets[0] : null,
+    Array.isArray(output?.outputs) ? output.outputs[0] : null,
+    Array.isArray(output?.raw?.outputs) ? output.raw.outputs[0] : null,
+    Array.isArray(output?.images) ? output.images[0] : null,
+    output?.raw?.output,
+  ].filter(Boolean);
+
+  const findValue = (key: string) => {
+    for (const item of candidates) {
+      if (item && item[key]) return item[key];
+    }
+    return null;
+  };
+
+  const planningJson = findValue("planningJson");
+  const validationReport = findValue("validationReport") || planningJson?.validation || [];
+  const scoreReport = findValue("scoreReport") || planningJson?.scoreReport || null;
+
+  return {
+    planningJson,
+    validationReport: Array.isArray(validationReport) ? validationReport : [],
+    scoreReport,
+    hasAny: Boolean(planningJson || (Array.isArray(validationReport) && validationReport.length) || scoreReport),
+  };
+}
+
+function getBuildSetuValidationBadgeClass(status: string) {
+  const normalized = String(status || "").toLowerCase();
+  if (normalized === "pass") return "border-emerald-200 bg-emerald-50 text-emerald-700";
+  if (normalized === "fail") return "border-red-200 bg-red-50 text-red-700";
+  return "border-amber-200 bg-amber-50 text-amber-700";
+}
+
 export default function ToolWorkspacePage() {
   const params = useParams();
   const router = useRouter();
@@ -3319,6 +3361,103 @@ export default function ToolWorkspacePage() {
 
             <div className="min-h-0 flex-1 overflow-y-auto p-3">
               {renderConceptStatusPanel()}
+
+              {/* BUILDSETU_OUTPUT_PLANNING_METADATA_CARD_V1 */}
+
+              {output ? (() => {
+                const planningMeta = getBuildSetuPlanningMetadata(output);
+                if (!planningMeta.hasAny) return null;
+
+                const score = planningMeta.scoreReport;
+                const validations = planningMeta.validationReport.slice(0, 6);
+                const convention = planningMeta.planningJson?.plot?.drawingConvention || null;
+                const roomCounts = planningMeta.planningJson?.roomCounts || null;
+
+                return (
+                  <div className="mb-3 rounded-[20px] border border-[#d9c7ff] bg-[linear-gradient(180deg,#ffffff,#fbf8ff)] p-3 shadow-[0_10px_24px_rgba(72,30,130,0.07)]">
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="min-w-0">
+                        <p className="text-[10px] font-black uppercase tracking-[0.22em] text-[#7c3aed]">
+                          Planning Brain
+                        </p>
+                        <h3 className="mt-1 text-[15px] font-black tracking-[-0.04em] text-[#12072f]">
+                          Validation Report
+                        </h3>
+                      </div>
+
+                      {score ? (
+                        <div className="shrink-0 rounded-2xl border border-[#ded1f4] bg-white px-3 py-2 text-right shadow-sm">
+                          <p className="text-[9px] font-black uppercase tracking-[0.16em] text-[#8a76a6]">Score</p>
+                          <p className="mt-0.5 text-lg font-black leading-none text-[#6d28d9]">
+                            {score.total ?? "-"}<span className="text-[11px] text-[#8a76a6]">/{score.max ?? 100}</span>
+                          </p>
+                          <p className="mt-1 text-[10px] font-black uppercase text-emerald-700">
+                            {score.status || "review"}
+                          </p>
+                        </div>
+                      ) : null}
+                    </div>
+
+                    {convention ? (
+                      <div className="mt-3 rounded-2xl border border-[#eadfff] bg-white p-2.5">
+                        <p className="text-[10px] font-black uppercase tracking-[0.18em] text-[#8a76a6]">Drawing Convention</p>
+                        <div className="mt-2 grid gap-1.5 text-[11px] font-bold text-[#3b2d54]">
+                          <div>North arrow: {convention.northArrow || "UP"}</div>
+                          <div>Top: {convention.topEdge || "-"}</div>
+                          <div>Right: {convention.rightEdge || "-"}</div>
+                        </div>
+                      </div>
+                    ) : null}
+
+                    {roomCounts ? (
+                      <div className="mt-2 grid grid-cols-3 gap-2">
+                        {[
+                          ["Bedrooms", roomCounts.bedrooms],
+                          ["Bathrooms", roomCounts.bathrooms],
+                          ["Parking", roomCounts.parking],
+                        ].map(([label, value]) => (
+                          <div key={String(label)} className="rounded-2xl border border-[#eadfff] bg-white px-2 py-2 text-center">
+                            <p className="text-[9px] font-black uppercase tracking-[0.14em] text-[#8a76a6]">{label}</p>
+                            <p className="mt-0.5 text-sm font-black text-[#12072f]">{String(value ?? "-")}</p>
+                          </div>
+                        ))}
+                      </div>
+                    ) : null}
+
+                    {validations.length ? (
+                      <div className="mt-3 space-y-1.5">
+                        {validations.map((item: any, index: number) => (
+                          <div key={`${item.id || item.check || index}`} className="rounded-2xl border border-[#eadfff] bg-white p-2.5">
+                            <div className="flex items-start justify-between gap-2">
+                              <p className="min-w-0 text-[12px] font-black leading-4 text-[#21133f]">
+                                {item.check || item.id || `Check ${index + 1}`}
+                              </p>
+                              <span className={`shrink-0 rounded-full border px-2 py-0.5 text-[9px] font-black uppercase ${getBuildSetuValidationBadgeClass(item.status)}`}>
+                                {item.status || "review"}
+                              </span>
+                            </div>
+                            {item.note ? (
+                              <p className="mt-1 text-[11px] font-semibold leading-4 text-[#67567f]">{item.note}</p>
+                            ) : null}
+                          </div>
+                        ))}
+                      </div>
+                    ) : null}
+
+                    {Array.isArray(score?.blockers) && score.blockers.length ? (
+                      <div className="mt-3 rounded-2xl border border-red-200 bg-red-50 p-2.5">
+                        <p className="text-[11px] font-black text-red-700">Revision Blockers</p>
+                        <ul className="mt-1 list-disc space-y-1 pl-4 text-[11px] font-semibold leading-4 text-red-700">
+                          {score.blockers.slice(0, 4).map((item: string, index: number) => (
+                            <li key={`${item}-${index}`}>{item}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    ) : null}
+                  </div>
+                );
+              })() : null}
+
 
               {!output ? (
                 <div className="flex h-full min-h-[280px] items-center justify-center rounded-[24px] border border-dashed border-[#d9c7ff] bg-[#fbf8ff]">
