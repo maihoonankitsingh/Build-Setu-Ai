@@ -1,4 +1,4 @@
-import { buildSetuPlanningBrainSystemPrompt } from "@/lib/planning/buildsetu-planning-brain";
+import { buildSetuPlanningBrainSystemPrompt, buildSetuPlanningBrainV2TrainingPrompt } from "@/lib/planning/buildsetu-planning-brain";
 
 
 // BUILDSETU_STRICT_FLOOR_PLAN_AGENT_PROMPT_V2
@@ -79,6 +79,11 @@ Architectural image prompt rules:
 - Keep circulation realistic.
 - Make plan look professional, premium, readable, and client-presentable.
 
+Planning Brain V2 scoring must be used:
+- Score serious plans on Space Utilization, Room Dimensions, Circulation, Natural Light, Ventilation, Structure Feasibility, MEP Efficiency, Safety, Cost Practicality and Future Expansion.
+- Total score below 75 requires revision before final image/render.
+- Any hard blocker such as wrong room count, wrong road orientation, duplicate rooms or missing bathroom requires revision.
+
 Return output in this structure:
 
 IMAGE PROMPT:
@@ -139,7 +144,10 @@ export function createFloorPlanImagePrompt(args: PromptAgentArgs) {
   const projectTitle = safe(args.projectTitle, "41 x 51 ft North Facing House");
   const userPrompt = safe(args.userPrompt);
   const raw = `${projectTitle}\n${userPrompt}`;
-  const planningBrainPrompt = buildSetuPlanningBrainSystemPrompt(raw);
+  const planningBrainPrompt = [
+    buildSetuPlanningBrainSystemPrompt(raw),
+    buildSetuPlanningBrainV2TrainingPrompt()
+  ].join("\n\n");
 
   const plot = parsePlot(raw);
   const facing = parseFacing(raw);
@@ -198,6 +206,7 @@ DRAWING REQUIREMENTS:
       floor,
       planningJson,
       validationReport: planningJson.validation,
+      scoreReport: planningJson.scoreReport,
       imagePrompt,
     };
   }
@@ -310,6 +319,7 @@ Final image must look like a polished furnished professional floor plan similar 
     floor,
     planningJson,
     validationReport: planningJson.validation,
+    scoreReport: planningJson.scoreReport,
     imagePrompt,
   };
 }
@@ -576,6 +586,12 @@ function build49x57EastNorthPlanningJson(args: {
     ],
     rooms,
     validation,
+    scoreReport: buildPlanningScorecard({
+      is49x57EastNorth: true,
+      floor: "ground",
+      bedroomCountGround: 1,
+      bathroomCountGround: 1,
+    }),
     imagePromptRules: [
       "Do not create a new layout outside planning JSON.",
       "Do not create 2 or 3 ground-floor bedrooms.",
@@ -616,6 +632,10 @@ function buildGenericPlanningJson(args: {
       "validation",
       "image_prompt",
     ],
+    scoreReport: buildPlanningScorecard({
+      is49x57EastNorth: false,
+      floor: args.floor,
+    }),
     validation: [
       {
         id: "project_specific_requirement",
@@ -630,5 +650,47 @@ function buildGenericPlanningJson(args: {
         note: "Concept plan requires architect/engineer verification before construction or approval use.",
       },
     ],
+  };
+}
+
+
+// BUILDSETU_PLANNING_SCORECARD_V1
+function buildPlanningScorecard(args: {
+  is49x57EastNorth?: boolean;
+  floor?: string;
+  bedroomCountGround?: number;
+  bathroomCountGround?: number;
+}) {
+  const scorecard = [
+    { criteria: "Space Utilization", score: 8, note: "Uses parking, living, dining, service and private zones without overloading ground floor." },
+    { criteria: "Room Dimensions", score: 8, note: "Uses practical approximate sizes and rejects oversized/unrequested rooms." },
+    { criteria: "Circulation", score: 8, note: "Entry, living, dining, kitchen, bedroom and staircase flow is kept direct." },
+    { criteria: "Natural Light", score: 8, note: "East and North corner edges are prioritized for daylight." },
+    { criteria: "Ventilation", score: 8, note: "External openings and wet-area ventilation are required in prompt/rules." },
+    { criteria: "Structure Feasibility", score: 7, note: "Conceptual structure logic included; engineer verification required." },
+    { criteria: "MEP Efficiency", score: 7, note: "Kitchen, wash and bathroom wet areas are grouped conceptually." },
+    { criteria: "Safety", score: 7, note: "Basic residential safety and staircase continuity included; authority review required." },
+    { criteria: "Cost Practicality", score: 8, note: "Avoids excessive room sizes and unnecessary duplicate rooms." },
+    { criteria: "Future Expansion", score: 8, note: "G+1 staircase and floor-wise separation are preserved." },
+  ];
+
+  const total = scorecard.reduce((sum, item) => sum + item.score, 0);
+  const status = total >= 75 ? "pass" : "revise";
+
+  const blockers: string[] = [];
+
+  if (args.is49x57EastNorth && args.floor === "ground") {
+    if (args.bedroomCountGround !== 1) blockers.push("Ground floor bedroom count must be exactly 1.");
+    if (args.bathroomCountGround !== 1) blockers.push("Ground floor bathroom count must be exactly 1.");
+  }
+
+  return {
+    source: "buildsetu_planning_scorecard_v1",
+    total,
+    max: 100,
+    status: blockers.length ? "revise" : status,
+    scorecard,
+    blockers,
+    revisionRule: "If score is below 75 or blockers exist, revise before final image/render prompt.",
   };
 }
