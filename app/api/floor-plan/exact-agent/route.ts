@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { mkdir, readFile, writeFile } from "fs/promises";
 import path from "path";
 import { getProjectPlanLock } from "@/lib/planning/project-plan-lock";
+import { validateBuildSetu49x57EastNorthGroundGeometry } from "@/lib/planning/buildsetu-floor-plan-geometry-validator";
 
 export const runtime = "nodejs";
 
@@ -610,6 +611,35 @@ function buildExactAgentPlanningMetadata(plan: ExactPlan) {
     },
   ];
 
+  // BUILDSETU_EXACT_AGENT_HARD_GEOMETRY_ATTACH_V1
+  const hardGeometryReport =
+    is49x57EastNorth && isGroundFloor
+      ? validateBuildSetu49x57EastNorthGroundGeometry({
+          plot: {
+            width: 57,
+            depth: 49,
+            drawingWidth: 57,
+            drawingHeight: 49,
+          },
+          rooms: plan.rooms,
+          drawingConvention: {
+            northArrow: "UP",
+            topEdge: "NORTH SIDE ROAD - 57'",
+            rightEdge: "EAST FRONT ROAD - 49'",
+          },
+        })
+      : null;
+
+  const mergedValidationReport = [
+    ...validationReport,
+    ...(hardGeometryReport?.checks || []).map((check) => ({
+      id: check.id,
+      check: check.id,
+      status: check.status,
+      note: check.note,
+    })),
+  ];
+
   const scoreItems = [
     ["Space Utilization", 8],
     ["Room Dimensions", 8],
@@ -627,7 +657,7 @@ function buildExactAgentPlanningMetadata(plan: ExactPlan) {
     note: `${criteria} concept reviewed by exact floor-plan agent.`,
   }));
 
-  const blockers = validationReport
+  const blockers = mergedValidationReport
     .filter((item) => item.status === "fail")
     .map((item) => item.note);
 
@@ -635,11 +665,12 @@ function buildExactAgentPlanningMetadata(plan: ExactPlan) {
 
   const scoreReport = {
     source: "exact_agent_planning_scorecard_v1",
-    total: scoreTotal,
+    total: hardGeometryReport?.status === "fail" ? 0 : scoreTotal,
     max: 100,
-    status: blockers.length ? "revise" : scoreTotal >= 75 ? "pass" : "revise",
+    status: hardGeometryReport?.status === "fail" ? "fail" : (blockers.length ? "revise" : scoreTotal >= 75 ? "pass" : "revise"),
     scorecard: scoreItems,
     blockers,
+    hardGeometryReport,
     revisionRule: "If blockers exist or score is below 75, revise before final render/working drawing.",
   };
 
@@ -650,6 +681,8 @@ function buildExactAgentPlanningMetadata(plan: ExactPlan) {
     command: plan.command,
     plot: {
       ...plan.plot,
+      drawingWidthFt: is49x57EastNorth ? 57 : plan.plot.widthFt,
+      drawingHeightFt: is49x57EastNorth ? 49 : plan.plot.depthFt,
       drawingConvention: is49x57EastNorth
         ? {
             northArrow: "UP",
@@ -667,13 +700,13 @@ function buildExactAgentPlanningMetadata(plan: ExactPlan) {
       parking: parkingCount,
       balconyTerrace: balconyTerraceCount,
     },
-    validation: validationReport,
+    validation: mergedValidationReport,
     scoreReport,
   };
 
   return {
     planningJson,
-    validationReport,
+    validationReport: mergedValidationReport,
     scoreReport,
   };
 }
