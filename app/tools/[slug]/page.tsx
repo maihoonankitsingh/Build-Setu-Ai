@@ -1676,6 +1676,56 @@ export default function ToolWorkspacePage() {
       : projectImages;
 
 
+  // BUILDSETU_FORCE_FRESH_EXACT_ASSETS_UI_RELOAD_V1
+  useEffect(() => {
+    if (tool?.slug !== "floor-plan-ai" || !projectId) return;
+
+    let cancelled = false;
+
+    async function refreshExactFloorPlanAssets() {
+      try {
+        const res = await fetch(
+          `/api/project-assets/images?projectId=${encodeURIComponent(projectId)}&limit=80&fresh=${Date.now()}`,
+          {
+            cache: "no-store",
+            headers: {
+              "Cache-Control": "no-cache",
+              Pragma: "no-cache",
+            },
+          },
+        );
+
+        const data = await res.json().catch(() => ({}));
+        const list = Array.isArray(data.items)
+          ? data.items
+          : Array.isArray(data.assets)
+            ? data.assets
+            : Array.isArray(data.images)
+              ? data.images
+              : Array.isArray(data)
+                ? data
+                : [];
+
+        const ordered = sortBuildSetuFloorPlanAssetsForDisplay(list);
+
+        if (!cancelled && ordered.length) {
+          setProjectImages(ordered);
+        }
+      } catch (error) {
+        console.warn("BUILDSETU_FORCE_FRESH_EXACT_ASSETS_UI_RELOAD_V1 failed", error);
+      }
+    }
+
+    refreshExactFloorPlanAssets();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [tool?.slug, projectId]);
+
+
+
+
   // BUILDSETU_FORCE_OUTPUT_PREVIEW_FROM_LATEST_ASSET
   useEffect(() => {
     if (tool?.slug !== "floor-plan-ai") return;
@@ -3628,8 +3678,9 @@ export default function ToolWorkspacePage() {
 
 
               {/* BUILDSETU_EXACT_SVG_PREVIEW_PRIORITY_OUTPUT_V1 */}
-              {tool?.slug === "floor-plan-ai" && output && getBuildSetuPrimaryExactFloorPlanAsset(projectImages, output) ? (() => {
-                const exactPrimary = getBuildSetuPrimaryExactFloorPlanAsset(projectImages, output);
+              {/* BUILDSETU_EXACT_CARD_PROJECT_IMAGES_WITHOUT_OUTPUT_V1 */}
+              {tool?.slug === "floor-plan-ai" && getBuildSetuPrimaryExactFloorPlanAsset(projectImages, output || {}) ? (() => {
+                const exactPrimary = getBuildSetuPrimaryExactFloorPlanAsset(projectImages, output || {});
                 const exactUrl = getDisplayImageUrl(getBuildSetuAssetImageUrlForGPlusOne(exactPrimary));
 
                 if (!exactPrimary || !exactUrl) return null;
