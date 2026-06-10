@@ -1,84 +1,97 @@
 import { NextRequest, NextResponse } from "next/server";
-import fs from "fs/promises";
+import { readFile } from "fs/promises";
 import path from "path";
 
 export const runtime = "nodejs";
-export const dynamic = "force-dynamic";
 
-const ASSETS_FILE = path.join(process.cwd(), "data", "generated", "project-assets.json");
-
-
-function buildSetuAssetPriority(asset: any) {
-  const text = JSON.stringify(asset || {}).toLowerCase();
-
-  if (
-    text.includes("exact_professional_floor_plan_v1") || text.includes("exact_professional_floor_plan") || text.includes("exact-professional-floor-plan") || text.includes("openai_professional_floor_plan_v1") ||
-    text.includes("openai_professional_floor_plan") ||
-    text.includes("professional_floor_plan") ||
-    text.includes("openai-professional-floor-plan")
-  ) {
-    return 1000;
+// BUILDSETU_PROJECT_ASSETS_IMAGES_EXACT_SVG_FALLBACK_V1
+async function readJsonArray(file: string) {
+  try {
+    const raw = await readFile(file, "utf8");
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
   }
-
-  if (
-    text.includes("floor-plan-ai") ||
-    text.includes("floor_plan") ||
-    text.includes("floor-plan")
-  ) {
-    return 500;
-  }
-
-  if (
-    text.includes("working_drawing_sheet") ||
-    text.includes("working-set") ||
-    text.includes("locked_working_drawing")
-  ) {
-    return -1000;
-  }
-
-  return 0;
 }
 
-function buildSetuAssetTime(asset: any) {
-  const created = Date.parse(String(asset?.createdAt || ""));
-  if (Number.isFinite(created)) return created;
+function normalizeAsset(item: any) {
+  const imageUrl =
+    item?.imageUrl ||
+    item?.publicUrl ||
+    item?.url ||
+    item?.assetUrl ||
+    item?.thumbnailUrl ||
+    "";
 
-  const raw = String(asset?.id || asset?.file || asset?.imageUrl || "");
-  const match = raw.match(/\d{10,}/);
-  return match ? Number(match[0]) : 0;
+  return {
+    ...item,
+    imageUrl,
+    publicUrl: item?.publicUrl || imageUrl,
+    url: item?.url || imageUrl,
+    thumbnailUrl: item?.thumbnailUrl || imageUrl,
+    kind: item?.kind || item?.assetType || item?.type || "project_asset",
+  };
 }
 
-function sortBuildSetuAssets(items: any[]) {
-  return [...items].sort((a, b) => {
-    const priorityDiff = buildSetuAssetPriority(b) - buildSetuAssetPriority(a);
-    if (priorityDiff) return priorityDiff;
-    return buildSetuAssetTime(b) - buildSetuAssetTime(a);
-  });
+function createdTime(item: any) {
+  return Date.parse(item?.createdAt || item?.updatedAt || "") || 0;
 }
 
 export async function GET(req: NextRequest) {
   try {
     const url = new URL(req.url);
-    const projectId = String(url.searchParams.get("projectId") || "");
-    const limit = Math.min(Number(url.searchParams.get("limit") || 100), 300);
+    const projectId = String(url.searchParams.get("projectId") || "").trim();
+    const limit = Math.min(200, Math.max(1, Number(url.searchParams.get("limit") || 80) || 80));
 
-    let store: any = { assets: [] };
-    try {
-      store = JSON.parse(await fs.readFile(ASSETS_FILE, "utf-8"));
-    } catch {}
+    const file = path.join(process.cwd(), "data/generated/project-assets.json");
+    const all = await readJsonArray(file);
 
-    const all = Array.isArray(store) ? store : Array.isArray(store.assets) ? store.assets : [];
+    const items = all
+      .filter((item: any) => {
+        if (!item) return false;
+        if (projectId && String(item.projectId || "") !== projectId) return false;
 
-    const images = all
-      .filter((asset: any) => asset?.type === "image")
-      .filter((asset: any) => !projectId || String(asset.projectId) === projectId)
-      .slice(0, limit);
+        const imageUrl =
+          item.imageUrl ||
+          item.publicUrl ||
+          item.url ||
+          item.assetUrl ||
+          item.thumbnailUrl ||
+          "";
 
-    return NextResponse.json({ ok: true, images: sortBuildSetuAssets(images) });
+        // Include exact SVG source-of-truth floor plans and normal generated images.
+        if (String(item.source || "") === "exact_floor_plan_agent_v1" && imageUrl) return true;
+        if (String(item.source || "") === "professional_openai_floor_plan_v1" && imageUrl) return true;
+        if (String(item.toolSlug || "") === "floor-plan-ai" && imageUrl) return true;
+        if (imageUrl && /\.(png|jpg|jpeg|webp|svg)(\?|$)/i.test(imageUrl)) return true;
+
+        return false;
+      })
+      .sort((a: any, b: any) => createdTime(b) - createdTime(a))
+      .slice(0, limit)
+      .map(normalizeAsset);
+
+    return NextResponse.json({
+      ok: true,
+      items,
+      images: items,
+      assets: items,
+      total: items.length,
+      source: "project-assets-json",
+      includesExactSvg: true,
+    });
   } catch (error: any) {
     return NextResponse.json(
-      { ok: false, error: error?.message || "Failed to load project images", images: [] },
-      { status: 500 }
+      {
+        ok: false,
+        error: error?.message || "Failed to load project assets.",
+        items: [],
+        images: [],
+        assets: [],
+        total: 0,
+      },
+      { status: 500 },
     );
   }
 }
