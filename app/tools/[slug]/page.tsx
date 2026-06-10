@@ -2290,9 +2290,18 @@ export default function ToolWorkspacePage() {
         assetType: exactData.command || exactData.asset?.assetType || "ground_floor_plan",
         planningSource: "exact_floor_plan_agent_v1",
         planningStatus: exactData.planningStatus,
-        lockedPlan: exactData.plan || {},
+        lockedPlan: {
+          ...(exactData.plan || {}),
+          planningJson: exactData.planningJson || exactData.asset?.planningJson || null,
+          validationReport: exactData.validationReport || exactData.asset?.validationReport || null,
+          scoreReport: exactData.scoreReport || exactData.asset?.scoreReport || null,
+        },
         exactAsset: exactData.asset || null,
         exactImageUrl: exactData.imageUrl || exactData.asset?.imageUrl || "",
+        // BUILDSETU_OPENAI_FINAL_METADATA_PASSTHROUGH_V1
+        planningJson: exactData.planningJson || exactData.asset?.planningJson || null,
+        validationReport: exactData.validationReport || exactData.asset?.validationReport || null,
+        scoreReport: exactData.scoreReport || exactData.asset?.scoreReport || null,
         projectTitle: selectedProject?.title || selectedProject?.name || "",
         userMessage: cleanText,
         renderMode: "openai_final_image_from_tool_page_v2",
@@ -2333,6 +2342,9 @@ export default function ToolWorkspacePage() {
       asset: renderData.asset || null,
       assets: renderData.asset ? [renderData.asset] : [],
       outputs: renderData.asset ? [renderData.asset] : [],
+      planningJson: renderData.planningJson || exactData.planningJson || exactData.asset?.planningJson || null,
+      validationReport: renderData.validationReport || exactData.validationReport || exactData.asset?.validationReport || null,
+      scoreReport: renderData.scoreReport || exactData.scoreReport || exactData.asset?.scoreReport || null,
       planning: exactData,
       render: renderData,
       reply: `${finalTitle} ready hai. Planning agent ne layout lock kiya aur final image ChatGPT/OpenAI se generate hui hai.`,
@@ -2388,6 +2400,9 @@ export default function ToolWorkspacePage() {
           source: result.source,
           provider: "openai",
           generationMode: "openai-final-floor-plan",
+          planningJson: result.planningJson || result.asset?.planningJson || result.planning?.planningJson || null,
+          validationReport: result.validationReport || result.asset?.validationReport || result.planning?.validationReport || null,
+          scoreReport: result.scoreReport || result.asset?.scoreReport || result.planning?.scoreReport || null,
         }), result, tool));
 
         setOutput(finalOutput);
