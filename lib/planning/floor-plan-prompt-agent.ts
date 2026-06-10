@@ -1,4 +1,5 @@
-import { buildSetuPlanningBrainSystemPrompt, buildSetuPlanningBrainV2TrainingPrompt } from "@/lib/planning/buildsetu-planning-brain";
+import { buildSetuHumanLikePlanningChecklist, retrieveBuildSetuPlanningRagContext } from "@/lib/planning/buildsetu-planning-rag";
+import { buildSetuPlanningBrainSystemPrompt, buildSetuPlanningBrainV2TrainingPrompt, buildSetuHumanLikePlanningBrainRules } from "@/lib/planning/buildsetu-planning-brain";
 
 
 // BUILDSETU_STRICT_FLOOR_PLAN_AGENT_PROMPT_V2
@@ -96,6 +97,32 @@ PLANNING NOTES:
 `;
 
 
+
+// BUILDSETU_PROMPT_AGENT_SHARED_RAG_HELPER_V1
+function buildSetuPromptAgentRagContext(rawInput: string, projectId = "") {
+  const raw = String(rawInput || "");
+
+  const planningRag = retrieveBuildSetuPlanningRagContext({
+    query: raw,
+    projectId,
+    limit: 8,
+  });
+
+  const humanChecklist = buildSetuHumanLikePlanningChecklist({
+    projectText: raw,
+    projectId,
+  });
+
+  const humanBrainRules = buildSetuHumanLikePlanningBrainRules(raw);
+
+  return [
+    "BUILDSETU_PLANNING_RAG_CONTEXT_USED_IN_PROMPT_V1",
+    humanBrainRules,
+    humanChecklist,
+    planningRag.context,
+  ].filter(Boolean).join("\\n\\n");
+}
+
 type PromptAgentArgs = {
   projectId: string;
   projectTitle?: string;
@@ -144,9 +171,12 @@ export function createFloorPlanImagePrompt(args: PromptAgentArgs) {
   const projectTitle = safe(args.projectTitle, "41 x 51 ft North Facing House");
   const userPrompt = safe(args.userPrompt);
   const raw = `${projectTitle}\n${userPrompt}`;
+  // BUILDSETU_CREATE_PROMPT_RAG_CONTEXT_V1
+  const planningRagContext = buildSetuPromptAgentRagContext(raw, args.projectId);
   const planningBrainPrompt = [
     buildSetuPlanningBrainSystemPrompt(raw),
-    buildSetuPlanningBrainV2TrainingPrompt()
+    buildSetuPlanningBrainV2TrainingPrompt(),
+    planningRagContext,
   ].join("\n\n");
 
   const plot = parsePlot(raw);
@@ -326,7 +356,13 @@ Final image must look like a polished furnished professional floor plan similar 
 
 
 export function buildStrictFloorPlanAgentPrompt(projectSummary: string, userMessage: string) {
-  return `${BUILDSETU_STRICT_FLOOR_PLAN_AGENT_PROMPT}
+
+  // BUILDSETU_STRICT_PROMPT_RAG_CONTEXT_V1
+  const strictPromptRaw = `${projectSummary || ""}\n${userMessage || ""}`;
+  const strictPlanningRagContext = buildSetuPromptAgentRagContext(strictPromptRaw);
+
+
+  return `BUILDSETU_PLANNING_RAG_CONTEXT_USED_IN_PROMPT_V1\n${strictPlanningRagContext}\n\n${BUILDSETU_STRICT_FLOOR_PLAN_AGENT_PROMPT}
 
 PROJECT SUMMARY:
 ${projectSummary || "No project summary available."}

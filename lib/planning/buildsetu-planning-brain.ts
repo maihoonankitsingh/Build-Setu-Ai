@@ -528,3 +528,43 @@ Professional boundary:
 Never claim final structural design, final RCC reinforcement, final fire compliance or final authority approval. Mark structural, MEP, fire and approval outputs as requiring licensed professional verification.
 `.trim();
 }
+
+// BUILDSETU_HUMAN_LIKE_PLANNING_BRAIN_V3
+export function buildSetuHumanLikePlanningBrainRules(projectText: string) {
+  const raw = String(projectText || "");
+  const lower = raw.toLowerCase();
+
+  const is49x57EastNorth =
+    /49\s*[x×]\s*57|57\s*[x×]\s*49/.test(lower) &&
+    lower.includes("east") &&
+    lower.includes("north");
+
+  const rules: string[] = [
+    "BUILDSETU_HUMAN_LIKE_PLANNING_BRAIN_V3",
+    "Human-like planning sequence:",
+    "A. Understand site first: plot size, road sides, front, north arrow, corner status.",
+    "B. Understand family/usage: bedrooms, bathrooms, parking, floor count, special rooms.",
+    "C. Create zoning before drawing: public, private, service, circulation, stairs, parking.",
+    "D. Create room rectangles only after zoning is logically valid.",
+    "E. Validate every label against actual rectangle dimensions.",
+    "F. Reject visual-only or decorative plans that break dimensions.",
+    "G. Never mark PASS if orientation, room count, or room dimensions are inconsistent.",
+  ];
+
+  if (is49x57EastNorth) {
+    rules.push(
+      "49x57 East-North hard geometry rule:",
+      "Use drawing width = 57 and drawing height = 49.",
+      "Top edge label must be NORTH SIDE ROAD - 57'.",
+      "Right edge label must be EAST FRONT ROAD - 49'.",
+      "If a drawing is portrait/tall for this project, it is wrong.",
+      "If Dining is not 14x11 in the locked ground layout, reject.",
+      "If Wash/Store 11x7 is missing in the locked ground layout, reject.",
+      "If Bathroom 7x8 is clipped or mislabeled, reject.",
+    );
+  }
+
+  return rules.join("\\n");
+}
+
+
