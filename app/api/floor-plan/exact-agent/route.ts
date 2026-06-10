@@ -343,16 +343,22 @@ function buildComplianceChecklist(args: {
 }
 
 function renderSvg(plan: ExactPlan) {
+  // BUILDSETU_PROFESSIONAL_EXACT_SVG_RENDERER_SAFE_V1
   const W = plan.plot.widthFt;
   const D = plan.plot.depthFt;
 
-  const scale = 16;
-  const pad = 70;
-  const sheetW = Math.round(W * scale + pad * 2);
-  const sheetH = Math.round(D * scale + pad * 2 + 90);
+  const scale = 15;
+  const pad = 88;
+  const sheetW = Math.round(W * scale + pad * 2 + 72);
+  const sheetH = Math.round(D * scale + pad * 2 + 128);
+
+  const outerX = pad;
+  const outerY = pad + 18;
+  const outerW = W * scale;
+  const outerH = D * scale;
 
   const colors: Record<string, string> = {
-    parking: "#e5e7eb",
+    parking: "#eef2f7",
     living: "#fff7ed",
     kitchen: "#fef3c7",
     dining: "#f8fafc",
@@ -361,61 +367,157 @@ function renderSvg(plan: ExactPlan) {
     wash: "#bfdbfe",
     staircase: "#f3f4f6",
     puja: "#fde68a",
+    passage: "#ffffff",
+    lobby: "#ffffff",
+    terrace: "#ecfdf5",
+    balcony: "#f0fdfa",
+    study: "#f5f3ff",
     multiuse: "#ecfdf5",
   };
 
-  const roomSvg = plan.rooms.map((r) => {
-    const x = pad + r.x * scale;
-    const y = pad + r.y * scale;
-    const w = r.w * scale;
-    const h = r.h * scale;
-    const cx = x + w / 2;
-    const cy = y + h / 2;
+  function esc(value: unknown) {
+    return String(value || "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;");
+  }
+
+  function sx(ft: number) { return outerX + ft * scale; }
+  function sy(ft: number) { return outerY + ft * scale; }
+  function sw(ft: number) { return ft * scale; }
+
+  function box(r: Room) {
+    const x = sx(r.x);
+    const y = sy(r.y);
+    const w = sw(r.w);
+    const h = sw(r.h);
+    return { x, y, w, h, cx: x + w / 2, cy: y + h / 2 };
+  }
+
+  function roomLabelLines(name: string) {
+    const words = safe(name).split(" ");
+    const lines: string[] = [];
+    let current = "";
+    for (const word of words) {
+      const next = current ? `${current} ${word}` : word;
+      if (next.length > 18 && current) {
+        lines.push(current);
+        current = word;
+      } else {
+        current = next;
+      }
+    }
+    if (current) lines.push(current);
+    return lines.slice(0, 2);
+  }
+
+  function furniture(r: Room) {
+    const kind = String(r.kind || "").toLowerCase();
+    const b = box(r);
+    const dark = "#374151";
+
+    if (kind === "bedroom") {
+      const bw = Math.min(b.w - 22, 70);
+      const bh = Math.min(b.h - 24, 76);
+      return `<g data-furniture="bed"><rect x="${b.cx - bw / 2}" y="${b.cy - bh / 2}" width="${bw}" height="${bh}" rx="6" fill="#fff" stroke="${dark}" stroke-width="1.4"/><rect x="${b.cx - bw / 2 + 5}" y="${b.cy - bh / 2 + 5}" width="${bw / 2 - 7}" height="17" rx="3" fill="#e5e7eb" stroke="${dark}" stroke-width="1"/><rect x="${b.cx + 2}" y="${b.cy - bh / 2 + 5}" width="${bw / 2 - 7}" height="17" rx="3" fill="#e5e7eb" stroke="${dark}" stroke-width="1"/></g>`;
+    }
+
+    if (kind === "living") {
+      return `<g data-furniture="sofa-tv"><rect x="${b.x + 10}" y="${b.y + 10}" width="${Math.min(b.w - 20, 80)}" height="23" rx="6" fill="#fff" stroke="${dark}" stroke-width="1.3"/><rect x="${b.x + b.w - 18}" y="${b.y + 18}" width="5" height="${Math.min(b.h - 36, 82)}" fill="${dark}" opacity="0.8"/><rect x="${b.cx - 18}" y="${b.cy - 12}" width="36" height="24" rx="4" fill="#fff" stroke="${dark}" stroke-width="1"/></g>`;
+    }
+
+    if (kind === "dining") {
+      return `<g data-furniture="dining"><rect x="${b.cx - 27}" y="${b.cy - 17}" width="54" height="34" rx="6" fill="#fff" stroke="${dark}" stroke-width="1.3"/><circle cx="${b.cx - 39}" cy="${b.cy}" r="5" fill="#e5e7eb" stroke="${dark}" stroke-width="1"/><circle cx="${b.cx + 39}" cy="${b.cy}" r="5" fill="#e5e7eb" stroke="${dark}" stroke-width="1"/><circle cx="${b.cx}" cy="${b.cy - 29}" r="5" fill="#e5e7eb" stroke="${dark}" stroke-width="1"/><circle cx="${b.cx}" cy="${b.cy + 29}" r="5" fill="#e5e7eb" stroke="${dark}" stroke-width="1"/></g>`;
+    }
+
+    if (kind === "kitchen") {
+      return `<g data-furniture="kitchen-counter"><rect x="${b.x + 8}" y="${b.y + 8}" width="${b.w - 16}" height="16" fill="#111827" opacity="0.75"/><rect x="${b.x + b.w - 30}" y="${b.y + 30}" width="22" height="${b.h - 42}" fill="#9ca3af" opacity="0.45"/><circle cx="${b.x + b.w - 20}" cy="${b.y + 40}" r="5" fill="#fff" stroke="${dark}" stroke-width="1"/></g>`;
+    }
+
+    if (kind === "toilet" || kind === "wash") {
+      return `<g data-furniture="toilet-fixtures"><circle cx="${b.x + 18}" cy="${b.y + 20}" r="10" fill="#fff" stroke="${dark}" stroke-width="1.3"/><rect x="${b.x + b.w - 30}" y="${b.y + 14}" width="20" height="14" rx="4" fill="#fff" stroke="${dark}" stroke-width="1.3"/><line x1="${b.x + 10}" y1="${b.y + b.h - 12}" x2="${b.x + b.w - 10}" y2="${b.y + b.h - 12}" stroke="#60a5fa" stroke-width="2"/></g>`;
+    }
+
+    if (kind === "staircase") {
+      const steps = Math.max(5, Math.floor(b.h / 18));
+      const stepLines = Array.from({ length: steps }, (_, i) => {
+        const yy = b.y + 10 + (i * (b.h - 20)) / Math.max(1, steps - 1);
+        return `<line x1="${b.x + 8}" y1="${yy}" x2="${b.x + b.w - 8}" y2="${yy}" stroke="${dark}" stroke-width="1"/>`;
+      }).join("");
+      return `<g data-furniture="stair-up">${stepLines}<path d="M ${b.x + b.w * 0.25} ${b.y + b.h * 0.75} L ${b.x + b.w * 0.75} ${b.y + b.h * 0.25}" stroke="${dark}" stroke-width="2" marker-end="url(#smallArrow)"/><text x="${b.cx}" y="${b.cy + 5}" text-anchor="middle" font-size="10" font-family="Arial" font-weight="700" fill="${dark}">UP</text></g>`;
+    }
+
+    if (kind === "parking") {
+      const carW = Math.min(b.w - 30, 72);
+      const carH = Math.min(b.h - 42, 118);
+      return `<g data-furniture="car-bike"><rect x="${b.cx - carW / 2}" y="${b.cy - carH / 2}" width="${carW}" height="${carH}" rx="18" fill="#fff" stroke="${dark}" stroke-width="1.5"/><rect x="${b.cx - carW / 2 + 10}" y="${b.cy - carH / 2 + 18}" width="${carW - 20}" height="22" rx="8" fill="#d1d5db" stroke="${dark}" stroke-width="1"/><circle cx="${b.x + b.w - 26}" cy="${b.y + b.h - 30}" r="7" fill="none" stroke="${dark}" stroke-width="1.5"/><circle cx="${b.x + b.w - 48}" cy="${b.y + b.h - 30}" r="7" fill="none" stroke="${dark}" stroke-width="1.5"/><line x1="${b.x + b.w - 48}" y1="${b.y + b.h - 30}" x2="${b.x + b.w - 26}" y2="${b.y + b.h - 30}" stroke="${dark}" stroke-width="1.5"/></g>`;
+    }
+
+    if (kind === "puja") {
+      return `<g data-furniture="puja-symbol"><path d="M ${b.cx} ${b.cy - 18} L ${b.cx + 18} ${b.cy + 14} L ${b.cx - 18} ${b.cy + 14} Z" fill="#fff" stroke="${dark}" stroke-width="1.2"/><circle cx="${b.cx}" cy="${b.cy}" r="5" fill="#f59e0b"/></g>`;
+    }
+
+    if (kind === "balcony" || kind === "terrace") {
+      return `<g data-furniture="terrace-balcony"><rect x="${b.x + 8}" y="${b.y + 8}" width="${b.w - 16}" height="${b.h - 16}" fill="url(#hatch)" stroke="#059669" stroke-width="1" opacity="0.45"/><circle cx="${b.x + b.w - 18}" cy="${b.y + 18}" r="8" fill="#86efac" stroke="#047857" stroke-width="1"/></g>`;
+    }
+
+    return "";
+  }
+
+  function door(r: Room, index: number) {
+    const kind = String(r.kind || "").toLowerCase();
+    if (kind === "terrace" || kind === "balcony") return "";
+    const b = box(r);
+    const tag = `D${index + 1}`;
+    const d = Math.min(34, Math.max(22, Math.min(b.w, b.h) * 0.35));
+    const dx = b.x + Math.min(Math.max(16, b.w * 0.18), Math.max(16, b.w - d - 12));
+    const dy = b.y + b.h;
+    return `<g data-door="${tag}"><line x1="${dx}" y1="${dy}" x2="${dx + d}" y2="${dy}" stroke="#fff" stroke-width="7"/><line x1="${dx}" y1="${dy}" x2="${dx}" y2="${dy - d}" stroke="#7c2d12" stroke-width="2"/><path d="M ${dx} ${dy - d} A ${d} ${d} 0 0 1 ${dx + d} ${dy}" fill="none" stroke="#7c2d12" stroke-width="1.6"/><text x="${dx + d / 2}" y="${dy - 5}" text-anchor="middle" font-size="9" font-family="Arial" font-weight="700" fill="#7c2d12">${tag}</text></g>`;
+  }
+
+  function windowTag(r: Room, index: number) {
+    const kind = String(r.kind || "").toLowerCase();
+    if (kind === "passage" || kind === "lobby" || kind === "staircase") return "";
+    const b = box(r);
+    const tag = `W${index + 1}`;
+    const len = Math.min(52, Math.max(28, Math.min(b.w, b.h) * 0.45));
+
+    if (r.y <= 4) {
+      const wx = b.x + b.w / 2 - len / 2;
+      return `<g data-window="${tag}"><line x1="${wx}" y1="${b.y}" x2="${wx + len}" y2="${b.y}" stroke="#2563eb" stroke-width="4"/><line x1="${wx}" y1="${b.y - 7}" x2="${wx + len}" y2="${b.y - 7}" stroke="#2563eb" stroke-width="1.5"/><text x="${wx + len / 2}" y="${b.y - 11}" text-anchor="middle" font-size="9" font-family="Arial" font-weight="700" fill="#2563eb">${tag}</text></g>`;
+    }
+
+    if (r.x + r.w >= W - 4) {
+      const wy = b.y + b.h / 2 - len / 2;
+      return `<g data-window="${tag}"><line x1="${b.x + b.w}" y1="${wy}" x2="${b.x + b.w}" y2="${wy + len}" stroke="#2563eb" stroke-width="4"/><line x1="${b.x + b.w + 7}" y1="${wy}" x2="${b.x + b.w + 7}" y2="${wy + len}" stroke="#2563eb" stroke-width="1.5"/><text x="${b.x + b.w + 17}" y="${wy + len / 2}" text-anchor="middle" font-size="9" font-family="Arial" font-weight="700" fill="#2563eb" transform="rotate(90 ${b.x + b.w + 17} ${wy + len / 2})">${tag}</text></g>`;
+    }
+
+    if (r.x <= 4) {
+      const wy = b.y + b.h / 2 - len / 2;
+      return `<g data-window="${tag}"><line x1="${b.x}" y1="${wy}" x2="${b.x}" y2="${wy + len}" stroke="#2563eb" stroke-width="4"/><line x1="${b.x - 7}" y1="${wy}" x2="${b.x - 7}" y2="${wy + len}" stroke="#2563eb" stroke-width="1.5"/><text x="${b.x - 17}" y="${wy + len / 2}" text-anchor="middle" font-size="9" font-family="Arial" font-weight="700" fill="#2563eb" transform="rotate(-90 ${b.x - 17} ${wy + len / 2})">${tag}</text></g>`;
+    }
+
+    return "";
+  }
+
+  const roomSvg = plan.rooms.map((r, index) => {
+    const b = box(r);
     const fill = colors[r.kind] || "#ffffff";
+    const minSide = Math.min(r.w, r.h);
+    const fs = minSide <= 5 ? 9 : minSide <= 7 ? 10 : minSide <= 10 ? 11.5 : 13;
+    const lines = roomLabelLines(r.name);
+    const labelY = b.cy - (lines.length > 1 ? fs * 0.6 : 0);
+    const labelSvg = lines.map((line, i) => `<text x="${b.cx}" y="${labelY + i * (fs + 2)}" text-anchor="middle" font-size="${fs}" font-family="Arial" font-weight="800" fill="#111827">${esc(line)}</text>`).join("");
+    const dimY = labelY + lines.length * (fs + 2) + 4;
 
-    return `
-      <g>
-        <rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${fill}" stroke="#111827" stroke-width="2"/>
-        <text x="${cx}" y="${cy - 8}" text-anchor="middle" font-size="15" font-family="Arial" font-weight="700">${r.name}</text>
-        <text x="${cx}" y="${cy + 12}" text-anchor="middle" font-size="13" font-family="Arial">${r.w}' x ${r.h}'</text>
-      </g>
-    `;
-  }).join("\n");
+    return `<g data-room="${esc(r.id)}" data-kind="${esc(r.kind)}"><rect x="${b.x}" y="${b.y}" width="${b.w}" height="${b.h}" fill="${fill}" stroke="#111827" stroke-width="3"/><rect x="${b.x + 4}" y="${b.y + 4}" width="${Math.max(1, b.w - 8)}" height="${Math.max(1, b.h - 8)}" fill="none" stroke="#fff" stroke-width="1" opacity="0.7"/>${furniture(r)}${labelSvg}<text x="${b.cx}" y="${dimY}" text-anchor="middle" font-size="${Math.max(8.5, fs - 1.5)}" font-family="Arial" font-weight="700" fill="#374151">${r.w}' × ${r.h}'</text>${door(r, index)}${windowTag(r, index)}</g>`;
+  }).join("");
 
-  const outerX = pad;
-  const outerY = pad;
-  const outerW = W * scale;
-  const outerH = D * scale;
-
-  return `<?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" width="${sheetW}" height="${sheetH}" viewBox="0 0 ${sheetW} ${sheetH}">
-  <rect width="100%" height="100%" fill="#ffffff"/>
-
-  <text x="${sheetW / 2}" y="28" text-anchor="middle" font-size="22" font-family="Arial" font-weight="700">${plan.title}</text>
-  <text x="${sheetW / 2}" y="52" text-anchor="middle" font-size="15" font-family="Arial">${plan.plot.widthFt}' x ${plan.plot.depthFt}' ${plan.plot.facing.toUpperCase()} Facing • Exact Planning Draft</text>
-
-  <defs>
-    <marker id="arrow" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto-start-reverse">
-      <path d="M0,0 L8,4 L0,8 Z" fill="#111827"/>
-    </marker>
-  </defs>
-
-  <rect x="${outerX}" y="${outerY}" width="${outerW}" height="${outerH}" fill="none" stroke="#000" stroke-width="4"/>
-
-  <line x1="${outerX}" y1="${outerY - 25}" x2="${outerX + outerW}" y2="${outerY - 25}" stroke="#111827" stroke-width="1.5" marker-start="url(#arrow)" marker-end="url(#arrow)"/>
-  <text x="${outerX + outerW / 2}" y="${outerY - 34}" text-anchor="middle" font-size="18" font-family="Arial" font-weight="700">${W}'</text>
-
-  <line x1="${outerX + outerW + 25}" y1="${outerY}" x2="${outerX + outerW + 25}" y2="${outerY + outerH}" stroke="#111827" stroke-width="1.5" marker-start="url(#arrow)" marker-end="url(#arrow)"/>
-  <text x="${outerX + outerW + 45}" y="${outerY + outerH / 2}" text-anchor="middle" font-size="18" font-family="Arial" font-weight="700" transform="rotate(90 ${outerX + outerW + 45} ${outerY + outerH / 2})">${D}'</text>
-
-  ${roomSvg}
-
-  <text x="${sheetW / 2}" y="${outerY + outerH + 48}" text-anchor="middle" font-size="28" font-family="Arial" font-weight="700">${plan.plot.facing.toUpperCase()}</text>
-  <text x="${sheetW / 2}" y="${outerY + outerH + 76}" text-anchor="middle" font-size="18" font-family="Arial">${W}' x ${D}'</text>
-
-  <text x="${pad}" y="${sheetH - 18}" font-size="12" font-family="Arial" fill="#374151">Generated by BuildSetu Exact Floor Plan Agent • Planning draft, final approval by licensed professional required.</text>
-</svg>`;
+  return `<?xml version="1.0" encoding="UTF-8"?><svg xmlns="http://www.w3.org/2000/svg" width="${sheetW}" height="${sheetH}" viewBox="0 0 ${sheetW} ${sheetH}"><rect width="100%" height="100%" fill="#ffffff"/><defs><pattern id="hatch" width="8" height="8" patternUnits="userSpaceOnUse"><path d="M0,8 L8,0" stroke="#10b981" stroke-width="1" opacity="0.45"/></pattern><marker id="arrow" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto-start-reverse"><path d="M0,0 L8,4 L0,8 Z" fill="#111827"/></marker><marker id="smallArrow" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 Z" fill="#111827"/></marker></defs><rect x="18" y="14" width="${sheetW - 36}" height="${sheetH - 28}" fill="none" stroke="#d1d5db" stroke-width="1"/><text x="${sheetW / 2}" y="32" text-anchor="middle" font-size="25" font-family="Arial" font-weight="900" fill="#111827">${esc(plan.title)}</text><text x="${sheetW / 2}" y="57" text-anchor="middle" font-size="13" font-family="Arial" font-weight="700" fill="#374151">49' East Front × 57' North Side Corner Plot • Exact Source-of-Truth Draft</text><text x="${outerX + outerW / 2}" y="${outerY - 42}" text-anchor="middle" font-size="16" font-family="Arial" font-weight="900" fill="#111827">NORTH SIDE ROAD - 57'</text><text x="${outerX + outerW + 54}" y="${outerY + outerH / 2}" text-anchor="middle" font-size="16" font-family="Arial" font-weight="900" fill="#111827" transform="rotate(90 ${outerX + outerW + 54} ${outerY + outerH / 2})">EAST FRONT ROAD - 49'</text><line x1="${outerX}" y1="${outerY - 24}" x2="${outerX + outerW}" y2="${outerY - 24}" stroke="#111827" stroke-width="1.6" marker-start="url(#arrow)" marker-end="url(#arrow)"/><text x="${outerX + outerW / 2}" y="${outerY - 31}" text-anchor="middle" font-size="13" font-family="Arial" font-weight="900">${W}'</text><line x1="${outerX + outerW + 24}" y1="${outerY}" x2="${outerX + outerW + 24}" y2="${outerY + outerH}" stroke="#111827" stroke-width="1.6" marker-start="url(#arrow)" marker-end="url(#arrow)"/><text x="${outerX + outerW + 36}" y="${outerY + outerH / 2}" text-anchor="middle" font-size="13" font-family="Arial" font-weight="900" transform="rotate(90 ${outerX + outerW + 36} ${outerY + outerH / 2})">${D}'</text><g data-north-arrow><text x="${sheetW - 62}" y="40" text-anchor="middle" font-size="18" font-family="Arial" font-weight="900">N</text><path d="M ${sheetW - 62} 48 L ${sheetW - 76} 84 L ${sheetW - 62} 76 L ${sheetW - 48} 84 Z" fill="#111827"/></g><rect x="${outerX}" y="${outerY}" width="${outerW}" height="${outerH}" fill="none" stroke="#050505" stroke-width="7"/>${roomSvg}<g data-title-block><rect x="${outerX}" y="${outerY + outerH + 26}" width="${outerW}" height="56" fill="#f9fafb" stroke="#d1d5db" stroke-width="1"/><text x="${outerX + 14}" y="${outerY + outerH + 48}" font-size="12" font-family="Arial" font-weight="900" fill="#111827">BUILDSETU EXACT FLOOR PLAN</text><text x="${outerX + 14}" y="${outerY + outerH + 68}" font-size="11" font-family="Arial" fill="#374151">Generated by BuildSetu Exact Floor Plan Agent • Planning draft only • Architect/engineer/local authority approval required.</text><text x="${outerX + outerW - 14}" y="${outerY + outerH + 48}" text-anchor="end" font-size="11" font-family="Arial" font-weight="800" fill="#374151">Scale: coordinate locked</text><text x="${outerX + outerW - 14}" y="${outerY + outerH + 68}" text-anchor="end" font-size="11" font-family="Arial" font-weight="800" fill="#374151">Plot: ${W}' × ${D}'</text></g></svg>`;
 }
+
+
 
 async function readJsonArray(file: string) {
   try {
