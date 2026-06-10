@@ -1,11 +1,11 @@
 {
   "ok": true,
-  "generatedAt": "2026-06-10T06:52:07.675Z",
-  "scannedDrafts": 167,
+  "generatedAt": "2026-06-10T12:51:43.920Z",
+  "scannedDrafts": 168,
   "quarantined": [
     {
-      "file": "data/buildsetu-research/drafts/draft_20260610_064714_sourceupdate_bis-national-building-code_9fc0bb4b_bis-national-building-code.json",
-      "id": "draft_20260610_064714_sourceupdate_bis-national-building-code_9fc0bb4b",
+      "file": "data/buildsetu-research/drafts/draft_20260610_124705_sourceupdate_bis-national-building-code_821fbde8_bis-national-building-code.json",
+      "id": "draft_20260610_124705_sourceupdate_bis-national-building-code_821fbde8",
       "title": "BIS National Building Code",
       "code": "path_changed_after_redirect",
       "reason": "Fetch final path / does not match intended source path /standards/technical-department/national-building-code."
