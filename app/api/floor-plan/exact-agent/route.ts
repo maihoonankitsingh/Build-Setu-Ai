@@ -213,11 +213,11 @@ function buildGroundFloorPlan(args: {
       room("living", "Living Room 20x16", "living", 10, 3, 20, 16, "Public living room connected to dining/circulation flow"),
       room("parking", "Car + Bike Parking 15x18", "parking", 39, 3, 15, 18, "East front entry parking; one car plus bike space only"),
 
-      room("dining", "Dining 14x11", "dining", 24, 23, 14, 11, "BUILDSETU_GROUND_HUMAN_FLOW_LAYOUT_V2 Dining placed between living and kitchen for human-like public-to-service flow"),
+      room("dining", "Dining 14x11", "dining", 24, 23, 14, 11, "BUILDSETU_GROUND_NO_OVERLAP_SKILL_GEOMETRY_V4 Dining between living and kitchen with no stair overlap"),
       room("lobby", "Entry Lobby 15x8", "lobby", 39, 22, 15, 8, "Entry transition from East side; connects parking/public circulation"),
 
-      room("passage", "Private Passage", "passage", 16, 34, 17, 4, "Compact circulation spine linking dining, stair, bedroom and bathroom"),
-      room("stair", "Staircase 9x15", "staircase", 34, 31, 9, 15, "Single internal staircase for G+1 with clear UP direction"),
+      room("passage", "Private Passage 17x4", "passage", 16, 34, 17, 4, "Compact circulation spine linking dining, stair, bedroom and bathroom"),
+      room("stair", "Staircase 9x15", "staircase", 24, 38, 9, 11, "Staircase compacted within 57x49 boundary without room overlap"),
       room("kitchen", "Kitchen 11x10", "kitchen", 39, 31, 11, 10, "Kitchen beside dining and wash/store for service flow"),
       room("wash_store", "Wash / Store 11x7", "wash", 39, 42, 11, 7, "Service wash/store directly behind kitchen, not a second kitchen"),
 
