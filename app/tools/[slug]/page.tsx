@@ -1492,14 +1492,27 @@ export default function ToolWorkspacePage() {
 
     const list = Array.isArray(projectImages) ? projectImages : [];
 
-    const latestFloorPlan = list.find((item: any) => {
+    // BUILDSETU_EXACT_SOURCE_OF_TRUTH_GALLERY_PRIORITY_V1
+    const latestExactFloorPlan = list.find((item: any) => {
       const text = JSON.stringify(item || {}).toLowerCase();
       return (
-        text.includes("floor-plan-ai") ||
-        text.includes("floor_plan_2d") ||
-        text.includes("exact-floor-plan")
+        text.includes("exact_floor_plan_agent_v1") ||
+        text.includes("exact-floor-plan-agent") ||
+        text.includes("exact-floor-plan-source-of-truth") ||
+        text.includes("source_of_truth")
       );
     });
+
+    const latestFloorPlan =
+      latestExactFloorPlan ||
+      list.find((item: any) => {
+        const text = JSON.stringify(item || {}).toLowerCase();
+        return (
+          text.includes("floor-plan-ai") ||
+          text.includes("floor_plan_2d") ||
+          text.includes("exact-floor-plan")
+        );
+      });
 
     if (!latestFloorPlan) return;
 
@@ -2264,7 +2277,8 @@ export default function ToolWorkspacePage() {
         message: cleanText,
         prompt: cleanText,
         internalOnly: true,
-        saveAsset: false,
+        // BUILDSETU_EXACT_SOURCE_OF_TRUTH_SAVE_ASSET_V1
+        saveAsset: true,
       }),
     });
 
@@ -2323,12 +2337,44 @@ export default function ToolWorkspacePage() {
 
     const finalTitle = renderData.title || exactData.title || "Ground Floor Plan";
 
+    // BUILDSETU_EXACT_SOURCE_OF_TRUTH_MAIN_OUTPUT_V1
+    const exactTechnicalImageUrl =
+      exactData.imageUrl ||
+      exactData.asset?.imageUrl ||
+      exactData.asset?.publicUrl ||
+      "";
+
+    const exactTechnicalAsset = exactData.asset
+      ? {
+          ...exactData.asset,
+          role: "technical_source_of_truth",
+          provider: "buildsetu-exact",
+          generationMode: "exact-floor-plan-source-of-truth",
+          sourceOfTruth: true,
+          sourceOfTruthCandidate: true,
+          previewRole: "main_technical_plan",
+        }
+      : null;
+
+    const openAiPreviewAsset = renderData.asset
+      ? {
+          ...renderData.asset,
+          role: "beautified_openai_preview",
+          previewRole: "visual_preview_only",
+          sourceOfTruth: false,
+        }
+      : null;
+
+    const primaryImageUrl = exactTechnicalImageUrl || finalImageUrl;
+    const primaryAsset = exactTechnicalAsset || openAiPreviewAsset || renderData.asset || null;
+    const combinedAssets = [exactTechnicalAsset, openAiPreviewAsset].filter(Boolean);
+
     return {
       ok: true,
       success: true,
-      source: "tool_page_direct_exact_plan_plus_openai_render_v2",
-      provider: "openai",
-      generationMode: "openai-final-floor-plan",
+      source: "tool_page_exact_source_of_truth_plus_openai_preview_v1",
+      provider: "buildsetu-exact",
+      generationMode: "exact-floor-plan-source-of-truth",
       toolSlug: "floor-plan-ai",
       toolName: finalTitle,
       projectId: currentProjectId,
@@ -2336,19 +2382,22 @@ export default function ToolWorkspacePage() {
       outputTitle: finalTitle,
       assetType: renderData.assetType || exactData.command || "ground_floor_plan",
       assetId: renderData.assetId || renderData.asset?.id || null,
-      imageUrl: finalImageUrl,
-      url: finalImageUrl,
-      publicUrl: finalImageUrl,
-      asset: renderData.asset || null,
-      assets: renderData.asset ? [renderData.asset] : [],
-      outputs: renderData.asset ? [renderData.asset] : [],
+      imageUrl: primaryImageUrl,
+      url: primaryImageUrl,
+      publicUrl: primaryImageUrl,
+      exactTechnicalImageUrl,
+      openAiPreviewImageUrl: finalImageUrl,
+      asset: primaryAsset,
+      assets: combinedAssets.length ? combinedAssets : primaryAsset ? [primaryAsset] : [],
+      outputs: combinedAssets.length ? combinedAssets : primaryAsset ? [primaryAsset] : [],
+      openAiPreviewAsset,
       planningJson: renderData.planningJson || exactData.planningJson || exactData.asset?.planningJson || null,
       validationReport: renderData.validationReport || exactData.validationReport || exactData.asset?.validationReport || null,
       scoreReport: renderData.scoreReport || exactData.scoreReport || exactData.asset?.scoreReport || null,
       planning: exactData,
       render: renderData,
-      reply: `${finalTitle} ready hai. Planning agent ne layout lock kiya aur final image ChatGPT/OpenAI se generate hui hai.`,
-      message: `${finalTitle} ready hai. Planning agent ne layout lock kiya aur final image ChatGPT/OpenAI se generate hui hai.`,
+      reply: `${finalTitle} ready hai. Exact technical plan source-of-truth hai; OpenAI image beautified preview ke रूप me saved hai.`,
+      message: `${finalTitle} ready hai. Exact technical plan source-of-truth hai; OpenAI image beautified preview ke रूप me saved hai.`,
     };
   }
 
