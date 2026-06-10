@@ -357,6 +357,13 @@ function renderSvg(plan: ExactPlan) {
   // BUILDSETU_PROFESSIONAL_EXACT_SVG_RENDERER_SAFE_V1
   const W = drawingWidthFt;
   const D = drawingDepthFt;
+  // BUILDSETU_RENDERER_ROAD_LABELS_57X49_SAFE_FIX_V1
+  const topRoadLabelText = is57x49EastNorthDrawing ? "NORTH SIDE ROAD - 57'" : String(W) + "' FRONT";
+  const rightRoadLabelText = is57x49EastNorthDrawing ? "EAST FRONT ROAD - 49'" : String(D) + "' DEPTH";
+  const subtitleLabelText = is57x49EastNorthDrawing
+    ? "49' x 57' East-North Corner Plot · Drawing: 57' North × 49' East"
+    : String(plan.plot.widthFt) + "' x " + String(plan.plot.depthFt) + "' · " + String(plan.plot.facing || "").toUpperCase() + " Facing";
+
 
   const scale = 15;
   const pad = 88;
