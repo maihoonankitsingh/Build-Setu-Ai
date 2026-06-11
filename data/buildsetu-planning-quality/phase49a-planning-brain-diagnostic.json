@@ -1,0 +1,159 @@
+{
+  "snapshotId": "buildsetu-phase49a-planning-brain-diagnostic",
+  "createdAt": "2026-06-11T07:28:54.214171+00:00",
+  "phase": "49A",
+  "status": "complete",
+  "repository": {
+    "branch": "main",
+    "head": "15cbde4",
+    "headMessage": "Record manual browser click test"
+  },
+  "runtimeSample": {
+    "httpParsed": true,
+    "ok": true,
+    "command": "ground_floor_plan",
+    "planningStatus": "ready",
+    "roomCount": 11,
+    "roomNames": [
+      "Puja 5x6",
+      "Living Room 25x17",
+      "Car + Bike Parking 15x18",
+      "Dining 18x11",
+      "Entry Lobby 15x8",
+      "Private Passage 22x4",
+      "Staircase 9x14",
+      "Kitchen 11x10",
+      "Wash / Store 11x7",
+      "Bedroom 13x14",
+      "Bathroom 8x8"
+    ],
+    "scoreReportStatus": "pass",
+    "scoreReportTotal": 77,
+    "hardGeometryStatus": "pass",
+    "hardGeometryTotal": 100,
+    "planningSkillSummaryStatus": "review",
+    "planningSkillSummaryTotal": 88,
+    "finalExactAgentGateStatus": "pass",
+    "professionalReady": true,
+    "imageUrl": "/api/ai/generated-image?file=generated%2Fai-images%2Fphase-49a-planning-brain-diagnostic%2Fexact-floor-plan-agent%2F1781162933772-ground-floor-plan.svg",
+    "planJsonUrl": "/api/ai/generated-image?file=generated%2Fai-images%2Fphase-49a-planning-brain-diagnostic%2Fexact-floor-plan-agent%2F1781162933772-ground-floor-plan.json",
+    "badRooms": [],
+    "planningWeaknessHypothesis": [
+      "Current route likely uses fixed/locked room rectangles instead of true multi-candidate architectural search.",
+      "Gate validates pass/fail but may not force iterative correction for visual quality and room arrangement.",
+      "Fallback SVG renderer needs label-fit and no-overlap checks.",
+      "Planning should separate plan synthesis from rendering; renderer must never decide layout."
+    ]
+  },
+  "sourceMap": {
+    "plan_builders": {
+      "hitCount": 213,
+      "spans": [
+        [
+          1,
+          419
+        ],
+        [
+          493,
+          897
+        ]
+      ]
+    },
+    "room_rectangles": {
+      "hitCount": 154,
+      "spans": [
+        [
+          1,
+          728
+        ]
+      ]
+    },
+    "score_gate": {
+      "hitCount": 28,
+      "spans": [
+        [
+          603,
+          947
+        ],
+        [
+          1142,
+          1207
+        ]
+      ]
+    },
+    "candidate_logic": {
+      "hitCount": 7,
+      "spans": [
+        [
+          164,
+          311
+        ],
+        [
+          665,
+          751
+        ],
+        [
+          801,
+          876
+        ]
+      ]
+    },
+    "render_svg": {
+      "hitCount": 68,
+      "spans": [
+        [
+          21,
+          292
+        ],
+        [
+          315,
+          645
+        ],
+        [
+          902,
+          995
+        ],
+        [
+          1002,
+          1207
+        ]
+      ]
+    }
+  },
+  "finding": {
+    "workflowReady": true,
+    "uiActionsReady": true,
+    "planningQualityNeedsUpgrade": true,
+    "mainProblem": "Agent validates generated layouts but does not yet behave like a true planning brain with multi-candidate generation, iterative correction and visual label-fit validation.",
+    "notMainProblem": "This is not primarily a UI actions problem."
+  },
+  "nextDesign": {
+    "phase": "49B",
+    "goal": "Add real planning brain v1 before rendering.",
+    "requiredPlannerStages": [
+      "Normalize plot orientation and drawing convention.",
+      "Extract room program from user prompt and project data.",
+      "Generate at least 3 candidate layouts instead of one fixed layout.",
+      "Score each candidate using hard geometry, room adjacency, circulation, compactness, parking entry, stair core, wet plumbing, ventilation and professional output checks.",
+      "Reject candidates with overlap, boundary errors, disconnected circulation or unreadable room labels.",
+      "Auto-revise best candidate until score threshold is met.",
+      "Render only after best candidate passes planning gate.",
+      "Add SVG label-fit rules so labels never overlap or clip."
+    ],
+    "implementationTargets": [
+      "app/api/floor-plan/exact-agent/route.ts",
+      "lib/planning/skills/buildsetu-layout-candidate-generator-skill.ts",
+      "lib/planning/skills/buildsetu-circulation-graph-skill.ts",
+      "lib/planning/skills/buildsetu-professional-output-contract-skill.ts"
+    ],
+    "minimumAcceptance": {
+      "candidateCount": ">=3",
+      "finalScore": ">=85",
+      "hardGeometry": "pass",
+      "finalExactAgentGate": "pass",
+      "visualLabelOverlap": "0",
+      "roomOverlap": "0",
+      "allRoomsInsidePlot": true
+    }
+  }
+}
