@@ -1,0 +1,176 @@
+{
+  "snapshotId": "buildsetu-phase47-final-closeout",
+  "createdAt": "2026-06-11T06:23:54.605122+00:00",
+  "phase": "47Z-C",
+  "status": "complete",
+  "repository": {
+    "branch": "main",
+    "head": "f7f5ada",
+    "headMessage": "Expose exact agent final gate in tool runner response",
+    "pushedToOrigin": true
+  },
+  "production": {
+    "publicRoot": "https://build.sikhadenge.in/",
+    "toolPage": "https://build.sikhadenge.in/tools/floor-plan-ai",
+    "exactAgentEndpoint": "https://build.sikhadenge.in/api/floor-plan/exact-agent",
+    "toolRunnerEndpoint": "https://build.sikhadenge.in/api/tool-chat/run",
+    "pm2Process": "sikhadenge-build"
+  },
+  "finalVerifiedToolRunnerGate": {
+    "okTopLevel": true,
+    "successTopLevel": true,
+    "source": "hard_exact_plan_plus_openai_render_v2",
+    "toolSlug": "floor-plan-ai",
+    "projectId": "phase-47zb-tool-runner-final-gate-exposure",
+    "responseCommand": "ground_floor_plan",
+    "responseAssetType": "ground_floor_plan",
+    "planSource": "exact_floor_plan_agent_v1",
+    "planCommand": "ground_floor_plan",
+    "planRoomCount": 11,
+    "scoreReportStatus": "pass",
+    "finalExactAgentGateStatus": "pass",
+    "finalExactAgentProfessionalReady": true,
+    "finalExactAgentRequiredSkillCount": 12,
+    "ok": true
+  },
+  "projectAssetVerification": {
+    "itemCount": 1,
+    "toolImageFound": true,
+    "groundFloorAssetFound": true,
+    "ok": true
+  },
+  "requiredSkills": [
+    "buildsetu.layout-candidate-generator.v1",
+    "buildsetu.wall-topology.v1",
+    "buildsetu.building-envelope.v1",
+    "buildsetu.door-topology.v1",
+    "buildsetu.window-ventilation.v1",
+    "buildsetu.wet-plumbing.v1",
+    "buildsetu.stair-core.v1",
+    "buildsetu.parking-entry.v1",
+    "buildsetu.professional-output-contract.v1",
+    "buildsetu.compactness.v1",
+    "buildsetu.polygon-geometry.v1",
+    "buildsetu.circulation-graph.v2"
+  ],
+  "completedPhases": [
+    {
+      "phase": "47I",
+      "name": "Layout candidate generator planning skill",
+      "status": "complete"
+    },
+    {
+      "phase": "47J",
+      "name": "Wall topology planning skill",
+      "status": "complete"
+    },
+    {
+      "phase": "47K",
+      "name": "Building envelope planning skill",
+      "status": "complete"
+    },
+    {
+      "phase": "47L",
+      "name": "Door topology planning skill",
+      "status": "complete"
+    },
+    {
+      "phase": "47M",
+      "name": "Window ventilation planning skill",
+      "status": "complete"
+    },
+    {
+      "phase": "47N",
+      "name": "Wet plumbing planning skill",
+      "status": "complete"
+    },
+    {
+      "phase": "47O",
+      "name": "Stair core planning skill",
+      "status": "complete"
+    },
+    {
+      "phase": "47P",
+      "name": "Parking entry planning skill",
+      "status": "complete"
+    },
+    {
+      "phase": "47Q",
+      "name": "Professional output contract planning skill",
+      "status": "complete"
+    },
+    {
+      "phase": "47R",
+      "name": "Final exact-agent consolidated gate",
+      "status": "complete"
+    },
+    {
+      "phase": "47S",
+      "name": "Regression matrix and ground command guard",
+      "status": "complete"
+    },
+    {
+      "phase": "47T",
+      "name": "Final production verification and push",
+      "status": "complete"
+    },
+    {
+      "phase": "47U",
+      "name": "Public production POST and generated asset verify",
+      "status": "complete"
+    },
+    {
+      "phase": "47V",
+      "name": "User-facing UI/tool integration audit",
+      "status": "complete"
+    },
+    {
+      "phase": "47W",
+      "name": "Production handover snapshot",
+      "status": "complete"
+    },
+    {
+      "phase": "47Y",
+      "name": "Authenticated tool-runner workflow verify",
+      "status": "complete"
+    },
+    {
+      "phase": "47Z-A",
+      "name": "Authenticated workflow snapshot",
+      "status": "complete"
+    },
+    {
+      "phase": "47Z-B",
+      "name": "Expose final exact-agent gate in tool-runner response",
+      "status": "complete"
+    },
+    {
+      "phase": "47Z-C",
+      "name": "Final closeout snapshot",
+      "status": "complete"
+    }
+  ],
+  "reportDirs": {
+    "47T": "/tmp/buildsetu_phase47t_final_production_verify_push_20260611_095605",
+    "47U": "/tmp/buildsetu_phase47u_public_post_asset_verify_20260611_100324",
+    "47V": "/tmp/buildsetu_phase47v_user_facing_ui_tool_integration_audit_20260611_103849",
+    "47W": "/tmp/buildsetu_phase47w_final_production_handover_snapshot_20260611_105453",
+    "47Y2": "/tmp/buildsetu_phase47y2_robust_tool_runner_parser_resume_20260611_112131",
+    "47ZA": "/tmp/buildsetu_phase47za_record_auth_tool_runner_snapshot_20260611_112447",
+    "47ZB": "/tmp/buildsetu_phase47zb_fix_diffcheck_resume_20260611_114800"
+  },
+  "finalDecision": {
+    "exactAgentProductionReady": true,
+    "publicPostVerified": true,
+    "uiToolWorkflowVerified": true,
+    "authenticatedToolRunnerVerified": true,
+    "toolRunnerFinalGateExposed": true,
+    "projectAssetPersistenceVerified": true,
+    "functionalPatchRequired": false
+  },
+  "nextRecommendedWork": [
+    "Start a new major phase for real customer UX polish: loading states, error cards, saved project history UI, and download/share actions.",
+    "Run manual browser test using /tools/floor-plan-ai and /workspace/project/[projectId].",
+    "Optionally add a permanent scripted authenticated smoke command with cookie loaded from a local-only env file."
+  ]
+}
