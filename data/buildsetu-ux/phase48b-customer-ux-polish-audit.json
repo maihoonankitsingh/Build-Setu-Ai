@@ -1,0 +1,80 @@
+{
+  "snapshotId": "buildsetu-phase48b-customer-ux-polish-audit",
+  "createdAt": "2026-06-11T06:38:41.154872+00:00",
+  "phase": "48B",
+  "status": "complete",
+  "repository": {
+    "branch": "main",
+    "head": "6ab462a",
+    "headMessage": "Add BuildSetu planning skills catalog"
+  },
+  "auditSignals": {
+    "loadingSignals": 461,
+    "errorSignals": 153,
+    "downloadSignals": 177,
+    "shareSignals": 13296,
+    "copySignals": 33,
+    "historySignals": 58,
+    "assetSignals": 13613,
+    "finalGateSignals": 366
+  },
+  "findings": [
+    "Loading/pending UI signals exist in source.",
+    "Error/toast/alert signals exist in source.",
+    "Download-related source signals exist.",
+    "Share-related source signals exist.",
+    "Project history/assets endpoints and references are present.",
+    "Final exact-agent gate/scoreReport signals are present."
+  ],
+  "recommendations": [
+    "Proceed to implementation phase 48C with UX polish tasks."
+  ],
+  "coreNextTasks": [
+    "Add generation progress/loading state to /tools/floor-plan-ai.",
+    "Add customer-readable error card with retry.",
+    "Add download generated image button.",
+    "Add copy/share generated asset link button.",
+    "Show saved asset/history panel after successful generation.",
+    "Show scoreReport/finalExactAgentGate pass badge in result UI.",
+    "Manual browser smoke: generate plan, confirm image, download, share/copy, project history visibility."
+  ],
+  "routesChecked": [
+    "https://build.sikhadenge.in/",
+    "https://build.sikhadenge.in/tools/floor-plan-ai",
+    "https://build.sikhadenge.in/workspace",
+    "http://127.0.0.1:3016/tools/floor-plan-ai",
+    "http://127.0.0.1:3016/workspace"
+  ],
+  "customerUxApiRoutes": [
+    "app/api/ai/generated-image/route.ts",
+    "app/api/floor-plan/architect-agent/route.ts",
+    "app/api/floor-plan/exact-agent/route.ts",
+    "app/api/floor-plan/exact-professional/route.ts",
+    "app/api/floor-plan/plan/route.ts",
+    "app/api/floor-plan/presentation/status/route.ts",
+    "app/api/floor-plan/professional-openai/route.ts",
+    "app/api/project-assets/images/route.ts",
+    "app/api/project-assets/upload/route.ts",
+    "app/api/project-chat/history/route.ts",
+    "app/api/project-chat/send/route.ts",
+    "app/api/project-gallery/list/route.ts",
+    "app/api/project-workspace/summary/route.ts",
+    "app/api/projects/archive/route.ts",
+    "app/api/projects/create/route.ts",
+    "app/api/projects/delete/route.ts",
+    "app/api/projects/list/route.ts",
+    "app/api/projects/update/route.ts",
+    "app/api/settings/workspace/route.ts",
+    "app/api/tool-chat/domain-answer-local/debug/route.ts",
+    "app/api/tool-chat/domain-answer-local/route.ts",
+    "app/api/tool-chat/history/route.ts",
+    "app/api/tool-chat/run/route.ts"
+  ],
+  "reportDir": "/tmp/buildsetu_phase48b_customer_ux_polish_audit_20260611_120806",
+  "build": "pass",
+  "decision": {
+    "codePatchApplied": false,
+    "readyFor48CImplementation": true,
+    "functionalRegressionObserved": false
+  }
+}
