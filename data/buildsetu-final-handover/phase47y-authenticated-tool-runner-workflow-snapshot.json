@@ -1,0 +1,67 @@
+{
+  "snapshotId": "buildsetu-phase47y-authenticated-tool-runner-workflow-smoke",
+  "createdAt": "2026-06-11T05:54:48.527064+00:00",
+  "phase": "47Z-A",
+  "recordsPhase": "47Y-2",
+  "status": "complete",
+  "repository": {
+    "branch": "main",
+    "head": "bc2fddc",
+    "headMessage": "Record phase 47 production handover"
+  },
+  "workflow": {
+    "endpoint": "/api/tool-chat/run",
+    "auth": "browser session cookie used in terminal; cookie not stored",
+    "toolSlug": "floor-plan-ai",
+    "projectId": "phase-47y-auth-tool-runner-verify",
+    "generationMode": "openai-final-floor-plan",
+    "source": "hard_exact_plan_plus_openai_render_v2",
+    "provider": "openai"
+  },
+  "directExactAgentBaseline": {
+    "ok": true,
+    "command": "ground_floor_plan",
+    "assetType": "ground_floor_plan",
+    "scoreReportStatus": "pass",
+    "finalExactAgentGateStatus": "pass",
+    "professionalReady": true,
+    "roomCount": 11,
+    "imageUrl": "/api/ai/generated-image?file=generated%2Fai-images%2Fphase-47y-auth-tool-runner-verify%2Fexact-floor-plan-agent%2F1781156979791-ground-floor-plan.svg",
+    "planJsonUrl": "/api/ai/generated-image?file=generated%2Fai-images%2Fphase-47y-auth-tool-runner-verify%2Fexact-floor-plan-agent%2F1781156979791-ground-floor-plan.json"
+  },
+  "authenticatedToolRunner": {
+    "ok": true,
+    "okTopLevel": true,
+    "successTopLevel": true,
+    "responseCommand": "ground_floor_plan",
+    "responseAssetType": "ground_floor_plan",
+    "planSource": "exact_floor_plan_agent_v1",
+    "planCommand": "ground_floor_plan",
+    "planRoomCount": 11,
+    "assetId": "asset_1781156983064_floor_plan_fallback",
+    "imageUrl": "/api/ai/generated-image?file=generated%2Fai-images%2Fphase-47y-auth-tool-runner-verify%2Ffloor-plan-fallback%2F1781156983063-ground-floor-plan-ground-floor-plan-fallback.svg",
+    "planJsonUrl": null,
+    "strictFinalGateExposed": false,
+    "needsPatch": false,
+    "note": "Tool-runner workflow passed, but finalExactAgentGate is not exposed in top-level tool-chat response; direct exact-agent gate remains source of truth."
+  },
+  "projectAssets": {
+    "ok": true,
+    "itemCount": 3,
+    "toolImageFound": true,
+    "exactAgentAssetFound": true,
+    "groundFloorAssetFound": true
+  },
+  "finalDecision": {
+    "directExactAgentOk": true,
+    "authenticatedToolRunnerOk": true,
+    "projectAssetsOk": true,
+    "toolRunnerNeedsPatch": false,
+    "functionalPatchRequired": false,
+    "optionalImprovement": "Expose finalExactAgentGate in top-level /api/tool-chat/run response for easier future automated checks."
+  },
+  "reportDirs": {
+    "47Y2": "/tmp/buildsetu_phase47y2_robust_tool_runner_parser_resume_20260611_112131",
+    "47ZA": "/tmp/buildsetu_phase47za_record_auth_tool_runner_snapshot_20260611_112447"
+  }
+}
