@@ -1,4 +1,4 @@
-// BUILDSETU_SKILL_REGISTRY_V5
+// BUILDSETU_SKILL_REGISTRY_V6
 
 import type {
   BuildSetuPlanningContext,
@@ -8,6 +8,7 @@ import type {
 import { buildSetuPlanningRagSkill } from "./buildsetu-planning-rag-skill";
 import { buildSetuGeometrySkill } from "./buildsetu-geometry-skill";
 import { buildSetuPolygonGeometrySkill } from "./buildsetu-polygon-geometry-skill";
+import { buildSetuWallTopologySkill } from "./buildsetu-wall-topology-skill";
 import { buildSetuRoomProgramSkill } from "./buildsetu-room-program-skill";
 import { buildSetuLayoutCandidateGeneratorSkill } from "./buildsetu-layout-candidate-generator-skill";
 import { buildSetuHumanFlowSkill } from "./buildsetu-human-flow-skill";
@@ -20,6 +21,7 @@ export const buildSetuPlanningSkills: BuildSetuPlanningSkill[] = [
   buildSetuPlanningRagSkill,
   buildSetuGeometrySkill,
   buildSetuPolygonGeometrySkill,
+  buildSetuWallTopologySkill,
   buildSetuRoomProgramSkill,
   buildSetuLayoutCandidateGeneratorSkill,
   buildSetuHumanFlowSkill,

@@ -29,7 +29,7 @@ function addStrictPair(
   a: BuildSetuPlanningRoom | null,
   b: BuildSetuPlanningRoom | null,
 ) {
-  const ok = nearStrict(a, b);
+  const ok = nearStrictOrSharedEdge(a, b);
 
   checks.push({
     id,
@@ -40,6 +40,85 @@ function addStrictPair(
       : `${label(a)} is not compactly connected with ${label(b)}. This creates floating-box planning.`,
     severity: ok ? "info" : "blocker",
   });
+}
+
+
+
+// BUILDSETU_COMPACTNESS_SHARED_EDGE_AWARE_V1
+// Real architecture rule: a real shared wall is stronger than distance-only near checks.
+function bsuCompactnessNumberOrNull(value: unknown): number | null {
+  const n = Number(value);
+  return Number.isFinite(n) ? n : null;
+}
+
+function bsuCompactnessPickNumber(values: unknown[]): number | null {
+  for (const value of values) {
+    const n = bsuCompactnessNumberOrNull(value);
+    if (n !== null) return n;
+  }
+  return null;
+}
+
+function bsuCompactnessRoomRect(room: unknown): { x: number; y: number; width: number; height: number } | null {
+  const r = (room ?? {}) as any;
+  const b = (r.bounds ?? r.rect ?? r.box ?? r.frame ?? {}) as any;
+  const position = (r.position ?? r.origin ?? {}) as any;
+  const size = (r.size ?? {}) as any;
+
+  const x = bsuCompactnessPickNumber([r.x, r.left, r.minX, b.x, b.left, b.minX, position.x]);
+  const y = bsuCompactnessPickNumber([r.y, r.top, r.minY, b.y, b.top, b.minY, position.y]);
+
+  const right = bsuCompactnessPickNumber([r.right, r.maxX, b.right, b.maxX]);
+  const bottom = bsuCompactnessPickNumber([r.bottom, r.maxY, b.bottom, b.maxY]);
+
+  let width = bsuCompactnessPickNumber([r.width, r.w, b.width, b.w, size.width, size.w]);
+  let height = bsuCompactnessPickNumber([r.height, r.h, b.height, b.h, size.height, size.h]);
+
+  if (x !== null && right !== null && width === null) width = right - x;
+  if (y !== null && bottom !== null && height === null) height = bottom - y;
+
+  if (x === null || y === null || width === null || height === null) return null;
+  if (width <= 0 || height <= 0) return null;
+
+  return { x, y, width, height };
+}
+
+function bsuCompactnessSharedEdgeOverlapFt(roomA: unknown, roomB: unknown): number {
+  const a = bsuCompactnessRoomRect(roomA);
+  const b = bsuCompactnessRoomRect(roomB);
+  if (!a || !b) return 0;
+
+  const eps = 0.001;
+  const aRight = a.x + a.width;
+  const bRight = b.x + b.width;
+  const aBottom = a.y + a.height;
+  const bBottom = b.y + b.height;
+
+  const verticalTouch =
+    Math.abs(aRight - b.x) <= eps ||
+    Math.abs(bRight - a.x) <= eps;
+
+  if (verticalTouch) {
+    return Math.max(0, Math.min(aBottom, bBottom) - Math.max(a.y, b.y));
+  }
+
+  const horizontalTouch =
+    Math.abs(aBottom - b.y) <= eps ||
+    Math.abs(bBottom - a.y) <= eps;
+
+  if (horizontalTouch) {
+    return Math.max(0, Math.min(aRight, bRight) - Math.max(a.x, b.x));
+  }
+
+  return 0;
+}
+
+function bsuCompactnessRoomsShareRealEdge(roomA: unknown, roomB: unknown, minOverlapFt = 2): boolean {
+  return bsuCompactnessSharedEdgeOverlapFt(roomA, roomB) >= minOverlapFt;
+}
+
+function nearStrictOrSharedEdge(roomA: unknown, roomB: unknown, distanceFt = 2, minOverlapFt = 2): boolean {
+  return nearStrict(roomA as any, roomB as any) || bsuCompactnessRoomsShareRealEdge(roomA, roomB, minOverlapFt);
 }
 
 export const buildSetuCompactnessSkill: BuildSetuPlanningSkill = {
@@ -76,7 +155,7 @@ export const buildSetuCompactnessSkill: BuildSetuPlanningSkill = {
     addStrictPair(checks, "compact-puja-living", "Puja should not float away from public zone", puja, living);
 
     const isolatedRooms = rooms.filter((room) => {
-      const neighbours = rooms.filter((other) => other !== room && nearStrict(room, other));
+      const neighbours = rooms.filter((other) => other !== room && nearStrictOrSharedEdge(room, other));
       return neighbours.length === 0;
     });
 
