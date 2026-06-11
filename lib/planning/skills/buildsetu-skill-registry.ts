@@ -18,12 +18,14 @@ import { buildSetuCirculationGraphSkill } from "./buildsetu-circulation-graph-sk
 import { buildSetuVastuPreferenceSkill } from "./buildsetu-vastu-preference-skill";
 import { buildSetuVentilationSkill } from "./buildsetu-ventilation-skill";
 
+import { buildSetuDoorTopologySkill } from "./buildsetu-door-topology-skill";
 export const buildSetuPlanningSkills: BuildSetuPlanningSkill[] = [
   buildSetuPlanningRagSkill,
   buildSetuGeometrySkill,
   buildSetuPolygonGeometrySkill,
   buildSetuWallTopologySkill,
   buildSetuBuildingEnvelopeSkill,
+  buildSetuDoorTopologySkill,
   buildSetuRoomProgramSkill,
   buildSetuLayoutCandidateGeneratorSkill,
   buildSetuHumanFlowSkill,
