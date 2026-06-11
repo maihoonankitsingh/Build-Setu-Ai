@@ -19,6 +19,7 @@ import { buildSetuVastuPreferenceSkill } from "./buildsetu-vastu-preference-skil
 import { buildSetuVentilationSkill } from "./buildsetu-ventilation-skill";
 
 import { buildSetuDoorTopologySkill } from "./buildsetu-door-topology-skill";
+import { buildSetuWindowVentilationSkill } from "./buildsetu-window-ventilation-skill";
 export const buildSetuPlanningSkills: BuildSetuPlanningSkill[] = [
   buildSetuPlanningRagSkill,
   buildSetuGeometrySkill,
@@ -26,6 +27,7 @@ export const buildSetuPlanningSkills: BuildSetuPlanningSkill[] = [
   buildSetuWallTopologySkill,
   buildSetuBuildingEnvelopeSkill,
   buildSetuDoorTopologySkill,
+  buildSetuWindowVentilationSkill,
   buildSetuRoomProgramSkill,
   buildSetuLayoutCandidateGeneratorSkill,
   buildSetuHumanFlowSkill,

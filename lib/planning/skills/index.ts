@@ -16,3 +16,4 @@ export * from "./buildsetu-planning-rag-skill";
 export * from "./buildsetu-skill-registry";
 export * from "./buildsetu-building-envelope-skill";
 export * from "./buildsetu-door-topology-skill";
+export * from "./buildsetu-window-ventilation-skill";
