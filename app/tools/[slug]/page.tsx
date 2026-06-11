@@ -967,6 +967,68 @@ function safePreviewImageSrc(value: any): string {
   return normalizePreviewImageUrl(value);
 }
 
+// BUILDSETU_CUSTOMER_RESULT_ACTIONS_HELPERS_V1
+function getBuildSetuCustomerOutputUrl(output: any): string {
+  return normalizePreviewImageUrl(
+    output?.imageUrl ||
+      output?.publicUrl ||
+      output?.url ||
+      output?.asset?.imageUrl ||
+      output?.asset?.publicUrl ||
+      output?.asset?.url ||
+      (Array.isArray(output?.images) ? output.images[0] : "")
+  );
+}
+
+function getBuildSetuCustomerPlanJsonUrl(output: any): string {
+  return normalizePreviewImageUrl(
+    output?.planJsonUrl ||
+      output?.asset?.planJsonUrl ||
+      output?.planning?.planJsonUrl ||
+      output?.planning?.asset?.planJsonUrl ||
+      output?.render?.planJsonUrl ||
+      ""
+  );
+}
+
+function getBuildSetuCustomerGateInfo(output: any) {
+  const score =
+    output?.scoreReport ||
+    output?.asset?.scoreReport ||
+    output?.planning?.scoreReport ||
+    output?.planning?.asset?.scoreReport ||
+    output?.planningJson?.scoreReport ||
+    null;
+
+  const gate =
+    output?.finalExactAgentGate ||
+    output?.asset?.finalExactAgentGate ||
+    score?.finalExactAgentGate ||
+    null;
+
+  const status = String(gate?.status || score?.status || "").toLowerCase();
+  const professionalReady = gate?.professionalReady === true;
+  const requiredSkillCount = gate?.requiredSkillCount ?? null;
+
+  return {
+    score,
+    gate,
+    status: status || "review",
+    professionalReady,
+    requiredSkillCount,
+    scoreTotal: score?.total ?? null,
+    scoreMax: score?.max ?? 100,
+    hasAny: Boolean(score || gate),
+  };
+}
+
+function getBuildSetuCustomerGateBadgeClass(gateInfo: any): string {
+  if (gateInfo?.status === "pass" && gateInfo?.professionalReady) return "border-emerald-200 bg-emerald-50 text-emerald-700";
+  if (gateInfo?.status === "pass") return "border-emerald-200 bg-white text-emerald-700";
+  if (gateInfo?.status === "fail") return "border-red-200 bg-red-50 text-red-700";
+  return "border-amber-200 bg-amber-50 text-amber-700";
+}
+
 // BUILDSETU_SAFE_PREVIEW_IMAGE_SRC
 function withValidPreviewImages(output: any) {
   if (!output || typeof output !== "object") return output;
@@ -1702,6 +1764,8 @@ export default function ToolWorkspacePage() {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
   const [output, setOutput] = useState<any>(null);
+  // BUILDSETU_CUSTOMER_RESULT_ACTIONS_STATE_V1
+  const [copiedOutputLink, setCopiedOutputLink] = useState("");
   const [projectImages, setProjectImages] = useState<ProjectImageAsset[]>([]);
   // BUILDSETU_EXACT_SVG_GALLERY_PRIORITY_V1
   const buildSetuProjectImagesForDisplay =
@@ -4027,14 +4091,108 @@ export default function ToolWorkspacePage() {
                 <div className="flex h-full min-h-[280px] items-center justify-center rounded-[24px] border border-dashed border-[#d9c7ff] bg-[#fbf8ff]">
                   <div className="px-5 text-center">
                     <Sparkles className="mx-auto h-9 w-9 text-[#7c3aed]" />
-                    <h3 className="mt-4 text-lg font-black tracking-[-0.05em] text-[#12072f]">Output yahan aayega</h3>
-                    <p className="mx-auto mt-2 max-w-[250px] text-sm leading-6 text-[#67567f]">
-                      Project memory aur chat input se tool-specific result generate hoga.
+                    {/* BUILDSETU_CUSTOMER_GENERATING_WAITING_STATE_V1 */}
+                    <h3 className="mt-4 text-lg font-black tracking-[-0.05em] text-[#12072f]">
+                      {busy === "execute" ? "Output generate ho raha hai" : "Output yahan aayega"}
+                    </h3>
+                    <p className="mx-auto mt-2 max-w-[270px] text-sm leading-6 text-[#67567f]">
+                      {busy === "execute" ? "Exact planning, final image, saved asset aur quality gate verify ho rahe hain." : "Project memory aur chat input se tool-specific result generate hoga."}
                     </p>
+                    {busy === "execute" ? (
+                      <div className="mx-auto mt-4 max-w-[260px] rounded-2xl border border-[#eadfff] bg-white p-3 text-left shadow-sm">
+                        <div className="flex items-center justify-between text-[10px] font-black uppercase tracking-[0.16em] text-[#7c3aed]">
+                          <span>Generating</span>
+                          <span>Live</span>
+                        </div>
+                        <div className="mt-2 h-2 overflow-hidden rounded-full bg-[#efe7fb]">
+                          <div className="h-full w-2/3 rounded-full bg-gradient-to-r from-[#7c3aed] to-[#2563eb]" />
+                        </div>
+                        <p className="mt-2 text-[11px] font-semibold leading-4 text-[#67567f]">
+                          Page ko close mat karo. Result ready hote hi yahin preview, download aur copy actions dikhेंगे.
+                        </p>
+                      </div>
+                    ) : null}
                   </div>
                 </div>
               ) : (
                 <div className="space-y-3">
+                  {/* BUILDSETU_CUSTOMER_OUTPUT_ACTION_ROW_V1 */}
+                  {(() => {
+                    const actionUrl = getBuildSetuCustomerOutputUrl(output);
+                    const planJsonUrl = getBuildSetuCustomerPlanJsonUrl(output);
+                    const gateInfo = getBuildSetuCustomerGateInfo(output);
+                    const absoluteActionUrl =
+                      actionUrl && typeof window !== "undefined"
+                        ? new URL(actionUrl, window.location.origin).toString()
+                        : actionUrl;
+                    const copied = Boolean(absoluteActionUrl && copiedOutputLink === absoluteActionUrl);
+
+                    return (
+                      <div className="rounded-[20px] border border-[#eadfff] bg-[linear-gradient(180deg,#ffffff,#fbf8ff)] p-3 shadow-[0_10px_24px_rgba(72,30,130,0.07)]">
+                        <div className="flex flex-wrap items-start justify-between gap-2">
+                          <div className="min-w-0">
+                            <p className="text-[10px] font-black uppercase tracking-[0.22em] text-[#7c3aed]">Customer Actions</p>
+                            <h3 className="mt-1 text-[15px] font-black tracking-[-0.04em] text-[#12072f]">Output ready for review</h3>
+                            <p className="mt-1 text-[11px] font-semibold leading-4 text-[#67567f]">
+                              Download, open, or copy the generated result link. Technical source-of-truth remains the exact SVG when available.
+                            </p>
+                          </div>
+                          {gateInfo.hasAny ? (
+                            <span className={`shrink-0 rounded-full border px-2.5 py-1 text-[9px] font-black uppercase ${getBuildSetuCustomerGateBadgeClass(gateInfo)}`}>
+                              {gateInfo.status === "pass" && gateInfo.professionalReady ? "Final Gate Pass" : gateInfo.status === "pass" ? "Score Pass" : gateInfo.status || "Review"}
+                            </span>
+                          ) : null}
+                        </div>
+
+                        {gateInfo.hasAny ? (
+                          <div className="mt-3 grid grid-cols-3 gap-2 text-center">
+                            <div className="rounded-2xl border border-[#eadfff] bg-white px-2 py-2">
+                              <p className="text-[8px] font-black uppercase tracking-[0.12em] text-[#8a76a6]">Score</p>
+                              <p className="mt-0.5 text-sm font-black text-[#12072f]">{String(gateInfo.scoreTotal ?? "-")}/{String(gateInfo.scoreMax ?? 100)}</p>
+                            </div>
+                            <div className="rounded-2xl border border-[#eadfff] bg-white px-2 py-2">
+                              <p className="text-[8px] font-black uppercase tracking-[0.12em] text-[#8a76a6]">Gate</p>
+                              <p className="mt-0.5 text-sm font-black text-[#12072f]">{gateInfo.status}</p>
+                            </div>
+                            <div className="rounded-2xl border border-[#eadfff] bg-white px-2 py-2">
+                              <p className="text-[8px] font-black uppercase tracking-[0.12em] text-[#8a76a6]">Skills</p>
+                              <p className="mt-0.5 text-sm font-black text-[#12072f]">{String(gateInfo.requiredSkillCount ?? "-")}</p>
+                            </div>
+                          </div>
+                        ) : null}
+
+                        <div className="mt-3 grid grid-cols-2 gap-2">
+                          {actionUrl ? (
+                            <a href={getDisplayImageUrl(actionUrl)} target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center rounded-2xl border border-[#ded1f4] bg-white px-3 py-2.5 text-xs font-black text-[#6d28d9] shadow-sm transition hover:bg-[#f8f3ff]">Open Output</a>
+                          ) : null}
+                          {actionUrl ? (
+                            <a href={getDisplayImageUrl(actionUrl)} download={`${tool.slug || "buildsetu"}-customer-output.png`} className="inline-flex items-center justify-center rounded-2xl bg-gradient-to-br from-[#7c3aed] to-[#2563eb] px-3 py-2.5 text-xs font-black text-white shadow-[0_10px_22px_rgba(37,99,235,0.20)] transition active:scale-95">Download Image</a>
+                          ) : null}
+                          {planJsonUrl ? (
+                            <a href={getDisplayImageUrl(planJsonUrl)} target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center rounded-2xl border border-[#ded1f4] bg-white px-3 py-2.5 text-xs font-black text-[#46325f] shadow-sm transition hover:bg-[#f8f3ff]">Open Plan JSON</a>
+                          ) : null}
+                          <button
+                            type="button"
+                            disabled={!absoluteActionUrl}
+                            onClick={async () => {
+                              if (!absoluteActionUrl) return;
+                              try {
+                                await navigator.clipboard?.writeText(absoluteActionUrl);
+                                setCopiedOutputLink(absoluteActionUrl);
+                                window.setTimeout(() => setCopiedOutputLink((current) => current === absoluteActionUrl ? "" : current), 2400);
+                              } catch {
+                                window.prompt("Copy output link", absoluteActionUrl);
+                              }
+                            }}
+                            className="inline-flex items-center justify-center rounded-2xl border border-[#ded1f4] bg-white px-3 py-2.5 text-xs font-black text-[#46325f] shadow-sm transition hover:bg-[#f8f3ff] disabled:cursor-not-allowed disabled:opacity-50"
+                          >
+                            {copied ? "Copied" : "Copy Link"}
+                          </button>
+                        </div>
+                      </div>
+                    );
+                  })()}
+
                   {Array.isArray(output.images) && output.images.length ? (
                     <div className="space-y-2">
                       <div className="grid grid-cols-2 gap-2">
