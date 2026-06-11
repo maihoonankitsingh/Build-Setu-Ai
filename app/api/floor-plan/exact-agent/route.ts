@@ -904,9 +904,123 @@ function buildExactAgentPlanningMetadata(plan: ExactPlan) {
 }
 
 
+
+// BUILDSETU_EXACT_AGENT_FORCE_GROUND_COMMAND_GUARD_V1
+function buildSetuShouldForceGroundFloorPlan(payload: any): boolean {
+  const command = String(payload?.command ?? "").toLowerCase();
+  const assetType = String(payload?.assetType ?? "").toLowerCase();
+  const expectedCommand = String(payload?.expectedCommand ?? "").toLowerCase();
+  const title = String(payload?.title ?? "").toLowerCase();
+  const prompt = String(payload?.prompt ?? "").toLowerCase();
+
+  return (
+    payload?.forceGroundFloorPlan === true ||
+    command === "ground_floor_plan" ||
+    assetType === "ground_floor_plan" ||
+    expectedCommand === "ground_floor_plan" ||
+    (
+      prompt.includes("ground floor") &&
+      !prompt.includes("door/window schedule") &&
+      !prompt.includes("door window schedule")
+    ) ||
+    title.includes("ground floor")
+  );
+}
+
+function buildSetuGroundFloorPlanGuardPrompt(prompt: unknown): string {
+  const originalPrompt = String(prompt ?? "");
+  const directive = [
+    "BUILDSETU_FORCE_GROUND_FLOOR_PLAN_GUARD_V1.",
+    "Return the exact ground_floor_plan command and ground_floor_plan assetType.",
+    "Use the active V6 shared-edge ground layout only.",
+    "Required rooms: puja, living, parking, dining, lobby, passage, stair, kitchen, wash/store, bedroom, bathroom.",
+    "Keep lobby and passage present.",
+    "Keep kitchen adjacent to wash/store.",
+    "Keep parking adjacent to lobby.",
+    "Keep passage adjacent to bedroom, bathroom and stair.",
+    "Do not return door_window_schedule, schedule-only response, first-floor response, or generic fallback layout."
+  ].join(" ");
+
+  return `${directive}\n\n${originalPrompt}`;
+}
+
+// BUILDSETU_EXACT_AGENT_GROUND_GUARD_DIMENSION_FLATTEN_V1
+function buildSetuFiniteNumber(value: unknown, fallback = 0): number {
+  const parsed = Number(value);
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : fallback;
+}
+
+function buildSetuGroundGuardDimensions(payload: any) {
+  const plot = payload?.plot || {};
+
+  const rawWidth = buildSetuFiniteNumber(
+    payload?.widthFt ?? payload?.plotWidthFt ?? plot?.widthFt ?? plot?.plotWidthFt ?? plot?.width,
+    0
+  );
+
+  const rawDepth = buildSetuFiniteNumber(
+    payload?.depthFt ?? payload?.plotDepthFt ?? plot?.depthFt ?? plot?.plotDepthFt ?? plot?.depth,
+    0
+  );
+
+  const rawFacing = String(payload?.facing ?? plot?.facing ?? "east-north").toLowerCase();
+
+  // The active exact-agent V6 ground layout is canonical 49x57 East/North.
+  // User payloads often provide plot as width=57, depth=49, while the route's
+  // V6 branch expects widthFt=49 and depthFt=57. Normalize that exact pair only.
+  const pair = [Math.round(rawWidth), Math.round(rawDepth)].sort((a, b) => a - b);
+  if (pair[0] === 49 && pair[1] === 57 && rawFacing.includes("east")) {
+    return {
+      widthFt: 49,
+      depthFt: 57,
+      facing: rawFacing || "east-north",
+    };
+  }
+
+  return {
+    widthFt: rawWidth || 49,
+    depthFt: rawDepth || 57,
+    facing: rawFacing || "east-north",
+  };
+}
+
+function buildSetuApplyGroundFloorPlanGuard<T extends Record<string, any>>(payload: T): T {
+  if (!buildSetuShouldForceGroundFloorPlan(payload)) return payload;
+
+  const groundDimensions = buildSetuGroundGuardDimensions(payload);
+
+  return {
+    ...payload,
+    widthFt: groundDimensions.widthFt,
+    depthFt: groundDimensions.depthFt,
+    facing: groundDimensions.facing,
+    command: "ground_floor_plan",
+    assetType: "ground_floor_plan",
+    expectedCommand: "ground_floor_plan",
+    forceGroundFloorPlan: true,
+    title: payload?.title || "Ground Floor Plan",
+    prompt: buildSetuGroundFloorPlanGuardPrompt(payload?.prompt),
+    requirements: {
+      ...(payload?.requirements || {}),
+      floors: 1,
+      bedrooms: 1,
+      bathrooms: 1,
+      parking: true,
+      puja: true,
+      kitchen: true,
+      dining: true,
+      stair: true,
+      washStore: true,
+      lobby: true,
+      passage: true,
+    },
+  };
+}
+
 export async function POST(req: NextRequest) {
   try {
-    const body = await req.json().catch(() => ({}));
+    const rawBody = await req.json().catch(() => ({}));
+    const body = buildSetuApplyGroundFloorPlanGuard(rawBody);
     // BUILDSETU_EXACT_AGENT_SAVEASSET_PERSISTENCE_V1
     const forceSaveAsset =
       body?.saveAsset === true ||
@@ -949,7 +1063,7 @@ export async function POST(req: NextRequest) {
     const facing = safe(body.facing || parsed.facing || lockedPlan.facing || "north").toLowerCase();
 
     const city = safe(body.city || body.localAuthority || lockedPlan.city || "");
-    const command = detectCommand(message);
+    const command = String(body.command || body.assetType || body.expectedCommand || "").toLowerCase() === "ground_floor_plan" ? "ground_floor_plan" : detectCommand(message);
     const title = titleForCommand(command);
 
     const missing: string[] = [];
