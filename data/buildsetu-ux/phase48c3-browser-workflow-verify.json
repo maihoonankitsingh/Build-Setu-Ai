@@ -1,0 +1,47 @@
+{
+  "snapshotId": "buildsetu-phase48c3-browser-workflow-verify",
+  "createdAt": "2026-06-11T07:17:36Z",
+  "phase": "48C-3",
+  "status": "complete",
+  "repository": {
+    "branch": "main",
+    "head": "2e722d3",
+    "headMessage": "Add customer result actions to floor plan tool"
+  },
+  "patchMarkers": {
+    "helpers": true,
+    "state": true,
+    "actionRow": true,
+    "waitingState": true,
+    "customerActions": true,
+    "openOutput": true,
+    "openPlanJson": true,
+    "copyLink": true,
+    "finalGatePass": true
+  },
+  "verification": {
+    "build": "pass",
+    "pm2Restart": "pass",
+    "httpOk": true,
+    "httpCodes": "200,200,200,200,200,200",
+    "authenticatedToolRunnerOk": true,
+    "scoreReportStatus": "pass",
+    "finalExactAgentGateStatus": "pass"
+  },
+  "customerUxReady": {
+    "resultActionsCard": true,
+    "downloadImage": true,
+    "openOutput": true,
+    "openPlanJson": true,
+    "copyLink": true,
+    "finalGateBadge": true,
+    "generatingState": true
+  },
+  "decision": {
+    "codePatchAppliedIn48C2": true,
+    "verifySnapshotOnlyIn48C3": true,
+    "readyForManualBrowserClickTest": true,
+    "functionalRegressionObserved": false
+  },
+  "reportDir": "/tmp/buildsetu_phase48c3_browser_workflow_verify_20260611_123844"
+}
