@@ -689,6 +689,68 @@ function buildExactAgentPlanningMetadata(plan: ExactPlan) {
   const planningSkillSummary = summarizeBuildSetuSkillReports(planningSkillReports);
 
 
+    // BUILDSETU_FINAL_EXACT_AGENT_GATE_CONSOLIDATION_V1
+    // Consolidates the full 47I-47Q professional readiness stack into one final exact-agent gate.
+    const finalExactAgentRequiredSkillIds = [
+      "buildsetu.layout-candidate-generator.v1",
+      "buildsetu.wall-topology.v1",
+      "buildsetu.building-envelope.v1",
+      "buildsetu.door-topology.v1",
+      "buildsetu.window-ventilation.v1",
+      "buildsetu.wet-plumbing.v1",
+      "buildsetu.stair-core.v1",
+      "buildsetu.parking-entry.v1",
+      "buildsetu.professional-output-contract.v1",
+      "buildsetu.compactness.v1",
+      "buildsetu.polygon-geometry.v1",
+      "buildsetu.circulation-graph.v2",
+    ];
+
+    const finalExactAgentRequiredSkillReports = finalExactAgentRequiredSkillIds.map((skillId) => {
+      const report = planningSkillReports.find((item: any) => item?.skillId === skillId);
+      return {
+        skillId,
+        status: report?.status ?? "missing",
+        total: Number(report?.total ?? 0),
+        blockers: report?.blockers ?? [],
+        warnings: report?.warnings ?? [],
+      };
+    });
+
+    const finalExactAgentMissingRequiredSkills = finalExactAgentRequiredSkillReports
+      .filter((item) => item.status === "missing")
+      .map((item) => item.skillId);
+
+    const finalExactAgentFailingRequiredSkills = finalExactAgentRequiredSkillReports
+      .filter((item) => item.status === "fail" || item.status === "missing")
+      .map((item) => item.skillId);
+
+    const finalExactAgentWarningRequiredSkills = finalExactAgentRequiredSkillReports
+      .filter((item) => item.status === "review")
+      .map((item) => item.skillId);
+
+    const finalExactAgentGateFailed =
+      finalExactAgentMissingRequiredSkills.length > 0 ||
+      finalExactAgentFailingRequiredSkills.length > 0;
+
+    const finalExactAgentGate = {
+      id: "buildsetu.final-exact-agent-gate.v1",
+      status: finalExactAgentGateFailed ? "fail" : "pass",
+      total: finalExactAgentGateFailed ? 0 : 100,
+      professionalReady: !finalExactAgentGateFailed,
+      requiredSkillCount: finalExactAgentRequiredSkillIds.length,
+      requiredSkillIds: finalExactAgentRequiredSkillIds,
+      requiredSkillReports: finalExactAgentRequiredSkillReports,
+      missingRequiredSkills: finalExactAgentMissingRequiredSkills,
+      failingRequiredSkills: finalExactAgentFailingRequiredSkills,
+      reviewRequiredSkills: finalExactAgentWarningRequiredSkills,
+      commandGuard: {
+        expectedRuntimeCommand: "ground_floor_plan",
+        note: "Runtime smoke must verify response.command or asset.assetType remains ground_floor_plan.",
+      },
+    };
+
+
     // BUILDSETU_HARD_GEOMETRY_V6_SHARED_EDGE_DIMENSION_SYNC_V1
     // V6 intentionally changed these room dimensions to create real shared-wall topology.
     // Keep the hard gate strict, but align its canonical checks with the active V6 layout.
@@ -732,7 +794,7 @@ function buildExactAgentPlanningMetadata(plan: ExactPlan) {
       }
     }
   // BUILDSETU_PLANNING_SKILL_GATE_ENFORCED_SCOPE_SAFE_V1
-  const planningSkillGateFailed = planningSkillSummary?.status === "fail";
+  const planningSkillGateFailed = planningSkillSummary?.status === "fail" || finalExactAgentGateFailed;
   const exactAgentQualityGateFailed =
     hardGeometryReport?.status === "fail" ||
     humanPlanningReport?.status === "fail" ||
@@ -796,6 +858,7 @@ function buildExactAgentPlanningMetadata(plan: ExactPlan) {
     hardGeometryReport,
     humanPlanningReport,
     planningSkillSummary,
+    finalExactAgentGate,
     planningSkillReports,
     planningSkillGateEnforced: true,
     planningSkillGateFailed,
