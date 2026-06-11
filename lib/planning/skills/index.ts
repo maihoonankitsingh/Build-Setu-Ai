@@ -20,3 +20,4 @@ export * from "./buildsetu-window-ventilation-skill";
 export * from "./buildsetu-wet-plumbing-skill";
 export * from "./buildsetu-stair-core-skill";
 export * from "./buildsetu-parking-entry-skill";
+export * from "./buildsetu-professional-output-contract-skill";

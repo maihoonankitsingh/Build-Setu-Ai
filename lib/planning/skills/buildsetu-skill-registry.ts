@@ -23,6 +23,7 @@ import { buildSetuWindowVentilationSkill } from "./buildsetu-window-ventilation-
 import { buildSetuWetPlumbingSkill } from "./buildsetu-wet-plumbing-skill";
 import { buildSetuStairCoreSkill } from "./buildsetu-stair-core-skill";
 import { buildSetuParkingEntrySkill } from "./buildsetu-parking-entry-skill";
+import { buildSetuProfessionalOutputContractSkill } from "./buildsetu-professional-output-contract-skill";
 export const buildSetuPlanningSkills: BuildSetuPlanningSkill[] = [
   buildSetuPlanningRagSkill,
   buildSetuGeometrySkill,
@@ -34,6 +35,7 @@ export const buildSetuPlanningSkills: BuildSetuPlanningSkill[] = [
   buildSetuWetPlumbingSkill,
   buildSetuStairCoreSkill,
   buildSetuParkingEntrySkill,
+  buildSetuProfessionalOutputContractSkill,
   buildSetuRoomProgramSkill,
   buildSetuLayoutCandidateGeneratorSkill,
   buildSetuHumanFlowSkill,
