@@ -9,6 +9,7 @@ import { buildSetuPlanningRagSkill } from "./buildsetu-planning-rag-skill";
 import { buildSetuGeometrySkill } from "./buildsetu-geometry-skill";
 import { buildSetuPolygonGeometrySkill } from "./buildsetu-polygon-geometry-skill";
 import { buildSetuWallTopologySkill } from "./buildsetu-wall-topology-skill";
+import { buildSetuBuildingEnvelopeSkill } from "./buildsetu-building-envelope-skill";
 import { buildSetuRoomProgramSkill } from "./buildsetu-room-program-skill";
 import { buildSetuLayoutCandidateGeneratorSkill } from "./buildsetu-layout-candidate-generator-skill";
 import { buildSetuHumanFlowSkill } from "./buildsetu-human-flow-skill";
@@ -22,6 +23,7 @@ export const buildSetuPlanningSkills: BuildSetuPlanningSkill[] = [
   buildSetuGeometrySkill,
   buildSetuPolygonGeometrySkill,
   buildSetuWallTopologySkill,
+  buildSetuBuildingEnvelopeSkill,
   buildSetuRoomProgramSkill,
   buildSetuLayoutCandidateGeneratorSkill,
   buildSetuHumanFlowSkill,

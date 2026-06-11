@@ -14,3 +14,4 @@ export * from "./buildsetu-vastu-preference-skill";
 export * from "./buildsetu-ventilation-skill";
 export * from "./buildsetu-planning-rag-skill";
 export * from "./buildsetu-skill-registry";
+export * from "./buildsetu-building-envelope-skill";
