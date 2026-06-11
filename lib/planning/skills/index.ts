@@ -18,3 +18,4 @@ export * from "./buildsetu-building-envelope-skill";
 export * from "./buildsetu-door-topology-skill";
 export * from "./buildsetu-window-ventilation-skill";
 export * from "./buildsetu-wet-plumbing-skill";
+export * from "./buildsetu-stair-core-skill";
