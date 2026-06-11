@@ -11,6 +11,7 @@ const required = [
   "lib/planning/skills/buildsetu-building-envelope-skill.ts",
   "lib/planning/skills/buildsetu-door-topology-skill.ts",
   "lib/planning/skills/buildsetu-window-ventilation-skill.ts",
+  "lib/planning/skills/buildsetu-wet-plumbing-skill.ts",
   "lib/planning/skills/buildsetu-human-flow-skill.ts",
   "lib/planning/skills/buildsetu-compactness-skill.ts",
   "lib/planning/skills/buildsetu-room-program-skill.ts",
