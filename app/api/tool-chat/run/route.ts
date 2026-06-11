@@ -1381,6 +1381,25 @@ function bsBuildFloorPlanCommandPrompt(command: any, originalText: string, proje
   ].join("\\n");
 }
 
+
+// BUILDSETU_TOOL_CHAT_EXPOSE_FINAL_EXACT_AGENT_GATE_V1
+function bsTcPickExactAgentScoreReport(payload: any): any {
+  return (
+    payload?.scoreReport ||
+    payload?.asset?.scoreReport ||
+    payload?.asset?.planningJson?.scoreReport ||
+    payload?.planningJson?.scoreReport ||
+    payload?.plan?.scoreReport ||
+    payload?.plan?.planningMetadata?.scoreReport ||
+    null
+  );
+}
+
+function bsTcPickFinalExactAgentGate(payload: any): any {
+  const scoreReport = bsTcPickExactAgentScoreReport(payload);
+  return scoreReport?.finalExactAgentGate || null;
+}
+
 export async function POST(req: NextRequest) {
 
   // BUILDSETU_PRIVATE_API_POST_AUTH_APPLIED
@@ -1507,6 +1526,10 @@ export async function POST(req: NextRequest) {
 
       const hardExactData = await hardExactRes.json().catch(() => null);
 
+
+      const hardExactAgentScoreReport = bsTcPickExactAgentScoreReport(hardExactData);
+      const hardExactAgentFinalGate = bsTcPickFinalExactAgentGate(hardExactData);
+
       if (!hardExactRes.ok || !hardExactData?.ok) {
         return NextResponse.json(
           {
@@ -1610,6 +1633,8 @@ export async function POST(req: NextRequest) {
         ok: true,
         success: true,
         source: "hard_exact_plan_plus_openai_render_v2",
+        scoreReport: hardExactAgentScoreReport,
+        finalExactAgentGate: hardExactAgentFinalGate,
         provider: "openai",
         generationMode: "openai-final-floor-plan",
         toolSlug: body.toolSlug || "floor-plan-ai",
